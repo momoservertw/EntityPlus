@@ -1,0 +1,14 @@
+# --{ =-=-=-=-=-=-=-=-=-= EntityPlus's Configuration Settings, by Momocraft =-=-=-=-=-=-=-=-=-= }--
+config-Version: 1
+Metrics-Logging: true
+Log-Coloration: true
+
+# How many percent the mobs will spawn.
+Mobs-Spawn-Chance:
+  GUARDIAN: 0.1
+  IRON_GOLEM: 0.5
+
+Message:
+  Prefix: '&7[&dEntityPlus&7]&r '
+  Commands:
+    noPermission: '&cYou do not have permission to use that command!'
