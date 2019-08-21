@@ -3,7 +3,9 @@ config-Version: 1
 Metrics-Logging: true
 Log-Coloration: true
 
-# How many percent the mobs will spawn.
+# How many percent of mobs will spawn. You can add a new one you want.
+#Entity type can find here.
+#https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html
 Mobs-Spawn-Chance:
   GUARDIAN: 0.1
   IRON_GOLEM: 0.5
