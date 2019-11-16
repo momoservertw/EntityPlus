@@ -1,9 +1,13 @@
 tw\momocraft\entityplus\handlers\PermissionsHandler.class
-tw\momocraft\entityplus\utils\Language.class
+tw\momocraft\entityplus\listeners\MythicMobsSpawn.class
+tw\momocraft\entityplus\listeners\MythicMobLootDrop.class
 tw\momocraft\entityplus\handlers\ServerHandler.class
 tw\momocraft\entityplus\listeners\EntitySpawn.class
-tw\momocraft\entityplus\utils\Language$Lang.class
 tw\momocraft\entityplus\utils\Utils.class
 tw\momocraft\entityplus\handlers\ConfigHandler.class
+tw\momocraft\entityplus\utils\Language.class
+tw\momocraft\entityplus\utils\DependAPI.class
+tw\momocraft\entityplus\utils\Language$Lang.class
 tw\momocraft\entityplus\Commands.class
 tw\momocraft\entityplus\EntityPlus.class
+tw\momocraft\entityplus\utils\VaultAPI.class

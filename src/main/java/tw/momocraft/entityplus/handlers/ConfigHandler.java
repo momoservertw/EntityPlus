@@ -5,6 +5,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import tw.momocraft.entityplus.Commands;
 import tw.momocraft.entityplus.EntityPlus;
 import tw.momocraft.entityplus.listeners.EntitySpawn;
+import tw.momocraft.entityplus.listeners.MythicMobLootDrop;
+import tw.momocraft.entityplus.listeners.MythicMobsSpawn;
+import tw.momocraft.entityplus.utils.DependAPI;
 import tw.momocraft.entityplus.utils.Utils;
 
 import java.io.File;
@@ -12,14 +15,19 @@ import java.io.File;
 public class ConfigHandler {
 
 	private static YamlConfiguration configYAML;
+	private static DependAPI depends;
 
 	public static void generateData(File file) {
 		configFile();
+		setDepends(new DependAPI());
+		sendUtilityDepends();
 	}
 
 	public static void registerEvents() {
 		EntityPlus.getInstance().getCommand("entityplus").setExecutor(new Commands());
 		EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new EntitySpawn(), EntityPlus.getInstance());
+		EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new MythicMobsSpawn(), EntityPlus.getInstance());
+		EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new MythicMobLootDrop(), EntityPlus.getInstance());
 	}
 
 	public static FileConfiguration getConfig(String path) {
@@ -56,7 +64,7 @@ public class ConfigHandler {
 	public static void configFile() {
 		getConfigData("config.yml");
 		File File = new File(EntityPlus.getInstance().getDataFolder(), "config.yml");
-		if (File.exists() && getConfig("config.yml").getInt("config-Version") != 1) {
+		if (File.exists() && getConfig("config.yml").getInt("config-Version") != 2) {
 			if (EntityPlus.getInstance().getResource("config.yml") != null) {
 				String newGen = "config" + Utils.getRandom(1, 50000) + ".yml";
 				File newFile = new File(EntityPlus.getInstance().getDataFolder(), newGen);
@@ -70,5 +78,20 @@ public class ConfigHandler {
 			}
 		}
 		getConfig("config.yml").options().copyDefaults(false);
+	}
+
+	private static void sendUtilityDepends() {
+		ServerHandler.sendConsoleMessage("&fUtilizing [ &e"
+				+ (getDepends().getVault().vaultEnabled() ? "Vault, " : "")
+				+ (getDepends().MythicMobsEnabled() ? "MythicMobs " : "")
+				+ "&f]");
+	}
+
+	public static DependAPI getDepends() {
+		return depends;
+	}
+
+	private static void setDepends(DependAPI depend) {
+		depends = depend;
 	}
 }

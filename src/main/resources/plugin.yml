@@ -2,8 +2,9 @@ name: EntityPlus
 main: tw.momocraft.entityplus.EntityPlus
 author: Momocraft
 api-version: 1.14
-version: 1.0-SNAPSHOT
-description: To change Guardian's spawn chance
+version: 1.0.1-SNAPSHOT
+description: To change Entities' spawn chance
+softdepend: [Vault, MythicMobs]
 
 commands:
   entityplus:

@@ -18,7 +18,7 @@ public class Language {
 	public static void sendLangMessage(String nodeLocation, CommandSender sender, String...placeHolder) {
 		Player player = null; if (sender instanceof Player) { player = (Player) sender; }
 		String langMessage = ConfigHandler.getConfig(langType.nodeLocation()).getString(nodeLocation);
-		String prefix = Utils.translateLayout(ConfigHandler.getConfig(langType.nodeLocation()).getString("Message.Prefix"), player); if (prefix == null) { prefix = ""; } else { prefix += ""; }
+		String prefix = Utils.translateLayout(ConfigHandler.getConfig(langType.nodeLocation()).getString("Message.prefix"), player); if (prefix == null) { prefix = ""; } else { prefix += ""; }
 		if (langMessage != null && !langMessage.isEmpty()) {
 			langMessage = Utils.translateLayout(langMessage, player);
 			String[] langLines = langMessage.split(" /n ");

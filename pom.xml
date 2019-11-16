@@ -6,14 +6,18 @@
 
     <groupId>momocraft.tw</groupId>
     <artifactId>EntityPlus</artifactId>
-    <version>1.0-SNAPSHOT</version>
-
+    <version>1.0.1-SNAPSHOT</version>
 
     <repositories>
         <!--Spigot/CraftBukkit Repo-->
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+        <!--MythicMobs API-->
+        <repository>
+            <id>lumine-repo</id>
+            <url>http://mvn.lumine.io/repository/maven-snapshots/</url>
         </repository>
     </repositories>
     <dependencies>
@@ -31,7 +35,22 @@
             <version>LATEST</version>
             <scope>provided</scope>
         </dependency>
-
+        <!--Vault API-->
+        <dependency>
+            <groupId>net.milkbowl.vault</groupId>
+            <artifactId>Vault</artifactId>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/src/main/java/tw/momocraft/entityplus/extra/VaultAPI.jar</systemPath>
+            <version>LATEST</version>
+        </dependency>
+        <!--MythicMobs API-->
+        <dependency>
+            <groupId>io.lumine.xikage</groupId>
+            <artifactId>MythicMobs</artifactId>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/src/main/java/tw/momocraft/entityplus/extra/MythicMobs-4.8.0-SNAPSHOT.jar</systemPath>
+            <version>4.8.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
 </project>

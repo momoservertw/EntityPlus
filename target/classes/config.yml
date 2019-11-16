@@ -1,16 +1,41 @@
 # --{ =-=-=-=-=-=-=-=-=-= EntityPlus's Configuration Settings, by Momocraft =-=-=-=-=-=-=-=-=-= }--
-config-Version: 1
+config-Version: 2
 Metrics-Logging: true
 Log-Coloration: true
 
 # How many percent of mobs will spawn. You can add a new one you want.
-#Entity type can find here.
-#https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html
+# Entity type can find here: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html
 Mobs-Spawn-Chance:
-  GUARDIAN: 0.1
-  IRON_GOLEM: 0.5
+  GUARDIAN: 0.01
+  IRON_GOLEM: 0.3
+  SALMON: 0.2
+  PUFFERFISH: 0.2
+  TROPICAL_FISH: 0.2
+  PHANTOM: 0.3
+  BAT: 0.2
+
+# You can change MythicMobs spawn chance here.
+# The best way to change custom mobs spawn chance is in RandomSpawns.yml, but for some reason you may need it.
+# MythicMobs: https://www.spigotmc.org/resources/%E2%9A%94-mythicmobs-free-version-%E2%96%BAthe-1-custom-mob-creator%E2%97%84.5702/
+MythicMobs-Spawn-Chance:
+  Crazy_Zombie: 0.1
+
+MythicMobs-Drop:
+  Enable: true
+  # If player has multiple multipliers, he will get more rewards than just the highest multiplier.
+  # Calculation method: addition or multiplication
+  Combined-enable: true
+  Combined-method: addition
+  # You can add more multipliers.
+  # Permission: "entityplus.drop.multiplier.GROUP"
+  Multipliers:
+    1:
+      money: 1.5
+      exp: 1.5
+    2:
+      money: 2
+      exp: 2
 
 Message:
-  Prefix: '&7[&dEntityPlus&7]&r '
-  Commands:
-    noPermission: '&cYou do not have permission to use that command!'
+  prefix: '&7[&dEntityPlus&7]&r '
+  noPermission: '&cYou do not have permission to use that command!'

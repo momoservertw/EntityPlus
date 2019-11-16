@@ -28,9 +28,4 @@ public class Utils {
 		name = ChatColor.translateAlternateColorCodes('&', name).toString();
 		return name;
 	}
-
-	public static boolean getRandomBoolean() {
-		return Math.random() < 0.5;
-		//I tried another approaches here, still the same result
-	}
 }

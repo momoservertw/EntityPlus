@@ -12,7 +12,7 @@ public class Commands implements CommandExecutor {
         if (PermissionsHandler.hasPermission(sender, "entityplus.admin")) {
             Language.dispatchMessage(sender, "&aEntityPlus v" + EntityPlus.getInstance().getDescription().getVersion() + "&d by Momocraft");
         } else {
-            Language.sendLangMessage("Message.Commands.noPermission", sender);
+            Language.sendLangMessage("Message.noPermission", sender);
         }
         return true;
     }
