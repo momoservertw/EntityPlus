@@ -17,14 +17,18 @@ public class MythicMobLootDrop implements Listener {
 
     @EventHandler
     public void onMythicMobsDeath(MythicMobLootDropEvent e) {
+        if (e.getKiller() == null) {
+            return;
+        }
+
+        Player player = Bukkit.getPlayer(e.getKiller().getUniqueId());
+        if (player == null) {
+            return;
+        }
 
         if (!ConfigHandler.getConfig("config.yml").getBoolean("MythicMobs-Drop.Enable")) {
             return;
         }
-
-        String playerName = e.getKiller().getName();
-        Player player = Bukkit.getPlayer(playerName);
-
 
         List<String> playerMultiList = new ArrayList<String>();
 
@@ -87,10 +91,10 @@ public class MythicMobLootDrop implements Listener {
 
         MythicMobs.inst().getDropManager().getDropTables(e.getPhysicalDrops());
         MythicDropsDrop.getDrop().addAmount(1);
-         */
 
         int dropExp = e.getExp();
         dropExp *= totalExp;
         e.setExp(dropExp);
+        */
     }
 }
