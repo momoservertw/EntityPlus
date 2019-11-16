@@ -55,7 +55,7 @@ public class MythicMobLootDrop implements Listener {
                     money = ConfigHandler.getConfig("config.yml").getDouble("MythicMobs-Drop.Multipliers." + key + ".money");
                     exp = ConfigHandler.getConfig("config.yml").getDouble("MythicMobs-Drop.Multipliers." + key + ".exp");
 
-                    if (combinedMethod == "addition") {
+                    if (combinedMethod.equals("addition")) {
                         money --;
                         exp --;
                         totalMoney += money;
@@ -71,7 +71,7 @@ public class MythicMobLootDrop implements Listener {
             money = ConfigHandler.getConfig("config.yml").getDouble("MythicMobs-Drop.Multipliers." + maxMulti + ".money");
             exp = ConfigHandler.getConfig("config.yml").getDouble("MythicMobs-Drop.Multipliers." + maxMulti + ".exp");
 
-            if (combinedMethod == "addition") {
+            if (combinedMethod.equals("addition")) {
                 totalMoney = money;
                 totalExp = exp;
             } else {
@@ -91,10 +91,11 @@ public class MythicMobLootDrop implements Listener {
 
         MythicMobs.inst().getDropManager().getDropTables(e.getPhysicalDrops());
         MythicDropsDrop.getDrop().addAmount(1);
+         */
 
         int dropExp = e.getExp();
         dropExp *= totalExp;
         e.setExp(dropExp);
-        */
+
     }
 }
