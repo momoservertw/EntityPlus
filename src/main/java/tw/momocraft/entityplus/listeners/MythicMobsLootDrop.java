@@ -11,7 +11,7 @@ import tw.momocraft.entityplus.handlers.PermissionsHandler;
 import java.util.*;
 
 
-public class MythicMobLootDrop implements Listener {
+public class MythicMobsLootDrop implements Listener {
 
     private Set<String> multiList = ConfigHandler.getConfig("config.yml").getConfigurationSection("MythicMobs-Drop.Multipliers").getKeys(false);
 

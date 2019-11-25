@@ -5,7 +5,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import tw.momocraft.entityplus.Commands;
 import tw.momocraft.entityplus.EntityPlus;
 import tw.momocraft.entityplus.listeners.EntitySpawn;
-import tw.momocraft.entityplus.listeners.MythicMobLootDrop;
+import tw.momocraft.entityplus.listeners.MythicMobsLootDrop;
 import tw.momocraft.entityplus.listeners.MythicMobsSpawn;
 import tw.momocraft.entityplus.utils.DependAPI;
 import tw.momocraft.entityplus.utils.Utils;
@@ -27,7 +27,7 @@ public class ConfigHandler {
 		EntityPlus.getInstance().getCommand("entityplus").setExecutor(new Commands());
 		EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new EntitySpawn(), EntityPlus.getInstance());
 		EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new MythicMobsSpawn(), EntityPlus.getInstance());
-		EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new MythicMobLootDrop(), EntityPlus.getInstance());
+		EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new MythicMobsLootDrop(), EntityPlus.getInstance());
 	}
 
 	public static FileConfiguration getConfig(String path) {
