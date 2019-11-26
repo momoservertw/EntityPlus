@@ -16,6 +16,7 @@ public class EntitySpawn implements Listener {
 
     @EventHandler
     public void onSpawnMobs(CreatureSpawnEvent e) {
+        // Bypass the checking event if you have MythicMobs.
         if (e.getSpawnReason() == CreatureSpawnEvent.SpawnReason.CUSTOM) {
             return;
         }
@@ -31,7 +32,7 @@ public class EntitySpawn implements Listener {
             entityListed.add(key);
         }
 
-        // If entity list doesn't include the entity, it will return and spawn the entity.
+        // If entity list doesn't include the spawn entity, it will return and spawn it.
         String entityType = e.getEntityType().toString();
         if (entityListed.contains(entityType)) {
             ConfigurationSection entityConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn." + entityType);
@@ -40,269 +41,186 @@ public class EntitySpawn implements Listener {
             }
 
             // If entity has groups.
-            ServerHandler.sendConsoleMessage("43 group");
             if (ConfigHandler.getConfig("config.yml").getString("Spawn." + entityType + ".Chance") != null) {
-                ServerHandler.sendConsoleMessage("45 has group");
-
                 // If entity spawn "chance" are success, it will keep checking.
                 // Otherwise it will return and spawn the entity.
                 if (!getChance("Spawn." + entityType + ".Chance")) {
-                    ServerHandler.sendConsoleMessage("return chance");
                     return;
                 }
-                ServerHandler.sendConsoleMessage("53 chance success");
 
                 // If entity spawn "reason" are match or equal null, it will keep checking.
-                // Otherwise it will return and spawn the entity.
                 if (!getReason(e, "Spawn." + entityType + ".Reason")) {
-                    ServerHandler.sendConsoleMessage("return reason");
                     return;
                 }
-                ServerHandler.sendConsoleMessage("69 reason match or equal null");
 
                 // If entity spawn "biome" are match or equal null, it will keep checking.
-                // Otherwise it will return and spawn the entity.
                 if (!getBiome(e, "Spawn." + entityType + ".Biome")) {
-                    ServerHandler.sendConsoleMessage("return biome");
                     return;
                 }
-                ServerHandler.sendConsoleMessage("69 biome match or equal null");
 
                 // If entity spawn "water" are match or equal null, it will keep checking.
                 // Config "water: false" -> only affect in the air.
-                // Otherwise it will return and spawn the entity.
                 if (!getWater(e, "Spawn." + entityType + ".Water")) {
-                    ServerHandler.sendConsoleMessage("return water");
                     return;
                 }
-                ServerHandler.sendConsoleMessage("78 water match or equal null");
 
                 List<String> worldList = ConfigHandler.getConfig("config.yml").getStringList("Spawn." + entityType + ".Worlds");
                 ConfigurationSection worldConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn." + entityType + ".Worlds");
                 String world;
-                // If the entity world setting is simple it will check every world.
+                // If the entity world setting is simple, it will check every world.
                 if (worldList.size() != 0) {
-                    ServerHandler.sendConsoleMessage("85 world String List");
                     Iterator<String> iterator2 = worldList.iterator();
 
                     while (iterator2.hasNext()) {
                         world = iterator2.next();
-                        ServerHandler.sendConsoleMessage("while, " + world + " 90");
                         if (!getWorld(e, world)) {
                             if (!iterator2.hasNext()) {
-                                ServerHandler.sendConsoleMessage("return world 95");
                                 return;
                             }
                         } else {
-                            ServerHandler.sendConsoleMessage("92 world StringList match");
-                            ServerHandler.sendConsoleMessage("&c93 cancelled");
                             e.setCancelled(true);
                             return;
                         }
                     }
-                    // If the entity world setting is advanced, it will check every detail world location(xyz).
+                // If the entity world setting is advanced, it will check every detail world location(xyz).
                 } else if (worldConfig != null) {
-                    ServerHandler.sendConsoleMessage("106 world config");
                     Set<String> worldGroups = worldConfig.getKeys(false);
                     Iterator<String> iterator2 = worldGroups.iterator();
-
                     // Checking every "world" from config.
                     while (iterator2.hasNext()) {
                         world = iterator2.next();
-                        ServerHandler.sendConsoleMessage("while, " + world + " 111");
-
                         // If entity spawn "world" are match or equal null, it will keep checking.
-                        // Otherwise it will check another world, and return and spawn the entity if this is the latest world in config..
+                        // Otherwise it will check another world, and return and spawn the entity if this is the latest world in config.
                         if (!getWorld(e, world)) {
                             if (!iterator2.hasNext()) {
-                                ServerHandler.sendConsoleMessage("117 return world");
                                 return;
                             }
                             continue;
                         }
-                        ServerHandler.sendConsoleMessage("122 world match or equal null");
 
                         // If entity spawn "location" are match or equal null, it will cancel the spawn event.
-                        // Otherwise it will check another world, and return and spawn the entity if this is the latest world in config..
+                        // Otherwise it will check another world, and return and spawn the entity if this is the latest world in config.
                         ConfigurationSection xyzList = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn." + entityType + ".Worlds." + world);
                         if (xyzList != null) {
-                            ServerHandler.sendConsoleMessage("120");
-
-                            // If the "location" doesn't match, it will check another world.
+                            // If the "location" is match, it will cancel the spawn event.
                             // And it will return and spawn the entity if this is the latest world in config.
-
                             for (String key : xyzList.getKeys(false)) {
                                 if (getXYZ(e, entityType, key, "Spawn." + entityType + ".Worlds." + world + "." + key)) {
-                                    ServerHandler.sendConsoleMessage("135 world config match - xyz " + key);
-                                    ServerHandler.sendConsoleMessage("&c136 cancelled");
                                     e.setCancelled(true);
                                     return;
                                 }
-
                             }
-                            ServerHandler.sendConsoleMessage("142");
                             if (!iterator2.hasNext()) {
-                                ServerHandler.sendConsoleMessage("145 return xyz");
                                 return;
                             }
-                            ServerHandler.sendConsoleMessage("148 xyz not match, checking another world.");
                             continue;
                         }
-                        ServerHandler.sendConsoleMessage("&c151 cancelled");
                         e.setCancelled(true);
                         return;
                     }
                 }
             } else {
-                ServerHandler.sendConsoleMessage("&6has group");
                 Set<String> groups = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn." + entityType).getKeys(false);
                 Iterator<String> iterator = groups.iterator();
                 String group;
 
                 back1:
                 while (iterator.hasNext()) {
-                    ServerHandler.sendConsoleMessage("while 141");
                     group = iterator.next();
                     // If entity spawn "chance" are success, it will keep checking.
                     // Otherwise it will return and spawn the entity.
                     if (!getChance("Spawn." + entityType + "." + group + ".Chance")) {
-                        ServerHandler.sendConsoleMessage("!chance");
                         if (!iterator.hasNext()) {
-                            ServerHandler.sendConsoleMessage("168 return chance");
                             return;
                         }
-                        ServerHandler.sendConsoleMessage("168 chance not match, checking another groups");
                         continue;
                     }
-                    ServerHandler.sendConsoleMessage("53 chance success");
 
                     // If entity spawn "reason" are match or equal null, it will keep checking.
-                    // Otherwise it will return and spawn the entity.
                     if (!getReason(e, "Spawn." + entityType + "." + group + ".Reason")) {
-                        ServerHandler.sendConsoleMessage("!reason");
                         if (!iterator.hasNext()) {
-                            ServerHandler.sendConsoleMessage("181 return reason");
                             return;
                         }
-                        ServerHandler.sendConsoleMessage("181 reason not match, checking another group.");
                         continue;
                     }
-                    ServerHandler.sendConsoleMessage("69 reason match or equal null");
 
                     // If entity spawn "biome" are match or equal null, it will keep checking.
-                    // Otherwise it will return and spawn the entity.
                     if (!getBiome(e, "Spawn." + entityType + "." + group + ".Biome")) {
-                        ServerHandler.sendConsoleMessage("!biome");
                         if (!iterator.hasNext()) {
-                            ServerHandler.sendConsoleMessage("194 return biome");
                             return;
                         }
-                        ServerHandler.sendConsoleMessage("194 biome not match, checking another group.");
                         continue;
                     }
-                    ServerHandler.sendConsoleMessage("69 biome match or equal null");
 
                     // If entity spawn "water" are match or equal null, it will keep checking.
                     // Config "water: false" -> only affect in the air.
-                    // Otherwise it will return and spawn the entity.
                     if (!getWater(e, "Spawn." + entityType + "." + group + ".Water")) {
-                        ServerHandler.sendConsoleMessage("return water");
                         if (!iterator.hasNext()) {
-                            ServerHandler.sendConsoleMessage("208 return water");
                             return;
                         }
-                        ServerHandler.sendConsoleMessage("208 water not match, checking another group.");
                         continue;
                     }
-                    ServerHandler.sendConsoleMessage("78 water match or equal null");
 
                     List<String> worldList = ConfigHandler.getConfig("config.yml").getStringList("Spawn." + entityType + "." + group + ".Worlds");
                     ConfigurationSection worldConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn." + entityType + "." + group + ".Worlds");
                     String world;
                     // If the entity world setting is simple it will check every world.
                     if (worldList.size() != 0) {
-                        ServerHandler.sendConsoleMessage("85 world String List");
                         Iterator<String> iterator2 = worldList.iterator();
 
                         while (iterator2.hasNext()) {
                             world = iterator2.next();
-                            ServerHandler.sendConsoleMessage("while, " + world + " 90");
                             if (!getWorld(e, world)) {
                                 if (!iterator2.hasNext()) {
-                                    ServerHandler.sendConsoleMessage("!!world 95");
                                     if (!iterator.hasNext()) {
-                                        ServerHandler.sendConsoleMessage("226 return world");
                                         return;
                                     }
-                                    ServerHandler.sendConsoleMessage("226 world not match, checking another group.");
                                     continue back1;
                                 }
                             } else {
-                                ServerHandler.sendConsoleMessage("241 world StringList match");
-                                ServerHandler.sendConsoleMessage("&c241 cancelled");
                                 e.setCancelled(true);
                                 return;
                             }
                         }
-                        // If the entity world setting is advanced, it will check every detail world location(xyz).
+                    // If the entity world setting is advanced, it will check every detail world location(xyz).
                     } else if (worldConfig != null) {
-                        ServerHandler.sendConsoleMessage("106 world config");
                         Set<String> worldGroups = worldConfig.getKeys(false);
                         Iterator<String> iterator2 = worldGroups.iterator();
-
                         // Checking every "world" from config.
                         while (iterator2.hasNext()) {
                             world = iterator2.next();
-                            ServerHandler.sendConsoleMessage("while, " + world + " 111");
-
                             // If entity spawn "world" are match or equal null, it will keep checking.
                             // Otherwise it will check another world, and return and spawn the entity if this is the latest world in config..
                             if (!getWorld(e, world)) {
                                 if (!iterator2.hasNext()) {
-                                    ServerHandler.sendConsoleMessage("117 !world");
                                     if (!iterator.hasNext()) {
-                                        ServerHandler.sendConsoleMessage("256 return world");
                                         return;
                                     }
-                                    ServerHandler.sendConsoleMessage("256 world not match, checking another group.");
                                     continue back1;
                                 }
                                 continue;
                             }
-                            ServerHandler.sendConsoleMessage("269");
 
                             // If entity spawn "location" are match or equal null, it will cancel the spawn event.
-                            // Otherwise it will check another world, and return and spawn the entity if this is the latest world in config..
+                            // Otherwise it will check another world, and return and spawn the entity if this is the latest world in config.
                             ConfigurationSection xyzList = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn." + entityType + "." + group + ".Worlds." + world);
                             if (xyzList != null) {
-                                ServerHandler.sendConsoleMessage("120");
-
-                                // If the "location" doesn't match, it will check another world.
+                                // If the "location" is match, it will cancel the spawn event.
                                 // And it will return and spawn the entity if this is the latest world in config.
-
                                 for (String key : xyzList.getKeys(false)) {
                                     if (getXYZ(e, entityType, key, "Spawn." + entityType + "." + group + ".Worlds." + world + "." + key)) {
-                                        ServerHandler.sendConsoleMessage("135 world config match - xyz " + key);
-                                        ServerHandler.sendConsoleMessage("&c136 cancelled");
                                         e.setCancelled(true);
                                         return;
                                     }
-
                                 }
-                                ServerHandler.sendConsoleMessage("142");
                                 if (!iterator2.hasNext()) {
-                                    ServerHandler.sendConsoleMessage("145 !xyz");
                                     if (!iterator.hasNext()) {
-                                        ServerHandler.sendConsoleMessage("288 return xyz");
                                         return;
                                     }
-                                    ServerHandler.sendConsoleMessage("291 xyz not match, checking another group.");
                                     continue back1;
                                 }
-                                ServerHandler.sendConsoleMessage("148 xyz not match, checking another world.");
                                 continue;
                             }
-                            ServerHandler.sendConsoleMessage("&c302 cancelled");
                             e.setCancelled(true);
                             return;
                         }
@@ -311,7 +229,6 @@ public class EntitySpawn implements Listener {
             }
         }
     }
-
 
     /**
      * @param path the path of spawn chance in config.yml
@@ -427,7 +344,6 @@ public class EntitySpawn implements Listener {
         if (keyConfig != null) {
             String[] keyContent = keyConfig.split("\\s+");
             int xyzLength = getXYZLength(entityType, keyContent);
-            ServerHandler.sendConsoleMessage("&a" + key);
 
             if (xyzLength == 1) {
                 if (key.equalsIgnoreCase("X")) {
@@ -556,7 +472,6 @@ public class EntitySpawn implements Listener {
         }
     }
 
-
     /**
      * @param number1  first number.
      * @param operator the comparison operator to compare two numbers.
@@ -570,10 +485,8 @@ public class EntitySpawn implements Listener {
                 operator.equals("<=") && number1 <= number2 ||
                 operator.equals(">=") && number1 >= number2 ||
                 operator.equals("==") && number1 == number2) {
-            ServerHandler.sendConsoleMessage(number1 + " " + operator + " " + number2);
             return true;
         }
-        ServerHandler.sendConsoleMessage(number1 + " " + operator + " " + number2);
         return false;
     }
 
@@ -586,15 +499,10 @@ public class EntitySpawn implements Listener {
      */
     public static boolean getRange(int check, int range1, int range2) {
         if (range1 == range2) {
-            ServerHandler.sendConsoleMessage(range1 + " == " + range2);
             return true;
         } else if (range1 < range2) {
-            ServerHandler.sendConsoleMessage(range1 + " < " + range2);
-            ServerHandler.sendConsoleMessage(check + " >= " + range1 + " && " + check + " <= " + range2);
             return check >= range1 && check <= range2;
         } else {
-            ServerHandler.sendConsoleMessage(range1 + " > " + range2);
-            ServerHandler.sendConsoleMessage(check + " >= " + range2 + " && " + check + " <= " + range1);
             return check >= range2 && check <= range1;
         }
     }

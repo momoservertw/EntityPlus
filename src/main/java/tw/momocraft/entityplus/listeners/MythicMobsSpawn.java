@@ -17,8 +17,6 @@ public class MythicMobsSpawn implements Listener {
 
     @EventHandler
     public void onMythicMobsSpawn(MythicMobSpawnEvent e) {
-        ServerHandler.sendConsoleMessage("MM 21");
-
         if (entityList == null) {
             return;
         }
@@ -32,8 +30,6 @@ public class MythicMobsSpawn implements Listener {
 
         // If entity list doesn't include the entity, it will return and spawn the entity.
         String entityType = e.getMobType().getInternalName();
-        ServerHandler.sendConsoleMessage("---------------------");
-        ServerHandler.sendConsoleMessage(entityType);
         if (entityListed.contains(entityType)) {
             ConfigurationSection entityConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("MythicMobs-Spawn." + entityType);
             if (entityConfig == null) {
@@ -41,248 +37,175 @@ public class MythicMobsSpawn implements Listener {
             }
 
             // If entity has groups.
-            ServerHandler.sendConsoleMessage("43 group");
             if (ConfigHandler.getConfig("config.yml").getString("MythicMobs-Spawn." + entityType + ".Chance") != null) {
-                ServerHandler.sendConsoleMessage("45 has group");
 
                 // If entity spawn "chance" are success, it will keep checking.
                 // Otherwise it will return and spawn the entity.
                 if (!getChance("MythicMobs-Spawn." + entityType + ".Chance")) {
-                    ServerHandler.sendConsoleMessage("return chance");
                     return;
                 }
-                ServerHandler.sendConsoleMessage("53 chance success");
 
                 // If entity spawn "biome" are match or equal null, it will keep checking.
-                // Otherwise it will return and spawn the entity.
                 if (!getBiome(e, "MythicMobs-Spawn." + entityType + ".Biome")) {
-                    ServerHandler.sendConsoleMessage("return biome");
                     return;
                 }
-                ServerHandler.sendConsoleMessage("69 biome match or equal null");
 
                 // If entity spawn "water" are match or equal null, it will keep checking.
                 // Config "water: false" -> only affect in the air.
-                // Otherwise it will return and spawn the entity.
                 if (!getWater(e, "MythicMobs-Spawn." + entityType + ".Water")) {
-                    ServerHandler.sendConsoleMessage("return water");
                     return;
                 }
-                ServerHandler.sendConsoleMessage("78 water match or equal null");
 
                 List<String> worldList = ConfigHandler.getConfig("config.yml").getStringList("MythicMobs-Spawn." + entityType + ".Worlds");
                 ConfigurationSection worldConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("MythicMobs-Spawn." + entityType + ".Worlds");
                 String world;
-                // If the entity world setting is simple it will check every world.
+                // If the entity world setting is simple, it will check every world.
                 if (worldList.size() != 0) {
-                    ServerHandler.sendConsoleMessage("85 world String List");
                     Iterator<String> iterator2 = worldList.iterator();
 
                     while (iterator2.hasNext()) {
                         world = iterator2.next();
-                        ServerHandler.sendConsoleMessage("while, " + world + " 90");
                         if (!getWorld(e, world)) {
                             if (!iterator2.hasNext()) {
-                                ServerHandler.sendConsoleMessage("return world 95");
                                 return;
                             }
                         } else {
-                            ServerHandler.sendConsoleMessage("92 world StringList match");
-                            ServerHandler.sendConsoleMessage("&c93 cancelled");
                             e.setCancelled();
                             return;
                         }
                     }
-                    // If the entity world setting is advanced, it will check every detail world location(xyz).
+                // If the entity world setting is advanced, it will check every detail world location(xyz).
                 } else if (worldConfig != null) {
-                    ServerHandler.sendConsoleMessage("106 world config");
                     Set<String> worldGroups = worldConfig.getKeys(false);
                     Iterator<String> iterator2 = worldGroups.iterator();
 
                     // Checking every "world" from config.
                     while (iterator2.hasNext()) {
                         world = iterator2.next();
-                        ServerHandler.sendConsoleMessage("while, " + world + " 111");
-
                         // If entity spawn "world" are match or equal null, it will keep checking.
-                        // Otherwise it will check another world, and return and spawn the entity if this is the latest world in config..
+                        // Otherwise it will check another world, and return and spawn the entity if this is the latest world in config.
                         if (!getWorld(e, world)) {
                             if (!iterator2.hasNext()) {
-                                ServerHandler.sendConsoleMessage("117 return world");
                                 return;
                             }
                             continue;
                         }
-                        ServerHandler.sendConsoleMessage("122 world match or equal null");
 
                         // If entity spawn "location" are match or equal null, it will cancel the spawn event.
-                        // Otherwise it will check another world, and return and spawn the entity if this is the latest world in config..
+                        // Otherwise it will check another world, and return and spawn the entity if this is the latest world in config.
                         ConfigurationSection xyzList = ConfigHandler.getConfig("config.yml").getConfigurationSection("MythicMobs-Spawn." + entityType + ".Worlds." + world);
                         if (xyzList != null) {
-                            ServerHandler.sendConsoleMessage("120");
-
-                            // If the "location" doesn't match, it will check another world.
+                            // If the "location" is match, it will cancel the spawn event.
                             // And it will return and spawn the entity if this is the latest world in config.
-
                             for (String key : xyzList.getKeys(false)) {
                                 if (getXYZ(e, entityType, key, "MythicMobs-Spawn." + entityType + ".Worlds." + world + "." + key)) {
-                                    ServerHandler.sendConsoleMessage("135 world config match - xyz " + key);
-                                    ServerHandler.sendConsoleMessage("&c136 cancelled");
                                     e.setCancelled();
                                     return;
                                 }
-
                             }
-                            ServerHandler.sendConsoleMessage("142");
                             if (!iterator2.hasNext()) {
-                                ServerHandler.sendConsoleMessage("145 return xyz");
                                 return;
                             }
-                            ServerHandler.sendConsoleMessage("148 xyz not match, checking another world.");
                             continue;
                         }
-                        ServerHandler.sendConsoleMessage("&c151 cancelled");
                         e.setCancelled();
                         return;
                     }
                 }
             } else {
-                ServerHandler.sendConsoleMessage("&6has group");
                 Set<String> groups = ConfigHandler.getConfig("config.yml").getConfigurationSection("MythicMobs-Spawn." + entityType).getKeys(false);
                 Iterator<String> iterator = groups.iterator();
                 String group;
 
                 back1:
                 while (iterator.hasNext()) {
-                    ServerHandler.sendConsoleMessage("while 141");
                     group = iterator.next();
                     // If entity spawn "chance" are success, it will keep checking.
                     // Otherwise it will return and spawn the entity.
                     if (!getChance("MythicMobs-Spawn." + entityType + "." + group + ".Chance")) {
-                        ServerHandler.sendConsoleMessage("!chance");
                         if (!iterator.hasNext()) {
-                            ServerHandler.sendConsoleMessage("168 return chance");
                             return;
                         }
-                        ServerHandler.sendConsoleMessage("168 chance not match, checking another groups");
                         continue;
                     }
-                    ServerHandler.sendConsoleMessage("53 chance success");
 
                     // If entity spawn "biome" are match or equal null, it will keep checking.
-                    // Otherwise it will return and spawn the entity.
                     if (!getBiome(e, "MythicMobs-Spawn." + entityType + "." + group + ".Biome")) {
-                        ServerHandler.sendConsoleMessage("!biome");
                         if (!iterator.hasNext()) {
-                            ServerHandler.sendConsoleMessage("194 return biome");
                             return;
                         }
-                        ServerHandler.sendConsoleMessage("194 biome not match, checking another group.");
                         continue;
                     }
-                    ServerHandler.sendConsoleMessage("69 biome match or equal null");
 
                     // If entity spawn "water" are match or equal null, it will keep checking.
                     // Config "water: false" -> only affect in the air.
-                    // Otherwise it will return and spawn the entity.
                     if (!getWater(e, "MythicMobs-Spawn." + entityType + "." + group + ".Water")) {
-                        ServerHandler.sendConsoleMessage("return water");
                         if (!iterator.hasNext()) {
-                            ServerHandler.sendConsoleMessage("208 return water");
                             return;
                         }
-                        ServerHandler.sendConsoleMessage("208 water not match, checking another group.");
                         continue;
                     }
-                    ServerHandler.sendConsoleMessage("78 water match or equal null");
 
                     List<String> worldList = ConfigHandler.getConfig("config.yml").getStringList("MythicMobs-Spawn." + entityType + "." + group + ".Worlds");
                     ConfigurationSection worldConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("MythicMobs-Spawn." + entityType + "." + group + ".Worlds");
                     String world;
                     // If the entity world setting is simple it will check every world.
                     if (worldList.size() != 0) {
-                        ServerHandler.sendConsoleMessage("85 world String List");
                         Iterator<String> iterator2 = worldList.iterator();
 
                         while (iterator2.hasNext()) {
                             world = iterator2.next();
-                            ServerHandler.sendConsoleMessage("while, " + world + " 90");
                             if (!getWorld(e, world)) {
                                 if (!iterator2.hasNext()) {
-                                    ServerHandler.sendConsoleMessage("!!world 95");
                                     if (!iterator.hasNext()) {
-                                        ServerHandler.sendConsoleMessage("226 return world");
                                         return;
                                     }
-                                    ServerHandler.sendConsoleMessage("226 world not match, checking another group.");
                                     continue back1;
                                 }
                             } else {
-                                ServerHandler.sendConsoleMessage("241 world StringList match");
-                                ServerHandler.sendConsoleMessage("&c241 cancelled");
                                 e.setCancelled();
                                 return;
                             }
                         }
                         // If the entity world setting is advanced, it will check every detail world location(xyz).
                     } else if (worldConfig != null) {
-                        ServerHandler.sendConsoleMessage("106 world config");
                         Set<String> worldGroups = worldConfig.getKeys(false);
                         Iterator<String> iterator2 = worldGroups.iterator();
-
                         // Checking every "world" from config.
                         while (iterator2.hasNext()) {
                             world = iterator2.next();
-                            ServerHandler.sendConsoleMessage("while, " + world + " 111");
-
                             // If entity spawn "world" are match or equal null, it will keep checking.
                             // Otherwise it will check another world, and return and spawn the entity if this is the latest world in config..
                             if (!getWorld(e, world)) {
                                 if (!iterator2.hasNext()) {
-                                    ServerHandler.sendConsoleMessage("117 !world");
                                     if (!iterator.hasNext()) {
-                                        ServerHandler.sendConsoleMessage("256 return world");
                                         return;
                                     }
-                                    ServerHandler.sendConsoleMessage("256 world not match, checking another group.");
                                     continue back1;
                                 }
                                 continue;
                             }
-                            ServerHandler.sendConsoleMessage("269");
 
                             // If entity spawn "location" are match or equal null, it will cancel the spawn event.
-                            // Otherwise it will check another world, and return and spawn the entity if this is the latest world in config..
+                            // Otherwise it will check another world, and return and spawn the entity if this is the latest world in config.
                             ConfigurationSection xyzList = ConfigHandler.getConfig("config.yml").getConfigurationSection("MythicMobs-Spawn." + entityType + "." + group + ".Worlds." + world);
                             if (xyzList != null) {
-                                ServerHandler.sendConsoleMessage("120");
-
-                                // If the "location" doesn't match, it will check another world.
+                                // If the "location" is match, it will cancel the spawn event.
                                 // And it will return and spawn the entity if this is the latest world in config.
-
                                 for (String key : xyzList.getKeys(false)) {
                                     if (getXYZ(e, entityType, key, "MythicMobs-Spawn." + entityType + "." + group + ".Worlds." + world + "." + key)) {
-                                        ServerHandler.sendConsoleMessage("135 world config match - xyz " + key);
-                                        ServerHandler.sendConsoleMessage("&c136 cancelled");
                                         e.setCancelled();
                                         return;
                                     }
-
                                 }
-                                ServerHandler.sendConsoleMessage("142");
                                 if (!iterator2.hasNext()) {
-                                    ServerHandler.sendConsoleMessage("145 !xyz");
                                     if (!iterator.hasNext()) {
-                                        ServerHandler.sendConsoleMessage("288 return xyz");
                                         return;
                                     }
-                                    ServerHandler.sendConsoleMessage("291 xyz not match, checking another group.");
                                     continue back1;
                                 }
-                                ServerHandler.sendConsoleMessage("148 xyz not match, checking another world.");
                                 continue;
                             }
-                            ServerHandler.sendConsoleMessage("&c302 cancelled");
                             e.setCancelled();
                             return;
                         }
@@ -393,7 +316,6 @@ public class MythicMobsSpawn implements Listener {
         if (keyConfig != null) {
             String[] keyContent = keyConfig.split("\\s+");
             int xyzLength = getXYZLength(entityType, keyContent);
-            ServerHandler.sendConsoleMessage("&a" + key);
 
             if (xyzLength == 1) {
                 if (key.equalsIgnoreCase("X")) {
