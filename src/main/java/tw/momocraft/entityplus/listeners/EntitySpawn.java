@@ -82,27 +82,29 @@ public class EntitySpawn implements Listener {
                 String world;
                 // If the entity world setting is simple it will check every world.
                 if (worldList.size() != 0) {
-                    ServerHandler.sendConsoleMessage("85 world list");
+                    ServerHandler.sendConsoleMessage("85 world String List");
                     Iterator<String> iterator2 = worldList.iterator();
 
                     while (iterator2.hasNext()) {
                         world = iterator2.next();
                         ServerHandler.sendConsoleMessage("while, " + world + " 90");
-                        if (getWorld(e, world)) {
-                            break;
-                        }
-                        if (!iterator2.hasNext()) {
-                            ServerHandler.sendConsoleMessage("return world 95");
+                        if (!getWorld(e, world)) {
+                            if (!iterator2.hasNext()) {
+                                ServerHandler.sendConsoleMessage("return world 95");
+                                return;
+                            }
+                        } else {
+                            ServerHandler.sendConsoleMessage("92 world StringList match");
+                            ServerHandler.sendConsoleMessage("&c93 cancelled");
+                            e.setCancelled(true);
                             return;
                         }
                     }
-
                     // If the entity world setting is advanced, it will check every detail world location(xyz).
                 } else if (worldConfig != null) {
-                    ServerHandler.sendConsoleMessage("102 world config");
+                    ServerHandler.sendConsoleMessage("106 world config");
                     Set<String> worldGroups = worldConfig.getKeys(false);
                     Iterator<String> iterator2 = worldGroups.iterator();
-                    String[] keyContent;
 
                     // Checking every "world" from config.
                     while (iterator2.hasNext()) {
@@ -128,47 +130,187 @@ public class EntitySpawn implements Listener {
 
                             // If the "location" doesn't match, it will check another world.
                             // And it will return and spawn the entity if this is the latest world in config.
-                            if (getXYZ(e, entityType, "X", "Spawn." + entityType + ".Worlds." + world + ".X")) {
-                                ServerHandler.sendConsoleMessage("132");
-                                if (getXYZ(e, entityType, "Y", "Spawn." + entityType + ".Worlds." + world + "Y")) {
-                                    ServerHandler.sendConsoleMessage("134");
-                                    if (getXYZ(e, entityType, "Z", "Spawn." + entityType + ".Worlds." + world + "Z")) {
-                                        ServerHandler.sendConsoleMessage("136");
-                                        break;
-                                    }
+
+                            for (String key : xyzList.getKeys(false)) {
+                                if (getXYZ(e, entityType, key, "Spawn." + entityType + ".Worlds." + world + "." + key)) {
+                                    ServerHandler.sendConsoleMessage("135 world config match - xyz " + key);
+                                    ServerHandler.sendConsoleMessage("&c136 cancelled");
+                                    e.setCancelled(true);
+                                    return;
                                 }
+
                             }
-                            ServerHandler.sendConsoleMessage("141");
+                            ServerHandler.sendConsoleMessage("142");
                             if (!iterator2.hasNext()) {
-                                ServerHandler.sendConsoleMessage("149 return xyz");
+                                ServerHandler.sendConsoleMessage("145 return xyz");
                                 return;
                             }
-                            ServerHandler.sendConsoleMessage("152 xyz not match, checking another world.");
+                            ServerHandler.sendConsoleMessage("148 xyz not match, checking another world.");
                             continue;
                         }
+                        ServerHandler.sendConsoleMessage("&c151 cancelled");
+                        e.setCancelled(true);
+                        return;
                     }
-                    ServerHandler.sendConsoleMessage("137 xyz match or equal null");
                 }
-                ServerHandler.sendConsoleMessage("142 world match or equal null");
-                ServerHandler.sendConsoleMessage("&c143 cancelled");
-                e.setCancelled(true);
-                return;
             } else {
-                return;
-            }
-        }
-    }
-                /*
+                ServerHandler.sendConsoleMessage("&6has group");
                 Set<String> groups = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn." + entityType).getKeys(false);
                 Iterator<String> iterator = groups.iterator();
                 String group;
 
-                ServerHandler.sendConsoleMessage("113");
                 back1:
                 while (iterator.hasNext()) {
                     ServerHandler.sendConsoleMessage("while 141");
                     group = iterator.next();
-                }*/
+                    // If entity spawn "chance" are success, it will keep checking.
+                    // Otherwise it will return and spawn the entity.
+                    if (!getChance("Spawn." + entityType + "." + group + ".Chance")) {
+                        ServerHandler.sendConsoleMessage("!chance");
+                        if (!iterator.hasNext()) {
+                            ServerHandler.sendConsoleMessage("168 return chance");
+                            return;
+                        }
+                        ServerHandler.sendConsoleMessage("168 chance not match, checking another groups");
+                        continue;
+                    }
+                    ServerHandler.sendConsoleMessage("53 chance success");
+
+                    // If entity spawn "reason" are match or equal null, it will keep checking.
+                    // Otherwise it will return and spawn the entity.
+                    if (!getReason(e, "Spawn." + entityType + "." + group + ".Reason")) {
+                        ServerHandler.sendConsoleMessage("!reason");
+                        if (!iterator.hasNext()) {
+                            ServerHandler.sendConsoleMessage("181 return reason");
+                            return;
+                        }
+                        ServerHandler.sendConsoleMessage("181 reason not match, checking another group.");
+                        continue;
+                    }
+                    ServerHandler.sendConsoleMessage("69 reason match or equal null");
+
+                    // If entity spawn "biome" are match or equal null, it will keep checking.
+                    // Otherwise it will return and spawn the entity.
+                    if (!getBiome(e, "Spawn." + entityType + "." + group + ".Biome")) {
+                        ServerHandler.sendConsoleMessage("!biome");
+                        if (!iterator.hasNext()) {
+                            ServerHandler.sendConsoleMessage("194 return biome");
+                            return;
+                        }
+                        ServerHandler.sendConsoleMessage("194 biome not match, checking another group.");
+                        continue;
+                    }
+                    ServerHandler.sendConsoleMessage("69 biome match or equal null");
+
+                    // If entity spawn "water" are match or equal null, it will keep checking.
+                    // Config "water: false" -> only affect in the air.
+                    // Otherwise it will return and spawn the entity.
+                    if (!getWater(e, "Spawn." + entityType + "." + group + ".Water")) {
+                        ServerHandler.sendConsoleMessage("return water");
+                        if (!iterator.hasNext()) {
+                            ServerHandler.sendConsoleMessage("208 return water");
+                            return;
+                        }
+                        ServerHandler.sendConsoleMessage("208 water not match, checking another group.");
+                        continue;
+                    }
+                    ServerHandler.sendConsoleMessage("78 water match or equal null");
+
+                    List<String> worldList = ConfigHandler.getConfig("config.yml").getStringList("Spawn." + entityType + "." + group + ".Worlds");
+                    ConfigurationSection worldConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn." + entityType + "." + group + ".Worlds");
+                    String world;
+                    // If the entity world setting is simple it will check every world.
+                    if (worldList.size() != 0) {
+                        ServerHandler.sendConsoleMessage("85 world String List");
+                        Iterator<String> iterator2 = worldList.iterator();
+
+                        while (iterator2.hasNext()) {
+                            world = iterator2.next();
+                            ServerHandler.sendConsoleMessage("while, " + world + " 90");
+                            if (!getWorld(e, world)) {
+                                if (!iterator2.hasNext()) {
+                                    ServerHandler.sendConsoleMessage("!!world 95");
+                                    if (!iterator.hasNext()) {
+                                        ServerHandler.sendConsoleMessage("226 return world");
+                                        return;
+                                    }
+                                    ServerHandler.sendConsoleMessage("226 world not match, checking another group.");
+                                    continue back1;
+                                }
+                            } else {
+                                ServerHandler.sendConsoleMessage("241 world StringList match");
+                                ServerHandler.sendConsoleMessage("&c241 cancelled");
+                                e.setCancelled(true);
+                                return;
+                            }
+                        }
+                        // If the entity world setting is advanced, it will check every detail world location(xyz).
+                    } else if (worldConfig != null) {
+                        ServerHandler.sendConsoleMessage("106 world config");
+                        Set<String> worldGroups = worldConfig.getKeys(false);
+                        Iterator<String> iterator2 = worldGroups.iterator();
+
+                        // Checking every "world" from config.
+                        while (iterator2.hasNext()) {
+                            world = iterator2.next();
+                            ServerHandler.sendConsoleMessage("while, " + world + " 111");
+
+                            // If entity spawn "world" are match or equal null, it will keep checking.
+                            // Otherwise it will check another world, and return and spawn the entity if this is the latest world in config..
+                            if (!getWorld(e, world)) {
+                                if (!iterator2.hasNext()) {
+                                    ServerHandler.sendConsoleMessage("117 !world");
+                                    if (!iterator.hasNext()) {
+                                        ServerHandler.sendConsoleMessage("256 return world");
+                                        return;
+                                    }
+                                    ServerHandler.sendConsoleMessage("256 world not match, checking another group.");
+                                    continue back1;
+                                }
+                                continue;
+                            }
+                            ServerHandler.sendConsoleMessage("269");
+
+                            // If entity spawn "location" are match or equal null, it will cancel the spawn event.
+                            // Otherwise it will check another world, and return and spawn the entity if this is the latest world in config..
+                            ConfigurationSection xyzList = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn." + entityType + "." + group + ".Worlds." + world);
+                            if (xyzList != null) {
+                                ServerHandler.sendConsoleMessage("120");
+
+                                // If the "location" doesn't match, it will check another world.
+                                // And it will return and spawn the entity if this is the latest world in config.
+
+                                for (String key : xyzList.getKeys(false)) {
+                                    if (getXYZ(e, entityType, key, "Spawn." + entityType + "." + group + ".Worlds." + world + "." + key)) {
+                                        ServerHandler.sendConsoleMessage("135 world config match - xyz " + key);
+                                        ServerHandler.sendConsoleMessage("&c136 cancelled");
+                                        e.setCancelled(true);
+                                        return;
+                                    }
+
+                                }
+                                ServerHandler.sendConsoleMessage("142");
+                                if (!iterator2.hasNext()) {
+                                    ServerHandler.sendConsoleMessage("145 !xyz");
+                                    if (!iterator.hasNext()) {
+                                        ServerHandler.sendConsoleMessage("288 return xyz");
+                                        return;
+                                    }
+                                    ServerHandler.sendConsoleMessage("291 xyz not match, checking another group.");
+                                    continue back1;
+                                }
+                                ServerHandler.sendConsoleMessage("148 xyz not match, checking another world.");
+                                continue;
+                            }
+                            ServerHandler.sendConsoleMessage("&c302 cancelled");
+                            e.setCancelled(true);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 
     /**
@@ -280,9 +422,12 @@ public class EntitySpawn implements Listener {
      * @return if the entity spawn in key's (x, y, z) location range.
      */
     private boolean getXYZ(CreatureSpawnEvent e, String entityType, String key, String path) {
-        if (ConfigHandler.getConfig("config.yml").getString(path) != null) {
-            String[] keyContent = ConfigHandler.getConfig("config.yml").getString(path).split("\\s+");
+
+        String keyConfig = ConfigHandler.getConfig("config.yml").getString(path);
+        if (keyConfig != null) {
+            String[] keyContent = keyConfig.split("\\s+");
             int xyzLength = getXYZLength(entityType, keyContent);
+            ServerHandler.sendConsoleMessage("&a" + key);
 
             if (xyzLength == 1) {
                 if (key.equalsIgnoreCase("X")) {
@@ -292,14 +437,37 @@ public class EntitySpawn implements Listener {
                 } else if (key.equalsIgnoreCase("Z")) {
                     return getRange(e.getLocation().getBlockZ(), Integer.valueOf(keyContent[0]));
                 } else if (key.equalsIgnoreCase("!X")) {
-                    ServerHandler.sendConsoleMessage("&a!X");
                     return !getRange(e.getLocation().getBlockX(), Integer.valueOf(keyContent[0]));
                 } else if (key.equalsIgnoreCase("!Y")) {
-                    ServerHandler.sendConsoleMessage("&a!Y");
                     return !getRange(e.getLocation().getBlockY(), Integer.valueOf(keyContent[0]));
                 } else if (key.equalsIgnoreCase("!Z")) {
-                    ServerHandler.sendConsoleMessage("&a!Z");
                     return !getRange(e.getLocation().getBlockZ(), Integer.valueOf(keyContent[0]));
+                } else if (key.equalsIgnoreCase("XYZ")) {
+                    return getRange(e.getLocation().getBlockX(), Integer.valueOf(keyContent[0])) &&
+                            getRange(e.getLocation().getBlockY(), Integer.valueOf(keyContent[0])) &&
+                            getRange(e.getLocation().getBlockZ(), Integer.valueOf(keyContent[0]));
+                } else if (key.equalsIgnoreCase("!XYZ")) {
+                    return !getRange(e.getLocation().getBlockX(), Integer.valueOf(keyContent[0])) &&
+                            !getRange(e.getLocation().getBlockY(), Integer.valueOf(keyContent[0])) &&
+                            !getRange(e.getLocation().getBlockZ(), Integer.valueOf(keyContent[0]));
+                } else if (key.equalsIgnoreCase("XY")) {
+                    return getRange(e.getLocation().getBlockX(), Integer.valueOf(keyContent[0])) &&
+                            getRange(e.getLocation().getBlockY(), Integer.valueOf(keyContent[0]));
+                } else if (key.equalsIgnoreCase("YZ")) {
+                    return getRange(e.getLocation().getBlockY(), Integer.valueOf(keyContent[0])) &&
+                            getRange(e.getLocation().getBlockZ(), Integer.valueOf(keyContent[0]));
+                } else if (key.equalsIgnoreCase("XZ")) {
+                    return getRange(e.getLocation().getBlockX(), Integer.valueOf(keyContent[0])) &&
+                            getRange(e.getLocation().getBlockZ(), Integer.valueOf(keyContent[0]));
+                } else if (key.equalsIgnoreCase("!XY")) {
+                    return !getRange(e.getLocation().getBlockX(), Integer.valueOf(keyContent[0])) &&
+                            !getRange(e.getLocation().getBlockY(), Integer.valueOf(keyContent[0]));
+                } else if (key.equalsIgnoreCase("!YZ")) {
+                    return !getRange(e.getLocation().getBlockY(), Integer.valueOf(keyContent[0])) &&
+                            !getRange(e.getLocation().getBlockZ(), Integer.valueOf(keyContent[0]));
+                } else if (key.equalsIgnoreCase("!XZ")) {
+                    return !getRange(e.getLocation().getBlockX(), Integer.valueOf(keyContent[0])) &&
+                            !getRange(e.getLocation().getBlockZ(), Integer.valueOf(keyContent[0]));
                 }
             } else if (xyzLength == 2) {
                 if (key.equalsIgnoreCase("X")) {
@@ -309,31 +477,77 @@ public class EntitySpawn implements Listener {
                 } else if (key.equalsIgnoreCase("Z")) {
                     return getCompare(e.getLocation().getBlockZ(), keyContent[0], Integer.valueOf(keyContent[1]));
                 } else if (key.equalsIgnoreCase("!X")) {
-                    ServerHandler.sendConsoleMessage("&a!X");
                     return !getCompare(e.getLocation().getBlockX(), keyContent[0], Integer.valueOf(keyContent[1]));
                 } else if (key.equalsIgnoreCase("!Y")) {
-                    ServerHandler.sendConsoleMessage("&a!Y");
                     return !getCompare(e.getLocation().getBlockY(), keyContent[0], Integer.valueOf(keyContent[1]));
                 } else if (key.equalsIgnoreCase("!Z")) {
-                    ServerHandler.sendConsoleMessage("&aZ!");
                     return !getCompare(e.getLocation().getBlockZ(), keyContent[0], Integer.valueOf(keyContent[1]));
+                } else if (key.equalsIgnoreCase("XYZ")) {
+                    return getCompare(e.getLocation().getBlockX(), keyContent[0], Integer.valueOf(keyContent[1])) &&
+                            getCompare(e.getLocation().getBlockY(), keyContent[0], Integer.valueOf(keyContent[1])) &&
+                            getCompare(e.getLocation().getBlockZ(), keyContent[0], Integer.valueOf(keyContent[1]));
+                } else if (key.equalsIgnoreCase("!XYZ")) {
+                    return !getCompare(e.getLocation().getBlockX(), keyContent[0], Integer.valueOf(keyContent[1])) &&
+                            !getCompare(e.getLocation().getBlockY(), keyContent[0], Integer.valueOf(keyContent[1])) &&
+                            !getCompare(e.getLocation().getBlockZ(), keyContent[0], Integer.valueOf(keyContent[1]));
+                } else if (key.equalsIgnoreCase("XY")) {
+                    return getCompare(e.getLocation().getBlockX(), keyContent[0], Integer.valueOf(keyContent[1])) &&
+                            getCompare(e.getLocation().getBlockY(), keyContent[0], Integer.valueOf(keyContent[1]));
+                } else if (key.equalsIgnoreCase("YZ")) {
+                    return getCompare(e.getLocation().getBlockY(), keyContent[0], Integer.valueOf(keyContent[1])) &&
+                            getCompare(e.getLocation().getBlockZ(), keyContent[0], Integer.valueOf(keyContent[1]));
+                } else if (key.equalsIgnoreCase("XZ")) {
+                    return getCompare(e.getLocation().getBlockX(), keyContent[0], Integer.valueOf(keyContent[1])) &&
+                            getCompare(e.getLocation().getBlockZ(), keyContent[0], Integer.valueOf(keyContent[1]));
+                } else if (key.equalsIgnoreCase("!XY")) {
+                    return !getCompare(e.getLocation().getBlockX(), keyContent[0], Integer.valueOf(keyContent[1])) &&
+                            !getCompare(e.getLocation().getBlockY(), keyContent[0], Integer.valueOf(keyContent[1]));
+                } else if (key.equalsIgnoreCase("!YZ")) {
+                    return !getCompare(e.getLocation().getBlockY(), keyContent[0], Integer.valueOf(keyContent[1])) &&
+                            !getCompare(e.getLocation().getBlockZ(), keyContent[0], Integer.valueOf(keyContent[1]));
+                } else if (key.equalsIgnoreCase("!XZ")) {
+                    return !getCompare(e.getLocation().getBlockX(), keyContent[0], Integer.valueOf(keyContent[1])) &&
+                            !getCompare(e.getLocation().getBlockZ(), keyContent[0], Integer.valueOf(keyContent[1]));
                 }
             } else if (xyzLength == 3) {
                 if (key.equalsIgnoreCase("X")) {
-                    return getRange(e.getLocation().getBlockY(), Integer.valueOf(keyContent[0]), Integer.valueOf(keyContent[2]));
+                    return getRange(e.getLocation().getBlockX(), Integer.valueOf(keyContent[0]), Integer.valueOf(keyContent[2]));
                 } else if (key.equalsIgnoreCase("Y")) {
                     return getRange(e.getLocation().getBlockY(), Integer.valueOf(keyContent[0]), Integer.valueOf(keyContent[2]));
                 } else if (key.equalsIgnoreCase("Z")) {
                     return getRange(e.getLocation().getBlockZ(), Integer.valueOf(keyContent[0]), Integer.valueOf(keyContent[2]));
                 } else if (key.equalsIgnoreCase("!X")) {
-                    ServerHandler.sendConsoleMessage("&a!X");
                     return !getRange(e.getLocation().getBlockX(), Integer.valueOf(keyContent[0]), Integer.valueOf(keyContent[2]));
                 } else if (key.equalsIgnoreCase("!Y")) {
-                    ServerHandler.sendConsoleMessage("&a!Y");
                     return !getRange(e.getLocation().getBlockY(), Integer.valueOf(keyContent[0]), Integer.valueOf(keyContent[2]));
                 } else if (key.equalsIgnoreCase("!Z")) {
-                    ServerHandler.sendConsoleMessage("&aZ!");
                     return !getRange(e.getLocation().getBlockZ(), Integer.valueOf(keyContent[0]), Integer.valueOf(keyContent[2]));
+                } else if (key.equalsIgnoreCase("XYZ")) {
+                    return getRange(e.getLocation().getBlockX(), Integer.valueOf(keyContent[0]), Integer.valueOf(keyContent[2])) &&
+                            getRange(e.getLocation().getBlockY(), Integer.valueOf(keyContent[0]), Integer.valueOf(keyContent[2])) &&
+                            getRange(e.getLocation().getBlockZ(), Integer.valueOf(keyContent[0]), Integer.valueOf(keyContent[2]));
+                } else if (key.equalsIgnoreCase("!XYZ")) {
+                    return !getRange(e.getLocation().getBlockX(), Integer.valueOf(keyContent[0]), Integer.valueOf(keyContent[2])) &&
+                            !getRange(e.getLocation().getBlockY(), Integer.valueOf(keyContent[0]), Integer.valueOf(keyContent[2])) &&
+                            !getRange(e.getLocation().getBlockZ(), Integer.valueOf(keyContent[0]), Integer.valueOf(keyContent[2]));
+                } else if (key.equalsIgnoreCase("XY")) {
+                    return getRange(e.getLocation().getBlockX(), Integer.valueOf(keyContent[0]), Integer.valueOf(keyContent[2])) &&
+                            getRange(e.getLocation().getBlockY(), Integer.valueOf(keyContent[0]), Integer.valueOf(keyContent[2]));
+                } else if (key.equalsIgnoreCase("YZ")) {
+                    return getRange(e.getLocation().getBlockY(), Integer.valueOf(keyContent[0]), Integer.valueOf(keyContent[2])) &&
+                            getRange(e.getLocation().getBlockZ(), Integer.valueOf(keyContent[0]), Integer.valueOf(keyContent[2]));
+                } else if (key.equalsIgnoreCase("XZ")) {
+                    return getRange(e.getLocation().getBlockX(), Integer.valueOf(keyContent[0]), Integer.valueOf(keyContent[2])) &&
+                            getRange(e.getLocation().getBlockZ(), Integer.valueOf(keyContent[0]), Integer.valueOf(keyContent[2]));
+                } else if (key.equalsIgnoreCase("!XY")) {
+                    return !getRange(e.getLocation().getBlockX(), Integer.valueOf(keyContent[0]), Integer.valueOf(keyContent[2])) &&
+                            !getRange(e.getLocation().getBlockY(), Integer.valueOf(keyContent[0]), Integer.valueOf(keyContent[2]));
+                } else if (key.equalsIgnoreCase("!YZ")) {
+                    return !getRange(e.getLocation().getBlockY(), Integer.valueOf(keyContent[0]), Integer.valueOf(keyContent[2])) &&
+                            !getRange(e.getLocation().getBlockZ(), Integer.valueOf(keyContent[0]), Integer.valueOf(keyContent[2]));
+                } else if (key.equalsIgnoreCase("!XZ")) {
+                    return !getRange(e.getLocation().getBlockX(), Integer.valueOf(keyContent[0]), Integer.valueOf(keyContent[2])) &&
+                            !getRange(e.getLocation().getBlockZ(), Integer.valueOf(keyContent[0]), Integer.valueOf(keyContent[2]));
                 }
             }
             return true;
@@ -349,7 +563,7 @@ public class EntitySpawn implements Listener {
      * @param number2  second number.
      * @return if first number(a) bigger/small/equal... than second number.
      */
-    public boolean getCompare(int number1, String operator, int number2) {
+    public static boolean getCompare(int number1, String operator, int number2) {
         if (operator.equals(">") && number1 > number2 ||
                 operator.equals("<") && number1 < number2 ||
                 operator.equals("=") && number1 == number2 ||
@@ -370,7 +584,7 @@ public class EntitySpawn implements Listener {
      * @return if the check number is inside the range.
      * It will return true if the two side of range numbers are equal.
      */
-    public boolean getRange(int check, int range1, int range2) {
+    public static boolean getRange(int check, int range1, int range2) {
         if (range1 == range2) {
             ServerHandler.sendConsoleMessage(range1 + " == " + range2);
             return true;
@@ -390,7 +604,7 @@ public class EntitySpawn implements Listener {
      * @param range1 the side of range.
      * @return if the check number is inside the range.
      */
-    public boolean getRange(int check, int range1) {
+    public static boolean getRange(int check, int range1) {
         int range2 = range1 * -1;
         if (range1 < range2) {
             return check >= range1 && check <= range2;
