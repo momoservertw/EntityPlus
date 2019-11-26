@@ -1,15 +1,14 @@
 # --{ =-=-=-=-=-=-=-=-=-= EntityPlus's Configuration Settings, by Momocraft =-=-=-=-=-=-=-=-=-= }--
-config-Version: 2
+config-Version: 3
 Metrics-Logging: true
 Log-Coloration: true
 
 # Entity type: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html
-# Normal reason: NATURAL, SPAWNER, CUSTOM
-# CUSTOM: hen a creature is spawned by plugins.
 # Spawn reason: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/entity/CreatureSpawnEvent.SpawnReason.html
+#   Normal reason: NATURAL, SPAWNER, SPAWNER_EGG
+#   Reason "CUSTOM" will not work if you have MythicMobs.
 # Spawn biome: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/block/Biome.html
-# Spawn in water: true
-# Spawn location example: "X: -1000 ~ 1000", "X: >= 1000"
+# Spawn water: true or false. It will check if the spawn location in water or air.
 Spawn:
   PHANTOM:
     Chance: 0.3
@@ -29,72 +28,50 @@ Spawn:
   TROPICAL_FISH:
     Chance: 0.2
     Reason: NATURAL
-
-  CAVE_SPIDER:
-    1:
-      Chance: 0
-      Reason: SPAWNER
-      Biome: DESERT
-      Water: true
-      World:
-        test:
-          X: "1000"
-          Y: "> 80"
-          Z: "-1000 ~ 1000"
-    2:
-      Chance: 0
-      Reason: SPAWNER
-      Biome: DESERT
-      Water: true
-      World:
-        test:
-          X: "-1000 ~ 1000"
-          Y: "> 80"
-          Z: "-1000 ~ 1000"
-
 #  PIG_ZOMBIE:
 #    Reason: NETHER_PORTAL
 #    Chance: 0.5
 
-# Normal example:
-#  CAVE_SPIDER:
+# Normal example.
+#  Wolf:
 #    Chance: 0
-#    Reason: SPAWNER
+#    Reason: NATURAL
 #    Biome: DESERT
-#    Water: false
-#    Location:
-#    World: test
-#    X: -1000 ~ 1000
-#    Y: 80 >
-#    Z: -1000 ~ 1000
-
-# Advanced example:
-#  CAVE_SPIDER:
-#    First:
+#    Water: true
+#    Worlds:
+#      - world
+#      - world_nether
+#
+# Coordinate format: X, Y, Z, !X, !Y, etc ...
+# Range format: "1000", ">= 80", "-1000 ~ 1000"
+# More information: https://www.spigotmc.org/resources/entityplus.70592/
+# Advanced example.
+#  Wolf:
+#    1:
+#      Chance: 0
+#      Reason: NATURAL
+#      Biome: DESERT
+#      Water: true
+#      Worlds:
+#        # X: "1000" -> -1000 ~ 1000
+#        # Y: ">= 80" -> Support: >, <, =, >=, <=, ==
+#        world:
+#          X: "1000"
+#          Y: ">= 80"
+#          Z: "-1000 ~ 1000"
+#    2:
 #      Chance: 0
 #      Reason: SPAWNER
-#      Biome: DESERT
-#      Water: false
-#      Location:
-#        World: test
-#        X: "1000"                       # X = -1000 ~ 1000
-#        Y: ">= 80"                     # Support ">, <, =, >=, <=, =="
-#        Z: "-1000 ~ 1000"
-#    Second:
-#      Chance: 0.1
-#      Biome: DESERT
-#    Third:
-#      Chance: 0.8
+#      Worlds:
+#        world:
+#          XZ: "1000"
+#        world_nether: []
 
 # You can change MythicMobs spawn chance here.
 # The best way to change custom mobs spawn chance is in RandomSpawns.yml, but for some reason you may need it.
 # MythicMobs: https://www.spigotmc.org/resources/%E2%9A%94-mythicmobs-free-version-%E2%96%BAthe-1-custom-mob-creator%E2%97%84.5702/
-MythicSpawn:
-  Crazy_Zombie:
-    Chance: 0.1
-  Crazy_Player:
-    Chance: 0
-    Water: false
+# Spawn reason will not work in "MythicMobs-Spawn".
+MythicMobs-Spawn: []
 
 MythicMobs-Drop:
   Enable: true

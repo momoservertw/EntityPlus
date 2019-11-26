@@ -64,7 +64,7 @@ public class ConfigHandler {
 	public static void configFile() {
 		getConfigData("config.yml");
 		File File = new File(EntityPlus.getInstance().getDataFolder(), "config.yml");
-		if (File.exists() && getConfig("config.yml").getInt("config-Version") != 2) {
+		if (File.exists() && getConfig("config.yml").getInt("config-Version") != 3) {
 			if (EntityPlus.getInstance().getResource("config.yml") != null) {
 				String newGen = "config" + Utils.getRandom(1, 50000) + ".yml";
 				File newFile = new File(EntityPlus.getInstance().getDataFolder(), newGen);

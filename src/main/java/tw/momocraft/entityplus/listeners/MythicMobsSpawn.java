@@ -13,7 +13,7 @@ import java.util.*;
 
 public class MythicMobsSpawn implements Listener {
 
-    private ConfigurationSection entityList = ConfigHandler.getConfig("config.yml").getConfigurationSection("MythicSpawn");
+    private ConfigurationSection entityList = ConfigHandler.getConfig("config.yml").getConfigurationSection("MythicMobs-Spawn");
 
     @EventHandler
     public void onMythicMobsSpawn(MythicMobSpawnEvent e) {
@@ -35,19 +35,19 @@ public class MythicMobsSpawn implements Listener {
         ServerHandler.sendConsoleMessage("---------------------");
         ServerHandler.sendConsoleMessage(entityType);
         if (entityListed.contains(entityType)) {
-            ConfigurationSection entityConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("MythicSpawn." + entityType);
+            ConfigurationSection entityConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("MythicMobs-Spawn." + entityType);
             if (entityConfig == null) {
                 return;
             }
 
             // If entity has groups.
             ServerHandler.sendConsoleMessage("43 group");
-            if (ConfigHandler.getConfig("config.yml").getString("MythicSpawn." + entityType + ".Chance") != null) {
+            if (ConfigHandler.getConfig("config.yml").getString("MythicMobs-Spawn." + entityType + ".Chance") != null) {
                 ServerHandler.sendConsoleMessage("45 has group");
 
                 // If entity spawn "chance" are success, it will keep checking.
                 // Otherwise it will return and spawn the entity.
-                if (!getChance("MythicSpawn." + entityType + ".Chance")) {
+                if (!getChance("MythicMobs-Spawn." + entityType + ".Chance")) {
                     ServerHandler.sendConsoleMessage("return chance");
                     return;
                 }
@@ -55,7 +55,7 @@ public class MythicMobsSpawn implements Listener {
 
                 // If entity spawn "biome" are match or equal null, it will keep checking.
                 // Otherwise it will return and spawn the entity.
-                if (!getBiome(e, "MythicSpawn." + entityType + ".Biome")) {
+                if (!getBiome(e, "MythicMobs-Spawn." + entityType + ".Biome")) {
                     ServerHandler.sendConsoleMessage("return biome");
                     return;
                 }
@@ -64,14 +64,14 @@ public class MythicMobsSpawn implements Listener {
                 // If entity spawn "water" are match or equal null, it will keep checking.
                 // Config "water: false" -> only affect in the air.
                 // Otherwise it will return and spawn the entity.
-                if (!getWater(e, "MythicSpawn." + entityType + ".Water")) {
+                if (!getWater(e, "MythicMobs-Spawn." + entityType + ".Water")) {
                     ServerHandler.sendConsoleMessage("return water");
                     return;
                 }
                 ServerHandler.sendConsoleMessage("78 water match or equal null");
 
-                List<String> worldList = ConfigHandler.getConfig("config.yml").getStringList("MythicSpawn." + entityType + ".Worlds");
-                ConfigurationSection worldConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("MythicSpawn." + entityType + ".Worlds");
+                List<String> worldList = ConfigHandler.getConfig("config.yml").getStringList("MythicMobs-Spawn." + entityType + ".Worlds");
+                ConfigurationSection worldConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("MythicMobs-Spawn." + entityType + ".Worlds");
                 String world;
                 // If the entity world setting is simple it will check every world.
                 if (worldList.size() != 0) {
@@ -117,7 +117,7 @@ public class MythicMobsSpawn implements Listener {
 
                         // If entity spawn "location" are match or equal null, it will cancel the spawn event.
                         // Otherwise it will check another world, and return and spawn the entity if this is the latest world in config..
-                        ConfigurationSection xyzList = ConfigHandler.getConfig("config.yml").getConfigurationSection("MythicSpawn." + entityType + ".Worlds." + world);
+                        ConfigurationSection xyzList = ConfigHandler.getConfig("config.yml").getConfigurationSection("MythicMobs-Spawn." + entityType + ".Worlds." + world);
                         if (xyzList != null) {
                             ServerHandler.sendConsoleMessage("120");
 
@@ -125,7 +125,7 @@ public class MythicMobsSpawn implements Listener {
                             // And it will return and spawn the entity if this is the latest world in config.
 
                             for (String key : xyzList.getKeys(false)) {
-                                if (getXYZ(e, entityType, key, "MythicSpawn." + entityType + ".Worlds." + world + "." + key)) {
+                                if (getXYZ(e, entityType, key, "MythicMobs-Spawn." + entityType + ".Worlds." + world + "." + key)) {
                                     ServerHandler.sendConsoleMessage("135 world config match - xyz " + key);
                                     ServerHandler.sendConsoleMessage("&c136 cancelled");
                                     e.setCancelled();
@@ -148,7 +148,7 @@ public class MythicMobsSpawn implements Listener {
                 }
             } else {
                 ServerHandler.sendConsoleMessage("&6has group");
-                Set<String> groups = ConfigHandler.getConfig("config.yml").getConfigurationSection("MythicSpawn." + entityType).getKeys(false);
+                Set<String> groups = ConfigHandler.getConfig("config.yml").getConfigurationSection("MythicMobs-Spawn." + entityType).getKeys(false);
                 Iterator<String> iterator = groups.iterator();
                 String group;
 
@@ -158,7 +158,7 @@ public class MythicMobsSpawn implements Listener {
                     group = iterator.next();
                     // If entity spawn "chance" are success, it will keep checking.
                     // Otherwise it will return and spawn the entity.
-                    if (!getChance("MythicSpawn." + entityType + "." + group + ".Chance")) {
+                    if (!getChance("MythicMobs-Spawn." + entityType + "." + group + ".Chance")) {
                         ServerHandler.sendConsoleMessage("!chance");
                         if (!iterator.hasNext()) {
                             ServerHandler.sendConsoleMessage("168 return chance");
@@ -171,7 +171,7 @@ public class MythicMobsSpawn implements Listener {
 
                     // If entity spawn "biome" are match or equal null, it will keep checking.
                     // Otherwise it will return and spawn the entity.
-                    if (!getBiome(e, "MythicSpawn." + entityType + "." + group + ".Biome")) {
+                    if (!getBiome(e, "MythicMobs-Spawn." + entityType + "." + group + ".Biome")) {
                         ServerHandler.sendConsoleMessage("!biome");
                         if (!iterator.hasNext()) {
                             ServerHandler.sendConsoleMessage("194 return biome");
@@ -185,7 +185,7 @@ public class MythicMobsSpawn implements Listener {
                     // If entity spawn "water" are match or equal null, it will keep checking.
                     // Config "water: false" -> only affect in the air.
                     // Otherwise it will return and spawn the entity.
-                    if (!getWater(e, "MythicSpawn." + entityType + "." + group + ".Water")) {
+                    if (!getWater(e, "MythicMobs-Spawn." + entityType + "." + group + ".Water")) {
                         ServerHandler.sendConsoleMessage("return water");
                         if (!iterator.hasNext()) {
                             ServerHandler.sendConsoleMessage("208 return water");
@@ -196,8 +196,8 @@ public class MythicMobsSpawn implements Listener {
                     }
                     ServerHandler.sendConsoleMessage("78 water match or equal null");
 
-                    List<String> worldList = ConfigHandler.getConfig("config.yml").getStringList("MythicSpawn." + entityType + "." + group + ".Worlds");
-                    ConfigurationSection worldConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("MythicSpawn." + entityType + "." + group + ".Worlds");
+                    List<String> worldList = ConfigHandler.getConfig("config.yml").getStringList("MythicMobs-Spawn." + entityType + "." + group + ".Worlds");
+                    ConfigurationSection worldConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("MythicMobs-Spawn." + entityType + "." + group + ".Worlds");
                     String world;
                     // If the entity world setting is simple it will check every world.
                     if (worldList.size() != 0) {
@@ -253,7 +253,7 @@ public class MythicMobsSpawn implements Listener {
 
                             // If entity spawn "location" are match or equal null, it will cancel the spawn event.
                             // Otherwise it will check another world, and return and spawn the entity if this is the latest world in config..
-                            ConfigurationSection xyzList = ConfigHandler.getConfig("config.yml").getConfigurationSection("MythicSpawn." + entityType + "." + group + ".Worlds." + world);
+                            ConfigurationSection xyzList = ConfigHandler.getConfig("config.yml").getConfigurationSection("MythicMobs-Spawn." + entityType + "." + group + ".Worlds." + world);
                             if (xyzList != null) {
                                 ServerHandler.sendConsoleMessage("120");
 
@@ -261,7 +261,7 @@ public class MythicMobsSpawn implements Listener {
                                 // And it will return and spawn the entity if this is the latest world in config.
 
                                 for (String key : xyzList.getKeys(false)) {
-                                    if (getXYZ(e, entityType, key, "MythicSpawn." + entityType + "." + group + ".Worlds." + world + "." + key)) {
+                                    if (getXYZ(e, entityType, key, "MythicMobs-Spawn." + entityType + "." + group + ".Worlds." + world + "." + key)) {
                                         ServerHandler.sendConsoleMessage("135 world config match - xyz " + key);
                                         ServerHandler.sendConsoleMessage("&c136 cancelled");
                                         e.setCancelled();
