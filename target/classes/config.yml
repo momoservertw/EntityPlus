@@ -16,9 +16,6 @@ Spawn:
     Chance: 0.2
   GUARDIAN:
     Chance: 0.01
-  IRON_GOLEM:
-    Chance: 0.3
-    Reason: VILLAGE_DEFENSE
   SALMON:
     Chance: 0.2
     Reason: NATURAL
@@ -28,9 +25,12 @@ Spawn:
   TROPICAL_FISH:
     Chance: 0.2
     Reason: NATURAL
+#  IRON_GOLEM:
+#    Chance: 0.3
+#    Reason: VILLAGE_DEFENSE
 #  PIG_ZOMBIE:
-#    Reason: NETHER_PORTAL
 #    Chance: 0.5
+#    Reason: NETHER_PORTAL
 
 # Normal example.
 #  Wolf:
@@ -42,10 +42,9 @@ Spawn:
 #      - world
 #      - world_nether
 #
-# Coordinate format: X, Y, Z, !X, !Y, etc ...
-# Range format: "1000", ">= 80", "-1000 ~ 1000"
-# More information: https://www.spigotmc.org/resources/entityplus.70592/
 # Advanced example.
+# You can set several condition groups and set it's own group name.
+# More information: https://www.spigotmc.org/resources/entityplus.70592/
 #  Wolf:
 #    1:
 #      Chance: 0
@@ -53,24 +52,22 @@ Spawn:
 #      Biome: DESERT
 #      Water: true
 #      Worlds:
-#        # X: "1000" -> -1000 ~ 1000
-#        # Y: ">= 80" -> Support: >, <, =, >=, <=, ==
 #        world:
-#          X: "1000"
-#          Y: ">= 80"
+#          X: "1000"            # "1000" -> -1000 ~ 1000
+#          Y: ">= 80"           # Support: >, <, =, >=, <=, ==
 #          Z: "-1000 ~ 1000"
 #    2:
 #      Chance: 0
 #      Reason: SPAWNER
 #      Worlds:
 #        world:
-#          XZ: "1000"
+#          X: "1000"
+#          Z: "1000"
 #        world_nether: []
 
-# You can change MythicMobs spawn chance here.
-# The best way to change custom mobs spawn chance is in RandomSpawns.yml, but for some reason you may need it.
+# The best way to change custom mobs spawn chance is in RandomSpawns.yml.
 # MythicMobs: https://www.spigotmc.org/resources/%E2%9A%94-mythicmobs-free-version-%E2%96%BAthe-1-custom-mob-creator%E2%97%84.5702/
-# Spawn reason will not work in "MythicMobs-Spawn".
+# Spawn "reason" doesn't work.
 MythicMobs-Spawn: []
 
 MythicMobs-Drop:

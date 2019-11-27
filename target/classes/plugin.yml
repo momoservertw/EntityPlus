@@ -2,7 +2,7 @@ name: EntityPlus
 main: tw.momocraft.entityplus.EntityPlus
 author: Momocraft
 api-version: 1.14
-version: 1.0.5-SNAPSHOT
+version: 1.0.6-SNAPSHOT
 description: To change Entities' spawn chance
 softdepend: [Vault, MythicMobs]
 

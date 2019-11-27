@@ -17,8 +17,10 @@ public class EntitySpawn implements Listener {
     @EventHandler
     public void onSpawnMobs(CreatureSpawnEvent e) {
         // Bypass the checking event if you have MythicMobs.
-        if (e.getSpawnReason() == CreatureSpawnEvent.SpawnReason.CUSTOM) {
-            return;
+        if (ConfigHandler.getDepends().MythicMobsEnabled()) {
+            if (e.getSpawnReason() == CreatureSpawnEvent.SpawnReason.CUSTOM) {
+                return;
+            }
         }
 
         if (entityList == null) {

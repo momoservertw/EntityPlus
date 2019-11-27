@@ -26,8 +26,11 @@ public class ConfigHandler {
 	public static void registerEvents() {
 		EntityPlus.getInstance().getCommand("entityplus").setExecutor(new Commands());
 		EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new EntitySpawn(), EntityPlus.getInstance());
-		EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new MythicMobsSpawn(), EntityPlus.getInstance());
-		EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new MythicMobsLootDrop(), EntityPlus.getInstance());
+
+		if (ConfigHandler.getDepends().MythicMobsEnabled()) {
+			EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new MythicMobsSpawn(), EntityPlus.getInstance());
+			EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new MythicMobsLootDrop(), EntityPlus.getInstance());
+		}
 	}
 
 	public static FileConfiguration getConfig(String path) {
