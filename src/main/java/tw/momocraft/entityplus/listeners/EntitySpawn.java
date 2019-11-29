@@ -1,7 +1,12 @@
 package tw.momocraft.entityplus.listeners;
 
+import com.Zrips.CMI.CMI;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -11,8 +16,14 @@ import tw.momocraft.entityplus.handlers.ServerHandler;
 import java.util.*;
 
 public class EntitySpawn implements Listener {
-
     private ConfigurationSection entityList = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn");
+    static double spawnLimitX = ConfigHandler.getConfig("config.yml").getDouble("Spawn-Limit.Range.X");
+    static double spawnLimitY = ConfigHandler.getConfig("config.yml").getDouble("Spawn-Limit.Range.Y");
+    static double spawnLimitZ = ConfigHandler.getConfig("config.yml").getDouble("Spawn-Limit.Range.Z");
+    static double spawnLimitAmount = ConfigHandler.getConfig("config.yml").getDouble("Spawn-Limit.Amount");
+    static boolean spawnLimitDefault = ConfigHandler.getConfig("config.yml").getBoolean("Spawn-Limit.Default");
+    static boolean spawnLimitARKDefault = ConfigHandler.getConfig("config.yml").getBoolean("Spawn-Limit-ARK.Default");
+    static int spawnLimitARKRange = ConfigHandler.getConfig("config.yml").getInt("Spawn-Limit-AFK.mob-spawn-range") * 16;
 
     @EventHandler
     public void onSpawnMobs(CreatureSpawnEvent e) {
@@ -24,7 +35,18 @@ public class EntitySpawn implements Listener {
         }
 
         if (entityList == null) {
-            return;
+            if (spawnLimitDefault) {
+                if (getLimit(e)) {
+                    e.setCancelled(true);
+                    return;
+                }
+            }
+            if (spawnLimitARKDefault) {
+                if (getLimitAFK(e)) {
+                    e.setCancelled(true);
+                    return;
+                }
+            }
         }
 
         // Get entity list from config.
@@ -34,42 +56,180 @@ public class EntitySpawn implements Listener {
             entityListed.add(key);
         }
 
-        // If entity list doesn't include the spawn entity, it will return and spawn it.
         String entityType = e.getEntityType().toString();
-        if (entityListed.contains(entityType)) {
-            ConfigurationSection entityConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn." + entityType);
-            if (entityConfig == null) {
+        if (!entityListed.contains(entityType)) {
+            if (spawnLimitDefault) {
+                if (getLimit(e)) {
+                    e.setCancelled(true);
+                    return;
+                }
+            }
+            if (spawnLimitARKDefault) {
+                if (getLimitAFK(e)) {
+                    e.setCancelled(true);
+                    return;
+                }
+            }
+        }
+
+        // If entity list doesn't include the spawn entity, it will return and spawn it.
+        ConfigurationSection entityConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn." + entityType);
+        if (entityConfig == null) {
+            return;
+        }
+
+        // If entity has groups.
+        if (ConfigHandler.getConfig("config.yml").getString("Spawn." + entityType + ".Chance") != null || ConfigHandler.getConfig("config.yml").getString("Spawn." + entityType + ".Limit") != null) {
+            // If entity spawn location has reach the maximum entity amount, it will cancel the spawn event.
+            // Otherwise it will keep checking.
+            if (!getLimit(e)) {
+                e.setCancelled(true);
                 return;
             }
 
-            // If entity has groups.
-            if (ConfigHandler.getConfig("config.yml").getString("Spawn." + entityType + ".Chance") != null) {
+            // If all player in the range is AFK, it will cancel the spawn event.
+            // Otherwise it will keep checking.
+            if (!getLimitAFK(e)) {
+                e.setCancelled(true);
+                return;
+            }
+
+            // If entity spawn "chance" are success, it will keep checking.
+            // Otherwise it will return and spawn the entity.
+            if (!getChance("Spawn." + entityType + ".Chance")) {
+                return;
+            }
+
+            // If entity spawn "reason" are match or equal null, it will keep checking.
+            if (!getReason(e, "Spawn." + entityType + ".Reason")) {
+                return;
+            }
+
+            // If entity spawn "biome" are match or equal null, it will keep checking.
+            if (!getBiome(e, "Spawn." + entityType + ".Biome")) {
+                return;
+            }
+
+            // If entity spawn "water" are match or equal null, it will keep checking.
+            // Config "water: false" -> only affect in the air.
+            if (!getWater(e, "Spawn." + entityType + ".Water")) {
+                return;
+            }
+
+            List<String> worldList = ConfigHandler.getConfig("config.yml").getStringList("Spawn." + entityType + ".Worlds");
+            ConfigurationSection worldConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn." + entityType + ".Worlds");
+            String world;
+            // If the entity world setting is simple, it will check every world.
+            if (worldList.size() != 0) {
+                Iterator<String> iterator2 = worldList.iterator();
+                while (iterator2.hasNext()) {
+                    world = iterator2.next();
+                    if (!getWorld(e, world)) {
+                        if (!iterator2.hasNext()) {
+                            return;
+                        }
+                    } else {
+                        e.setCancelled(true);
+                        return;
+                    }
+                }
+                // If the entity world setting is advanced, it will check every detail world location(xyz).
+            } else if (worldConfig != null) {
+                Set<String> worldGroups = worldConfig.getKeys(false);
+                Iterator<String> iterator2 = worldGroups.iterator();
+                // Checking every "world" from config.
+                while (iterator2.hasNext()) {
+                    world = iterator2.next();
+                    // If entity spawn "world" are match or equal null, it will keep checking.
+                    // Otherwise it will check another world, and return and spawn the entity if this is the latest world in config.
+                    if (!getWorld(e, world)) {
+                        if (!iterator2.hasNext()) {
+                            return;
+                        }
+                        continue;
+                    }
+
+                    // If entity spawn "location" are match or equal null, it will cancel the spawn event.
+                    // Otherwise it will check another world, and return and spawn the entity if this is the latest world in config.
+                    ConfigurationSection xyzList = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn." + entityType + ".Worlds." + world);
+                    if (xyzList != null) {
+                        // If the "location" is match, it will cancel the spawn event.
+                        // And it will return and spawn the entity if this is the latest world in config.
+                        for (String key : xyzList.getKeys(false)) {
+                            if (getXYZ(e, entityType, key, "Spawn." + entityType + ".Worlds." + world + "." + key)) {
+                                e.setCancelled(true);
+                                return;
+                            }
+                        }
+                        if (!iterator2.hasNext()) {
+                            return;
+                        }
+                        continue;
+                    }
+                    e.setCancelled(true);
+                    return;
+                }
+            }
+        } else {
+            Set<String> groups = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn." + entityType).getKeys(false);
+            Iterator<String> iterator = groups.iterator();
+            String group;
+
+            back1:
+            while (iterator.hasNext()) {
+                group = iterator.next();
+                // If entity spawn location has reach the maximum entity amount, it will cancel the spawn event.
+                // Otherwise it will keep checking.
+                if (!getLimit(e)) {
+                    e.setCancelled(true);
+                    return;
+                }
+
+                // If all player in the range is AFK, it will cancel the spawn event.
+                // Otherwise it will keep checking.
+                if (!getLimitAFK(e)) {
+                    e.setCancelled(true);
+                    return;
+                }
+
                 // If entity spawn "chance" are success, it will keep checking.
                 // Otherwise it will return and spawn the entity.
-                if (!getChance("Spawn." + entityType + ".Chance")) {
-                    return;
+                if (!getChance("Spawn." + entityType + "." + group + ".Chance")) {
+                    if (!iterator.hasNext()) {
+                        return;
+                    }
+                    continue;
                 }
 
                 // If entity spawn "reason" are match or equal null, it will keep checking.
-                if (!getReason(e, "Spawn." + entityType + ".Reason")) {
-                    return;
+                if (!getReason(e, "Spawn." + entityType + "." + group + ".Reason")) {
+                    if (!iterator.hasNext()) {
+                        return;
+                    }
+                    continue;
                 }
 
                 // If entity spawn "biome" are match or equal null, it will keep checking.
-                if (!getBiome(e, "Spawn." + entityType + ".Biome")) {
-                    return;
+                if (!getBiome(e, "Spawn." + entityType + "." + group + ".Biome")) {
+                    if (!iterator.hasNext()) {
+                        return;
+                    }
+                    continue;
                 }
 
                 // If entity spawn "water" are match or equal null, it will keep checking.
                 // Config "water: false" -> only affect in the air.
-                if (!getWater(e, "Spawn." + entityType + ".Water")) {
-                    return;
+                if (!getWater(e, "Spawn." + entityType + "." + group + ".Water")) {
+                    if (!iterator.hasNext()) {
+                        return;
+                    }
+                    continue;
                 }
 
-                List<String> worldList = ConfigHandler.getConfig("config.yml").getStringList("Spawn." + entityType + ".Worlds");
-                ConfigurationSection worldConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn." + entityType + ".Worlds");
+                List<String> worldList = ConfigHandler.getConfig("config.yml").getStringList("Spawn." + entityType + "." + group + ".Worlds");
+                ConfigurationSection worldConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn." + entityType + "." + group + ".Worlds");
                 String world;
-                // If the entity world setting is simple, it will check every world.
+                // If the entity world setting is simple it will check every world.
                 if (worldList.size() != 0) {
                     Iterator<String> iterator2 = worldList.iterator();
 
@@ -77,14 +237,17 @@ public class EntitySpawn implements Listener {
                         world = iterator2.next();
                         if (!getWorld(e, world)) {
                             if (!iterator2.hasNext()) {
-                                return;
+                                if (!iterator.hasNext()) {
+                                    return;
+                                }
+                                continue back1;
                             }
                         } else {
                             e.setCancelled(true);
                             return;
                         }
                     }
-                // If the entity world setting is advanced, it will check every detail world location(xyz).
+                    // If the entity world setting is advanced, it will check every detail world location(xyz).
                 } else if (worldConfig != null) {
                     Set<String> worldGroups = worldConfig.getKeys(false);
                     Iterator<String> iterator2 = worldGroups.iterator();
@@ -92,28 +255,34 @@ public class EntitySpawn implements Listener {
                     while (iterator2.hasNext()) {
                         world = iterator2.next();
                         // If entity spawn "world" are match or equal null, it will keep checking.
-                        // Otherwise it will check another world, and return and spawn the entity if this is the latest world in config.
+                        // Otherwise it will check another world, and return and spawn the entity if this is the latest world in config..
                         if (!getWorld(e, world)) {
                             if (!iterator2.hasNext()) {
-                                return;
+                                if (!iterator.hasNext()) {
+                                    return;
+                                }
+                                continue back1;
                             }
                             continue;
                         }
 
                         // If entity spawn "location" are match or equal null, it will cancel the spawn event.
                         // Otherwise it will check another world, and return and spawn the entity if this is the latest world in config.
-                        ConfigurationSection xyzList = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn." + entityType + ".Worlds." + world);
+                        ConfigurationSection xyzList = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn." + entityType + "." + group + ".Worlds." + world);
                         if (xyzList != null) {
                             // If the "location" is match, it will cancel the spawn event.
                             // And it will return and spawn the entity if this is the latest world in config.
                             for (String key : xyzList.getKeys(false)) {
-                                if (getXYZ(e, entityType, key, "Spawn." + entityType + ".Worlds." + world + "." + key)) {
+                                if (getXYZ(e, entityType, key, "Spawn." + entityType + "." + group + ".Worlds." + world + "." + key)) {
                                     e.setCancelled(true);
                                     return;
                                 }
                             }
                             if (!iterator2.hasNext()) {
-                                return;
+                                if (!iterator.hasNext()) {
+                                    return;
+                                }
+                                continue back1;
                             }
                             continue;
                         }
@@ -121,124 +290,67 @@ public class EntitySpawn implements Listener {
                         return;
                     }
                 }
-            } else {
-                Set<String> groups = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn." + entityType).getKeys(false);
-                Iterator<String> iterator = groups.iterator();
-                String group;
+            }
+        }
+    }
 
-                back1:
-                while (iterator.hasNext()) {
-                    group = iterator.next();
-                    // If entity spawn "chance" are success, it will keep checking.
-                    // Otherwise it will return and spawn the entity.
-                    if (!getChance("Spawn." + entityType + "." + group + ".Chance")) {
-                        if (!iterator.hasNext()) {
-                            return;
-                        }
-                        continue;
-                    }
+    /**
+     * @param e CreatureSpawnEvent.
+     * @return if spawn location reach the maximum entity amount.
+     */
+    private static boolean getLimit(CreatureSpawnEvent e) {
+        List<Entity> nearbyEntities = e.getEntity().getNearbyEntities(spawnLimitX, spawnLimitY, spawnLimitZ);
+        return !(nearbyEntities.size() <= spawnLimitAmount);
+    }
+    private static boolean getLimit(CreatureSpawnEvent e, String path) {
+        if (ConfigHandler.getConfig("config.yml").getString(path) != null) {
+            List<Entity> nearbyEntities = e.getEntity().getNearbyEntities(spawnLimitX, spawnLimitY, spawnLimitZ);
+            return !(nearbyEntities.size() <= spawnLimitAmount);
+        }
+        return true;
+    }
 
-                    // If entity spawn "reason" are match or equal null, it will keep checking.
-                    if (!getReason(e, "Spawn." + entityType + "." + group + ".Reason")) {
-                        if (!iterator.hasNext()) {
-                            return;
-                        }
-                        continue;
-                    }
-
-                    // If entity spawn "biome" are match or equal null, it will keep checking.
-                    if (!getBiome(e, "Spawn." + entityType + "." + group + ".Biome")) {
-                        if (!iterator.hasNext()) {
-                            return;
-                        }
-                        continue;
-                    }
-
-                    // If entity spawn "water" are match or equal null, it will keep checking.
-                    // Config "water: false" -> only affect in the air.
-                    if (!getWater(e, "Spawn." + entityType + "." + group + ".Water")) {
-                        if (!iterator.hasNext()) {
-                            return;
-                        }
-                        continue;
-                    }
-
-                    List<String> worldList = ConfigHandler.getConfig("config.yml").getStringList("Spawn." + entityType + "." + group + ".Worlds");
-                    ConfigurationSection worldConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn." + entityType + "." + group + ".Worlds");
-                    String world;
-                    // If the entity world setting is simple it will check every world.
-                    if (worldList.size() != 0) {
-                        Iterator<String> iterator2 = worldList.iterator();
-
-                        while (iterator2.hasNext()) {
-                            world = iterator2.next();
-                            if (!getWorld(e, world)) {
-                                if (!iterator2.hasNext()) {
-                                    if (!iterator.hasNext()) {
-                                        return;
-                                    }
-                                    continue back1;
-                                }
-                            } else {
-                                e.setCancelled(true);
-                                return;
-                            }
-                        }
-                    // If the entity world setting is advanced, it will check every detail world location(xyz).
-                    } else if (worldConfig != null) {
-                        Set<String> worldGroups = worldConfig.getKeys(false);
-                        Iterator<String> iterator2 = worldGroups.iterator();
-                        // Checking every "world" from config.
-                        while (iterator2.hasNext()) {
-                            world = iterator2.next();
-                            // If entity spawn "world" are match or equal null, it will keep checking.
-                            // Otherwise it will check another world, and return and spawn the entity if this is the latest world in config..
-                            if (!getWorld(e, world)) {
-                                if (!iterator2.hasNext()) {
-                                    if (!iterator.hasNext()) {
-                                        return;
-                                    }
-                                    continue back1;
-                                }
-                                continue;
-                            }
-
-                            // If entity spawn "location" are match or equal null, it will cancel the spawn event.
-                            // Otherwise it will check another world, and return and spawn the entity if this is the latest world in config.
-                            ConfigurationSection xyzList = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn." + entityType + "." + group + ".Worlds." + world);
-                            if (xyzList != null) {
-                                // If the "location" is match, it will cancel the spawn event.
-                                // And it will return and spawn the entity if this is the latest world in config.
-                                for (String key : xyzList.getKeys(false)) {
-                                    if (getXYZ(e, entityType, key, "Spawn." + entityType + "." + group + ".Worlds." + world + "." + key)) {
-                                        e.setCancelled(true);
-                                        return;
-                                    }
-                                }
-                                if (!iterator2.hasNext()) {
-                                    if (!iterator.hasNext()) {
-                                        return;
-                                    }
-                                    continue back1;
-                                }
-                                continue;
-                            }
-                            e.setCancelled(true);
-                            return;
-                        }
+    /**
+     * @param e CreatureSpawnEvent.
+     * @return if spawn location reach the maximum entity amount.
+     */
+    private static boolean getLimitAFK(CreatureSpawnEvent e) {
+        if (ConfigHandler.getDepends().CMIEnabled()) {
+            List<Entity> nearbyEntities = e.getEntity().getNearbyEntities(spawnLimitARKRange, spawnLimitARKRange, spawnLimitARKRange);
+            for (Entity en : nearbyEntities) {
+                if (en.getType() == EntityType.PLAYER) {
+                    if (!CMI.getInstance().getPlayerManager().getUser((Player) en).isAfk()) {
+                        return false;
                     }
                 }
             }
+            return true;
         }
+        return true;
+    }
+    private static boolean getLimitAFK(CreatureSpawnEvent e, String path) {
+        if (ConfigHandler.getConfig("config.yml").getString(path) != null) {
+            if (ConfigHandler.getDepends().CMIEnabled()) {
+                List<Entity> nearbyEntities = e.getEntity().getNearbyEntities(spawnLimitARKRange, spawnLimitARKRange, spawnLimitARKRange);
+                for (Entity en : nearbyEntities) {
+                    if (en.getType() == EntityType.PLAYER) {
+                        if (!CMI.getInstance().getPlayerManager().getUser((Player) en).isAfk()) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+        }
+        return true;
     }
 
     /**
      * @param path the path of spawn chance in config.yml
      * @return if the entity will spawn or not.
      */
-    private boolean getChance(String path) {
+    static boolean getChance(String path) {
         String chance = ConfigHandler.getConfig("config.yml").getString(path);
-
         if (chance != null) {
             double random = new Random().nextDouble();
             return Double.parseDouble(chance) < random;
@@ -295,10 +407,7 @@ public class EntitySpawn implements Listener {
      * @return if the entity spawn world match the input world.
      */
     private boolean getWorld(CreatureSpawnEvent e, String world) {
-        if (e.getLocation().getWorld().getName().equalsIgnoreCase(world)) {
-            return true;
-        }
-        return false;
+        return e.getLocation().getWorld().getName().equalsIgnoreCase(world);
     }
 
     /**
@@ -328,7 +437,7 @@ public class EntitySpawn implements Listener {
                 return 3;
             }
         } else {
-            ServerHandler.sendConsoleMessage("&cThere is an error while spawning a &7" + entityType + "&c. Please check you config - &7XYZ 267");
+            ServerHandler.sendConsoleMessage("&cThere is an error while spawning a &7" + entityType + "&c. Please check you config");
         }
         return 0;
     }
@@ -341,12 +450,10 @@ public class EntitySpawn implements Listener {
      * @return if the entity spawn in key's (x, y, z) location range.
      */
     private boolean getXYZ(CreatureSpawnEvent e, String entityType, String key, String path) {
-
         String keyConfig = ConfigHandler.getConfig("config.yml").getString(path);
         if (keyConfig != null) {
             String[] keyContent = keyConfig.split("\\s+");
             int xyzLength = getXYZLength(entityType, keyContent);
-
             if (xyzLength == 1) {
                 if (key.equalsIgnoreCase("X")) {
                     return getRange(e.getLocation().getBlockX(), Integer.valueOf(keyContent[0]));
@@ -480,16 +587,13 @@ public class EntitySpawn implements Listener {
      * @param number2  second number.
      * @return if first number(a) bigger/small/equal... than second number.
      */
-    public static boolean getCompare(int number1, String operator, int number2) {
-        if (operator.equals(">") && number1 > number2 ||
+    static boolean getCompare(int number1, String operator, int number2) {
+        return operator.equals(">") && number1 > number2 ||
                 operator.equals("<") && number1 < number2 ||
                 operator.equals("=") && number1 == number2 ||
                 operator.equals("<=") && number1 <= number2 ||
                 operator.equals(">=") && number1 >= number2 ||
-                operator.equals("==") && number1 == number2) {
-            return true;
-        }
-        return false;
+                operator.equals("==") && number1 == number2;
     }
 
     /**
@@ -499,7 +603,7 @@ public class EntitySpawn implements Listener {
      * @return if the check number is inside the range.
      * It will return true if the two side of range numbers are equal.
      */
-    public static boolean getRange(int check, int range1, int range2) {
+    static boolean getRange(int check, int range1, int range2) {
         if (range1 == range2) {
             return true;
         } else if (range1 < range2) {
@@ -514,7 +618,7 @@ public class EntitySpawn implements Listener {
      * @param range1 the side of range.
      * @return if the check number is inside the range.
      */
-    public static boolean getRange(int check, int range1) {
+    static boolean getRange(int check, int range1) {
         int range2 = range1 * -1;
         if (range1 < range2) {
             return check >= range1 && check <= range2;

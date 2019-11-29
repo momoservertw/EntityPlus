@@ -87,6 +87,7 @@ public class ConfigHandler {
 		ServerHandler.sendConsoleMessage("&fUtilizing [ &e"
 				+ (getDepends().getVault().vaultEnabled() ? "Vault, " : "")
 				+ (getDepends().MythicMobsEnabled() ? "MythicMobs " : "")
+				+ (getDepends().CMIEnabled() ? "CMI " : "")
 				+ "&f]");
 	}
 

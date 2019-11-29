@@ -96,6 +96,5 @@ public class MythicMobsLootDrop implements Listener {
         int dropExp = e.getExp();
         dropExp *= totalExp;
         e.setExp(dropExp);
-
     }
 }
