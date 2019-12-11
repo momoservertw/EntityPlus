@@ -1,23 +1,26 @@
 package tw.momocraft.entityplus.handlers;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import tw.momocraft.entityplus.Commands;
 import tw.momocraft.entityplus.EntityPlus;
-import tw.momocraft.entityplus.listeners.EntitySpawn;
+import tw.momocraft.entityplus.listeners.CMIAfkEnter;
+import tw.momocraft.entityplus.listeners.CreatureSpawn;
 import tw.momocraft.entityplus.listeners.MythicMobsLootDrop;
 import tw.momocraft.entityplus.listeners.MythicMobsSpawn;
 import tw.momocraft.entityplus.utils.DependAPI;
 import tw.momocraft.entityplus.utils.Utils;
 
 import java.io.File;
+import java.util.List;
 
 public class ConfigHandler {
 
 	private static YamlConfiguration configYAML;
 	private static DependAPI depends;
 
-	public static void generateData(File file) {
+	public static void generateData() {
 		configFile();
 		setDepends(new DependAPI());
 		sendUtilityDepends();
@@ -25,11 +28,14 @@ public class ConfigHandler {
 
 	public static void registerEvents() {
 		EntityPlus.getInstance().getCommand("entityplus").setExecutor(new Commands());
-		EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new EntitySpawn(), EntityPlus.getInstance());
+		EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new CreatureSpawn(), EntityPlus.getInstance());
 
 		if (ConfigHandler.getDepends().MythicMobsEnabled()) {
 			EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new MythicMobsSpawn(), EntityPlus.getInstance());
 			EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new MythicMobsLootDrop(), EntityPlus.getInstance());
+		}
+		if (ConfigHandler.getDepends().CMIEnabled()) {
+			EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new CMIAfkEnter(), EntityPlus.getInstance());
 		}
 	}
 
@@ -67,7 +73,7 @@ public class ConfigHandler {
 	public static void configFile() {
 		getConfigData("config.yml");
 		File File = new File(EntityPlus.getInstance().getDataFolder(), "config.yml");
-		if (File.exists() && getConfig("config.yml").getInt("config-Version") != 3) {
+		if (File.exists() && getConfig("config.yml").getInt("Config-Version") != 4) {
 			if (EntityPlus.getInstance().getResource("config.yml") != null) {
 				String newGen = "config" + Utils.getRandom(1, 50000) + ".yml";
 				File newFile = new File(EntityPlus.getInstance().getDataFolder(), newGen);
@@ -97,5 +103,9 @@ public class ConfigHandler {
 
 	private static void setDepends(DependAPI depend) {
 		depends = depend;
+	}
+
+	public static boolean getDebugging() {
+		return ConfigHandler.getConfig("config.yml").getBoolean("Debugging");
 	}
 }

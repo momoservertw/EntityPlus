@@ -41,4 +41,27 @@ public class Language {
 	private static boolean isConsoleMessage(String nodeLocation) {
 		return false;
 	}
+
+	public static void debugMessage(String className, String target, String check, String action, String detail) {
+		if (ConfigHandler.getDebugging()) {
+			if (action.equals("return")) {
+				ServerHandler.sendConsoleMessage("&8" + className + " - &f" + target + "&8 : &7" + check + "&8, " + "&a" + action + "&8, " + detail);
+			} else if (action.equals("cancel")) {
+				ServerHandler.sendConsoleMessage("&8" + className + " - &f" + target + "&8 : &7" + check + "&8, " + "&c" + action + "&8, " + detail);
+			} else if (action.equals("continue")) {
+				ServerHandler.sendConsoleMessage("&8" + className + " - &f" + target + "&8 : &7" + check + "&8, " + "&e" + action + "&8, " + detail);
+			}
+		}
+	}
+	public static void debugMessage(String className, String target, String check, String action) {
+		if (ConfigHandler.getDebugging()) {
+			if (action.equals("return")) {
+				ServerHandler.sendConsoleMessage("&8" + className + " - &f" + target + "&8 : &7" + check + "&8, " + "&a" + action);
+			} else if (action.equals("cancel")) {
+				ServerHandler.sendConsoleMessage("&8" + className + " - &f" + target + "&8 : &7" + check + "&8, " + "&c" + action);
+			} else if (action.equals("continue")) {
+				ServerHandler.sendConsoleMessage("&8" + className + " - &f" + target + "&8 : &7" + check + "&8, " + "&e" + action);
+			}
+		}
+	}
 }
