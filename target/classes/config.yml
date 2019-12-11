@@ -1,32 +1,36 @@
 # --{ =-=-=-=-=-=-=-=-=-= EntityPlus's Configuration Settings, by Momocraft =-=-=-=-=-=-=-=-=-= }--
-config-Version: 4
+Config-Version: 4
 Log-Coloration: true
 Debugging: false
 
-# Please set the same value from your Spigot.yml. It will change the checking range of mob spawn or purge.
-mob-spawn-range: 3
+General:
+  # Please set the same value from your Spigot.yml. It will change the checking range of monsters.
+  mob-spawn-range: 3
 
 Purge:
   # Need plugin: CMI
-  # It will automatic purging all creatures in the AFK list which near afk players every 30 minutes. You can set "0" to disable it.
-  AFK-Auto-Clean: 30
-  # If the player enters the AFK, those entities near him will be purged at that time.
+  # It will automatic purging all creatures in the AFK list which near afk players every 30 minutes.
+  AFK-Auto-Clean:
+    Enable: false
+    Interval: 30
+  # If the player enters AFK, those entities near him will be check and purge.
   # Bypass permission: entityplus.bypass.purge.afk
   AFK:
     Enable: false
-    # The chance of each creature will be purged. Set "1" to purge all creatures and set "0" to disable this feature.
+    # The chance of each creature will be purged. Set "1" to purge all creatures.
     Chance: 1
-    Ignore-Named: true
-    Ignore-Tamed: true
-    Ignore-With-Saddle: true
-    Ignore-Baby-Animals: false
-    Ignore-Equipped: false
-    Ignore-Pickup-Equipped: true
-    # Ignore spawn reason like "NATURAL" and "SPAWNER".
-    # Spawn reason: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/entity/CreatureSpawnEvent.SpawnReason.html
-    Ignore-Reasons: []
-    Ignore-Worlds: []
-    # Only the creature will be purge when player is afk. If you set this option to false it will purge every creatures.
+    Ignore:
+      Named: true
+      Tamed: true
+      With-Saddle: true
+      Baby-Animals: false
+      Equipped: false
+      Pickup-Equipped: true
+      # Ignore spawn reason like "NATURAL" and "SPAWNER".
+      # Spawn reason: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/entity/CreatureSpawnEvent.SpawnReason.html
+      Reasons: []
+      Worlds: []
+    # Checking the purge list. If you set this option to false, it will purge every creatures.
     List-Enable: true
     List:
       - ZOMBIE
@@ -34,38 +38,51 @@ Purge:
       - SKELETON
       - CREEPER
       - SPIDER
+      - WITCH
+      - ENDERMAN
       - CAVE_SPIDER
       - SLIME
+      - SILVERFISH
+      - PIG_ZOMBIE
+      - BLAZE
+      - WITHER_SKELETON
+      - MAGMA_CUBE
+      - GHAST
       - STRAY
       - HUSK
       - DROWNED
-      - PIG_ZOMBIE
-      - ENDERMAN
+      - PHANTOM
+      - PILLAGER
+      - RAVAGER
   MythicMobs-AFK:
     Enable: false
     Chance: 1
-    Ignore-Named: true
-    Ignore-Tamed: true
-    Ignore-With-Saddle: true
-    Ignore-Baby-Animals: false
-    Ignore-Worlds: []
+    Ignore:
+      Named: true
+      Tamed: true
+      With-Saddle: true
+      Baby-Animals: false
+      Equipped: false
+      Pickup-Equipped: true
+      Worlds: []
     List-Enable: true
     List: []
 
 Spawn-Limit:
-  # If there are too many entities over the spawn location, it will cancel the spawn event.
+  # If there are too many creatures over the spawn location, it will cancel the spawn event.
+  # This setting can avoid the bug of spawn MythicMobs without limit when you are using "RandomRespawn".
   Range:
     Enable: false
     # The maximum amount near the player. You can set "-1" to disable this feature.
     Max-Amount: 5
-    # The chance of each creature will be spawned. Set "0" to cancel all spawn event.
+    # The chance of each creature will be spawned. Set "0" to disable all creatures spawn.
     Chance: 0
-    # The checking range near the player.
+    # The checking range near the spawn creature.
     Range:
       X: 8
       Y: 5
       Z: 8
-    Ignore-Reason: []
+    Ignore-Reasons: []
     Ignore-Worlds: []
     List-Enable: true
     List:
@@ -74,17 +91,31 @@ Spawn-Limit:
       - SKELETON
       - CREEPER
       - SPIDER
+      - WITCH
+      - ENDERMAN
       - CAVE_SPIDER
       - SLIME
+      - SILVERFISH
+      - PIG_ZOMBIE
+      - BLAZE
+      - WITHER_SKELETON
+      - MAGMA_CUBE
+      - GHAST
       - STRAY
       - HUSK
       - DROWNED
-      - PIG_ZOMBIE
-      - ENDERMAN
+      - PHANTOM
+      - PILLAGER
+      - RAVAGER
+      - ILLUSIONER
+      - VINDICATOR
+      - EVOKER
+      - VEX
+      - VILLAGER
+      - IRON_GOLEM
     # The creature will not be count in Max-Amount.
     Ignore-List: []
     MythicMobs-List-Enable: true
-    # This setting can avoid the bug of spawn MythicMobs without limit when you are using "RandomRespawn".
     MythicMobs-List: []
     MythicMobs-Ignore-List: []
   # Need plugin: CMI
@@ -92,9 +123,9 @@ Spawn-Limit:
   # Bypass permission: entityplus.bypass.spawnlimit.afk
   AFK:
     Enable: false
-    Chance: 0
     Max-Amount: -1
-    Ignore-Reason: []
+    Chance: 0
+    Ignore-Reasons: []
     Ignore-Worlds: []
     List-Enable: true
     List:
@@ -103,16 +134,32 @@ Spawn-Limit:
       - SKELETON
       - CREEPER
       - SPIDER
+      - WITCH
+      - ENDERMAN
       - CAVE_SPIDER
       - SLIME
+      - SILVERFISH
+      - PIG_ZOMBIE
+      - BLAZE
+      - WITHER_SKELETON
+      - MAGMA_CUBE
+      - GHAST
       - STRAY
       - HUSK
       - DROWNED
-      - PIG_ZOMBIE
-      - ENDERMAN
+      - PHANTOM
+      - PILLAGER
+      - RAVAGER
+      - ILLUSIONER
+      - VINDICATOR
+      - EVOKER
+      - VEX
+      - VILLAGER
+      - IRON_GOLEM
     MythicMobs-List-Enable: true
     MythicMobs-List: []
 
+# Only support creatures.
 # Entity type: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html
 # Spawn reason: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/entity/CreatureSpawnEvent.SpawnReason.html
 #   Normal reason: NATURAL, SPAWNER, SPAWNER_EGG
@@ -147,13 +194,12 @@ Spawn:
 #    Chance: 0.5
 #    Reason: NETHER_PORTAL
 
-# Normal example.
+# N#ormal example.
 #  WOLF:
 #    Chance: 0
 #    Reason: NATURAL
 #    Biome: DESERT
 #    Water: true
-#    Limit: false
 #    Worlds:
 #      - world
 #      - world_nether
@@ -167,7 +213,6 @@ Spawn:
 #      Reason: NATURAL
 #      Biome: DESERT
 #      Water: true
-#      Limit: false
 #      Worlds:
 #        world:
 #          X: 1000                # 1000 -> -1000 ~ 1000
@@ -181,12 +226,12 @@ Spawn:
 #          X: 1000
 #          Z: 1000
 #        world_nether: []
-#  3:
-#    Change: 0
-#    Reason: SPAWNER_EGG
-#    Worlds:
-#      world_the_end:
-#        R: 1000
+#    3:
+#      Chance: 0
+#      Reason: SPAWNER_EGG
+#      Worlds:
+#        world_the_end:
+#          R: 1000
 
 # The best way to change custom mobs spawn chance is in RandomSpawns.yml.
 # MythicMobs: https://www.spigotmc.org/resources/%E2%9A%94-mythicmobs-free-version-%E2%96%BAthe-1-custom-mob-creator%E2%97%84.5702/
@@ -196,10 +241,10 @@ MythicMobs-Spawn: []
 MythicMobs-Drop:
   Enable: false
   # If player has multiple multipliers, he will get more rewards than the highest multiplier.
-  # Calculation method: addition or multiplication
-  Combined-enable: true
-  Combined-method: addition
-  # You can add more multipliers. The highest multiplier is the maximum number of group name.
+  # Calculation method: "+" or "*"
+  Combined-Enable: true
+  Combined-Method: "+"
+  # You can add more multipliers. And the highest multiplier is the maximum number of group name.
   # Permission: "entityplus.drop.multiplier.GROUP"
   Multipliers:
     1:

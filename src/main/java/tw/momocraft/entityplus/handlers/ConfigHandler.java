@@ -1,6 +1,5 @@
 package tw.momocraft.entityplus.handlers;
 
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import tw.momocraft.entityplus.Commands;
@@ -13,7 +12,6 @@ import tw.momocraft.entityplus.utils.DependAPI;
 import tw.momocraft.entityplus.utils.Utils;
 
 import java.io.File;
-import java.util.List;
 
 public class ConfigHandler {
 
@@ -92,7 +90,7 @@ public class ConfigHandler {
 	private static void sendUtilityDepends() {
 		ServerHandler.sendConsoleMessage("&fUtilizing [ &e"
 				+ (getDepends().getVault().vaultEnabled() ? "Vault, " : "")
-				+ (getDepends().MythicMobsEnabled() ? "MythicMobs " : "")
+				+ (getDepends().MythicMobsEnabled() ? "MythicMobs, " : "")
 				+ (getDepends().CMIEnabled() ? "CMI " : "")
 				+ "&f]");
 	}

@@ -55,11 +55,7 @@ public class CreatureSpawn implements Listener {
         }
 
         // Get entity list from config.
-        List<String> entityListed = new ArrayList<String>();
-        for (String key : ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn").getKeys(false)) {
-            key.toUpperCase();
-            entityListed.add(key);
-        }
+        List<String> entityListed = new ArrayList<String>(ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn").getKeys(false));
 
         // If the spawn creature don't include in checking list, it will stop checking.
         if (!entityListed.contains(entityType)) {

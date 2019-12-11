@@ -54,12 +54,6 @@ Purge:
       - PHANTOM
       - PILLAGER
       - RAVAGER
-      - ILLUSIONER
-      - VINDICATOR
-      - EVOKER
-      - VEX
-      - VILLAGER
-      - IRON_GOLEM
   MythicMobs-AFK:
     Enable: false
     Chance: 1
@@ -113,6 +107,12 @@ Spawn-Limit:
       - PHANTOM
       - PILLAGER
       - RAVAGER
+      - ILLUSIONER
+      - VINDICATOR
+      - EVOKER
+      - VEX
+      - VILLAGER
+      - IRON_GOLEM
     # The creature will not be count in Max-Amount.
     Ignore-List: []
     MythicMobs-List-Enable: true
@@ -150,6 +150,12 @@ Spawn-Limit:
       - PHANTOM
       - PILLAGER
       - RAVAGER
+      - ILLUSIONER
+      - VINDICATOR
+      - EVOKER
+      - VEX
+      - VILLAGER
+      - IRON_GOLEM
     MythicMobs-List-Enable: true
     MythicMobs-List: []
 

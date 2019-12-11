@@ -54,7 +54,7 @@ public class MythicMobsLootDrop implements Listener {
                     money = ConfigHandler.getConfig("config.yml").getDouble("MythicMobs-Drop.Multipliers." + key + ".money");
                     exp = ConfigHandler.getConfig("config.yml").getDouble("MythicMobs-Drop.Multipliers." + key + ".exp");
 
-                    if (combinedMethod.equals("+")) {
+                    if (combinedMethod != null && combinedMethod.equals("+")) {
                         money--;
                         exp--;
                         totalMoney += money;

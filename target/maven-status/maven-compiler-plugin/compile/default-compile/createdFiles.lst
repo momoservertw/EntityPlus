@@ -5,7 +5,6 @@ tw\momocraft\entityplus\handlers\ServerHandler.class
 tw\momocraft\entityplus\utils\Utils.class
 tw\momocraft\entityplus\listeners\CreatureSpawn.class
 tw\momocraft\entityplus\handlers\ConfigHandler.class
-tw\momocraft\entityplus\utils\ConfigValue.class
 tw\momocraft\entityplus\utils\Language.class
 tw\momocraft\entityplus\listeners\MythicMobsLootDrop.class
 tw\momocraft\entityplus\utils\DependAPI.class
