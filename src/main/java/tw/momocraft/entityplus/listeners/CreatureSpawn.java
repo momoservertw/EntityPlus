@@ -341,9 +341,8 @@ public class CreatureSpawn implements Listener {
                         }
                         double limitRangeAmount = ConfigHandler.getConfig("config.yml").getDouble("Spawn-Limit.Range.Max-Amount");
                         if (limitRangeAmount != -1) {
-                            if (nearbyEntities.size() >= limitRangeAmount) {
-                                Language.debugMessage("(CreatureSpawn) Spawn", entityType, "!getLimit - Max Amount", "cancel");
-                                return false;
+                            if (nearbyEntities.size() < limitRangeAmount) {
+                                return true;
                             }
                         }
                         double limitRangeChance = ConfigHandler.getConfig("config.yml").getDouble("Spawn-Limit.Range.Chance");

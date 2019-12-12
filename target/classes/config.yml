@@ -174,9 +174,6 @@ Spawn:
   BAT:
     Chance: 0.2
     Reason: NATURAL
-  GUARDIAN:
-    Chance: 0.01
-    Reason: NATURAL
   SALMON:
     Chance: 0.2
     Reason: NATURAL
@@ -186,6 +183,9 @@ Spawn:
   TROPICAL_FISH:
     Chance: 0.2
     Reason: NATURAL
+  GUARDIAN:
+    Chance: 0.01
+    Reason: NATURAL
 
 #  IRON_GOLEM:
 #    Chance: 0.3
@@ -194,12 +194,13 @@ Spawn:
 #    Chance: 0.5
 #    Reason: NETHER_PORTAL
 
-# N#ormal example.
+# Normal example.
 #  WOLF:
 #    Chance: 0
 #    Reason: NATURAL
 #    Biome: DESERT
 #    Water: true
+#    Day: false
 #    Worlds:
 #      - world
 #      - world_nether
@@ -213,6 +214,7 @@ Spawn:
 #      Reason: NATURAL
 #      Biome: DESERT
 #      Water: true
+#      Day: false
 #      Worlds:
 #        world:
 #          X: 1000                # 1000 -> -1000 ~ 1000
