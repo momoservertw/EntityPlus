@@ -18,7 +18,7 @@ public class VaultAPI {
     private void enableEconomy() {
         if (ConfigHandler.getConfig("config.yml").getBoolean("softDepend.Vault") && EntityPlus.getInstance().getServer().getPluginManager().getPlugin("Vault") != null) {
             if (!this.setupEconomy()) {
-                ServerHandler.sendErrorMessage("There was an issue setting up Vault to work with BarrierPlus!");
+                ServerHandler.sendErrorMessage("There was an issue setting up Vault to work with EntityPlus!");
                 ServerHandler.sendErrorMessage("If this continues, please contact the plugin developer!");
             }
         }
