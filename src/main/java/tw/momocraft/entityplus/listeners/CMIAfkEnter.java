@@ -11,7 +11,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import tw.momocraft.entityplus.EntityPlus;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.PermissionsHandler;
-import tw.momocraft.entityplus.utils.Language;
+import tw.momocraft.entityplus.handlers.ServerHandler;
 
 import java.util.List;
 import java.util.Random;
@@ -23,7 +23,7 @@ public class CMIAfkEnter implements Listener {
         if (ConfigHandler.getConfig("config.yml").getBoolean("Purge.AFK.Enable") || ConfigHandler.getConfig("config.yml").getBoolean("Purge.MythicMobs-AFK.Enable")) {
             Player player = e.getPlayer();
             if (PermissionsHandler.hasPermission(player, "entityplus.bypass.purge.afk")) {
-                Language.debugMessage("CMIAfkEnter Purge", player.getName(), "has bypass permission", "return");
+                ServerHandler.debugMessage("CMIAfkEnter Purge", player.getName(), "has bypass permission", "return");
                 return;
             }
 
@@ -54,10 +54,9 @@ public class CMIAfkEnter implements Listener {
         for (Entity en : nearbyEntities) {
             String enString = en.getType().toString();
             if (!(en instanceof LivingEntity) || en instanceof Player) {
-                Language.debugMessage("CMIAfkEnter Purge", enString, "not creature or player", "continue");
+                ServerHandler.debugMessage("CMIAfkEnter Purge", enString, "not creature or player", "continue");
                 continue;
             }
-
             if (ConfigHandler.getConfig("config.yml").getBoolean("Purge.MythicMobs-AFK.Enable")) {
                 if (ConfigHandler.getDepends().MythicMobsEnabled()) {
                     if (MythicMobs.inst().getAPIHelper().isMythicMob(en)) {
@@ -67,39 +66,39 @@ public class CMIAfkEnter implements Listener {
                                 if (purgeMythicMobsAFKChance != 1) {
                                     double random = new Random().nextDouble();
                                     if (purgeMythicMobsAFKChance < random) {
-                                        Language.debugMessage("CMIAfkEnter Purge.MythicMobs-AFK", enString, "Chance", "continue");
+                                        ServerHandler.debugMessage("CMIAfkEnter Purge.MythicMobs-AFK", enString, "Chance", "continue");
                                         continue;
                                     }
                                 } else {
-                                    Language.debugMessage("CMIAfkEnter Purge.MythicMobs-AFK", enString, "Chance", "continue", "remove entity");
+                                    ServerHandler.debugMessage("CMIAfkEnter Purge.MythicMobs-AFK", enString, "Chance", "continue", "remove entity");
                                     en.remove();
                                     continue;
                                 }
                                 if (ConfigHandler.getConfig("config.yml").getBoolean("Purge.MythicMobs-AFK.Ignore.Named") && en.getCustomName() != null) {
-                                    Language.debugMessage("CMIAfkEnter Purge.MythicMobs-AFK", enString, "Name", "continue");
+                                    ServerHandler.debugMessage("CMIAfkEnter Purge.MythicMobs-AFK", enString, "Name", "continue");
                                     continue;
                                 }
                                 if (en instanceof Tameable) {
                                     if (ConfigHandler.getConfig("config.yml").getBoolean("Purge.MythicMobs-AFK.Ignore.Tamed") && ((Tameable) en).isTamed()) {
-                                        Language.debugMessage("CMIAfkEnter Purge.MythicMobs-AFK", enString, "Tamed", "continue");
+                                        ServerHandler.debugMessage("CMIAfkEnter Purge.MythicMobs-AFK", enString, "Tamed", "continue");
                                         continue;
                                     }
                                 }
                                 if (en instanceof AbstractHorse) {
                                     if (ConfigHandler.getConfig("config.yml").getBoolean("Purge.MythicMobs-AFK.Ignore.With-Saddle") && ((AbstractHorse) en).getInventory().getSaddle() != null) {
-                                        Language.debugMessage("CMIAfkEnter Purge.MythicMobs-AFK", enString, "Saddle", "continue");
+                                        ServerHandler.debugMessage("CMIAfkEnter Purge.MythicMobs-AFK", enString, "Saddle", "continue");
                                         continue;
                                     }
                                 }
                                 if (en instanceof Ageable) {
                                     if (ConfigHandler.getConfig("config.yml").getBoolean("Purge.MythicMobs-AFK.Ignore.Baby-Animals") && !((Ageable) en).isAdult()) {
-                                        Language.debugMessage("CMIAfkEnter Purge.MythicMobs-AFK", enString, "Baby", "continue");
+                                        ServerHandler.debugMessage("CMIAfkEnter Purge.MythicMobs-AFK", enString, "Baby", "continue");
                                         continue;
                                     }
                                 }
                                 LivingEntity len = (LivingEntity) en;
                                 if (ConfigHandler.getConfig("config.yml").getBoolean("Purge.MythicMobs-AFK.Ignore.Named") && len.getEquipment() != null) {
-                                    Language.debugMessage("CMIAfkEnter Purge.MythicMobs-AFK", enString, "Equip", "continue");
+                                    ServerHandler.debugMessage("CMIAfkEnter Purge.MythicMobs-AFK", enString, "Equip", "continue");
                                     continue;
                                 }
                                 if (ConfigHandler.getConfig("config.yml").getBoolean("Purge.MythicMobs-AFK.Ignore.Named")) {
@@ -107,15 +106,14 @@ public class CMIAfkEnter implements Listener {
                                         if (len.getEquipment().getHelmetDropChance() == 1 || len.getEquipment().getChestplateDropChance() == 1 ||
                                                 len.getEquipment().getLeggingsDropChance() == 1 || len.getEquipment().getBootsDropChance() == 1 ||
                                                 len.getEquipment().getItemInMainHandDropChance() == 1 || len.getEquipment().getItemInOffHandDropChance() == 1) {
-                                            Language.debugMessage("CMIAfkEnter Purge.MythicMobs-AFK", enString, "Pickup Equip", "continue");
+                                            ServerHandler.debugMessage("CMIAfkEnter Purge.MythicMobs-AFK", enString, "Pickup Equip", "continue");
                                             continue;
                                         }
                                     }
                                 }
                             }
-                            Language.debugMessage("CMIAfkEnter Purge.MythicMobs-AFK", enString, "Final", "continue", "remove entity");
+                            ServerHandler.debugMessage("CMIAfkEnter Purge.MythicMobs-AFK", enString, "Final", "continue", "remove entity");
                             en.remove();
-                            continue;
                         }
                     }
                 }
@@ -128,39 +126,39 @@ public class CMIAfkEnter implements Listener {
                                 if (purgeAFKChance != 1) {
                                     double random = new Random().nextDouble();
                                     if (purgeAFKChance < random) {
-                                        Language.debugMessage("CMIAfkEnter Purge.AFK", enString, "Chance", "continue");
+                                        ServerHandler.debugMessage("CMIAfkEnter Purge.AFK", enString, "Chance", "continue");
                                         continue;
                                     }
                                 } else {
-                                    Language.debugMessage("CMIAfkEnter Purge.AFK", enString, "Chance = 1", "continue", "remove entity");
+                                    ServerHandler.debugMessage("CMIAfkEnter Purge.AFK", enString, "Chance = 1", "continue", "remove entity");
                                     en.remove();
                                     continue;
                                 }
                                 if (ConfigHandler.getConfig("config.yml").getBoolean("Purge.AFK.Ignore.Named") && en.getCustomName() != null) {
-                                    Language.debugMessage("CMIAfkEnter Purge.AFK", enString, "Name", "continue");
+                                    ServerHandler.debugMessage("CMIAfkEnter Purge.AFK", enString, "Name", "continue");
                                     continue;
                                 }
                                 if (en instanceof Tameable) {
                                     if (ConfigHandler.getConfig("config.yml").getBoolean("Purge.AFK.Ignore.Tamed") && ((Tameable) en).isTamed()) {
-                                        Language.debugMessage("CMIAfkEnter Purge.AFK", enString, "Tamed", "continue");
+                                        ServerHandler.debugMessage("CMIAfkEnter Purge.AFK", enString, "Tamed", "continue");
                                         continue;
                                     }
                                 }
                                 if (en instanceof AbstractHorse) {
                                     if (ConfigHandler.getConfig("config.yml").getBoolean("Purge.AFK.Ignore.With-Saddle") && ((AbstractHorse) en).getInventory().getSaddle() != null) {
-                                        Language.debugMessage("CMIAfkEnter Purge.AFK", enString, "Saddle", "continue");
+                                        ServerHandler.debugMessage("CMIAfkEnter Purge.AFK", enString, "Saddle", "continue");
                                         continue;
                                     }
                                 }
                                 if (en instanceof Ageable) {
                                     if (ConfigHandler.getConfig("config.yml").getBoolean("Purge.AFK.Ignore.Baby-Animals") && !((Ageable) en).isAdult()) {
-                                        Language.debugMessage("CMIAfkEnter Purge.AFK", enString, "Baby", "continue");
+                                        ServerHandler.debugMessage("CMIAfkEnter Purge.AFK", enString, "Baby", "continue");
                                         continue;
                                     }
                                 }
                                 LivingEntity len = (LivingEntity) en;
                                 if (ConfigHandler.getConfig("config.yml").getBoolean("Purge.AFK.Ignore.Equipped") && len.getEquipment() != null) {
-                                    Language.debugMessage("CMIAfkEnter Purge.AFK", enString, "Equip", "continue");
+                                    ServerHandler.debugMessage("CMIAfkEnter Purge.AFK", enString, "Equip", "continue");
                                     continue;
                                 }
                                 if (ConfigHandler.getConfig("config.yml").getBoolean("Purge.AFK.Ignore.Pickup-Equipped")) {
@@ -168,14 +166,13 @@ public class CMIAfkEnter implements Listener {
                                         if (len.getEquipment().getHelmetDropChance() == 1 || len.getEquipment().getChestplateDropChance() == 1 ||
                                                 len.getEquipment().getLeggingsDropChance() == 1 || len.getEquipment().getBootsDropChance() == 1 ||
                                                 len.getEquipment().getItemInMainHandDropChance() == 1 || len.getEquipment().getItemInOffHandDropChance() == 1) {
-                                            Language.debugMessage("CMIAfkEnter Purge.AFK", enString, "Pickup Equip", "continue");
+                                            ServerHandler.debugMessage("CMIAfkEnter Purge.AFK", enString, "Pickup Equip", "continue");
                                             continue;
                                         }
                                     }
                                 }
-                                Language.debugMessage("CMIAfkEnter Purge.AFK", enString, "Final", "continue", "remove entity");
+                                ServerHandler.debugMessage("CMIAfkEnter Purge.AFK", enString, "Final", "continue", "remove entity");
                                 en.remove();
-                                continue;
                             }
                         }
                     }

@@ -1,11 +1,13 @@
 # --{ =-=-=-=-=-=-=-=-=-= EntityPlus's Configuration Settings, by Momocraft =-=-=-=-=-=-=-=-=-= }--
-Config-Version: 4
+Config-Version: 5
 Log-Coloration: true
+# It will show why the creature spawn failed or succeeded.
 Debugging: false
 
 General:
   # Please set the same value from your Spigot.yml. It will change the checking range of monsters.
   mob-spawn-range: 3
+  Nearby-Players-Range: 32
 
 Purge:
   # Need plugin: CMI
@@ -68,6 +70,7 @@ Purge:
     List-Enable: true
     List: []
 
+# If you have Residence, you can add custom flag "spawnlimitbypass" to bypass this feature.
 Spawn-Limit:
   # If there are too many creatures over the spawn location, it will cancel the spawn event.
   # This setting can avoid the bug of spawn MythicMobs without limit when you are using "RandomRespawn".
@@ -123,6 +126,7 @@ Spawn-Limit:
   # Bypass permission: entityplus.bypass.spawnlimit.afk
   AFK:
     Enable: false
+    # Set "-1" to disable Max-Amount.
     Max-Amount: -1
     Chance: 0
     Ignore-Reasons: []
@@ -159,7 +163,7 @@ Spawn-Limit:
     MythicMobs-List-Enable: true
     MythicMobs-List: []
 
-# Only support creatures.
+# This feature only support creatures.
 # Entity type: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html
 # Spawn reason: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/entity/CreatureSpawnEvent.SpawnReason.html
 #   Normal reason: NATURAL, SPAWNER, SPAWNER_EGG
@@ -168,24 +172,26 @@ Spawn-Limit:
 # Spawn water: true or false. It will check if the spawn location in water or air.
 # Spawn day: true or false. It will check if the world is day or night,
 Spawn:
-  PHANTOM:
-    Chance: 0.3
-    Reason: NATURAL
-  BAT:
-    Chance: 0.2
-    Reason: NATURAL
-  SALMON:
-    Chance: 0.2
-    Reason: NATURAL
-  PUFFERFISH:
-    Chance: 0.2
-    Reason: NATURAL
-  TROPICAL_FISH:
-    Chance: 0.2
-    Reason: NATURAL
-  GUARDIAN:
-    Chance: 0.01
-    Reason: NATURAL
+  Enable: false
+  List:
+    PHANTOM:
+      Chance: 0.3
+      Reason: NATURAL
+    BAT:
+      Chance: 0.2
+      Reason: NATURAL
+    SALMON:
+      Chance: 0.2
+      Reason: NATURAL
+    PUFFERFISH:
+      Chance: 0.2
+      Reason: NATURAL
+    TROPICAL_FISH:
+      Chance: 0.2
+      Reason: NATURAL
+    GUARDIAN:
+      Chance: 0.01
+      Reason: NATURAL
 
 #  IRON_GOLEM:
 #    Chance: 0.3
@@ -225,8 +231,8 @@ Spawn:
 #      Reason: SPAWNER
 #      Worlds:
 #        world:
-#          X: 1000
-#          Z: 1000
+#          "!X": 1000
+#          "!Z": 1000
 #        world_nether: []
 #    3:
 #      Chance: 0
@@ -238,7 +244,99 @@ Spawn:
 # The best way to change custom mobs spawn chance is in RandomSpawns.yml.
 # MythicMobs: https://www.spigotmc.org/resources/%E2%9A%94-mythicmobs-free-version-%E2%96%BAthe-1-custom-mob-creator%E2%97%84.5702/
 # Spawn "reason" doesn't work here.
-MythicMobs-Spawn: []
+MythicMobs-Spawn:
+  Enable: false
+  List: []
+
+Spawner:
+  # Change or remove custom spawner when it spawn a creature.
+  Groups:
+    Normal:
+      Enable: false
+      Worlds:
+        - world
+      Allow-List:
+        - ZOMBIE
+        - SKELETON
+        - SPIDER
+        - CAVE_SPIDER
+        - SILVERFISH
+      # The type of spawn will be change. If will
+      Change-List:
+        SKELETON: 0.25
+        ZOMBIE: 0.25
+        SPIDER: 0.25
+        CAVE_SPIDER: 0.25
+      Commands:
+        - "log: &e%spawner% spawner &cat %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to &e%new_spawner% spawner&c, nearby players: &e%nearbyplayers%"
+        - "nearby-message: &e%spawner% spawner &fat %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to &e%new_spawner% spawner&f."
+    Nether:
+      Enable: false
+      Worlds:
+        - world_nether
+      Allow-List:
+        - BLAZE
+      Change-List:
+        - BLAZE
+      Commands:
+        - "log: &e%spawner% spawner &cat %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to &e%new_spawner% spawner&c, nearby players: &e%nearbyplayers%"
+        - "nearby-message: &e%spawner% spawner &fat %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to &e%new_spawner% spawner&f."
+    Remove:
+      Enable: false
+      Remove: true
+      Worlds:
+        - world_the_end
+      Commands:
+        - "log: &e%spawner% spawner &cat %world%(%loc_x%, %loc_y%, %loc_z%) has been &eremoved&f, nearby players: &e%nearbyplayers%"
+        - "nearby-message: &e%spawner% spawner &fat %world%(%loc_x%, %loc_y%, %loc_z%) has been &eremoved&f."
+    Example:
+      Enable: false
+      Remove: false
+      Worlds:
+        - example_world
+        - example_world2
+      # If you have Residence, you can add custom flag "spawnerbypass" to bypass the change event.
+      Ignore:
+        # The location format is the same as the "Generate" function, more information is in the plugin page.
+        Location:
+          example_world:
+            "R": "1000"
+          example_world2:
+            "X": "1000"
+            "Z": "1000"
+      Allow-List:
+        - ZOMBIE
+        - SKELETON
+        - SPIDER
+        - CAVE_SPIDER
+        - SILVERFISH
+      Change-List:
+        ZOMBIE: 2
+        SKELETON: 2
+        SPIDER: 2
+        CAVE_SPIDER: 1
+      # Execute commands when changing a spawner.
+      # Placeholders: %spawner%, %new_spawner%, %world%, %loc%, %loc_x%, %loc_y%, %loc_z%, %nearbyplayers%, and PlaceholderAPI.
+      # PlaceholderAPI: https://www.spigotmc.org/resources/placeholderapi.6245/
+      #
+      # Commands can be executed by following types.
+      # log: sends the message to server's console.
+      # broadcast: sends the message to all players.
+      # console: executes the command by server.
+      #
+      # It will execute command for every players nearby the spawner.
+      # nearby-console: executes the command by server.
+      # nearby-op: executes the player command as operator. It will bypass that command permission.
+      # nearby-player: executes the player command.
+      # nearby-chat: sends chat message from player.
+      # nearby-message: sends message to player.
+      # nearby-bungee: executes BungeeCord command. (need BungeeCord)
+      # nearby-switch: sends player to another server. (need BungeeCord)
+      Commands:
+        - "log: &e%spawner% spawner &cat %world%(%loc_x%, %loc_y%, %loc_z%) has been &eremoved&f, nearby players: &e%nearbyplayers%"
+        - "nearby-message: &e%spawner% spawner &fat %world%(%loc_x%, %loc_y%, %loc_z%) has been &eremoved&f."
+        - 'console: Say hi! This is a test message.'
+        - 'broadcast: hi! This is another test message.'
 
 MythicMobs-Drop:
   Enable: false
@@ -260,3 +358,4 @@ Message:
   prefix: '&7[&dEntityPlus&7]&r '
   noPermission: '&cYou do not have permission to use that command!'
   configReload: '&aConfiguration(s) Reloaded!'
+  unknownCommand: '&cUnknown command, See &e/entityplus help &cfor a list of commands.'

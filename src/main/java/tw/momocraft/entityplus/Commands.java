@@ -1,18 +1,12 @@
 package tw.momocraft.entityplus;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.PermissionsHandler;
 import tw.momocraft.entityplus.utils.Language;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class Commands implements CommandExecutor {
 
@@ -23,7 +17,8 @@ public class Commands implements CommandExecutor {
             } else {
                 Language.sendLangMessage("Message.noPermission", sender);
             }
-        } else if (args[0].equalsIgnoreCase("reload")) {
+            return true;
+        } else if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
             if (PermissionsHandler.hasPermission(sender, "entityplus.admin")) {
                 // working: close purge.Auto-Clean schedule
                 ConfigHandler.generateData();
@@ -31,7 +26,10 @@ public class Commands implements CommandExecutor {
             } else {
                 Language.sendLangMessage("Message.noPermission", sender);
             }
+            return true;
+        } else {
+            Language.sendLangMessage("Message.unknownCommand", sender);
+            return true;
         }
-        return true;
     }
 }

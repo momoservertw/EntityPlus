@@ -45,15 +45,12 @@ public class MythicMobsLootDrop implements Listener {
         double totalExp = 1;
         double money;
         double exp;
-        String combinedMethod = ConfigHandler.getConfig("config.yml").getString("MythicMobs-Drop.Combined-Method");
-
         if (ConfigHandler.getConfig("config.yml").getBoolean("MythicMobs-Drop.Combined-Enable")) {
-
+            String combinedMethod = ConfigHandler.getConfig("config.yml").getString("MythicMobs-Drop.Combined-Method");
             for (String key : multiList) {
                 if (PermissionsHandler.hasPermission(player, "entityplus.drop.multiplier." + key)) {
                     money = ConfigHandler.getConfig("config.yml").getDouble("MythicMobs-Drop.Multipliers." + key + ".money");
                     exp = ConfigHandler.getConfig("config.yml").getDouble("MythicMobs-Drop.Multipliers." + key + ".exp");
-
                     if (combinedMethod != null && combinedMethod.equals("+")) {
                         money--;
                         exp--;

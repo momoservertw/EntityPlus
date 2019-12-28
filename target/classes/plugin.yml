@@ -1,10 +1,10 @@
 name: EntityPlus
 main: tw.momocraft.entityplus.EntityPlus
 author: Momocraft
-api-version: 1.14
-version: 1.1.1
+api-version: 1.15
+version: 1.1.2
 description: Control entities.
-softdepend: [Vault, MythicMobs, CMI]
+softdepend: [Vault, MythicMobs, CMI, Residence, PlaceHolderAPI]
 
 commands:
   entityplus:
@@ -14,7 +14,7 @@ commands:
       /entityplus
   entityplus reload:
     description: Reloads all EntityPlus configuration files and caches any new data.
-    permission: entityplus.reload
+    permission: entityplus.command.reload
     usage: |
         /entityplus reload
 
@@ -22,23 +22,33 @@ permissions:
   entityplus.*:
     description: Allows use of all commands and feature.
     default: op
-  entityplus.all:
-    description: Allows use of all commands and feature.
-    default: op
     children:
       entityplus.use: true
-      entityplus.reload: true
-      entityplus.bypass.spawnlimit.afk: true
-      entityplus.bypass.purge.afk: true
+      entityplus.command.*: true
+      entityplus.bypass.*: true
   entityplus.use:
     description: Allows use of basic commands.
     default: true
-  entityplus.reload:
-    description: Allows use of /entityplus reload command.
+  entityplus.command.*:
+    description: Allows use all commands.
     default: op
+    children:
+      entityplus.command.reload: true
+  entityplus.command.reload:
+    description: Allows use of /entityplus command reload.
+    default: op
+  entityplus.bypass.*:
+    description: Bypass the spawn amount limit when player is afk.
+    default: op
+    children:
+      entityplus.bypass.spawnlimit.afk: true
+      entityplus.bypass.purge.afk: true
   entityplus.bypass.spawnlimit.afk:
     description: Bypass the spawn amount limit when player is afk.
     default: op
   entityplus.bypass.purge.afk:
+    description: Bypass the purge event when player is afk.
+    default: op
+  entityplus.drop:
     description: Bypass the purge event when player is afk.
     default: op
