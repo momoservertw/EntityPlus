@@ -1,8 +1,8 @@
 # --{ =-=-=-=-=-=-=-=-=-= EntityPlus's Configuration Settings, by Momocraft =-=-=-=-=-=-=-=-=-= }--
-Config-Version: 5
+Config-Version: 6
 Log-Coloration: true
-# It will show why the creature spawn failed or succeeded.
 Debugging: false
+Check-Updates: true
 
 General:
   # Please set the same value from your Spigot.yml. It will change the checking range of monsters.
@@ -359,3 +359,8 @@ Message:
   noPermission: '&cYou do not have permission to use that command!'
   configReload: '&aConfiguration(s) Reloaded!'
   unknownCommand: '&cUnknown command, See &e/entityplus help &cfor a list of commands.'
+  EntityPlus:
+    Commands:
+      title: "&8▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩ &d&lEntityPlus &8▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩"
+      help: "&a/entityplus help &8- &7This help menu."
+      reload: "&a/entityplus reload &8- &7Reloads config file."

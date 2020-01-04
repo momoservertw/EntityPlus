@@ -57,6 +57,60 @@ public class Language {
 		}
 	}
 
+	public static void sendLangMessage(String nodeLocation, CommandSender sender, boolean hasPrefix, String... placeHolder) {
+		if (hasPrefix) {
+			Player player = null;
+			if (sender instanceof Player) {
+				player = (Player) sender;
+			}
+			String langMessage = ConfigHandler.getConfig(langType.nodeLocation()).getString(nodeLocation);
+			String prefix = Utils.translateLayout(ConfigHandler.getConfig(langType.nodeLocation()).getString("Message.prefix"), player);
+			if (prefix == null) {
+				prefix = "";
+			} else {
+				prefix += "";
+			}
+			if (langMessage != null && !langMessage.isEmpty()) {
+				langMessage = translateLangHolders(langMessage, initializeRows(placeHolder));
+				langMessage = Utils.translateLayout(langMessage, player);
+				String[] langLines = langMessage.split(" /n ");
+				for (String langLine : langLines) {
+					String langStrip = prefix + langLine;
+					if (sender instanceof ConsoleCommandSender) {
+						langStrip = Utils.stripLogColors(sender, langStrip);
+					}
+					if (isConsoleMessage(nodeLocation)) {
+						ServerHandler.sendConsoleMessage(Utils.stripLogColors(sender, langLine));
+					} else {
+						sender.sendMessage(langStrip);
+					}
+				}
+			}
+		} else {
+			Player player = null;
+			if (sender instanceof Player) {
+				player = (Player) sender;
+			}
+			String langMessage = ConfigHandler.getConfig(langType.nodeLocation()).getString(nodeLocation);
+			if (langMessage != null && !langMessage.isEmpty()) {
+				langMessage = translateLangHolders(langMessage, initializeRows(placeHolder));
+				langMessage = Utils.translateLayout(langMessage, player);
+				String[] langLines = langMessage.split(" /n ");
+				for (String langLine : langLines) {
+					String langStrip = langLine;
+					if (sender instanceof ConsoleCommandSender) {
+						langStrip = Utils.stripLogColors(sender, langStrip);
+					}
+					if (isConsoleMessage(nodeLocation)) {
+						ServerHandler.sendConsoleMessage(Utils.stripLogColors(sender, langLine));
+					} else {
+						sender.sendMessage(langStrip);
+					}
+				}
+			}
+		}
+	}
+
 	private static String[] initializeRows(String...placeHolder) {
 		if (placeHolder == null || placeHolder.length != newString().length) {
 			String[] langHolder = Language.newString();

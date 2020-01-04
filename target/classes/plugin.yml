@@ -2,8 +2,8 @@ name: EntityPlus
 main: tw.momocraft.entityplus.EntityPlus
 author: Momocraft
 api-version: 1.13
-version: 1.1.4
-description: Control entities.
+version: 1.1.6
+description: Control creatures spawn and spawner. And add more features for MythicMobs and CMI.
 softdepend: [Vault, MythicMobs, CMI, Residence, PlaceHolderAPI]
 
 commands:
@@ -17,6 +17,11 @@ commands:
     permission: entityplus.command.reload
     usage: |
         /entityplus reload
+  entityplus version:
+    description: Check the plugin version.
+    permission: entityplus.command.version
+    usage: |
+      /entityplus version
 
 permissions:
   entityplus.*:
@@ -26,6 +31,7 @@ permissions:
       entityplus.use: true
       entityplus.command.*: true
       entityplus.bypass.*: true
+      entityplus.drop.*: true
   entityplus.use:
     description: Allows use of basic commands.
     default: true
@@ -34,8 +40,12 @@ permissions:
     default: op
     children:
       entityplus.command.reload: true
+      entityplus.command.version: true
   entityplus.command.reload:
     description: Allows use of /entityplus command reload.
+    default: op
+  entityplus.command.version:
+    description: Allows use of command /barrierplus version.
     default: op
   entityplus.bypass.*:
     description: Bypass the spawn amount limit when player is afk.
@@ -49,6 +59,20 @@ permissions:
   entityplus.bypass.purge.afk:
     description: Bypass the purge event when player is afk.
     default: op
-  entityplus.drop:
-    description: Bypass the purge event when player is afk.
+  entityplus.drop.*:
+    description: Get multiple "money" and "exp" after player killing a mob.
+    default: op
+    children:
+      entityplus.drop.*: true
+  entityplus.drop.multiplier.*:
+    description: Get multiple "money" and "exp" after player killing a mob.
+    default: op
+    children:
+      entityplus.drop.multiplier.1: true
+      entityplus.drop.multiplier.2: true
+  entityplus.drop.multiplier.1:
+    description: Get multiple "money" and "exp" after player killing a mob.
+    default: op
+  entityplus.drop.multiplier.2:
+    description: Get multiple "money" and "exp" after player killing a mob.
     default: op

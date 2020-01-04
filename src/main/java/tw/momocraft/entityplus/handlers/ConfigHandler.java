@@ -7,7 +7,6 @@ import tw.momocraft.entityplus.Commands;
 import tw.momocraft.entityplus.EntityPlus;
 import tw.momocraft.entityplus.listeners.*;
 import tw.momocraft.entityplus.utils.DependAPI;
-import tw.momocraft.entityplus.utils.Utils;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -17,11 +16,13 @@ public class ConfigHandler {
 
 	private static YamlConfiguration configYAML;
 	private static DependAPI depends;
+	private static UpdateHandler updater;
 
 	public static void generateData() {
 		configFile();
 		setDepends(new DependAPI());
 		sendUtilityDepends();
+		setUpdater(new UpdateHandler());
 	}
 
 	public static void registerEvents() {
@@ -51,7 +52,7 @@ public class ConfigHandler {
 		return getPath(path, file, false);
 	}
 
-	public static FileConfiguration getConfigData(String path) {
+	private static FileConfiguration getConfigData(String path) {
 		File file = new File(EntityPlus.getInstance().getDataFolder(), path);
 		if (!(file).exists()) {
 			try {
@@ -64,7 +65,7 @@ public class ConfigHandler {
 		return getPath(path, file, true);
 	}
 
-	public static YamlConfiguration getPath(String path, File file, boolean saveData) {
+	private static YamlConfiguration getPath(String path, File file, boolean saveData) {
 		if (path.contains("config.yml")) {
 			if (saveData) {
 				configYAML = YamlConfiguration.loadConfiguration(file);
@@ -74,10 +75,10 @@ public class ConfigHandler {
 		return null;
 	}
 
-	public static void configFile() {
+	private static void configFile() {
 		getConfigData("config.yml");
 		File File = new File(EntityPlus.getInstance().getDataFolder(), "config.yml");
-		if (File.exists() && getConfig("config.yml").getInt("Config-Version") != 5) {
+		if (File.exists() && getConfig("config.yml").getInt("Config-Version") != 6) {
 			if (EntityPlus.getInstance().getResource("config.yml") != null) {
                 LocalDateTime currentDate = LocalDateTime.now();
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm-ss");
@@ -92,7 +93,7 @@ public class ConfigHandler {
                     ServerHandler.sendConsoleMessage("&e*            *            *");
                     ServerHandler.sendConsoleMessage("&e *            *            *");
                     ServerHandler.sendConsoleMessage("&e  *            *            *");
-					ServerHandler.sendConsoleMessage("&cYour config.yml is out of date and new options are available, generating a new one!");
+					ServerHandler.sendConsoleMessage("&cYour config.yml is out of date, generating a new one!");
                     ServerHandler.sendConsoleMessage("&e    *            *            *");
                     ServerHandler.sendConsoleMessage("&e     *            *            *");
                     ServerHandler.sendConsoleMessage("&e      *            *            *");
@@ -103,7 +104,7 @@ public class ConfigHandler {
 	}
 
 	private static void sendUtilityDepends() {
-		ServerHandler.sendConsoleMessage("&fUtilizing [ &e"
+		ServerHandler.sendConsoleMessage("&fHooked [ &e"
 				+ (getDepends().getVault().vaultEnabled() ? "Vault, " : "")
 				+ (getDepends().MythicMobsEnabled() ? "MythicMobs, " : "")
 				+ (getDepends().CMIEnabled() ? "CMI, " : "")
@@ -126,6 +127,14 @@ public class ConfigHandler {
 
 	public static boolean getLoggable() {
 		return ConfigHandler.getConfig("config.yml").getBoolean("Log-Commands");
+	}
+
+	public static UpdateHandler getUpdater() {
+		return updater;
+	}
+
+	private static void setUpdater(UpdateHandler update) {
+		updater = update;
 	}
 
 }

@@ -16,11 +16,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.SpawnerSpawnEvent;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.ServerHandler;
+import tw.momocraft.entityplus.utils.LocationAPI;
 
 import java.util.*;
-
-import static tw.momocraft.entityplus.listeners.CreatureSpawn.getCompare;
-import static tw.momocraft.entityplus.listeners.CreatureSpawn.getRange;
 
 public class SpawnerSpawn implements Listener {
 
@@ -33,24 +31,9 @@ public class SpawnerSpawn implements Listener {
                 if (ConfigHandler.getConfig("config.yml").getBoolean("Spawner.Groups." + group + ".Enable")) {
                     if (ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Worlds").contains(e.getSpawner().getLocation().getWorld().getName())) {
                         if (!ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Allow-List").contains(spawnType)) {
-                            ConfigurationSection worldConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawner.Groups." + group + ".Ignore.Location");
-                            if (worldConfig != null) {
-                                ConfigurationSection xyzList;
-                                back:
-                                for (String world : worldConfig.getKeys(false)) {
-                                    if (getWorld(e, world)) {
-                                        xyzList = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawner.Groups." + group + ".Ignore.Location." + world);
-                                        if (xyzList != null) {
-                                            for (String key : xyzList.getKeys(false)) {
-                                                if (!getXYZ(e, spawnType, key, "Spawner.Groups." + group + ".Ignore.Location." + world + "." + key)) {
-                                                    break back;
-                                                }
-                                            }
-                                            ServerHandler.debugMessage("(SpawnerSpawn) Spawner", spawnType, "Location - " + e.getSpawner().getLocation().toString(), "bypass");
-                                            return;
-                                        }
-                                    }
-                                }
+                            if (!LocationAPI.getLocation(e.getLocation().getBlock(), "Spawner.Groups." + group + ".Ignore.Location")) {
+                                ServerHandler.debugMessage("(SpawnerSpawn) Spawner", spawnType, "Ignore-Location", "return");
+                                return;
                             }
 
                             if (ConfigHandler.getDepends().ResidenceEnabled()) {
@@ -190,213 +173,5 @@ public class SpawnerSpawn implements Listener {
             }
         }
         return String.join(", ", nearbyPlayers);
-    }
-
-    /**
-     * @param e the SpawnerSpawnEvent.
-     * @param world the world name.
-     * @return if the entity spawn world match the input world.
-     */
-    private boolean getWorld(SpawnerSpawnEvent e, String world) {
-        return e.getSpawner().getLocation().getWorld().getName().equalsIgnoreCase(world);
-    }
-
-    /**
-     * @param e the SpawnerSpawnEvent.
-     * @param entityType the spawn entity type.
-     * @param key the checking name of "x, y, z" in for loop.
-     * @param path the of "x, y, z" in config.yml. It contains operator, range and value..
-     * @return if the entity spawn in key's (x, y, z) location range.
-     */
-    private boolean getXYZ(SpawnerSpawnEvent e, String entityType, String key, String path) {
-        String keyConfig = ConfigHandler.getConfig("config.yml").getString(path);
-        if (keyConfig != null) {
-            String[] keyValue = keyConfig.split("\\s+");
-            int xyzArgs = keyValue.length;
-            if (!CreatureSpawn.getXYZFormat(key, xyzArgs, keyValue)) {
-                ServerHandler.sendConsoleMessage("&cThere is an error while spawning a &e\"" + entityType + "\"&c. Please check you spawn location format.");
-                return true;
-            }
-            if (xyzArgs == 1) {
-                if (key.equalsIgnoreCase("X")) {
-                    return getRange(e.getSpawner().getLocation().getBlockX(), Integer.valueOf(keyValue[0]));
-                } else if (key.equalsIgnoreCase("Y")) {
-                    return getRange(e.getSpawner().getLocation().getBlockY(), Integer.valueOf(keyValue[0]));
-                } else if (key.equalsIgnoreCase("Z")) {
-                    return getRange(e.getSpawner().getLocation().getBlockZ(), Integer.valueOf(keyValue[0]));
-                } else if (key.equalsIgnoreCase("!X")) {
-                    return !getRange(e.getSpawner().getLocation().getBlockX(), Integer.valueOf(keyValue[0]));
-                } else if (key.equalsIgnoreCase("!Y")) {
-                    return !getRange(e.getSpawner().getLocation().getBlockY(), Integer.valueOf(keyValue[0]));
-                } else if (key.equalsIgnoreCase("!Z")) {
-                    return !getRange(e.getSpawner().getLocation().getBlockZ(), Integer.valueOf(keyValue[0]));
-                } else if (key.equalsIgnoreCase("XYZ")) {
-                    return getRange(e.getSpawner().getLocation().getBlockX(), Integer.valueOf(keyValue[0])) &&
-                            getRange(e.getSpawner().getLocation().getBlockY(), Integer.valueOf(keyValue[0])) &&
-                            getRange(e.getSpawner().getLocation().getBlockZ(), Integer.valueOf(keyValue[0]));
-                } else if (key.equalsIgnoreCase("!XYZ")) {
-                    return !getRange(e.getSpawner().getLocation().getBlockX(), Integer.valueOf(keyValue[0])) &&
-                            !getRange(e.getSpawner().getLocation().getBlockY(), Integer.valueOf(keyValue[0])) &&
-                            !getRange(e.getSpawner().getLocation().getBlockZ(), Integer.valueOf(keyValue[0]));
-                } else if (key.equalsIgnoreCase("XY")) {
-                    return getRange(e.getSpawner().getLocation().getBlockX(), Integer.valueOf(keyValue[0])) &&
-                            getRange(e.getSpawner().getLocation().getBlockY(), Integer.valueOf(keyValue[0]));
-                } else if (key.equalsIgnoreCase("YZ")) {
-                    return getRange(e.getSpawner().getLocation().getBlockY(), Integer.valueOf(keyValue[0])) &&
-                            getRange(e.getSpawner().getLocation().getBlockZ(), Integer.valueOf(keyValue[0]));
-                } else if (key.equalsIgnoreCase("XZ")) {
-                    return getRange(e.getSpawner().getLocation().getBlockX(), Integer.valueOf(keyValue[0])) &&
-                            getRange(e.getSpawner().getLocation().getBlockZ(), Integer.valueOf(keyValue[0]));
-                } else if (key.equalsIgnoreCase("!XY")) {
-                    return !getRange(e.getSpawner().getLocation().getBlockX(), Integer.valueOf(keyValue[0])) &&
-                            !getRange(e.getSpawner().getLocation().getBlockY(), Integer.valueOf(keyValue[0]));
-                } else if (key.equalsIgnoreCase("!YZ")) {
-                    return !getRange(e.getSpawner().getLocation().getBlockY(), Integer.valueOf(keyValue[0])) &&
-                            !getRange(e.getSpawner().getLocation().getBlockZ(), Integer.valueOf(keyValue[0]));
-                } else if (key.equalsIgnoreCase("!XZ")) {
-                    return !getRange(e.getSpawner().getLocation().getBlockX(), Integer.valueOf(keyValue[0])) &&
-                            !getRange(e.getSpawner().getLocation().getBlockZ(), Integer.valueOf(keyValue[0]));
-                } else if (key.equalsIgnoreCase("R")) {
-                    return getRadius(e, Integer.valueOf(keyValue[0]));
-                } else if (key.equalsIgnoreCase("!R")) {
-                    return !getRadius(e, Integer.valueOf(keyValue[0]));
-                }
-            } else if (xyzArgs == 2) {
-                if (key.equalsIgnoreCase("X")) {
-                    return getCompare(e.getSpawner().getLocation().getBlockX(), keyValue[0], Integer.valueOf(keyValue[1]));
-                } else if (key.equalsIgnoreCase("Y")) {
-                    return getCompare(e.getSpawner().getLocation().getBlockY(), keyValue[0], Integer.valueOf(keyValue[1]));
-                } else if (key.equalsIgnoreCase("Z")) {
-                    return getCompare(e.getSpawner().getLocation().getBlockZ(), keyValue[0], Integer.valueOf(keyValue[1]));
-                } else if (key.equalsIgnoreCase("!X")) {
-                    return !getCompare(e.getSpawner().getLocation().getBlockX(), keyValue[0], Integer.valueOf(keyValue[1]));
-                } else if (key.equalsIgnoreCase("!Y")) {
-                    return !getCompare(e.getSpawner().getLocation().getBlockY(), keyValue[0], Integer.valueOf(keyValue[1]));
-                } else if (key.equalsIgnoreCase("!Z")) {
-                    return !getCompare(e.getSpawner().getLocation().getBlockZ(), keyValue[0], Integer.valueOf(keyValue[1]));
-                } else if (key.equalsIgnoreCase("XYZ")) {
-                    return getCompare(e.getSpawner().getLocation().getBlockX(), keyValue[0], Integer.valueOf(keyValue[1])) &&
-                            getCompare(e.getSpawner().getLocation().getBlockY(), keyValue[0], Integer.valueOf(keyValue[1])) &&
-                            getCompare(e.getSpawner().getLocation().getBlockZ(), keyValue[0], Integer.valueOf(keyValue[1]));
-                } else if (key.equalsIgnoreCase("!XYZ")) {
-                    return !getCompare(e.getSpawner().getLocation().getBlockX(), keyValue[0], Integer.valueOf(keyValue[1])) &&
-                            !getCompare(e.getSpawner().getLocation().getBlockY(), keyValue[0], Integer.valueOf(keyValue[1])) &&
-                            !getCompare(e.getSpawner().getLocation().getBlockZ(), keyValue[0], Integer.valueOf(keyValue[1]));
-                } else if (key.equalsIgnoreCase("XY")) {
-                    return getCompare(e.getSpawner().getLocation().getBlockX(), keyValue[0], Integer.valueOf(keyValue[1])) &&
-                            getCompare(e.getSpawner().getLocation().getBlockY(), keyValue[0], Integer.valueOf(keyValue[1]));
-                } else if (key.equalsIgnoreCase("YZ")) {
-                    return getCompare(e.getSpawner().getLocation().getBlockY(), keyValue[0], Integer.valueOf(keyValue[1])) &&
-                            getCompare(e.getSpawner().getLocation().getBlockZ(), keyValue[0], Integer.valueOf(keyValue[1]));
-                } else if (key.equalsIgnoreCase("XZ")) {
-                    return getCompare(e.getSpawner().getLocation().getBlockX(), keyValue[0], Integer.valueOf(keyValue[1])) &&
-                            getCompare(e.getSpawner().getLocation().getBlockZ(), keyValue[0], Integer.valueOf(keyValue[1]));
-                } else if (key.equalsIgnoreCase("!XY")) {
-                    return !getCompare(e.getSpawner().getLocation().getBlockX(), keyValue[0], Integer.valueOf(keyValue[1])) &&
-                            !getCompare(e.getSpawner().getLocation().getBlockY(), keyValue[0], Integer.valueOf(keyValue[1]));
-                } else if (key.equalsIgnoreCase("!YZ")) {
-                    return !getCompare(e.getSpawner().getLocation().getBlockY(), keyValue[0], Integer.valueOf(keyValue[1])) &&
-                            !getCompare(e.getSpawner().getLocation().getBlockZ(), keyValue[0], Integer.valueOf(keyValue[1]));
-                } else if (key.equalsIgnoreCase("!XZ")) {
-                    return !getCompare(e.getSpawner().getLocation().getBlockX(), keyValue[0], Integer.valueOf(keyValue[1])) &&
-                            !getCompare(e.getSpawner().getLocation().getBlockZ(), keyValue[0], Integer.valueOf(keyValue[1]));
-                }
-            } else if (xyzArgs == 3) {
-                if (key.equalsIgnoreCase("X")) {
-                    return getRange(e.getSpawner().getLocation().getBlockX(), Integer.valueOf(keyValue[0]), Integer.valueOf(keyValue[2]));
-                } else if (key.equalsIgnoreCase("Y")) {
-                    return getRange(e.getSpawner().getLocation().getBlockY(), Integer.valueOf(keyValue[0]), Integer.valueOf(keyValue[2]));
-                } else if (key.equalsIgnoreCase("Z")) {
-                    return getRange(e.getSpawner().getLocation().getBlockZ(), Integer.valueOf(keyValue[0]), Integer.valueOf(keyValue[2]));
-                } else if (key.equalsIgnoreCase("!X")) {
-                    return !getRange(e.getSpawner().getLocation().getBlockX(), Integer.valueOf(keyValue[0]), Integer.valueOf(keyValue[2]));
-                } else if (key.equalsIgnoreCase("!Y")) {
-                    return !getRange(e.getSpawner().getLocation().getBlockY(), Integer.valueOf(keyValue[0]), Integer.valueOf(keyValue[2]));
-                } else if (key.equalsIgnoreCase("!Z")) {
-                    return !getRange(e.getSpawner().getLocation().getBlockZ(), Integer.valueOf(keyValue[0]), Integer.valueOf(keyValue[2]));
-                } else if (key.equalsIgnoreCase("XYZ")) {
-                    return getRange(e.getSpawner().getLocation().getBlockX(), Integer.valueOf(keyValue[0]), Integer.valueOf(keyValue[2])) &&
-                            getRange(e.getSpawner().getLocation().getBlockY(), Integer.valueOf(keyValue[0]), Integer.valueOf(keyValue[2])) &&
-                            getRange(e.getSpawner().getLocation().getBlockZ(), Integer.valueOf(keyValue[0]), Integer.valueOf(keyValue[2]));
-                } else if (key.equalsIgnoreCase("!XYZ")) {
-                    return !getRange(e.getSpawner().getLocation().getBlockX(), Integer.valueOf(keyValue[0]), Integer.valueOf(keyValue[2])) &&
-                            !getRange(e.getSpawner().getLocation().getBlockY(), Integer.valueOf(keyValue[0]), Integer.valueOf(keyValue[2])) &&
-                            !getRange(e.getSpawner().getLocation().getBlockZ(), Integer.valueOf(keyValue[0]), Integer.valueOf(keyValue[2]));
-                } else if (key.equalsIgnoreCase("XY")) {
-                    return getRange(e.getSpawner().getLocation().getBlockX(), Integer.valueOf(keyValue[0]), Integer.valueOf(keyValue[2])) &&
-                            getRange(e.getSpawner().getLocation().getBlockY(), Integer.valueOf(keyValue[0]), Integer.valueOf(keyValue[2]));
-                } else if (key.equalsIgnoreCase("YZ")) {
-                    return getRange(e.getSpawner().getLocation().getBlockY(), Integer.valueOf(keyValue[0]), Integer.valueOf(keyValue[2])) &&
-                            getRange(e.getSpawner().getLocation().getBlockZ(), Integer.valueOf(keyValue[0]), Integer.valueOf(keyValue[2]));
-                } else if (key.equalsIgnoreCase("XZ")) {
-                    return getRange(e.getSpawner().getLocation().getBlockX(), Integer.valueOf(keyValue[0]), Integer.valueOf(keyValue[2])) &&
-                            getRange(e.getSpawner().getLocation().getBlockZ(), Integer.valueOf(keyValue[0]), Integer.valueOf(keyValue[2]));
-                } else if (key.equalsIgnoreCase("!XY")) {
-                    return !getRange(e.getSpawner().getLocation().getBlockX(), Integer.valueOf(keyValue[0]), Integer.valueOf(keyValue[2])) &&
-                            !getRange(e.getSpawner().getLocation().getBlockY(), Integer.valueOf(keyValue[0]), Integer.valueOf(keyValue[2]));
-                } else if (key.equalsIgnoreCase("!YZ")) {
-                    return !getRange(e.getSpawner().getLocation().getBlockY(), Integer.valueOf(keyValue[0]), Integer.valueOf(keyValue[2])) &&
-                            !getRange(e.getSpawner().getLocation().getBlockZ(), Integer.valueOf(keyValue[0]), Integer.valueOf(keyValue[2]));
-                } else if (key.equalsIgnoreCase("!XZ")) {
-                    return !getRange(e.getSpawner().getLocation().getBlockX(), Integer.valueOf(keyValue[0]), Integer.valueOf(keyValue[2])) &&
-                            !getRange(e.getSpawner().getLocation().getBlockZ(), Integer.valueOf(keyValue[0]), Integer.valueOf(keyValue[2]));
-                } else if (key.equalsIgnoreCase("R")) {
-                    return getRadius(e, Integer.valueOf(keyValue[0]), Integer.valueOf(keyValue[1]), Integer.valueOf(keyValue[2]));
-                } else if (key.equalsIgnoreCase("!R")) {
-                    return !getRadius(e, Integer.valueOf(keyValue[0]), Integer.valueOf(keyValue[1]), Integer.valueOf(keyValue[2]));
-                }
-            } else if (xyzArgs == 4) {
-                if (key.equalsIgnoreCase("R")) {
-                    return getRadius(e, Integer.valueOf(keyValue[0]), Integer.valueOf(keyValue[1]), Integer.valueOf(keyValue[2]), Integer.valueOf(keyValue[3]));
-                } else if (key.equalsIgnoreCase("!R")) {
-                    return !getRadius(e, Integer.valueOf(keyValue[0]), Integer.valueOf(keyValue[1]), Integer.valueOf(keyValue[2]), Integer.valueOf(keyValue[3]));
-                }
-            }
-            return true;
-        } else {
-            return true;
-        }
-    }
-
-    /**
-     * @param e CreatureSpawnEvent
-     * @param r the checking radius.
-     * @param x the start checking X.
-     * @param y the start checking Y.
-     * @param z the start checking Z
-     * @return if the entity spawn in stereoscopic radius.
-     */
-    private boolean getRadius(SpawnerSpawnEvent e, int r, int x, int y, int z) {
-        x = Math.abs(e.getSpawner().getLocation().getBlockX() - x);
-        y = Math.abs(e.getSpawner().getLocation().getBlockY() - y);
-        z = Math.abs(e.getSpawner().getLocation().getBlockZ() - z);
-
-        return r > Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
-    }
-
-    /**
-     * @param e CreatureSpawnEvent
-     * @param r the checking radius.
-     * @param x the start checking X.
-     * @param z the start checking Z
-     * @return if the entity spawn in flat radius.
-     */
-    private boolean getRadius(SpawnerSpawnEvent e, int r, int x, int z) {
-        x = Math.abs(e.getSpawner().getLocation().getBlockX() - x);
-        z = Math.abs(e.getSpawner().getLocation().getBlockZ() - z);
-
-        return r > Math.sqrt(Math.pow(x, 2) + Math.pow(z, 2));
-    }
-
-    /**
-     * @param e CreatureSpawnEvent
-     * @param r the checking radius.
-     * @return if the entity spawn in flat radius.
-     */
-    private boolean getRadius(SpawnerSpawnEvent e, int r) {
-        int x = Math.abs(e.getSpawner().getLocation().getBlockX());
-        int z = Math.abs(e.getSpawner().getLocation().getBlockZ());
-
-        return r > Math.sqrt(Math.pow(x, 2) + Math.pow(z, 2));
     }
 }
