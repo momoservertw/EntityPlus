@@ -1,5 +1,5 @@
 # EntityPlus
-##  Minecraft plugin
+##  Minecraft server plugin
 ***Control creatures spawn and spawner. And add more features for MythicMobs and CMI.***
 
 ![](https://i.imgur.com/0aHKvBT.png)
