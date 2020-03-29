@@ -4,6 +4,7 @@ import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 import com.bekvon.bukkit.residence.protection.ResidencePermissions;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
@@ -31,7 +32,7 @@ public class SpawnerSpawn implements Listener {
                 if (ConfigHandler.getConfig("config.yml").getBoolean("Spawner.Groups." + group + ".Enable")) {
                     if (ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Worlds").contains(e.getSpawner().getLocation().getWorld().getName())) {
                         if (!ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Allow-List").contains(spawnType)) {
-                            if (!LocationAPI.getLocation(e.getLocation().getBlock(), "Spawner.Groups." + group + ".Ignore.Location")) {
+                            if (!LocationAPI.getLocation(e.getEntity().getLocation(), "Spawner.Groups." + group + ".Ignore.Location")) {
                                 ServerHandler.debugMessage("(SpawnerSpawn) Spawner", spawnType, "Ignore-Location", "return");
                                 return;
                             }

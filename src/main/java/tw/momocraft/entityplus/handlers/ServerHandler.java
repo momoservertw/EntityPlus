@@ -76,6 +76,10 @@ public class ServerHandler {
                 ServerHandler.sendDebugMessage("&8" + feature + " - &f" + target + "&8 : &7" + check + "&8, " + "&c" + action + "&8, " + detail);
             } else if (action.equals("change")) {
                 ServerHandler.sendDebugMessage("&8" + feature + " - &f" + target + "&8 : &7" + check + "&8, " + "&e" + action + "&8, " + detail);
+            } else if (action.equals("kill")) {
+                ServerHandler.sendDebugMessage("&8" + feature + " - &f" + target + "&8 : &7" + check + "&8, " + "&c" + action + "&8, " + detail);
+            } else if (action.equals("damage")) {
+                ServerHandler.sendDebugMessage("&8" + feature + " - &f" + target + "&8 : &7" + check + "&8, " + "&c" + action + "&8, " + detail);
             }
         }
     }
@@ -94,6 +98,10 @@ public class ServerHandler {
                 ServerHandler.sendDebugMessage("&8" + feature + " - &f" + target + "&8 : &7" + check + "&8, " + "&c" + action);
             } else if (action.equals("change")) {
                 ServerHandler.sendDebugMessage("&8" + feature + " - &f" + target + "&8 : &7" + check + "&8, " + "&e" + action);
+            } else if (action.equals("kill")) {
+                ServerHandler.sendDebugMessage("&8" + feature + " - &f" + target + "&8 : &7" + check + "&8, " + "&c" + action);
+            } else if (action.equals("damage")) {
+                ServerHandler.sendDebugMessage("&8" + feature + " - &f" + target + "&8 : &7" + check + "&8, " + "&c" + action);
             }
         }
     }
@@ -191,9 +199,9 @@ public class ServerHandler {
         if (player != null) {
             try {
                 if (placeholder) {
-                    player.chat("/" + Utils.translateLayout(command, player));
+                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), Utils.translateLayout(command, player));
                 } else {
-                    player.chat("/" + command);
+                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
                 }
                 Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), Utils.translateLayout(command, player));
             } catch (Exception e) {

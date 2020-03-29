@@ -8,6 +8,7 @@ import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobSpawnEvent;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
+import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,12 +25,13 @@ public class MythicMobsSpawn implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onMythicMobsSpawn(MythicMobSpawnEvent e) {
+        Entity en = e.getEntity();
         String entityType = e.getMobType().getInternalName();
-
+        Location loc = en.getLocation();
         // Check: Spawn-Limit.AFK
         // If all players in the range is AFK, it will cancel the spawn event.
         if (!getLimitAFK(e, entityType)) {
-            ServerHandler.debugMessage("(CreatureSpawn) Spawn-List", entityType, "AFK", "cancel");
+            ServerHandler.debugMessage("(MythicMobSpawn) Spawn-List", entityType, "AFK", "cancel");
             e.setCancelled();
             return;
         }
@@ -37,58 +39,68 @@ public class MythicMobsSpawn implements Listener {
         // Check: Spawn-Limit.Range
         // If the creature spawn location has reach the maximum creature amount, it will cancel the spawn event.
         if (!getLimit(e, entityType)) {
-            ServerHandler.debugMessage("(CreatureSpawn) Spawn-List", entityType, "Amount", "cancel");
+            ServerHandler.debugMessage("(MythicMobSpawn) Spawn-List", entityType, "Amount", "cancel");
             e.setCancelled();
             return;
         }
 
         if (ConfigHandler.getConfig("config.yml").getBoolean("Spawn.Enable")) {
             // Check: Spawn
-            // If the path of "Spawn" equal null, it will stop checking.
+            // If the path of "Spawn" equal null.
             ConfigurationSection creatureConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn.List");
             if (creatureConfig == null) {
-                ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "entityConfig = null", "return");
+                ServerHandler.debugMessage("(MythicMobSpawn) Spawn", entityType, "entityConfig = null", "return");
                 return;
             }
 
             List<String> creatureList = new ArrayList<>(creatureConfig.getKeys(false));
-            // If the creature isn't in the list, it will stop checking.
+            // If the creature isn't in the list.
             if (!creatureList.contains(entityType)) {
-                ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "entityList not contains", "return");
-                return;
+                if (!ConfigHandler.getCustomGroups(entityType, "Entities")) {
+                    ServerHandler.debugMessage("(MythicMobSpawn) Spawn", entityType, "entityList not contains", "return");
+                    return;
+                }
             }
 
             // If that creature isn't have groups.
             if (ConfigHandler.getConfig("config.yml").getString("Spawn.List." + entityType + ".Chance") != null) {
-                // If the creature's spawn "change" is success, it will stop checking.
-                if (!getChance("Spawn.List." + entityType + ".Chance")) {
-                    ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!Chance", "return");
+                // If the creature's spawn "change" is success.
+                if (!CreatureSpawn.getChance("Spawn.List." + entityType + ".Chance")) {
+                    ServerHandler.debugMessage("(MythicMobSpawn) Spawn", entityType, "!Chance", "return");
                     return;
                 }
 
-                // If the creature's spawn "biome" isn't match, it will stop checking.
-                if (!getBiome(e, "Spawn." + entityType + ".Biome")) {
-                    ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!Biome", "return");
+                // If the creature's spawn "biome" isn't match.
+                if (!CreatureSpawn.getBiome(loc, "Spawn." + entityType + ".Biome")) {
+                    ServerHandler.debugMessage("(MythicMobSpawn) Spawn", entityType, "!Biome", "return");
                     return;
                 }
 
-                // If the creature's spawn "water" isn't match, it will stop checking.
-                if (!getWater(e, "Spawn." + entityType + ".Water")) {
-                    ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!Water", "return");
+                // If the creature's spawn "water" isn't match.
+                if (!CreatureSpawn.getWater(loc, "Spawn." + entityType + ".Water")) {
+                    ServerHandler.debugMessage("(MythicMobSpawn) Spawn", entityType, "!Water", "return");
                     return;
                 }
 
-                // If the creature's spawn "day" isn't match, it will stop checking.
-                if (!getDay(e, "Spawn." + entityType + ".Day")) {
-                    ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!Day", "return");
+                // If the creature's spawn "day" isn't match.
+                if (!CreatureSpawn.getDay(loc, "Spawn." + entityType + ".Day")) {
+                    ServerHandler.debugMessage("(MythicMobSpawn) Spawn", entityType, "!Day", "return");
                     return;
                 }
 
-                if (!LocationAPI.getLocation(e.getLocation().getBlock(), "Spawn.List." + entityType + ".Worlds")) {
-                    ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!Location", "return");
+                // If the creature's spawn "location" isn't match.
+                if (!LocationAPI.getLocation(loc, "Spawn.List." + entityType + ".Location")) {
+                    ServerHandler.debugMessage("(MythicMobSpawn) Spawn", entityType, "!Location", "return");
                     return;
                 }
-                ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "Final", "cancel");
+
+                // If the creature's spawn isn't near certain "blocks".
+                if (!LocationAPI.getBlocks(loc, "Spawn.List." + entityType + "Blocks")) {
+                    ServerHandler.debugMessage("(MythicMobSpawn) Spawn", entityType, "!Blocks", "return");
+                    return;
+                }
+
+                ServerHandler.debugMessage("(MythicMobSpawn) Spawn", entityType, "Final", "cancel");
                 e.setCancelled();
             } else {
                 Set<String> groups = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn.List." + entityType).getKeys(false);
@@ -96,51 +108,61 @@ public class MythicMobsSpawn implements Listener {
                 String group;
                 while (iterator.hasNext()) {
                     group = iterator.next();
-                    if (!getChance("Spawn.List." + entityType + "." + group + ".Chance")) {
+                    if (!CreatureSpawn.getChance("Spawn.List." + entityType + "." + group + ".Chance")) {
                         if (!iterator.hasNext()) {
-                            ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!Chance", "return");
+                            ServerHandler.debugMessage("(MythicMobSpawn) Spawn", entityType, "!Chance", "return");
                             return;
                         }
-                        ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!Chance", "continue", "check another group");
+                        ServerHandler.debugMessage("(MythicMobSpawn) Spawn", entityType, "!Chance", "continue", "check another group");
                         continue;
                     }
 
-                    if (!getBiome(e, "Spawn." + entityType + "." + group + ".Biome")) {
+                    if (!CreatureSpawn.getBiome(loc, "Spawn." + entityType + "." + group + ".Biome")) {
                         if (!iterator.hasNext()) {
-                            ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!Biome", "return");
+                            ServerHandler.debugMessage("(MythicMobSpawn) Spawn", entityType, "!Biome", "return");
                             return;
                         }
-                        ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!Biome", "continue", "check another group");
+                        ServerHandler.debugMessage("(MythicMobSpawn) Spawn", entityType, "!Biome", "continue", "check another group");
                         continue;
                     }
 
-                    if (!getWater(e, "Spawn." + entityType + "." + group + ".Water")) {
+                    if (!CreatureSpawn.getWater(loc, "Spawn." + entityType + "." + group + ".Water")) {
                         if (!iterator.hasNext()) {
-                            ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!Water", "return", "Water");
+                            ServerHandler.debugMessage("(MythicMobSpawn) Spawn", entityType, "!Water", "return", "Water");
                             return;
                         }
-                        ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!Water", "continue", "check another group");
+                        ServerHandler.debugMessage("(MythicMobSpawn) Spawn", entityType, "!Water", "continue", "check another group");
                         continue;
                     }
 
-                    if (!getDay(e, "Spawn." + entityType + "." + group + ".Day")) {
+                    if (!CreatureSpawn.getDay(loc, "Spawn." + entityType + "." + group + ".Day")) {
                         if (!iterator.hasNext()) {
-                            ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!Day", "return");
+                            ServerHandler.debugMessage("(MythicMobSpawn) Spawn", entityType, "!Day", "return");
                             return;
                         }
-                        ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!Day", "continue", "check another group");
+                        ServerHandler.debugMessage("(MythicMobSpawn) Spawn", entityType, "!Day", "continue", "check another group");
                         continue;
                     }
 
-                    if (!LocationAPI.getLocation(e.getLocation().getBlock(), "Spawn.List." + entityType + "." + group + ".Worlds")) {
+                    if (!LocationAPI.getLocation(loc, "Spawn.List." + entityType + "." + group + ".Location")) {
                         if (!iterator.hasNext()) {
-                            ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!Location", "return");
+                            ServerHandler.debugMessage("(MythicMobSpawn) Spawn", entityType, "!Location", "return");
                             return;
                         }
-                        ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!Location", "continue", "check another group");
+                        ServerHandler.debugMessage("(MythicMobSpawn) Spawn", entityType, "!Location", "continue", "check another group");
                         continue;
                     }
-                    ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "Final", "cancel");
+
+                    if (!LocationAPI.getBlocks(loc, "Spawn.List." + entityType + "." + group + "Blocks")) {
+                        if (!iterator.hasNext()) {
+                            ServerHandler.debugMessage("(MythicMobSpawn) Spawn", entityType, "!Blocks", "return");
+                            return;
+                        }
+                        ServerHandler.debugMessage("(MythicMobSpawn) Spawn", entityType, "!Blocks", "continue", "check another group");
+                        continue;
+                    }
+
+                    ServerHandler.debugMessage("(MythicMobSpawn) Spawn", entityType, "Final", "cancel");
                     e.setCancelled();
                     return;
                 }
@@ -148,9 +170,8 @@ public class MythicMobsSpawn implements Listener {
         }
     }
 
-
     /**
-     * @param e MythicMobSpawnEvent.
+     * @param e CreatureSpawnEvent.
      * @return if spawn location reach the maximum entity amount.
      */
     private boolean getLimit(MythicMobSpawnEvent e, String entityType) {
@@ -161,7 +182,7 @@ public class MythicMobsSpawn implements Listener {
                         ClaimedResidence res = Residence.getInstance().getResidenceManager().getByLoc(e.getEntity().getLocation());
                         if (res != null) {
                             if (res.getPermissions().has("spawnlimitbypass", false)) {
-                                ServerHandler.debugMessage("(CreatureSpawn) Spawn-Limit", entityType, "ignore residence", "return", "residence has flag \"spawnlimitbypass\"");
+                                ServerHandler.debugMessage("(MythicMobSpawn) Spawn-Limit", entityType, "ignore residence", "return", "residence has flag \"spawnlimitbypass\"");
                                 return true;
                             }
                         }
@@ -200,11 +221,11 @@ public class MythicMobsSpawn implements Listener {
                     if (limitRangeChance != 0) {
                         double random = new Random().nextDouble();
                         if (limitRangeChance < random) {
-                            ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!getLimit - Chance", "cancel");
+                            ServerHandler.debugMessage("(MythicMobSpawn) Spawn", entityType, "!getLimit - Chance", "cancel");
                             return false;
                         }
                     } else {
-                        ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!getLimit - Chance = 0", "cancel");
+                        ServerHandler.debugMessage("(MythicMobSpawn) Spawn", entityType, "!getLimit - Chance = 0", "cancel");
                         return false;
                     }
                 }
@@ -214,7 +235,7 @@ public class MythicMobsSpawn implements Listener {
     }
 
     /**
-     * @param e MythicMobSpawnEvent.
+     * @param e CreatureSpawnEvent.
      * @return if all player in the range is AFK, it will return true.
      */
     private boolean getLimitAFK(MythicMobSpawnEvent e, String entityType) {
@@ -226,7 +247,7 @@ public class MythicMobsSpawn implements Listener {
                             ClaimedResidence res = Residence.getInstance().getResidenceManager().getByLoc(e.getEntity().getLocation());
                             if (res != null) {
                                 if (res.getPermissions().has("spawnlimitbypass", false)) {
-                                    ServerHandler.debugMessage("(CreatureSpawn) Spawn-Limit", entityType, "ignore residence", "return", "residence has flag \"spawnlimitbypass\"");
+                                    ServerHandler.debugMessage("(MythicMobSpawn) Spawn-Limit", entityType, "ignore residence", "return", "residence has flag \"spawnlimitbypass\"");
                                     return true;
                                 }
                             }
@@ -249,7 +270,7 @@ public class MythicMobsSpawn implements Listener {
                         if (ConfigHandler.getConfig("config.yml").getDouble("Spawn-Limit.AFK.Max-Amount") != -1) {
                             double limitRangeAmount = ConfigHandler.getConfig("config.yml").getDouble("Spawn-Limit.Range.Max-Amount");
                             if (nearbyEntities.size() >= limitRangeAmount) {
-                                ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!getLimitAFK - Max Amount", "cancel");
+                                ServerHandler.debugMessage("(MythicMobSpawn) Spawn", entityType, "!getLimitAFK - Max Amount", "cancel");
                                 return false;
                             }
                         }
@@ -257,69 +278,16 @@ public class MythicMobsSpawn implements Listener {
                         if (limitAFKChance != 0) {
                             double random = new Random().nextDouble();
                             if (limitAFKChance < random) {
-                                ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!getLimitAFK - Chance", "cancel");
+                                ServerHandler.debugMessage("(MythicMobSpawn) Spawn", entityType, "!getLimitAFK - Chance", "cancel");
                                 return false;
                             }
                         } else {
-                            ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!getLimitAFK - Chance = 0", "cancel");
+                            ServerHandler.debugMessage("(MythicMobSpawn) Spawn", entityType, "!getLimitAFK - Chance = 0", "cancel");
                             return false;
                         }
                     }
                 }
             }
-        }
-        return true;
-    }
-
-    /**
-     * @param path the path of spawn chance in config.yml
-     * @return if the entity will spawn or not.
-     */
-    static boolean getChance(String path) {
-        String chance = ConfigHandler.getConfig("config.yml").getString(path);
-        if (chance != null) {
-            double random = new Random().nextDouble();
-            return Double.parseDouble(chance) < random;
-        }
-        return true;
-    }
-
-    /**
-     * @param e    the MythicMobSpawnEvent.
-     * @param path the path of spawn biome in config.yml.
-     * @return if the entity spawn biome match the config setting.
-     */
-    private boolean getBiome(MythicMobSpawnEvent e, String path) {
-        String biome = ConfigHandler.getConfig("config.yml").getString(path);
-        if (biome != null) {
-            return e.getEntity().getLocation().getBlock().getBiome().name().equalsIgnoreCase(biome);
-        }
-        return true;
-    }
-
-    /**
-     * @param e    the MythicMobSpawnEvent.
-     * @param path the path of water value in config.yml.
-     * @return if the entity spawned in water and match the config setting.
-     */
-    private boolean getWater(MythicMobSpawnEvent e, String path) {
-        String water = ConfigHandler.getConfig("config.yml").getString(path);
-        if (water != null) {
-            return water.equals(String.valueOf(e.getEntity().getLocation().getBlock().getType() == Material.WATER));
-        }
-        return true;
-    }
-
-    /**
-     * @param e    the MythicMobSpawnEvent.
-     * @param path the path of spawn day in config.yml.
-     * @return if the entity spawn day match the config setting.
-     */
-    private boolean getDay(MythicMobSpawnEvent e, String path) {
-        String day = ConfigHandler.getConfig("config.yml").getString(path);
-        if (day != null) {
-            double time = e.getEntity().getLocation().getWorld().getTime();
-            return time < 12300 || time > 23850;
         }
         return true;
     }

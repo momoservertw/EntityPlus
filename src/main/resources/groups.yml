@@ -1,0 +1,147 @@
+# --{ =-=-=-=-=-=-=-=-=-= EntityPlus's Custom Groups Settings, by Momocraft =-=-=-=-=-=-=-=-=-= }--
+Groups-Version: 1
+Location:
+  NormalWorlds:
+    world:
+      X: 1000
+      Y: ">= 80"
+      Z: "-1000 ~ 1000"
+    world2: []
+    world3: []
+Blocks:
+  WitherRose:
+    WITHER_ROSE:
+      Offset: 0
+MythicMobs:
+  MythicMobs-Example:
+    - SkeletonKing
+    - SkeletalKnight
+Items:
+  Item-Machines:
+    - WATER
+    - STONE_PRESSURE_PLATE
+    - OAK_PRESSURE_PLATE
+    - BIRCH_PRESSURE_PLATE
+    - SPRUCE_PRESSURE_PLATE
+    - ACACIA_PRESSURE_PLATE
+    - JUNGLE_PRESSURE_PLATE
+    - DARK_OAK_PRESSURE_PLATE
+    - STRING
+Entities:
+  Monsters:
+    - BLAZE
+    - CAVE_SPIDER
+    - CREEPER
+    - DROWNED
+    - ELDER_GUARDIAN
+    - ENDERMAN
+    - ENDERMITE
+    - EVOKER
+    - GIANT
+    - GUARDIAN
+    - HUSK
+    - ILLUSIONER
+    - MAGMA_CUBE
+    - PHANTOM
+    - PIG_ZOMBIE
+    - PILLAGER
+    - RAVAGER
+    - SILVERFISH
+    - SLIME
+    - SKELETON
+    - SPIDER
+    - STRAY
+    - VEX
+    - VINDICATOR
+    - WITCH
+    - WITHER
+    - WITHER_SKELETON
+    - ZOMBIE
+    - ZOMBIE_VILLAGER
+  NormalMobs:
+    - BLAZE
+    - CAVE_SPIDER
+    - CREEPER
+    - DROWNED
+    - ENDERMAN
+    - HUSK
+    - MAGMA_CUBE
+    - PHANTOM
+    - PIG_ZOMBIE
+    - PILLAGER
+    - SILVERFISH
+    - SLIME
+    - SKELETON
+    - SPIDER
+    - STRAY
+    - WITCH
+    - WITHER
+    - WITHER_SKELETON
+    - ZOMBIE
+    - ZOMBIE_VILLAGER
+  Animals:
+    - BEE
+    - CAT
+    - CHICKEN
+    - COW
+    - DONKEY
+    - FOX
+    - HORSE
+    - LLAMA
+    - MULE
+    - MUSHROOM_COW
+    - OCELOT
+    - PANDA
+    - PARROT
+    - PIG
+    - POLAR_BEAR
+    - RABBIT
+    - SHEEP
+    - SKELETON_HORSE
+    - TRADER_LLAMA
+    - TURTLE
+    - WOLF
+    - ZOMBIE_HORSE
+  BreedableMobs:
+    - CHICKEN
+    - COW
+    - HORSE
+    - LLAMA
+    - MULE
+    - MUSHROOM_COW
+    - OCELOT
+    - PIG
+    - RABBIT
+    - SHEEP
+  Others:
+    - SNOWMAN
+    - IRON_GOLEM
+    - VILLAGER
+    - BAT
+  UselessMobs:
+    - COD
+    - PUFFERFISH
+    - SALMON
+    - TROPICAL_FISH
+    - BAT
+  WaterMobs:
+    - SQUID
+    - COD
+    - DOLPHIN
+    - PUFFERFISH
+    - SALMON
+    - TROPICAL_FISH
+  Pets:
+    - CAT
+    - OCELOT
+    - PARROT
+    - WOLF
+  ChestedHorse:
+    - DONKEY
+    - HORSE
+    - MULE
+    - SKELETON_HORSE
+    - ZOMBIE_HORSE
+    - LLAMA
+    - TRADER_LLAMA
+    - FOX

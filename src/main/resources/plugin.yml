@@ -16,9 +16,9 @@ commands:
     description: Reloads all EntityPlus configuration files and caches any new data.
     permission: entityplus.command.reload
     usage: |
-        /entityplus reload
+      /entityplus reload
   entityplus version:
-    description: Check the plugin version.
+    description: Check the plugin version and updates.
     permission: entityplus.command.version
     usage: |
       /entityplus version
@@ -63,7 +63,7 @@ permissions:
     description: Get multiple "money" and "exp" after player killing a mob.
     default: op
     children:
-      entityplus.drop.*: true
+      entityplus.dropmultiplier.*: true
   entityplus.drop.multiplier.*:
     description: Get multiple "money" and "exp" after player killing a mob.
     default: op

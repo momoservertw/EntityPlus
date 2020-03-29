@@ -2,13 +2,12 @@ package tw.momocraft.entityplus.listeners;
 
 import com.Zrips.CMI.CMI;
 import com.bekvon.bukkit.residence.Residence;
-import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
-import com.bekvon.bukkit.residence.protection.ResidencePermissions;
 import io.lumine.xikage.mythicmobs.MythicMobs;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
+import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -26,9 +25,9 @@ public class CreatureSpawn implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onSpawnMobs(CreatureSpawnEvent e) {
-        String entityType = e.getEntityType().toString();
-
-        // It will stop checking if MythicMobs is exist, and check it in MythicMobsSpawn class.
+        Entity en = e.getEntity();
+        String entityType = en.getType().name();
+        // If MythicMobs is exist, it will stop checking here then check in MythicMobsSpawn class.
         if (ConfigHandler.getDepends().MythicMobsEnabled()) {
             if (e.getSpawnReason() == CreatureSpawnEvent.SpawnReason.CUSTOM) {
                 ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "MythicMobsEnabled", "return");
@@ -36,6 +35,7 @@ public class CreatureSpawn implements Listener {
             }
         }
 
+        Location loc = en.getLocation();
         // Check: Spawn-Limit.AFK
         // If all players in the range is AFK, it will cancel the spawn event.
         if (!getLimitAFK(e, entityType)) {
@@ -54,7 +54,7 @@ public class CreatureSpawn implements Listener {
 
         if (ConfigHandler.getConfig("config.yml").getBoolean("Spawn.Enable")) {
             // Check: Spawn
-            // If the path of "Spawn" equal null, it will stop checking.
+            // If the path of "Spawn" equal null.
             ConfigurationSection creatureConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn.List");
             if (creatureConfig == null) {
                 ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "entityConfig = null", "return");
@@ -62,48 +62,58 @@ public class CreatureSpawn implements Listener {
             }
 
             List<String> creatureList = new ArrayList<>(creatureConfig.getKeys(false));
-            // If the creature isn't in the list, it will stop checking.
+            // If the creature isn't in the list.
             if (!creatureList.contains(entityType)) {
-                ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "entityList not contains", "return");
-                return;
+                if (!ConfigHandler.getCustomGroups(entityType, "Entities")) {
+                    ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "entityList not contains", "return");
+                    return;
+                }
             }
 
             // If that creature isn't have groups.
             if (ConfigHandler.getConfig("config.yml").getString("Spawn.List." + entityType + ".Chance") != null) {
-                // If the creature's spawn "change" is success, it will stop checking.
+                // If the creature's spawn "change" is success.
                 if (!getChance("Spawn.List." + entityType + ".Chance")) {
                     ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!Chance", "return");
                     return;
                 }
 
-                // If the creature's spawn "reason" isn't match, it will stop checking.
+                // If the creature's spawn "reason" isn't match.
                 if (!getReason(e, "Spawn." + entityType + ".Reason")) {
                     ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!Reason", "return");
                     return;
                 }
 
-                // If the creature's spawn "biome" isn't match, it will stop checking.
-                if (!getBiome(e, "Spawn." + entityType + ".Biome")) {
+                // If the creature's spawn "biome" isn't match.
+                if (!getBiome(loc, "Spawn." + entityType + ".Biome")) {
                     ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!Biome", "return");
                     return;
                 }
 
-                // If the creature's spawn "water" isn't match, it will stop checking.
-                if (!getWater(e, "Spawn." + entityType + ".Water")) {
+                // If the creature's spawn "water" isn't match.
+                if (!getWater(loc, "Spawn." + entityType + ".Water")) {
                     ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!Water", "return");
                     return;
                 }
 
-                // If the creature's spawn "day" isn't match, it will stop checking.
-                if (!getDay(e, "Spawn." + entityType + ".Day")) {
+                // If the creature's spawn "day" isn't match.
+                if (!getDay(loc, "Spawn." + entityType + ".Day")) {
                     ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!Day", "return");
                     return;
                 }
 
-                if (!LocationAPI.getLocation(e.getLocation().getBlock(), "Spawn.List." + entityType + ".Worlds")) {
+                // If the creature's spawn "location" isn't match.
+                if (!LocationAPI.getLocation(loc, "Spawn.List." + entityType + ".Location")) {
                     ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!Location", "return");
                     return;
                 }
+
+                // If the creature's spawn isn't near certain "blocks".
+                if (!LocationAPI.getBlocks(loc, "Spawn.List." + entityType + "Blocks")) {
+                    ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!Blocks", "return");
+                    return;
+                }
+
                 ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "Final", "cancel");
                 e.setCancelled(true);
             } else {
@@ -130,7 +140,7 @@ public class CreatureSpawn implements Listener {
                         continue;
                     }
 
-                    if (!getBiome(e, "Spawn." + entityType + "." + group + ".Biome")) {
+                    if (!getBiome(loc, "Spawn." + entityType + "." + group + ".Biome")) {
                         if (!iterator.hasNext()) {
                             ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!Biome", "return");
                             return;
@@ -139,7 +149,7 @@ public class CreatureSpawn implements Listener {
                         continue;
                     }
 
-                    if (!getWater(e, "Spawn." + entityType + "." + group + ".Water")) {
+                    if (!getWater(loc, "Spawn." + entityType + "." + group + ".Water")) {
                         if (!iterator.hasNext()) {
                             ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!Water", "return", "Water");
                             return;
@@ -148,7 +158,7 @@ public class CreatureSpawn implements Listener {
                         continue;
                     }
 
-                    if (!getDay(e, "Spawn." + entityType + "." + group + ".Day")) {
+                    if (!getDay(loc, "Spawn." + entityType + "." + group + ".Day")) {
                         if (!iterator.hasNext()) {
                             ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!Day", "return");
                             return;
@@ -157,7 +167,7 @@ public class CreatureSpawn implements Listener {
                         continue;
                     }
 
-                    if (!LocationAPI.getLocation(e.getLocation().getBlock(), "Spawn.List." + entityType + "." + group + ".Worlds")) {
+                    if (!LocationAPI.getLocation(loc, "Spawn.List." + entityType + "." + group + ".Location")) {
                         if (!iterator.hasNext()) {
                             ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!Location", "return");
                             return;
@@ -165,6 +175,16 @@ public class CreatureSpawn implements Listener {
                         ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!Location", "continue", "check another group");
                         continue;
                     }
+
+                    if (!LocationAPI.getBlocks(loc, "Spawn.List." + entityType + "." + group + "Blocks")) {
+                        if (!iterator.hasNext()) {
+                            ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!Blocks", "return");
+                            return;
+                        }
+                        ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!Blocks", "continue", "check another group");
+                        continue;
+                    }
+
                     ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "Final", "cancel");
                     e.setCancelled(true);
                     return;
@@ -192,7 +212,8 @@ public class CreatureSpawn implements Listener {
                                 }
                             }
                         }
-                        List<Entity> nearbyEntities = e.getEntity().getNearbyEntities(ConfigHandler.getConfig("config.yml").getDouble("Spawn-Limit.Range.Range.X"), ConfigHandler.getConfig("config.yml").getDouble("Spawn-Limit.Range.Range.Y"), ConfigHandler.getConfig("config.yml").getDouble("Spawn-Limit.Range.Range.Z"));
+                        List<Entity> nearbyEntities = e.getEntity().getNearbyEntities(ConfigHandler.getConfig("config.yml").getDouble("Spawn-Limit.Range.Range.X"), ConfigHandler.getConfig("config.yml").getDouble("Spawn-Limit.Range.Range.Y"),
+                                ConfigHandler.getConfig("config.yml").getDouble("Spawn-Limit.Range.Range.Z"));
                         Iterator<Entity> iterator = nearbyEntities.iterator();
                         while (iterator.hasNext()) {
                             Entity en = iterator.next();
@@ -327,40 +348,40 @@ public class CreatureSpawn implements Listener {
     }
 
     /**
-     * @param e    the CreatureSpawnEvent.
+     * @param loc location.
      * @param path the path of spawn biome in config.yml.
      * @return if the entity spawn biome match the config setting.
      */
-    private boolean getBiome(CreatureSpawnEvent e, String path) {
+    static boolean getBiome(Location loc, String path) {
         String biome = ConfigHandler.getConfig("config.yml").getString(path);
         if (biome != null) {
-            return e.getEntity().getLocation().getBlock().getBiome().name().equalsIgnoreCase(biome);
+            return loc.getBlock().getBiome().name().equalsIgnoreCase(biome);
         }
         return true;
     }
 
     /**
-     * @param e    the CreatureSpawnEvent.
+     * @param loc location.
      * @param path the path of water value in config.yml.
      * @return if the entity spawned in water and match the config setting.
      */
-    private boolean getWater(CreatureSpawnEvent e, String path) {
+    static boolean getWater(Location loc, String path) {
         String water = ConfigHandler.getConfig("config.yml").getString(path);
         if (water != null) {
-            return water.equals(String.valueOf(e.getEntity().getLocation().getBlock().getType() == Material.WATER));
+            return water.equals(String.valueOf(loc.getBlock().getType() == Material.WATER));
         }
         return true;
     }
 
     /**
-     * @param e    the CreatureSpawnEvent.
+     * @param loc location.
      * @param path the path of spawn day in config.yml.
      * @return if the entity spawn day match the config setting.
      */
-    private boolean getDay(CreatureSpawnEvent e, String path) {
+    static boolean getDay(Location loc, String path) {
         String day = ConfigHandler.getConfig("config.yml").getString(path);
         if (day != null) {
-            double time = e.getEntity().getLocation().getWorld().getTime();
+            double time = loc.getWorld().getTime();
             return time < 12300 || time > 23850;
         }
         return true;
