@@ -5,7 +5,6 @@ import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 import io.lumine.xikage.mythicmobs.MythicMobs;
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobSpawnEvent;
-import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.Location;
@@ -95,7 +94,7 @@ public class MythicMobsSpawn implements Listener {
                 }
 
                 // If the creature's spawn isn't near certain "blocks".
-                if (!LocationAPI.getBlocks(loc, "Spawn.List." + entityType + "Blocks")) {
+                if (!LocationAPI.isBlocks(loc, "Spawn.List." + entityType + "Blocks")) {
                     ServerHandler.debugMessage("(MythicMobSpawn) Spawn", entityType, "!Blocks", "return");
                     return;
                 }
@@ -153,7 +152,7 @@ public class MythicMobsSpawn implements Listener {
                         continue;
                     }
 
-                    if (!LocationAPI.getBlocks(loc, "Spawn.List." + entityType + "." + group + "Blocks")) {
+                    if (!LocationAPI.isBlocks(loc, "Spawn.List." + entityType + "." + group + "Blocks")) {
                         if (!iterator.hasNext()) {
                             ServerHandler.debugMessage("(MythicMobSpawn) Spawn", entityType, "!Blocks", "return");
                             return;

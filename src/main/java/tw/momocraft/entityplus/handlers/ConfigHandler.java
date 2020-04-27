@@ -228,7 +228,7 @@ public class ConfigHandler {
                     Location loc;
                     for (String group : groupList.getKeys(false)) {
                         loc = getLocationString(value);
-                        if (!LocationAPI.getBlocks(loc, "Blocks." + group)) {
+                        if (!LocationAPI.isBlocks(loc, "Blocks." + group)) {
                             return true;
                         }
                     }

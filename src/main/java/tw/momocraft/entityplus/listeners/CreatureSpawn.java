@@ -25,33 +25,39 @@ public class CreatureSpawn implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onSpawnMobs(CreatureSpawnEvent e) {
-        Entity en = e.getEntity();
-        String entityType = en.getType().name();
-        // If MythicMobs is exist, it will stop checking here then check in MythicMobsSpawn class.
+        Entity entity = e.getEntity();
+        String entityType = entity.getType().name();
+        String reason = e.getSpawnReason().name();
+        // If MythicMobs is exist, it will stop checking here then check in class "MythicMobsSpawn".
         if (ConfigHandler.getDepends().MythicMobsEnabled()) {
-            if (e.getSpawnReason() == CreatureSpawnEvent.SpawnReason.CUSTOM) {
+            if (reason.equals("CUSTOM")) {
                 ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "MythicMobsEnabled", "return");
                 return;
             }
         }
+        Location loc = entity.getLocation();
 
-        Location loc = en.getLocation();
         // Check: Spawn-Limit.AFK
         // If all players in the range is AFK, it will cancel the spawn event.
-        if (!getLimitAFK(e, entityType)) {
-            ServerHandler.debugMessage("(CreatureSpawn) Spawn-List", entityType, "AFK", "cancel");
-            e.setCancelled(true);
-            return;
+        if (ConfigHandler.getConfig("config.yml").getBoolean("Spawn-Limit.AFK.Enable")) {
+            if (!checkAFKLimit(entity, entityType, loc, reason)) {
+                ServerHandler.debugMessage("(CreatureSpawn) Spawn-List", entityType, "Limit.AFK", "cancel");
+                e.setCancelled(true);
+                return;
+            }
         }
 
         // Check: Spawn-Limit.Range
         // If the creature spawn location has reach the maximum creature amount, it will cancel the spawn event.
-        if (!getLimit(e, entityType)) {
-            ServerHandler.debugMessage("(CreatureSpawn) Spawn-List", entityType, "Amount", "cancel");
-            e.setCancelled(true);
-            return;
+        if (ConfigHandler.getConfig("config.yml").getBoolean("Spawn-Limit.Range.Enable")) {
+            if (!getLimit(entity, entityType, loc, reason)) {
+                ServerHandler.debugMessage("(CreatureSpawn) Spawn-List", entityType, "Limit.Range", "cancel");
+                e.setCancelled(true);
+                return;
+            }
         }
 
+        // Check: Spawn
         if (ConfigHandler.getConfig("config.yml").getBoolean("Spawn.Enable")) {
             // Check: Spawn
             // If the path of "Spawn" equal null.
@@ -109,7 +115,7 @@ public class CreatureSpawn implements Listener {
                 }
 
                 // If the creature's spawn isn't near certain "blocks".
-                if (!LocationAPI.getBlocks(loc, "Spawn.List." + entityType + "Blocks")) {
+                if (!LocationAPI.isBlocks(loc, "Spawn.List." + entityType + "Blocks")) {
                     ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!Blocks", "return");
                     return;
                 }
@@ -176,7 +182,7 @@ public class CreatureSpawn implements Listener {
                         continue;
                     }
 
-                    if (!LocationAPI.getBlocks(loc, "Spawn.List." + entityType + "." + group + "Blocks")) {
+                    if (!LocationAPI.isBlocks(loc, "Spawn.List." + entityType + "." + group + "Blocks")) {
                         if (!iterator.hasNext()) {
                             ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!Blocks", "return");
                             return;
@@ -193,67 +199,68 @@ public class CreatureSpawn implements Listener {
         }
     }
 
-
     /**
-     * @param e CreatureSpawnEvent.
+     * @param entity
+     * @param entityType
+     * @param loc
+     * @param reason
      * @return if spawn location reach the maximum entity amount.
      */
-    private boolean getLimit(CreatureSpawnEvent e, String entityType) {
-        if (ConfigHandler.getConfig("config.yml").getBoolean("Spawn-Limit.Range.Enable")) {
-            if (!ConfigHandler.getConfig("config.yml").getBoolean("Spawn-Limit.Range.List-Enable") || ConfigHandler.getConfig("config.yml").getStringList("Spawn-Limit.Range.List").contains(entityType)) {
-                if (!ConfigHandler.getConfig("config.yml").getStringList("Spawn-Limit.Range.Ignore-Worlds").contains(e.getLocation().getWorld().getName())) {
-                    if (!ConfigHandler.getConfig("config.yml").getStringList("Spawn-Limit.Range.Ignore-Reasons").contains(e.getSpawnReason().name())) {
-                        if (ConfigHandler.getDepends().ResidenceEnabled()) {
-                            ClaimedResidence res = Residence.getInstance().getResidenceManager().getByLoc(e.getEntity().getLocation());
-                            if (res != null) {
-                                if (res.getPermissions().has("spawnlimitbypass", false)) {
-                                    ServerHandler.debugMessage("(CreatureSpawn) Spawn-Limit", entityType, "ignore residence", "return", "residence has flag \"spawnlimitbypass\"");
-                                    return true;
-                                }
+    private boolean getLimit(Entity entity, String entityType, Location loc, String reason) {
+        if (!ConfigHandler.getConfig("config.yml").getBoolean("Spawn-Limit.Range.List-Enable") ||
+                ConfigHandler.getConfig("config.yml").getStringList("Spawn-Limit.Range.List").contains(entityType)) {
+            if (!ConfigHandler.getConfig("config.yml").getStringList("Spawn-Limit.Range.Ignore-Worlds").contains(loc.getWorld().getName())) {
+                if (!ConfigHandler.getConfig("config.yml").getStringList("Spawn-Limit.Range.Ignore-Reasons").contains(reason)) {
+                    if (ConfigHandler.getDepends().ResidenceEnabled()) {
+                        ClaimedResidence res = Residence.getInstance().getResidenceManager().getByLoc(loc);
+                        if (res != null) {
+                            if (res.getPermissions().has("spawnlimitbypass", false)) {
+                                ServerHandler.debugMessage("(CreatureSpawn) Spawn-Limit", entityType, "ignore residence", "return", "residence has flag \"spawnlimitbypass\"");
+                                return true;
                             }
                         }
-                        List<Entity> nearbyEntities = e.getEntity().getNearbyEntities(ConfigHandler.getConfig("config.yml").getDouble("Spawn-Limit.Range.Range.X"), ConfigHandler.getConfig("config.yml").getDouble("Spawn-Limit.Range.Range.Y"),
-                                ConfigHandler.getConfig("config.yml").getDouble("Spawn-Limit.Range.Range.Z"));
-                        Iterator<Entity> iterator = nearbyEntities.iterator();
-                        while (iterator.hasNext()) {
-                            Entity en = iterator.next();
-                            if (!(en instanceof LivingEntity) || en instanceof Player) {
-                                iterator.remove();
-                                continue;
-                            }
-                            if (ConfigHandler.getDepends().MythicMobsEnabled()) {
-                                if (MythicMobs.inst().getAPIHelper().isMythicMob(en)) {
-                                    if (ConfigHandler.getConfig("config.yml").getStringList("Spawn-Limit.Range.MythicMobs-Ignore-List").contains(MythicMobs.inst().getAPIHelper().getMythicMobInstance(en).getType().getInternalName())) {
-                                        iterator.remove();
-                                    }
-                                } else {
-                                    if (ConfigHandler.getConfig("config.yml").getStringList("Spawn-Limit.Range.Ignore-List").contains(en.getType().toString())) {
-                                        iterator.remove();
-                                    }
+                    }
+                    List<Entity> nearbyEntities = entity.getNearbyEntities(ConfigHandler.getConfig("config.yml").getDouble("Spawn-Limit.Range.Range.X"), ConfigHandler.getConfig("config.yml").getDouble("Spawn-Limit.Range.Range.Y"),
+                            ConfigHandler.getConfig("config.yml").getDouble("Spawn-Limit.Range.Range.Z"));
+                    Iterator<Entity> iterator = nearbyEntities.iterator();
+                    while (iterator.hasNext()) {
+                        Entity en = iterator.next();
+                        if (!(en instanceof LivingEntity) || en instanceof Player) {
+                            iterator.remove();
+                            continue;
+                        }
+                        if (ConfigHandler.getDepends().MythicMobsEnabled()) {
+                            if (MythicMobs.inst().getAPIHelper().isMythicMob(en)) {
+                                if (ConfigHandler.getConfig("config.yml").getStringList("Spawn-Limit.Range.MythicMobs-Ignore-List").contains(MythicMobs.inst().getAPIHelper().getMythicMobInstance(en).getType().getInternalName())) {
+                                    iterator.remove();
                                 }
                             } else {
                                 if (ConfigHandler.getConfig("config.yml").getStringList("Spawn-Limit.Range.Ignore-List").contains(en.getType().toString())) {
                                     iterator.remove();
                                 }
                             }
-                        }
-                        double limitRangeAmount = ConfigHandler.getConfig("config.yml").getDouble("Spawn-Limit.Range.Max-Amount");
-                        if (limitRangeAmount != -1) {
-                            if (nearbyEntities.size() < limitRangeAmount) {
-                                return true;
-                            }
-                        }
-                        double limitRangeChance = ConfigHandler.getConfig("config.yml").getDouble("Spawn-Limit.Range.Chance");
-                        if (limitRangeChance != 0) {
-                            double random = new Random().nextDouble();
-                            if (limitRangeChance < random) {
-                                ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!getLimit - Chance", "cancel");
-                                return false;
-                            }
                         } else {
-                            ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!getLimit - Chance = 0", "cancel");
+                            if (ConfigHandler.getConfig("config.yml").getStringList("Spawn-Limit.Range.Ignore-List").contains(en.getType().toString())) {
+                                iterator.remove();
+                            }
+                        }
+                    }
+                    double limitRangeAmount = ConfigHandler.getConfig("config.yml").getDouble("Spawn-Limit.Range.Max-Amount");
+                    if (limitRangeAmount != -1) {
+                        if (nearbyEntities.size() < limitRangeAmount) {
+                            return true;
+                        }
+                    }
+                    double limitRangeChance = ConfigHandler.getConfig("config.yml").getDouble("Spawn-Limit.Range.Chance");
+                    if (limitRangeChance != 0) {
+                        double random = new Random().nextDouble();
+                        if (limitRangeChance < random) {
+                            ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!getLimit - Chance", "cancel");
                             return false;
                         }
+                    } else {
+                        ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!getLimit - Chance = 0", "cancel");
+                        return false;
                     }
                 }
             }
@@ -262,57 +269,59 @@ public class CreatureSpawn implements Listener {
     }
 
     /**
-     * @param e CreatureSpawnEvent.
+     * @param entity
+     * @param entityType
+     * @param loc
+     * @param reason
      * @return if all player in the range is AFK, it will return true.
      */
-    private boolean getLimitAFK(CreatureSpawnEvent e, String entityType) {
-        if (ConfigHandler.getConfig("config.yml").getBoolean("Spawn-Limit.AFK.Enable")) {
-            if (ConfigHandler.getDepends().CMIEnabled()) {
-                if (!ConfigHandler.getConfig("config.yml").getBoolean("Spawn-Limit.AFK.List-Enable") || ConfigHandler.getConfig("config.yml").getStringList("Spawn-Limit.AFK.List").contains(entityType)) {
-                    if (!ConfigHandler.getConfig("config.yml").getStringList("Spawn-Limit.AFK.Ignore-Worlds").contains(e.getLocation().getWorld().getName())) {
-                        if (!ConfigHandler.getConfig("config.yml").getStringList("Spawn-Limit.AFK.Ignore-Reasons").contains(e.getSpawnReason().name())) {
-                            if (ConfigHandler.getDepends().ResidenceEnabled()) {
-                                ClaimedResidence res = Residence.getInstance().getResidenceManager().getByLoc(e.getEntity().getLocation());
-                                if (res != null) {
-                                    if (res.getPermissions().has("spawnlimitbypass", false)) {
-                                        ServerHandler.debugMessage("(CreatureSpawn) Spawn-Limit", entityType, "ignore residence", "return", "residence has flag \"spawnlimitbypass\"");
-                                        return true;
-                                    }
+    private boolean checkAFKLimit(Entity entity, String entityType, Location loc, String reason) {
+        if (ConfigHandler.getDepends().CMIEnabled()) {
+            if (!ConfigHandler.getConfig("config.yml").getBoolean("Spawn-Limit.AFK.List-Enable")
+                    || ConfigHandler.getConfig("config.yml").getStringList("Spawn-Limit.AFK.List").contains(entityType)) {
+                if (!ConfigHandler.getConfig("config.yml").getStringList("Spawn-Limit.AFK.Ignore-Worlds").contains(loc.getWorld().getName())) {
+                    if (!ConfigHandler.getConfig("config.yml").getStringList("Spawn-Limit.AFK.Ignore-Reasons").contains(reason)) {
+                        if (ConfigHandler.getDepends().ResidenceEnabled()) {
+                            ClaimedResidence res = Residence.getInstance().getResidenceManager().getByLoc(loc);
+                            if (res != null) {
+                                if (res.getPermissions().has("spawnlimitbypass", false)) {
+                                    ServerHandler.debugMessage("(CreatureSpawn) Spawn-Limit", entityType, "ignore residence", "return", "residence has flag \"spawnlimitbypass\"");
+                                    return true;
                                 }
                             }
-                            int spawnMobsRange = ConfigHandler.getConfig("config.yml").getInt("General.mob-spawn-range") * 16;
-                            List<Entity> nearbyEntities = e.getEntity().getNearbyEntities(spawnMobsRange, spawnMobsRange, spawnMobsRange);
-                            Iterator<Entity> iterator = nearbyEntities.iterator();
-                            while (iterator.hasNext()) {
-                                Entity en = iterator.next();
-                                if (!(en instanceof LivingEntity)) {
-                                    iterator.remove();
-                                    continue;
-                                }
-                                if (en instanceof Player) {
-                                    if (CMI.getInstance().getPlayerManager().getUser((Player) en).isAfk() && PermissionsHandler.hasPermission(en, "entityplus.bypass.spawnlimit.afk")) {
-                                        return true;
-                                    } else return !CMI.getInstance().getPlayerManager().getUser((Player) en).isAfk();
-                                }
+                        }
+                        int spawnMobsRange = ConfigHandler.getConfig("config.yml").getInt("General.mob-spawn-range") * 16;
+                        List<Entity> nearbyEntities = entity.getNearbyEntities(spawnMobsRange, spawnMobsRange, spawnMobsRange);
+                        Iterator<Entity> iterator = nearbyEntities.iterator();
+                        while (iterator.hasNext()) {
+                            Entity en = iterator.next();
+                            if (!(en instanceof LivingEntity)) {
+                                iterator.remove();
+                                continue;
                             }
-                            if (ConfigHandler.getConfig("config.yml").getDouble("Spawn-Limit.AFK.Max-Amount") != -1) {
-                                double limitRangeAmount = ConfigHandler.getConfig("config.yml").getDouble("Spawn-Limit.Range.Max-Amount");
-                                if (nearbyEntities.size() >= limitRangeAmount) {
-                                    ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!getLimitAFK - Max Amount", "cancel");
-                                    return false;
-                                }
+                            if (en instanceof Player) {
+                                if (CMI.getInstance().getPlayerManager().getUser((Player) en).isAfk() && PermissionsHandler.hasPermission(en, "entityplus.bypass.spawnlimit.afk")) {
+                                    return true;
+                                } else return !CMI.getInstance().getPlayerManager().getUser((Player) en).isAfk();
                             }
-                            double limitAFKChance = ConfigHandler.getConfig("config.yml").getDouble("Spawn-Limit.AFK.Chance");
-                            if (limitAFKChance != 0) {
-                                double random = new Random().nextDouble();
-                                if (limitAFKChance < random) {
-                                    ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!getLimitAFK - Chance", "cancel");
-                                    return false;
-                                }
-                            } else {
-                                ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!getLimitAFK - Chance = 0", "cancel");
+                        }
+                        if (ConfigHandler.getConfig("config.yml").getDouble("Spawn-Limit.AFK.Max-Amount") != -1) {
+                            double limitRangeAmount = ConfigHandler.getConfig("config.yml").getDouble("Spawn-Limit.Range.Max-Amount");
+                            if (nearbyEntities.size() >= limitRangeAmount) {
+                                ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!checkAFKLimit - Max Amount", "cancel");
                                 return false;
                             }
+                        }
+                        double limitAFKChance = ConfigHandler.getConfig("config.yml").getDouble("Spawn-Limit.AFK.Chance");
+                        if (limitAFKChance != 0) {
+                            double random = new Random().nextDouble();
+                            if (limitAFKChance < random) {
+                                ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!checkAFKLimit - Chance", "cancel");
+                                return false;
+                            }
+                        } else {
+                            ServerHandler.debugMessage("(CreatureSpawn) Spawn", entityType, "!checkAFKLimit - Chance = 0", "cancel");
+                            return false;
                         }
                     }
                 }
@@ -348,7 +357,7 @@ public class CreatureSpawn implements Listener {
     }
 
     /**
-     * @param loc location.
+     * @param loc  location.
      * @param path the path of spawn biome in config.yml.
      * @return if the entity spawn biome match the config setting.
      */
@@ -361,7 +370,7 @@ public class CreatureSpawn implements Listener {
     }
 
     /**
-     * @param loc location.
+     * @param loc  location.
      * @param path the path of water value in config.yml.
      * @return if the entity spawned in water and match the config setting.
      */
@@ -374,7 +383,7 @@ public class CreatureSpawn implements Listener {
     }
 
     /**
-     * @param loc location.
+     * @param loc  location.
      * @param path the path of spawn day in config.yml.
      * @return if the entity spawn day match the config setting.
      */

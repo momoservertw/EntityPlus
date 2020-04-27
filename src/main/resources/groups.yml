@@ -1,5 +1,6 @@
 # --{ =-=-=-=-=-=-=-=-=-= EntityPlus's Custom Groups Settings, by Momocraft =-=-=-=-=-=-=-=-=-= }--
 Groups-Version: 1
+
 Location:
   NormalWorlds:
     world:
@@ -8,14 +9,13 @@ Location:
       Z: "-1000 ~ 1000"
     world2: []
     world3: []
+
 Blocks:
-  WitherRose:
+  # When creatures spawn in wither_rose.
+  onWitherRose:
     WITHER_ROSE:
       Offset: 0
-MythicMobs:
-  MythicMobs-Example:
-    - SkeletonKing
-    - SkeletalKnight
+
 Items:
   Item-Machines:
     - WATER
@@ -27,6 +27,12 @@ Items:
     - JUNGLE_PRESSURE_PLATE
     - DARK_OAK_PRESSURE_PLATE
     - STRING
+
+MythicMobs:
+  MythicMobs-Example:
+    - SkeletonKing
+    - SkeletalKnight
+
 Entities:
   Monsters:
     - BLAZE

@@ -126,7 +126,7 @@ public class EntityDamage implements Listener {
                         if (ConfigHandler.getMythicMobs(en, "Damage.Control." + group + ".MythicMobs-Ignore-List")) {
                             return;
                         }
-                        if (!LocationAPI.getBlocks(entityLoc, "Damage.Control." + group + ".Blocks")) {
+                        if (!LocationAPI.isBlocks(entityLoc, "Damage.Control." + group + ".Blocks")) {
                             return;
                         }
 

@@ -1,35 +1,56 @@
 package tw.momocraft.entityplus.utils;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.ServerHandler;
 
 import java.util.List;
-import java.util.Set;
 
 public class LocationAPI {
 
-    public static boolean getBlocks(Location loc, String path) {
+    /**
+     * @param loc       location
+     * @param worldName the name of world.
+     * @return if the entity spawn world match that world name.
+     */
+    public static boolean isWorld(Location loc, String worldName) {
+        World world = loc.getWorld();
+        if (world != null) {
+            return world.getName().equalsIgnoreCase(worldName);
+        }
+        return true;
+    }
+
+    /**
+     * @param loc  the checking location.
+     * @param path the path of Blocks setting in config.yml.
+     * @return if there are certain blocks nearby the location.
+     * <p>
+     * Blocks:
+     * BlockType:
+     * Range:
+     * X: 3
+     * Y: 5
+     * Z: 3
+     */
+    public static boolean isBlocks(Location loc, String path) {
         ConfigurationSection blocksConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection(path);
         if (blocksConfig != null) {
-            Set blockConfig;
-            for (String block : blocksConfig.getKeys(false)) {
-                blockConfig = blocksConfig.getKeys(false);
-                if (blockConfig.contains("Range")) {
-                    if (!getRangeBlocks(loc, block, path)) {
-                        return false;
-                    }
-                }
-                if (blockConfig.contains("Offset")) {
-                    if (!getOffsetBlocks(loc, block, path)) {
-                        return false;
-                    }
-                }
-                if (blockConfig.contains("Ignore")) {
-                    if (!getIgnoreBlocks(loc, block, path)) {
-                        return false;
+            ConfigurationSection blockTypeConfig;
+            for (String blockType : blocksConfig.getKeys(false)) {
+                blockTypeConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection(path + "." + blockType);
+                if (blockTypeConfig != null) {
+                    for (String type : blockTypeConfig.getKeys(false)) {
+                        switch (type) {
+                            case "Range":
+                                return getRangeBlocks(loc, blockType, path);
+                            case "Offset":
+                                return getOffsetBlocks(loc, blockType, path);
+                            case "Ignore":
+                                return getIgnoreBlocks(loc, path + "." + blockType);
+                        }
                     }
                 }
             }
@@ -47,11 +68,12 @@ public class LocationAPI {
         int rangeX = ConfigHandler.getConfig("config.yml").getInt(path + ".Range.X");
         int rangeY = ConfigHandler.getConfig("config.yml").getInt(path + ".Range.Y");
         int rangeZ = ConfigHandler.getConfig("config.yml").getInt(path + ".Range.Z");
+        Location blockLoc;
         for (int x = -rangeX; x <= rangeX; x++) {
             for (int y = -rangeY; y <= rangeY; y++) {
                 for (int z = -rangeZ; z <= rangeZ; z++) {
-                    Location blockLoc = loc.add(x, y, z);
-                    if (blockLoc.getBlock().getType() == Material.getMaterial(block)) {
+                    blockLoc = loc.add(x, y, z);
+                    if (blockLoc.getBlock().getType().name().equals(block)) {
                         return true;
                     }
                 }
@@ -69,48 +91,42 @@ public class LocationAPI {
     private static boolean getOffsetBlocks(Location loc, String block, String path) {
         ConfigurationSection blocksConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection(path);
         if (blocksConfig != null) {
-            double offset;
-            Location offsetLoc;
-            offset = ConfigHandler.getConfig("config.yml").getDouble(path + "." + block + ".Offset");
-            offsetLoc = loc.add(0, offset, 0);
-            return offsetLoc.getBlock().getType().name().equals(block);
+            return loc.add(0, ConfigHandler.getConfig("config.yml").getDouble(path + "." + block + ".Offset"), 0)
+                    .getBlock().getType().name().equals(block);
         }
-        return true;
+        ServerHandler.sendConsoleMessage("&cThere is an error occurred. Please check the \"Blocks\" format.");
+        ServerHandler.sendConsoleMessage("&ePath: " + path);
+        return false;
     }
 
     /**
-     * @param loc   the checking location.
-     * @param block the target block type.
-     * @param path  the path of blocks setting in config.yml.
+     * @param loc  the checking location.
+     * @param path the path of blocks setting in config.yml.
      * @return Check if the location has certain blocks.
      */
-    private static boolean getIgnoreBlocks(Location loc, String block, String path) {
-        ConfigurationSection blockConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection(path + "." + block + ".Ignore");
-        if (blockConfig != null) {
-            for (String group : blockConfig.getKeys(false)) {
-                if (blockConfig.contains("Range")) {
-                    if (getRangeBlocks(loc, group, path + "." + block + ".Ignore")) {
-                        return false;
-                    }
-                }
-                if (blockConfig.contains("Offset")) {
-                    if (getOffsetBlocks(loc, group, path + "." + block + ".Ignore")) {
-                        return false;
+    private static boolean getIgnoreBlocks(Location loc, String path) {
+        ConfigurationSection blocksConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection(path);
+        if (blocksConfig != null) {
+            ConfigurationSection blockTypeConfig;
+            for (String blockType : blocksConfig.getKeys(false)) {
+                blockTypeConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection(path + "." + blockType);
+                if (blockTypeConfig != null) {
+                    for (String type : blockTypeConfig.getKeys(false)) {
+                        switch (type) {
+                            case "Range":
+                                return !getRangeBlocks(loc, blockType, path);
+                            case "Offset":
+                                return !getOffsetBlocks(loc, blockType, path);
+                            case "Ignore":
+                                return !getIgnoreBlocks(loc, path + "." + blockType);
+                        }
                     }
                 }
             }
-            return true;
         }
-        return true;
-    }
-
-    /**
-     * @param loc       location
-     * @param worldName the world name.
-     * @return if the entity spawn world match the input world.
-     */
-    public static boolean getWorld(Location loc, String worldName) {
-        return loc.getWorld() != null && loc.getWorld().getName().equalsIgnoreCase(worldName);
+        ServerHandler.sendConsoleMessage("&cThere is an error occurred. Please check the \"Blocks\" format.");
+        ServerHandler.sendConsoleMessage("&ePath: " + path);
+        return false;
     }
 
     /**
@@ -119,39 +135,46 @@ public class LocationAPI {
      * @return if the block is in the range of setting in the config.yml.
      */
     public static boolean getLocation(Location loc, String path) {
-        // Is a simple world list.
+        // Simple world list.
         List<String> locationList = ConfigHandler.getConfig("config.yml").getStringList(path);
         if (!locationList.isEmpty()) {
-            for (String world : locationList) {
-                if (loc.getWorld() != null && loc.getWorld().getName().equalsIgnoreCase(world)) {
-                    return true;
+            World world;
+            for (String worldName : locationList) {
+                world = loc.getWorld();
+                if (world != null) {
+                    return world.getName().equalsIgnoreCase(worldName);
                 }
             }
             return false;
         }
-        // Has location settings.
+
+        // Location settings.
         ConfigurationSection locationConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection(path);
         if (locationConfig != null) {
             ConfigurationSection xyzConfig;
+            World world;
             back:
-            for (String world : locationConfig.getKeys(false)) {
-                if (loc.getWorld() != null && !loc.getWorld().getName().equalsIgnoreCase(world)) {
+            for (String worldName : locationConfig.getKeys(false)) {
+                world = loc.getWorld();
+                if (world != null) {
+                    if (!world.getName().equalsIgnoreCase(worldName)) {
+                        continue;
+                    }
+                } else {
                     continue;
                 }
-                xyzConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection(path + "." + world);
+                xyzConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection(path + "." + worldName);
                 if (xyzConfig != null) {
                     for (String key : xyzConfig.getKeys(false)) {
-                        if (!getXYZ(loc, key, ConfigHandler.getConfig("config.yml").getString(path + "." + world + "." + key))) {
+                        if (!getXYZ(loc, key, ConfigHandler.getConfig("config.yml").getString(path + "." + worldName + "." + key))) {
                             continue back;
                         }
                     }
-                    return true;
                 }
                 return true;
             }
-            return false;
         }
-        return true;
+        return false;
     }
 
     /**
@@ -165,148 +188,158 @@ public class LocationAPI {
             String[] keyArray = keyValue.split("\\s+");
             int xyzLength = keyArray.length;
             if (!getXYZFormat(key, xyzLength, keyArray)) {
-                ServerHandler.sendConsoleMessage("&cThere is an error occurred. Please check your spawn location format \"" + keyValue + "\".");
+                ServerHandler.sendConsoleMessage("&cThere is an error occurred. Please check the \"Location\" format.");
+                ServerHandler.sendConsoleMessage("&eKey: " + keyValue);
                 return false;
             }
             if (xyzLength == 1) {
-                if (key.equalsIgnoreCase("X")) {
-                    return getRange(loc.getBlockX(), Integer.valueOf(keyArray[0]));
-                } else if (key.equalsIgnoreCase("Y")) {
-                    return getRange(loc.getBlockY(), Integer.valueOf(keyArray[0]));
-                } else if (key.equalsIgnoreCase("Z")) {
-                    return getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]));
-                } else if (key.equalsIgnoreCase("!X")) {
-                    return !getRange(loc.getBlockX(), Integer.valueOf(keyArray[0]));
-                } else if (key.equalsIgnoreCase("!Y")) {
-                    return !getRange(loc.getBlockY(), Integer.valueOf(keyArray[0]));
-                } else if (key.equalsIgnoreCase("!Z")) {
-                    return !getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]));
-                } else if (key.equalsIgnoreCase("XYZ")) {
-                    return getRange(loc.getBlockX(), Integer.valueOf(keyArray[0])) &&
-                            getRange(loc.getBlockY(), Integer.valueOf(keyArray[0])) &&
-                            getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]));
-                } else if (key.equalsIgnoreCase("!XYZ")) {
-                    return !getRange(loc.getBlockX(), Integer.valueOf(keyArray[0])) &&
-                            !getRange(loc.getBlockY(), Integer.valueOf(keyArray[0])) &&
-                            !getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]));
-                } else if (key.equalsIgnoreCase("XY")) {
-                    return getRange(loc.getBlockX(), Integer.valueOf(keyArray[0])) &&
-                            getRange(loc.getBlockY(), Integer.valueOf(keyArray[0]));
-                } else if (key.equalsIgnoreCase("YZ")) {
-                    return getRange(loc.getBlockY(), Integer.valueOf(keyArray[0])) &&
-                            getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]));
-                } else if (key.equalsIgnoreCase("XZ")) {
-                    return getRange(loc.getBlockX(), Integer.valueOf(keyArray[0])) &&
-                            getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]));
-                } else if (key.equalsIgnoreCase("!XY")) {
-                    return !getRange(loc.getBlockX(), Integer.valueOf(keyArray[0])) &&
-                            !getRange(loc.getBlockY(), Integer.valueOf(keyArray[0]));
-                } else if (key.equalsIgnoreCase("!YZ")) {
-                    return !getRange(loc.getBlockY(), Integer.valueOf(keyArray[0])) &&
-                            !getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]));
-                } else if (key.equalsIgnoreCase("!XZ")) {
-                    return !getRange(loc.getBlockX(), Integer.valueOf(keyArray[0])) &&
-                            !getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]));
-                } else if (key.equalsIgnoreCase("R")) {
-                    return getRadius(loc, Integer.valueOf(keyArray[0]));
-                } else if (key.equalsIgnoreCase("!R")) {
-                    return !getRadius(loc, Integer.valueOf(keyArray[0]));
+                // 1000
+                switch (key.toUpperCase()) {
+                    case "X":
+                        return getRange(loc.getBlockX(), Integer.valueOf(keyArray[0]));
+                    case "Y":
+                        return getRange(loc.getBlockY(), Integer.valueOf(keyArray[0]));
+                    case "Z":
+                        return getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]));
+                    case "XY":
+                        return getRange(loc.getBlockX(), Integer.valueOf(keyArray[0])) &&
+                                getRange(loc.getBlockY(), Integer.valueOf(keyArray[0]));
+                    case "YZ":
+                        return getRange(loc.getBlockY(), Integer.valueOf(keyArray[0])) &&
+                                getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]));
+                    case "XZ":
+                        return getRange(loc.getBlockX(), Integer.valueOf(keyArray[0])) &&
+                                getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]));
+                    case "XYZ":
+                        return getRange(loc.getBlockX(), Integer.valueOf(keyArray[0])) &&
+                                getRange(loc.getBlockY(), Integer.valueOf(keyArray[0])) &&
+                                getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]));
+                    case "!X":
+                        return !getRange(loc.getBlockX(), Integer.valueOf(keyArray[0]));
+                    case "!Y":
+                        return !getRange(loc.getBlockY(), Integer.valueOf(keyArray[0]));
+                    case "!Z":
+                        return !getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]));
+                    case "!XY":
+                        return !getRange(loc.getBlockX(), Integer.valueOf(keyArray[0])) &&
+                                !getRange(loc.getBlockY(), Integer.valueOf(keyArray[0]));
+                    case "!YZ":
+                        return !getRange(loc.getBlockY(), Integer.valueOf(keyArray[0])) &&
+                                !getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]));
+                    case "!XZ":
+                        return !getRange(loc.getBlockX(), Integer.valueOf(keyArray[0])) &&
+                                !getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]));
+                    case "!XYZ":
+                        return !getRange(loc.getBlockX(), Integer.valueOf(keyArray[0])) &&
+                                !getRange(loc.getBlockY(), Integer.valueOf(keyArray[0])) &&
+                                !getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]));
+                    case "R":
+                        return getRadius(loc, Integer.valueOf(keyArray[0]));
+                    case "!R":
+                        return !getRadius(loc, Integer.valueOf(keyArray[0]));
                 }
             } else if (xyzLength == 2) {
-                if (key.equalsIgnoreCase("X")) {
-                    return getCompare(loc.getBlockX(), keyArray[0], Integer.valueOf(keyArray[1]));
-                } else if (key.equalsIgnoreCase("Y")) {
-                    return getCompare(loc.getBlockY(), keyArray[0], Integer.valueOf(keyArray[1]));
-                } else if (key.equalsIgnoreCase("Z")) {
-                    return getCompare(loc.getBlockZ(), keyArray[0], Integer.valueOf(keyArray[1]));
-                } else if (key.equalsIgnoreCase("!X")) {
-                    return !getCompare(loc.getBlockX(), keyArray[0], Integer.valueOf(keyArray[1]));
-                } else if (key.equalsIgnoreCase("!Y")) {
-                    return !getCompare(loc.getBlockY(), keyArray[0], Integer.valueOf(keyArray[1]));
-                } else if (key.equalsIgnoreCase("!Z")) {
-                    return !getCompare(loc.getBlockZ(), keyArray[0], Integer.valueOf(keyArray[1]));
-                } else if (key.equalsIgnoreCase("XYZ")) {
-                    return getCompare(loc.getBlockX(), keyArray[0], Integer.valueOf(keyArray[1])) &&
-                            getCompare(loc.getBlockY(), keyArray[0], Integer.valueOf(keyArray[1])) &&
-                            getCompare(loc.getBlockZ(), keyArray[0], Integer.valueOf(keyArray[1]));
-                } else if (key.equalsIgnoreCase("!XYZ")) {
-                    return !getCompare(loc.getBlockX(), keyArray[0], Integer.valueOf(keyArray[1])) &&
-                            !getCompare(loc.getBlockY(), keyArray[0], Integer.valueOf(keyArray[1])) &&
-                            !getCompare(loc.getBlockZ(), keyArray[0], Integer.valueOf(keyArray[1]));
-                } else if (key.equalsIgnoreCase("XY")) {
-                    return getCompare(loc.getBlockX(), keyArray[0], Integer.valueOf(keyArray[1])) &&
-                            getCompare(loc.getBlockY(), keyArray[0], Integer.valueOf(keyArray[1]));
-                } else if (key.equalsIgnoreCase("YZ")) {
-                    return getCompare(loc.getBlockY(), keyArray[0], Integer.valueOf(keyArray[1])) &&
-                            getCompare(loc.getBlockZ(), keyArray[0], Integer.valueOf(keyArray[1]));
-                } else if (key.equalsIgnoreCase("XZ")) {
-                    return getCompare(loc.getBlockX(), keyArray[0], Integer.valueOf(keyArray[1])) &&
-                            getCompare(loc.getBlockZ(), keyArray[0], Integer.valueOf(keyArray[1]));
-                } else if (key.equalsIgnoreCase("!XY")) {
-                    return !getCompare(loc.getBlockX(), keyArray[0], Integer.valueOf(keyArray[1])) &&
-                            !getCompare(loc.getBlockY(), keyArray[0], Integer.valueOf(keyArray[1]));
-                } else if (key.equalsIgnoreCase("!YZ")) {
-                    return !getCompare(loc.getBlockY(), keyArray[0], Integer.valueOf(keyArray[1])) &&
-                            !getCompare(loc.getBlockZ(), keyArray[0], Integer.valueOf(keyArray[1]));
-                } else if (key.equalsIgnoreCase("!XZ")) {
-                    return !getCompare(loc.getBlockX(), keyArray[0], Integer.valueOf(keyArray[1])) &&
-                            !getCompare(loc.getBlockZ(), keyArray[0], Integer.valueOf(keyArray[1]));
+                // > 1000
+                switch (key.toUpperCase()) {
+                    case "X":
+                        return getCompare(loc.getBlockX(), keyArray[0], Integer.valueOf(keyArray[1]));
+                    case "Y":
+                        return getCompare(loc.getBlockY(), keyArray[0], Integer.valueOf(keyArray[1]));
+                    case "Z":
+                        return getCompare(loc.getBlockZ(), keyArray[0], Integer.valueOf(keyArray[1]));
+                    case "XY":
+                        return getCompare(loc.getBlockX(), keyArray[0], Integer.valueOf(keyArray[1])) &&
+                                getCompare(loc.getBlockY(), keyArray[0], Integer.valueOf(keyArray[1]));
+                    case "YZ":
+                        return getCompare(loc.getBlockY(), keyArray[0], Integer.valueOf(keyArray[1])) &&
+                                getCompare(loc.getBlockZ(), keyArray[0], Integer.valueOf(keyArray[1]));
+                    case "XZ":
+                        return getCompare(loc.getBlockX(), keyArray[0], Integer.valueOf(keyArray[1])) &&
+                                getCompare(loc.getBlockZ(), keyArray[0], Integer.valueOf(keyArray[1]));
+                    case "XYZ":
+                        return getCompare(loc.getBlockX(), keyArray[0], Integer.valueOf(keyArray[1])) &&
+                                getCompare(loc.getBlockY(), keyArray[0], Integer.valueOf(keyArray[1])) &&
+                                getCompare(loc.getBlockZ(), keyArray[0], Integer.valueOf(keyArray[1]));
+                    case "!X":
+                        return !getCompare(loc.getBlockX(), keyArray[0], Integer.valueOf(keyArray[1]));
+                    case "!Y":
+                        return !getCompare(loc.getBlockY(), keyArray[0], Integer.valueOf(keyArray[1]));
+                    case "!Z":
+                        return !getCompare(loc.getBlockZ(), keyArray[0], Integer.valueOf(keyArray[1]));
+                    case "!XY":
+                        return !getCompare(loc.getBlockX(), keyArray[0], Integer.valueOf(keyArray[1])) &&
+                                !getCompare(loc.getBlockY(), keyArray[0], Integer.valueOf(keyArray[1]));
+                    case "!YZ":
+                        return !getCompare(loc.getBlockY(), keyArray[0], Integer.valueOf(keyArray[1])) &&
+                                !getCompare(loc.getBlockZ(), keyArray[0], Integer.valueOf(keyArray[1]));
+                    case "!XZ":
+                        return !getCompare(loc.getBlockX(), keyArray[0], Integer.valueOf(keyArray[1])) &&
+                                !getCompare(loc.getBlockZ(), keyArray[0], Integer.valueOf(keyArray[1]));
+                    case "!XYZ":
+                        return !getCompare(loc.getBlockX(), keyArray[0], Integer.valueOf(keyArray[1])) &&
+                                !getCompare(loc.getBlockY(), keyArray[0], Integer.valueOf(keyArray[1])) &&
+                                !getCompare(loc.getBlockZ(), keyArray[0], Integer.valueOf(keyArray[1]));
                 }
             } else if (xyzLength == 3) {
-                if (key.equalsIgnoreCase("X")) {
-                    return getRange(loc.getBlockX(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2]));
-                } else if (key.equalsIgnoreCase("Y")) {
-                    return getRange(loc.getBlockY(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2]));
-                } else if (key.equalsIgnoreCase("Z")) {
-                    return getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2]));
-                } else if (key.equalsIgnoreCase("!X")) {
-                    return !getRange(loc.getBlockX(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2]));
-                } else if (key.equalsIgnoreCase("!Y")) {
-                    return !getRange(loc.getBlockY(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2]));
-                } else if (key.equalsIgnoreCase("!Z")) {
-                    return !getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2]));
-                } else if (key.equalsIgnoreCase("XYZ")) {
-                    return getRange(loc.getBlockX(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2])) &&
-                            getRange(loc.getBlockY(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2])) &&
-                            getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2]));
-                } else if (key.equalsIgnoreCase("!XYZ")) {
-                    return !getRange(loc.getBlockX(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2])) &&
-                            !getRange(loc.getBlockY(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2])) &&
-                            !getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2]));
-                } else if (key.equalsIgnoreCase("XY")) {
-                    return getRange(loc.getBlockX(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2])) &&
-                            getRange(loc.getBlockY(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2]));
-                } else if (key.equalsIgnoreCase("YZ")) {
-                    return getRange(loc.getBlockY(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2])) &&
-                            getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2]));
-                } else if (key.equalsIgnoreCase("XZ")) {
-                    return getRange(loc.getBlockX(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2])) &&
-                            getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2]));
-                } else if (key.equalsIgnoreCase("!XY")) {
-                    return !getRange(loc.getBlockX(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2])) &&
-                            !getRange(loc.getBlockY(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2]));
-                } else if (key.equalsIgnoreCase("!YZ")) {
-                    return !getRange(loc.getBlockY(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2])) &&
-                            !getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2]));
-                } else if (key.equalsIgnoreCase("!XZ")) {
-                    return !getRange(loc.getBlockX(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2])) &&
-                            !getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2]));
-                } else if (key.equalsIgnoreCase("R")) {
-                    return getRadius(loc, Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[1]), Integer.valueOf(keyArray[2]));
-                } else if (key.equalsIgnoreCase("!R")) {
-                    return !getRadius(loc, Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[1]), Integer.valueOf(keyArray[2]));
+                switch (key.toUpperCase()) {
+                    // -1000 ~ 1000
+                    case "X":
+                        return getRange(loc.getBlockX(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2]));
+                    case "Y":
+                        return getRange(loc.getBlockY(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2]));
+                    case "Z":
+                        return getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2]));
+                    case "XY":
+                        return getRange(loc.getBlockX(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2])) &&
+                                getRange(loc.getBlockY(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2]));
+                    case "YZ":
+                        return getRange(loc.getBlockY(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2])) &&
+                                getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2]));
+                    case "XZ":
+                        return getRange(loc.getBlockX(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2])) &&
+                                getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2]));
+                    case "XYZ":
+                        return getRange(loc.getBlockX(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2])) &&
+                                getRange(loc.getBlockY(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2])) &&
+                                getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2]));
+                    case "!X":
+                        return !getRange(loc.getBlockX(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2]));
+                    case "!Y":
+                        return !getRange(loc.getBlockY(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2]));
+                    case "!Z":
+                        return !getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2]));
+                    case "!XY":
+                        return !getRange(loc.getBlockX(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2])) &&
+                                !getRange(loc.getBlockY(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2]));
+                    case "!YZ":
+                        return !getRange(loc.getBlockY(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2])) &&
+                                !getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2]));
+                    case "!XZ":
+                        return !getRange(loc.getBlockX(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2])) &&
+                                !getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2]));
+                    case "!XYZ":
+                        return !getRange(loc.getBlockX(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2])) &&
+                                !getRange(loc.getBlockY(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2])) &&
+                                !getRange(loc.getBlockZ(), Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[2]));
+                    // R: 1000, Center: 0 0
+                    case "R":
+                        return getRadius(loc, Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[1]), Integer.valueOf(keyArray[2]));
+                    case "!R":
+                        return !getRadius(loc, Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[1]), Integer.valueOf(keyArray[2]));
                 }
             } else if (xyzLength == 4) {
+                // R: 1000, Center: 0 0 0
                 if (key.equalsIgnoreCase("R")) {
                     return getRadius(loc, Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[1]), Integer.valueOf(keyArray[2]), Integer.valueOf(keyArray[3]));
                 } else if (key.equalsIgnoreCase("!R")) {
                     return !getRadius(loc, Integer.valueOf(keyArray[0]), Integer.valueOf(keyArray[1]), Integer.valueOf(keyArray[2]), Integer.valueOf(keyArray[3]));
                 }
             }
-            return true;
-        } else {
-            return true;
+            ServerHandler.sendConsoleMessage("&cThere is an error occurred. Please check the \"Location\" format.");
+            ServerHandler.sendConsoleMessage("&eKey: " + keyValue);
+            return false;
         }
+        return true;
     }
 
     /**
@@ -335,8 +368,8 @@ public class LocationAPI {
         } else if (xyzArgs == 2) {
             if (key.length() == 1) {
                 if (key.matches("[XYZ]")) {
-                    if (keyValue[0].length() == 1 && keyValue[0].matches("[><=]") || keyValue[0].length() == 2 &&
-                            keyValue[0].matches("[>][=]|[<][=]|[=][=]")) {
+                    if (keyValue[0].length() == 1 && keyValue[0].matches("[><=]") ||
+                            keyValue[0].length() == 2 && keyValue[0].matches("[>][=]|[<][=]|[=][=]")) {
                         return keyValue[1].matches("-?[0-9]\\d*$");
                     }
                 }
@@ -367,7 +400,7 @@ public class LocationAPI {
                             keyValue[2].matches("-?[0-9]\\d*$");
                 } else if (key.matches("[XYZ]")) {
                     if (keyValue[0].matches("-?[0-9]\\d*$") && keyValue[2].matches("-?[0-9]\\d*$")) {
-                        return keyValue[1].equalsIgnoreCase("~");
+                        return keyValue[1].equals("~");
                     }
                 }
             } else if (key.length() == 2) {
@@ -376,17 +409,17 @@ public class LocationAPI {
                             keyValue[2].matches("-?[0-9]\\d*$");
                 } else if (key.matches("[XYZ][XYZ]")) {
                     if (keyValue[0].matches("-?[0-9]\\d*$") && keyValue[2].matches("-?[0-9]\\d*$")) {
-                        return keyValue[1].equalsIgnoreCase("~");
+                        return keyValue[1].equals("~");
                     }
                 } else if (key.matches("[!][XYZ]")) {
                     if (keyValue[0].matches("-?[0-9]\\d*$") && keyValue[2].matches("-?[0-9]\\d*$")) {
-                        return keyValue[1].equalsIgnoreCase("~");
+                        return keyValue[1].equals("~");
                     }
                 }
             } else if (key.length() == 3) {
                 if (key.matches("[!][XYZ][XYZ]")) {
                     if (keyValue[0].matches("-?[0-9]\\d*$") && keyValue[2].matches("-?[0-9]\\d*$")) {
-                        return keyValue[1].equalsIgnoreCase("~");
+                        return keyValue[1].equals("~");
                     }
                 }
             }
@@ -421,19 +454,21 @@ public class LocationAPI {
     }
 
     /**
-     * @param check  the location of event.
+     * @param number the location of event.
      * @param range1 the first side of range.
      * @param range2 another side of range.
      * @return if the check number is inside the range.
      * It will return false if the two side of range numbers are equal.
      */
-    private static boolean getRange(int check, int range1, int range2) {
+    private static boolean getRange(int number, int range1, int range2) {
         if (range1 == range2) {
+            ServerHandler.sendConsoleMessage("&cThere is an error occurred. Please check the \"Location\" format.");
+            ServerHandler.sendConsoleMessage("&eRange: " + range1 + "==" + range2);
             return false;
         } else if (range1 < range2) {
-            return check >= range1 && check <= range2;
+            return number >= range1 && number <= range2;
         } else {
-            return check >= range2 && check <= range1;
+            return number >= range2 && number <= range1;
         }
     }
 
