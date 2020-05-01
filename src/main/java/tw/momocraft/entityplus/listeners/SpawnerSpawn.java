@@ -4,7 +4,6 @@ import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 import com.bekvon.bukkit.residence.protection.ResidencePermissions;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
@@ -33,7 +32,7 @@ public class SpawnerSpawn implements Listener {
                     if (ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Worlds").contains(e.getSpawner().getLocation().getWorld().getName())) {
                         if (!ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Allow-List").contains(spawnType)) {
                             if (!LocationAPI.getLocation(e.getEntity().getLocation(), "Spawner.Groups." + group + ".Ignore.Location")) {
-                                ServerHandler.debugMessage("(SpawnerSpawn) Spawner", spawnType, "Ignore-Location", "return");
+                                ServerHandler.sendFeatureMessage("(SpawnerSpawn) Spawner", spawnType, "Ignore-Location", "return");
                                 return;
                             }
 
@@ -41,7 +40,7 @@ public class SpawnerSpawn implements Listener {
                                 ClaimedResidence res = Residence.getInstance().getResidenceManager().getByLoc(e.getSpawner().getLocation());
                                 if (res != null) {
                                     if (res.getPermissions().has("spawnerbypass", false)) {
-                                        ServerHandler.debugMessage("(SpawnerSpawn) Spawner", spawnType, "Ignore-Residences-Flag", "return");
+                                        ServerHandler.sendFeatureMessage("(SpawnerSpawn) Spawner", spawnType, "Ignore-Residences-Flag", "return");
                                         return;
                                     }
                                 }
@@ -55,14 +54,14 @@ public class SpawnerSpawn implements Listener {
                                         ResidencePermissions perms = res.getPermissions();
                                         //Residence - Has spawner permission.
                                         if (perms.has(Flags.getFlag("spawnerbypass"), false)) {
-                                            ServerHandler.debugMessage("(SpawnerSpawn) Spawner", spawnType, "Remove = true", "return", "residence has flag \"spawnerbypass\"");
+                                            ServerHandler.sendFeatureMessage("(SpawnerSpawn) Spawner", spawnType, "Remove = true", "return", "residence has flag \"spawnerbypass\"");
                                             return;
                                         }
                                     }
                                 }
                                 spawnerChangeCommands(e, group, "AIR");
                                 e.getSpawner().getBlock().setType(Material.AIR);
-                                ServerHandler.debugMessage("(SpawnerSpawn) Spawner", spawnType, "Remove = true", "remove");
+                                ServerHandler.sendFeatureMessage("(SpawnerSpawn) Spawner", spawnType, "Remove = true", "remove");
                                 e.setCancelled(true);
                                 return;
                             }
@@ -73,7 +72,7 @@ public class SpawnerSpawn implements Listener {
                                 spawnerChangeCommands(e, group, changeType);
                                 e.getSpawner().setSpawnedType(EntityType.valueOf(changeType));
                                 e.getSpawner().update();
-                                ServerHandler.debugMessage("(SpawnerSpawn) Spawner", spawnType, "changeList - " + changeType, "change");
+                                ServerHandler.sendFeatureMessage("(SpawnerSpawn) Spawner", spawnType, "changeList - " + changeType, "change");
                                 e.setCancelled(true);
                                 return;
                             }
@@ -93,7 +92,7 @@ public class SpawnerSpawn implements Listener {
                                         spawnerChangeCommands(e, group, changeType);
                                         e.getSpawner().setSpawnedType(EntityType.valueOf(changeType));
                                         e.getSpawner().update();
-                                        ServerHandler.debugMessage("(SpawnerSpawn) Spawner", spawnType, "changeConfig - " + changeType, "change");
+                                        ServerHandler.sendFeatureMessage("(SpawnerSpawn) Spawner", spawnType, "changeConfig - " + changeType, "change");
                                         e.setCancelled(true);
                                         return;
                                     }
@@ -105,7 +104,7 @@ public class SpawnerSpawn implements Listener {
                 }
             }
         }
-        ServerHandler.debugMessage("(SpawnerSpawn) Spawner", spawnType, "Final", "return");
+        ServerHandler.sendFeatureMessage("(SpawnerSpawn) Spawner", spawnType, "Final", "return");
     }
 
     /**

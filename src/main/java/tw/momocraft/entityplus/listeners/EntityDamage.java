@@ -39,7 +39,7 @@ public class EntityDamage implements Listener {
                 List<Entity> nearbyEntities = en.getNearbyEntities(playerRange, playerRange, playerRange);
                 for (Entity nearEntity : nearbyEntities) {
                     if (nearEntity instanceof Player) {
-                        ServerHandler.debugMessage("(EntityDamage) Damage-Skip-Duration", entityType, "No-Player-Range", "return");
+                        ServerHandler.sendFeatureMessage("(EntityDamage) Damage-Skip-Duration", entityType, "No-Player-Range", "return");
                         return;
                     }
                 }
@@ -65,7 +65,7 @@ public class EntityDamage implements Listener {
                                 if (en.getLocation().getBlock().getRelative(BlockFace.UP).getType() == Material.AIR) {
                                     double time = e.getEntity().getLocation().getWorld().getTime();
                                     if (time < 12300 || time > 23850) {
-                                        ServerHandler.debugMessage("(EntityDamage) Kill", entityType, "Fire Ignore-Sunburn", "return");
+                                        ServerHandler.sendFeatureMessage("(EntityDamage) Kill", entityType, "Fire Ignore-Sunburn", "return");
                                         return;
                                     }
                                 }
@@ -76,7 +76,7 @@ public class EntityDamage implements Listener {
                             damage = fireTick / 20;
                             damageEntity.setHealth(Math.max(0, damageEntity.getHeight() - damage));
                             livingEntity.setFireTicks(0);
-                            ServerHandler.debugMessage("(EntityDamage) Kill", entityType, "Fire", "damage");
+                            ServerHandler.sendFeatureMessage("(EntityDamage) Kill", entityType, "Fire", "damage");
                             return;
                         }
                     }
@@ -86,7 +86,7 @@ public class EntityDamage implements Listener {
                         damage += livingEntity.getPotionEffect(PotionEffectType.WITHER).getDuration() / 20 * 4;
                         damageEntity.setHealth(Math.max(0, damageEntity.getHeight() - damage));
                         livingEntity.removePotionEffect(PotionEffectType.WITHER);
-                        ServerHandler.debugMessage("(EntityDamage) Kill", entityType, "Wither", "damage");
+                        ServerHandler.sendFeatureMessage("(EntityDamage) Kill", entityType, "Wither", "damage");
                         return;
                     }
                 }
@@ -95,7 +95,7 @@ public class EntityDamage implements Listener {
                         damage += livingEntity.getPotionEffect(PotionEffectType.POISON).getDuration() / 20 * 4;
                         damageEntity.setHealth(Math.max(0, damageEntity.getHeight() - damage));
                         livingEntity.removePotionEffect(PotionEffectType.POISON);
-                        ServerHandler.debugMessage("(EntityDamage) Kill", entityType, "Poison", "damage");
+                        ServerHandler.sendFeatureMessage("(EntityDamage) Kill", entityType, "Poison", "damage");
                         return;
                     }
                 }
@@ -141,12 +141,12 @@ public class EntityDamage implements Listener {
                         if (newDamagePercent != null) {
                             damage *= Integer.valueOf(newDamagePercent);
                             e.setDamage(damage);
-                            ServerHandler.debugMessage("(EntityDamage) Kill", entityType, "Modified-Damage-Percent", "kill");
+                            ServerHandler.sendFeatureMessage("(EntityDamage) Kill", entityType, "Modified-Damage-Percent", "kill");
                             return;
                         }
 
                         damageEntity.setHealth(0);
-                        ServerHandler.debugMessage("(EntityDamage) Kill", entityType, "Final", "kill");
+                        ServerHandler.sendFeatureMessage("(EntityDamage) Kill", entityType, "Final", "kill");
                     }
                 }
             }

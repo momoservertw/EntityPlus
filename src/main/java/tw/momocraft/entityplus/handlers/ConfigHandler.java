@@ -14,6 +14,7 @@ import org.bukkit.entity.EntityType;
 import tw.momocraft.entityplus.Commands;
 import tw.momocraft.entityplus.EntityPlus;
 import tw.momocraft.entityplus.listeners.*;
+import tw.momocraft.entityplus.utils.ConfigPath;
 import tw.momocraft.entityplus.utils.DependAPI;
 import tw.momocraft.entityplus.utils.LocationAPI;
 import org.bukkit.Location;
@@ -26,8 +27,10 @@ import java.util.List;
 public class ConfigHandler {
 
     private static YamlConfiguration configYAML;
+    private static YamlConfiguration spigotYAML;
     private static YamlConfiguration groupsYAML;
     private static DependAPI depends;
+    private static ConfigPath configPath;
     private static UpdateHandler updater;
 
     public static void generateData() {
@@ -35,6 +38,7 @@ public class ConfigHandler {
         groupsFile();
         setDepends(new DependAPI());
         sendUtilityDepends();
+        setConfigPath(new ConfigPath());
         setUpdater(new UpdateHandler());
     }
 
@@ -124,6 +128,30 @@ public class ConfigHandler {
         getConfig("config.yml").options().copyDefaults(false);
     }
 
+    public static FileConfiguration getServerConfig(String path) {
+        File file = new File(Bukkit.getWorldContainer(), path);
+        if (spigotYAML == null) {
+            getServerConfigData(path);
+        }
+        return getServerPath(path, file, false);
+    }
+
+    private static FileConfiguration getServerConfigData(String path) {
+        File file = new File(Bukkit.getWorldContainer(), path);
+        return getServerPath(path, file, true);
+    }
+
+    private static YamlConfiguration getServerPath(String path, File file, boolean saveData) {
+        if (path.contains("spigot.yml")) {
+            if (saveData) {
+                spigotYAML = YamlConfiguration.loadConfiguration(file);
+            }
+            return spigotYAML;
+        }
+        return null;
+    }
+
+
     private static void groupsFile() {
         getConfigData("groups.yml");
         File itemsFile = new File(EntityPlus.getInstance().getDataFolder(), "groups.yml");
@@ -168,6 +196,15 @@ public class ConfigHandler {
 
     private static void setDepends(DependAPI depend) {
         depends = depend;
+    }
+
+
+    private static void setConfigPath(ConfigPath configPath) {
+        ConfigHandler.configPath = configPath;
+    }
+
+    public static ConfigPath getConfigPath() {
+        return configPath;
     }
 
     public static boolean getDebugging() {

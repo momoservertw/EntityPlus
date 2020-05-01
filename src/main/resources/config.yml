@@ -18,8 +18,10 @@ Spawn:
       # More information: https://github.com/momoservertw/EntityPlus/wiki/Custom-Groups
       Custom-Groups: true
       # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn-Limit
-      Limit: true
-      AFK-Limit: true
+      Limit:
+        Enable: true
+        AFK: true
+        Residnece-Flag: true
       # More information: https://github.com/momoservertw/EntityPlus/wiki/Purge
       Purge:
         Enable: true
@@ -49,6 +51,8 @@ Spawn:
       # If there are too many creatures over the spawn location, it will prevent spawning creatures.
       # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn-Limit
       Limit:
+        Enable: false
+        # More information: https://github.com/momoservertw/EntityPlus/wiki/Purge
         Purge: true
         # The chance of spawn creatures if the creature amount over the Max_Amount. Set "0" to cancel spawn every excess creatures.
         Chance: 0
@@ -58,11 +62,16 @@ Spawn:
           X: 8
           Y: 5
           Z: 8
-      # If player is AFK, it will reduce creatures' spawn chance.
+        Ignore-List: []
+        MythicMobs-Ignore-List: []
       # Need plugin: CMI
+      # If player is AFK, it will reduce creatures' spawn chance.
       # Bypass permission: entityplus.bypass.spawnlimit.afk
       AFK-Limit:
+        Enable: false
+        Purge: true
         Chance: 0
+        Amount: 0
         Range:
           X: 8
           Y: 5
@@ -112,7 +121,6 @@ Spawn:
       Priority: 2
       Chance: 0.5
       Reason: NETHER_PORTAL
-    # If wither_skeleton spawn in wither_rose.
     WITHER_SKELETON:
       Enable: false
       Priority: 2
@@ -126,7 +134,53 @@ Spawn:
 # Spawn "reason" doesn't work here.
 MythicMobs-Spawn:
   Enable: false
-  Control: []
+  Settings:
+    Features:
+      # More information: https://github.com/momoservertw/EntityPlus/wiki/Custom-Groups
+      Custom-Groups: true
+      # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn-Limit
+      Limit: true
+      AFK-Limit: true
+      # More information: https://github.com/momoservertw/EntityPlus/wiki/Purge
+      Purge:
+        Enable: true
+        Check:
+          Schedule:
+            Enable: false
+            Interval: 60
+        Ignore:
+          Named: true
+          Tamed: true
+          With-Saddle: true
+          Baby-Animals: false
+          Equipped: false
+          Pickup-Equipped: true
+  Control:
+    All:
+      Enable: true
+      Priority: 0
+      Location:
+        - world
+        - world_nether
+        - world_the_end
+      Limit:
+        Enable: false
+        Purge: true
+        Chance: 0
+        Amount: 5
+        Range:
+          X: 8
+          Y: 5
+          Z: 8
+      AFK-Limit:
+        Enable: false
+        Purge: true
+        Chance: 0
+        Amount: 0
+        Range:
+          X: 8
+          Y: 5
+          Z: 8
 
 # Change illegal spawners and randomly choose a new type, then execute custom commands.
 # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawner
@@ -151,9 +205,10 @@ Spawner:
         SPIDER: 0.25
         CAVE_SPIDER: 0.25
       # It will execute commands when a spawner changed.
+      # More information: https://github.com/momoservertw/EntityPlus/wiki/Custom-Commands
       Commands:
-        - "log: &e%spawner% spawner &cat %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to &e%new_spawner% spawner&c, nearby players: &e%nearbyplayers%"
-        - "nearby-message: &e%spawner% spawner &fat %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to &e%new_spawner% spawner&f."
+        - "log: &e%spawner_type% spawner &cat %spawner_world%(%spawner_loc_x%, %spawner_loc_y%, %spawner_loc_z%) has been changed to &e%spawner_newspawner%&c, nearby players: &e%spawner_nearbyplayers%"
+        - "all-message: &e%spawner_type% spawner &cat %spawner_world%(%spawner_loc_x%, %spawner_loc_y%, %spawner_loc_z%) has been changed to &e%spawner_newspawner%&c."
     Nether:
       Enable: true
       Location:
@@ -163,35 +218,37 @@ Spawner:
       Change-List:
         - BLAZE
       Commands:
-        - "log: &e%spawner% spawner &cat %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to &e%new_spawner% spawner&c, nearby players: &e%nearbyplayers%"
-        - "nearby-message: &e%spawner% spawner &fat %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to &e%new_spawner% spawner&f."
+        - "log: &e%spawner_type% spawner &cat %spawner_world%(%spawner_loc_x%, %spawner_loc_y%, %spawner_loc_z%) has been changed to &e%spawner_newspawner%&c, nearby players: &e%spawner_nearbyplayers%"
+        - "all-message: &e%spawner_type% spawner &cat %spawner_world%(%spawner_loc_x%, %spawner_loc_y%, %spawner_loc_z%) has been changed to &e%spawner_newspawner%&c."
     Remove:
       Enable: true
       Remove: true
       Location:
         - world_the_end
       Commands:
-        - "log: &e%spawner% spawner &cat %world%(%loc_x%, %loc_y%, %loc_z%) has been &eremoved&f, nearby players: &e%nearbyplayers%"
-        - "nearby-message: &e%spawner% spawner &fat %world%(%loc_x%, %loc_y%, %loc_z%) has been &eremoved&f."
+        - "log: &e%spawner_type% spawner &cat %spawner_world%(%spawner_loc_x%, %spawner_loc_y%, %spawner_loc_z%) has been removed&c, nearby players: &e%spawner_nearbyplayers%"
+        - "all-message: &e%spawner_type% spawner &cat %spawner_world%(%spawner_loc_x%, %spawner_loc_y%, %spawner_loc_z%) has been removed."
 
+# Change the reward for killing MythicMobs.
 # More information: https://github.com/momoservertw/EntityPlus/wiki/MythicMobs-Drop
 MythicMobs-Drop:
   Enable: false
   # If player has multiple multipliers, he will get more rewards than the highest multiplier.
   # Calculation method: "+" or "*"
-  Combined-Enable: true
-  Combined-Method: "+"
+  Combined:
+    Enable: true
+    Mode: "+"
   # You can add more multipliers. And the highest multiplier is the maximum number of group name.
   # Permission: "entityplus.drop.multiplier.GROUP"
   Multipliers:
-    1:
-      money: 1.5
-      exp: 1.5
+    1:                  # The priority of this group. It must be a number.
+      money: 1.5        # Give 150% money to player.
+      exp: 1.5          # Give 150% exp to player.
     2:
       money: 2
       exp: 2
 
-
+# Skip the damage duration and then damage the creature immediately.
 # More information: https://github.com/momoservertw/EntityPlus/wiki/Damage-Skip-Duration
 Damage-Skip-Duration:
   Enable: false
@@ -210,11 +267,13 @@ Damage-Skip-Duration:
     - world_nether
     - world_the_end
   # The list of creature type. If you set this option to "[]", it will affect to every creatures.
+  # You can set the creature type from groups.yml. More information: https://github.com/momoservertw/EntityPlus/wiki/Custom-Groups
   List: []
   Ignore-List: []
   MythicMobs-List: []
   MythicMobs-Ignore-List: []
 
+# Control creatures damage and modify it.
 # More information: https://github.com/momoservertw/EntityPlus/wiki/Damage
 Damage:
   Enable: false
@@ -223,14 +282,16 @@ Damage:
     Fast-Kill:
       Enable: true
       No-Player-Range: 10
-      Kill: true
+      Action:
+        Kill: true
       Reasons:
         - CRAMMING
         - DRYOUT
     Fast-Kill-HatFloor:
       Enable: true
       No-Player-Range: 10
-      Kill: true
+      Action:
+        Kill: true
       Reasons:
         - HOT_FLOOR
       Blocks:
@@ -244,7 +305,8 @@ Damage:
     Fast-Kill-WitherRose:
       Enable: true
       No-Player-Range: 10
-      Kill: true
+      Action:
+        Kill: true
       Reasons:
         - WITHER
       Blocks:
@@ -252,7 +314,8 @@ Damage:
     # It will prevent creature from dying if the creature is nearby the block end_portal.
     End-Portal-Duplicate:
       Enable: true
-      Set-Damage: 0
+      Action:
+        Damage: 0
       Blocks:
         END_PORTAL:
           Range:
