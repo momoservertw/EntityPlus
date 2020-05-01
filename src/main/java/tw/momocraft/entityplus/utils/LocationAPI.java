@@ -134,7 +134,7 @@ public class LocationAPI {
      * @param path the path of location setting in config.yml.
      * @return if the block is in the range of setting in the config.yml.
      */
-    public static boolean getLocation(Location loc, String path) {
+    public static boolean checkLocation(Location loc, String path) {
         // Simple world list.
         List<String> locationList = ConfigHandler.getConfig("config.yml").getStringList(path);
         if (!locationList.isEmpty()) {

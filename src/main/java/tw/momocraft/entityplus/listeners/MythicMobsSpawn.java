@@ -88,7 +88,7 @@ public class MythicMobsSpawn implements Listener {
                 }
 
                 // If the creature's spawn "location" isn't match.
-                if (!LocationAPI.getLocation(loc, "Spawn.List." + entityType + ".Location")) {
+                if (!LocationAPI.checkLocation(loc, "Spawn.List." + entityType + ".Location")) {
                     ServerHandler.sendFeatureMessage("(MythicMobSpawn) Spawn", entityType, "!Location", "return");
                     return;
                 }
@@ -143,7 +143,7 @@ public class MythicMobsSpawn implements Listener {
                         continue;
                     }
 
-                    if (!LocationAPI.getLocation(loc, "Spawn.List." + entityType + "." + group + ".Location")) {
+                    if (!LocationAPI.checkLocation(loc, "Spawn.List." + entityType + "." + group + ".Location")) {
                         if (!iterator.hasNext()) {
                             ServerHandler.sendFeatureMessage("(MythicMobSpawn) Spawn", entityType, "!Location", "return");
                             return;

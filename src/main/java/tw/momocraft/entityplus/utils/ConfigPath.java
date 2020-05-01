@@ -83,7 +83,6 @@ public class ConfigPath {
         spawnMMPSPickup = ConfigHandler.getConfig("config.yml").getBoolean("MythicMobs-Spawn.Settings.Features.Purge.Ignore.Pickup-Equipped");
 
         spawnConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn.Control");
-
         if (spawnConfig != null) {
             EntityMap entityMap = new EntityMap();
             ConfigurationSection groupsConfig;
@@ -124,6 +123,8 @@ public class ConfigPath {
                             limitMap.setRangeX(ConfigHandler.getConfig("config.yml").getInt("Spawn.Control." + entityType + ".Groups." + group + ".Limit.Range.X"));
                             limitMap.setRangeY(ConfigHandler.getConfig("config.yml").getInt("Spawn.Control." + entityType + ".Groups." + group + ".Limit.Range.Y"));
                             limitMap.setRangeZ(ConfigHandler.getConfig("config.yml").getInt("Spawn.Control." + entityType + ".Groups." + group + ".Limit.Range.Z"));
+                            limitMap.setIgnoreList(ConfigHandler.getConfig("config.yml").getStringList("Spawn.Control." + entityType + ".Groups." + group + ".Limit.Ignore-List"));
+                            limitMap.setIgnoreMMList(ConfigHandler.getConfig("config.yml").getStringList("Spawn.Control." + entityType + ".Groups." + group + ".Limit.MythicMobs-Ignore-List"));
                             entityMap.setLimit(limitMap);
                         }
                         entityProperties.put(entityType, group, entityMap);
@@ -149,7 +150,17 @@ public class ConfigPath {
                             }
                         }
                     }
-
+                    limitConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn.Control." + entityType + ".Groups.Limit");
+                    if (limitConfig != null) {
+                        limitMap.setChance(ConfigHandler.getConfig("config.yml").getLong("Spawn.Control." + entityType + ".Limit.Amount"));
+                        limitMap.setAmount(ConfigHandler.getConfig("config.yml").getInt("Spawn.Control." + entityType + ".Limit.Amount"));
+                        limitMap.setRangeX(ConfigHandler.getConfig("config.yml").getInt("Spawn.Control." + entityType + ".Limit.Range.X"));
+                        limitMap.setRangeY(ConfigHandler.getConfig("config.yml").getInt("Spawn.Control." + entityType + ".Limit.Range.Y"));
+                        limitMap.setRangeZ(ConfigHandler.getConfig("config.yml").getInt("Spawn.Control." + entityType + ".Limit.Range.Z"));
+                        limitMap.setIgnoreList(ConfigHandler.getConfig("config.yml").getStringList("Spawn.Control." + entityType + ".Limit.Ignore-List"));
+                        limitMap.setIgnoreMMList(ConfigHandler.getConfig("config.yml").getStringList("Spawn.Control." + entityType + ".Limit.MythicMobs-Ignore-List"));
+                        entityMap.setLimit(limitMap);
+                    }
                     entityProperties.put(entityType, "default", entityMap);
                 }
             }

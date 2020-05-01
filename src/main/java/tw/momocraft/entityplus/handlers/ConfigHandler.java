@@ -253,7 +253,7 @@ public class ConfigHandler {
                     Location loc;
                     for (String group : groupList.getKeys(false)) {
                         loc = getLocationString(value);
-                        if (LocationAPI.getLocation(loc, "Location." + group)) {
+                        if (LocationAPI.checkLocation(loc, "Location." + group)) {
                             return true;
                         }
                     }

@@ -31,7 +31,7 @@ public class SpawnerSpawn implements Listener {
                 if (ConfigHandler.getConfig("config.yml").getBoolean("Spawner.Groups." + group + ".Enable")) {
                     if (ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Worlds").contains(e.getSpawner().getLocation().getWorld().getName())) {
                         if (!ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Allow-List").contains(spawnType)) {
-                            if (!LocationAPI.getLocation(e.getEntity().getLocation(), "Spawner.Groups." + group + ".Ignore.Location")) {
+                            if (!LocationAPI.checkLocation(e.getEntity().getLocation(), "Spawner.Groups." + group + ".Ignore.Location")) {
                                 ServerHandler.sendFeatureMessage("(SpawnerSpawn) Spawner", spawnType, "Ignore-Location", "return");
                                 return;
                             }

@@ -32,6 +32,14 @@ public class LimitMap {
         this.rangeZ = rangeZ;
     }
 
+    public void setIgnoreList(List<String> ignoreList) {
+        this.ignoreList = ignoreList;
+    }
+
+    public void setIgnoreMMList(List<String> ignoreMMList) {
+        this.ignoreMMList = ignoreMMList;
+    }
+
     public List<String> getIgnoreList() {
         return ignoreList;
     }
