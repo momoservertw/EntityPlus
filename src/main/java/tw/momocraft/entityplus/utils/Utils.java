@@ -13,9 +13,7 @@ import org.bukkit.entity.Player;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.ServerHandler;
 
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 public class Utils {
 
@@ -121,5 +119,25 @@ public class Utils {
             } catch (Exception e) { }
         }
         return name;
+    }
+
+    /**
+     * Sort Map keys by values.
+     * High -> Low
+     *
+     * @param map the input map.
+     * @param <K>
+     * @param <V>
+     * @return the sorted map.
+     */
+    public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map) {
+        List<Map.Entry<K, V>> list = new ArrayList<>(map.entrySet());
+        list.sort(Collections.reverseOrder(Map.Entry.comparingByValue()));
+
+        Map<K, V> result = new LinkedHashMap<>();
+        for (Map.Entry<K, V> entry : list) {
+            result.put(entry.getKey(), entry.getValue());
+        }
+        return result;
     }
 }

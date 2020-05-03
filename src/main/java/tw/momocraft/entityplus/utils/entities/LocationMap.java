@@ -1,32 +1,27 @@
 package tw.momocraft.entityplus.utils.entities;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class LocationMap {
 
     private String world;
-    private String type;
-    private String value;
+    private Map<String, String> cord = new HashMap<>();
 
     public void setWorld(String world) {
         this.world = world;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void addCord(String type, String value) {
+        cord.put(type, value);
     }
 
     public String getWorld() {
         return world;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public String getValue() {
-        return value;
+    public Map<String, String> getCord() {
+        return cord;
     }
 }

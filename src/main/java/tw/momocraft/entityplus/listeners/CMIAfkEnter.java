@@ -30,8 +30,8 @@ public class CMIAfkEnter implements Listener {
             return;
         }
         purgeAFK(player);
-        if (ConfigHandler.getConfigPath().isSpawnPSchedule()) {
-            purgeAFKSchedule(player, ConfigHandler.getConfigPath().getSpawnPScheduleInt());
+        if (ConfigHandler.getConfigPath().isPurgeSchedule()) {
+            purgeAFKSchedule(player, ConfigHandler.getConfigPath().getPurgeScheduleInt());
         }
     }
 

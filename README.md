@@ -27,7 +27,7 @@ Improve other players' gaming experience and increase server TPS.
 
 **5. Purge creatures near the player when the he enters AFK.** (Need CMI)  
 
-**6. Change illegal spawners and randomly choose a new type, then execute custom commands.** (Support PlaceHolderAPI, BungeeCord)
+**6. Change illegal spawners and randomly choose a new types, then execute custom commands.** (Support PlaceHolderAPI, BungeeCord)
 
 **7. Support MythicMobs.**
 

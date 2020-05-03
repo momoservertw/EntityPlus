@@ -17,25 +17,11 @@ Spawn:
     Features:
       # More information: https://github.com/momoservertw/EntityPlus/wiki/Custom-Groups
       Custom-Groups: true
-      # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn-Limit
+      # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn#spawn-limit-example
       Limit:
         Enable: true
         AFK: true
         Residnece-Flag: true
-      # More information: https://github.com/momoservertw/EntityPlus/wiki/Purge
-      Purge:
-        Enable: true
-        Check:
-          Schedule:
-            Enable: false
-            Interval: 60
-        Ignore:
-          Named: true
-          Tamed: true
-          With-Saddle: true
-          Baby-Animals: false
-          Equipped: false
-          Pickup-Equipped: true
   Control:
     # This custom groups is from groups.yml.
     NormalMobs:
@@ -49,7 +35,7 @@ Spawn:
         - world_nether
         - world_the_end
       # If there are too many creatures over the spawn location, it will prevent spawning creatures.
-      # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn-Limit
+      # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn#spawn-limit-example
       Limit:
         Enable: false
         # More information: https://github.com/momoservertw/EntityPlus/wiki/Purge
@@ -182,11 +168,35 @@ MythicMobs-Spawn:
           Y: 5
           Z: 8
 
+# More information: https://github.com/momoservertw/EntityPlus/wiki/Purge
+Purge:
+  Enable: false
+  Check:
+    Schedule:
+      Enable: false
+      Interval: 60
+  Ignore:
+    Named: true
+    Tamed: true
+    With-Saddle: true
+    Baby-Animals: false
+    Equipped: false
+    Pickup-Equipped: true
+
+
 # Change illegal spawners and randomly choose a new type, then execute custom commands.
 # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawner
 Spawner:
   Enable: false
-  Change-Type:
+  Control:
+    Zombie:
+      Enable: true
+      Types:
+        - ZOMBIE
+        - SKELETON
+        -
+      Location:
+        - world
     Normal:
       Enable: true
       Location:

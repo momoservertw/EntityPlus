@@ -18,6 +18,7 @@ import tw.momocraft.entityplus.utils.ConfigPath;
 import tw.momocraft.entityplus.utils.DependAPI;
 import tw.momocraft.entityplus.utils.LocationAPI;
 import org.bukkit.Location;
+import tw.momocraft.entityplus.utils.TabComplete;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -44,6 +45,8 @@ public class ConfigHandler {
 
     public static void registerEvents() {
         EntityPlus.getInstance().getCommand("entityplus").setExecutor(new Commands());
+        EntityPlus.getInstance().getCommand("entityplus").setTabCompleter(new TabComplete());
+
         EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new CreatureSpawn(), EntityPlus.getInstance());
         EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new SpawnerSpawn(), EntityPlus.getInstance());
         EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new EntityDamage(), EntityPlus.getInstance());
@@ -60,7 +63,6 @@ public class ConfigHandler {
             FlagPermissions.addFlag("spawnlimitbypass");
             FlagPermissions.addFlag("spawnerbypass");
             FlagPermissions.addFlag("fastdamagebypass");
-
         }
     }
 

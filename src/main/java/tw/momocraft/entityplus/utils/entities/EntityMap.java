@@ -5,8 +5,10 @@ import java.util.List;
 
 public class EntityMap {
 
+    private String groupName;
+    private List<String> types;
+    private int priority;
     private long chance;
-    private long priority;
     private List<String> reasons;
     private List<String> boimes;
     private boolean water;
@@ -14,50 +16,23 @@ public class EntityMap {
     private List<LocationMap> locationMaps = new ArrayList<>();
     private String blocks;
     private LimitMap limit;
-    private LimitMap afkLimit;
+    private LimitMap limitAFK;
 
-    public void setChance(long chance) {
-        this.chance = chance;
+
+    public String getGroupName() {
+        return groupName;
     }
 
-    public void setPriority(long priority) {
-        this.priority = priority;
+    public List<String> getTypes() {
+        return types;
     }
 
-    public void setReasons(List<String> reasons) {
-        this.reasons = reasons;
-    }
-
-    public void setBoimes(List<String> boimes) {
-        this.boimes = boimes;
-    }
-
-    public void setWater(boolean water) {
-        this.water = water;
-    }
-
-    public void setDay(boolean day) {
-        this.day = day;
-    }
-
-    public void addLocation(LocationMap locationMap) {
-        locationMaps.add(locationMap);
-    }
-
-    public void setLimit(LimitMap limit) {
-        this.limit = limit;
-    }
-
-    public void setAfkLimit(LimitMap afkLimit) {
-        this.afkLimit = afkLimit;
+    public int getPriority() {
+        return priority;
     }
 
     public long getChance() {
         return chance;
-    }
-
-    public long getPriority() {
-        return priority;
     }
 
     public boolean isDay() {
@@ -88,7 +63,53 @@ public class EntityMap {
         return limit;
     }
 
-    public LimitMap getAfkLimit() {
-        return afkLimit;
+    public LimitMap getLimitAFK() {
+        return limitAFK;
     }
+
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public void setTypes(List<String> types) {
+        this.types = types;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
+    public void setChance(long chance) {
+        this.chance = chance;
+    }
+
+    public void setReasons(List<String> reasons) {
+        this.reasons = reasons;
+    }
+
+    public void setBoimes(List<String> boimes) {
+        this.boimes = boimes;
+    }
+
+    public void setWater(boolean water) {
+        this.water = water;
+    }
+
+    public void setDay(boolean day) {
+        this.day = day;
+    }
+
+    public void addLocation(LocationMap locationMap) {
+        locationMaps.add(locationMap);
+    }
+
+    public void setLimit(LimitMap limit) {
+        this.limit = limit;
+    }
+
+    public void setLimitAFK(LimitMap limitAFK) {
+        this.limitAFK = limitAFK;
+    }
+
 }

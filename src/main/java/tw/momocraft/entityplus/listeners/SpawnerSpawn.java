@@ -9,6 +9,7 @@ import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -17,6 +18,8 @@ import org.bukkit.event.entity.SpawnerSpawnEvent;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.ServerHandler;
 import tw.momocraft.entityplus.utils.LocationAPI;
+import tw.momocraft.entityplus.utils.entities.LocationMap;
+import tw.momocraft.entityplus.utils.entities.SpawnerMap;
 
 import java.util.*;
 
@@ -25,92 +28,84 @@ public class SpawnerSpawn implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onSpawnMobs(SpawnerSpawnEvent e) {
         String spawnType = e.getSpawner().getSpawnedType().name();
-        ConfigurationSection controlGroups = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawner.Groups");
-        if (controlGroups != null) {
-            for (String group : controlGroups.getKeys(false)) {
-                if (ConfigHandler.getConfig("config.yml").getBoolean("Spawner.Groups." + group + ".Enable")) {
-                    if (ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Worlds").contains(e.getSpawner().getLocation().getWorld().getName())) {
-                        if (!ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Allow-List").contains(spawnType)) {
-                            if (!LocationAPI.checkLocation(e.getEntity().getLocation(), "Spawner.Groups." + group + ".Ignore.Location")) {
-                                ServerHandler.sendFeatureMessage("(SpawnerSpawn) Spawner", spawnType, "Ignore-Location", "return");
-                                return;
-                            }
+        Map<String, SpawnerMap> spawnerPro = ConfigHandler.getConfigPath().getSpawnerProperties();
+        if (spawnerPro != null) {
+            Location location = e.getLocation();
+            SpawnerMap spawnerMap;
+            for (String group : spawnerPro.keySet()) {
+                spawnerMap = spawnerPro.get(group);
+                if (!spawnerMap.getAllowList().contains(spawnType)) {
+                    if (!LocationAPI.checkLocation(e.getEntity().getLocation(), spawnerMap.getLocationMaps(), "")) {
+                        continue;
+                    }
 
-                            if (ConfigHandler.getDepends().ResidenceEnabled()) {
-                                ClaimedResidence res = Residence.getInstance().getResidenceManager().getByLoc(e.getSpawner().getLocation());
-                                if (res != null) {
-                                    if (res.getPermissions().has("spawnerbypass", false)) {
-                                        ServerHandler.sendFeatureMessage("(SpawnerSpawn) Spawner", spawnType, "Ignore-Residences-Flag", "return");
-                                        return;
-                                    }
+                    if (ConfigHandler.getConfig("config.yml").getBoolean("Spawner.Groups." + group + ".Remove")) {
+                        if (ConfigHandler.getDepends().ResidenceEnabled()) {
+                            ClaimedResidence res = Residence.getInstance().getResidenceManager().getByLoc(e.getSpawner().getLocation());
+                            //Residence - In protect area.
+                            if (res != null) {
+                                ResidencePermissions perms = res.getPermissions();
+                                //Residence - Has spawner permission.
+                                if (perms.has(Flags.getFlag("spawnerbypass"), false)) {
+                                    ServerHandler.sendFeatureMessage("Spawner", spawnType, "Remove = true", "return", "residence has flag \"spawnerbypass\"",
+                                            new Throwable().getStackTrace()[0]);
+                                    return;
                                 }
                             }
+                        }
+                        spawnerChangeCommands(e, group, "AIR");
+                        e.getSpawner().getBlock().setType(Material.AIR);
+                        ServerHandler.sendFeatureMessage("Spawner", spawnType, "Remove = true", "remove",
+                                new Throwable().getStackTrace()[0]);
+                        e.setCancelled(true);
+                        return;
+                    }
+                    List<String> changeList = ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Change-List");
+                    if (!changeList.isEmpty()) {
+                        Random rand = new Random();
+                        String changeType = changeList.get(rand.nextInt(changeList.size()));
+                        spawnerChangeCommands(e, group, changeType);
+                        e.getSpawner().setSpawnedType(EntityType.valueOf(changeType));
+                        e.getSpawner().update();
+                        ServerHandler.sendFeatureMessage("Spawner", spawnType, "changeList - " + changeType, "change",
+                                new Throwable().getStackTrace()[0]);
+                        e.setCancelled(true);
+                        return;
+                    }
+                    ConfigurationSection changeTypeConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawner.Groups." + group + ".Change-List");
+                    if (changeTypeConfig != null) {
+                        double typeTotalChance = 0;
+                        double chance;
+                        for (String changeType : changeTypeConfig.getKeys(false)) {
+                            chance = ConfigHandler.getConfig("config.yml").getDouble("Spawner.Groups." + group + ".Change-List." + changeType);
+                            typeTotalChance += chance;
+                        }
 
-                            if (ConfigHandler.getConfig("config.yml").getBoolean("Spawner.Groups." + group + ".Remove")) {
-                                if (ConfigHandler.getDepends().ResidenceEnabled()) {
-                                    ClaimedResidence res = Residence.getInstance().getResidenceManager().getByLoc(e.getSpawner().getLocation());
-                                    //Residence - In protect area.
-                                    if (res != null) {
-                                        ResidencePermissions perms = res.getPermissions();
-                                        //Residence - Has spawner permission.
-                                        if (perms.has(Flags.getFlag("spawnerbypass"), false)) {
-                                            ServerHandler.sendFeatureMessage("(SpawnerSpawn) Spawner", spawnType, "Remove = true", "return", "residence has flag \"spawnerbypass\"");
-                                            return;
-                                        }
-                                    }
-                                }
-                                spawnerChangeCommands(e, group, "AIR");
-                                e.getSpawner().getBlock().setType(Material.AIR);
-                                ServerHandler.sendFeatureMessage("(SpawnerSpawn) Spawner", spawnType, "Remove = true", "remove");
-                                e.setCancelled(true);
-                                return;
-                            }
-                            List<String> changeList = ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Change-List");
-                            if (!changeList.isEmpty()) {
-                                Random rand = new Random();
-                                String changeType = changeList.get(rand.nextInt(changeList.size()));
+                        double radomTotalChange = Math.random() * typeTotalChance;
+                        for (String changeType : changeTypeConfig.getKeys(false)) {
+                            chance = ConfigHandler.getConfig("config.yml").getDouble("Spawner.Groups." + group + ".Change-List." + changeType);
+                            if (chance >= radomTotalChange) {
                                 spawnerChangeCommands(e, group, changeType);
                                 e.getSpawner().setSpawnedType(EntityType.valueOf(changeType));
                                 e.getSpawner().update();
-                                ServerHandler.sendFeatureMessage("(SpawnerSpawn) Spawner", spawnType, "changeList - " + changeType, "change");
+                                ServerHandler.sendFeatureMessage("Spawner", spawnType, "changeConfig - " + changeType, "change",
+                                        new Throwable().getStackTrace()[0]);
                                 e.setCancelled(true);
                                 return;
                             }
-                            ConfigurationSection changeTypeConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawner.Groups." + group + ".Change-List");
-                            if (changeTypeConfig != null) {
-                                double typeTotalChance = 0;
-                                double chance;
-                                for (String changeType : changeTypeConfig.getKeys(false)) {
-                                    chance = ConfigHandler.getConfig("config.yml").getDouble("Spawner.Groups." + group + ".Change-List." + changeType);
-                                    typeTotalChance += chance;
-                                }
-
-                                double radomTotalChange = Math.random() * typeTotalChance;
-                                for (String changeType : changeTypeConfig.getKeys(false)) {
-                                    chance = ConfigHandler.getConfig("config.yml").getDouble("Spawner.Groups." + group + ".Change-List." + changeType);
-                                    if (chance >= radomTotalChange) {
-                                        spawnerChangeCommands(e, group, changeType);
-                                        e.getSpawner().setSpawnedType(EntityType.valueOf(changeType));
-                                        e.getSpawner().update();
-                                        ServerHandler.sendFeatureMessage("(SpawnerSpawn) Spawner", spawnType, "changeConfig - " + changeType, "change");
-                                        e.setCancelled(true);
-                                        return;
-                                    }
-                                    radomTotalChange -= chance;
-                                }
-                            }
+                            radomTotalChange -= chance;
                         }
                     }
                 }
             }
         }
-        ServerHandler.sendFeatureMessage("(SpawnerSpawn) Spawner", spawnType, "Final", "return");
+        ServerHandler.sendFeatureMessage("Sawner", spawnType, "Final", "return",
+                new Throwable().getStackTrace()[0]);
     }
 
     /**
-     *
-     * @param e SpawnerSpawnEven
-     * @param group the world group.
+     * @param e          SpawnerSpawnEven
+     * @param group      the world group.
      * @param changeType the type of spawner which will change.
      */
     private void spawnerChangeCommands(SpawnerSpawnEvent e, String group, String changeType) {
@@ -138,7 +133,6 @@ public class SpawnerSpawn implements Listener {
     }
 
     /**
-     *
      * @param block the center block.
      * @return list the players near the block.
      */
@@ -157,7 +151,6 @@ public class SpawnerSpawn implements Listener {
     }
 
     /**
-     *
      * @param block the center block.
      * @return list the players' name near the block.
      */

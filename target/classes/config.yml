@@ -1,358 +1,332 @@
 # --{ =-=-=-=-=-=-=-=-=-= EntityPlus's Configuration Settings, by Momocraft =-=-=-=-=-=-=-=-=-= }--
-Config-Version: 6
+Config-Version: 7
 Log-Coloration: true
 Debugging: false
 Check-Updates: true
+Custom-Groups: true
 
 General:
-  # Please set the same value from your Spigot.yml. It will change the checking range of monsters.
-  mob-spawn-range: 3
+  # The searching players range from a location.
   Nearby-Players-Range: 32
 
-Purge:
-  # Need plugin: CMI
-  # It will automatic purging all creatures in the AFK list which near afk players every 30 minutes.
-  AFK-Auto-Clean:
-    Enable: false
-    Interval: 30
-  # If the player enters AFK, those entities near him will be check and purge.
-  # Bypass permission: entityplus.bypass.purge.afk
-  AFK:
-    Enable: false
-    # The chance of each creature will be purged. Set "1" to purge all creatures.
-    Chance: 1
-    Ignore:
-      Named: true
-      Tamed: true
-      With-Saddle: true
-      Baby-Animals: false
-      Equipped: false
-      Pickup-Equipped: true
-      # Ignore spawn reason like "NATURAL" and "SPAWNER".
-      # Spawn reason: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/entity/CreatureSpawnEvent.SpawnReason.html
-      Reasons: []
-      Worlds: []
-    # Checking the purge list. If you set this option to false, it will purge every creatures.
-    List-Enable: true
-    List:
-      - ZOMBIE
-      - ZOMBIE_VILLAGER
-      - SKELETON
-      - CREEPER
-      - SPIDER
-      - WITCH
-      - ENDERMAN
-      - CAVE_SPIDER
-      - SLIME
-      - SILVERFISH
-      - PIG_ZOMBIE
-      - BLAZE
-      - WITHER_SKELETON
-      - MAGMA_CUBE
-      - GHAST
-      - STRAY
-      - HUSK
-      - DROWNED
-      - PHANTOM
-      - PILLAGER
-      - RAVAGER
-  MythicMobs-AFK:
-    Enable: false
-    Chance: 1
-    Ignore:
-      Named: true
-      Tamed: true
-      With-Saddle: true
-      Baby-Animals: false
-      Equipped: false
-      Pickup-Equipped: true
-      Worlds: []
-    List-Enable: true
-    List: []
-
-# If you have Residence, you can add custom flag "spawnlimitbypass" to bypass this feature.
-Spawn-Limit:
-  # If there are too many creatures over the spawn location, it will cancel the spawn event.
-  # This setting can avoid the bug of spawn MythicMobs without limit when you are using "RandomRespawn".
-  Range:
-    Enable: false
-    # The maximum amount near the player. You can set "-1" to disable this feature.
-    Max-Amount: 5
-    # The chance of each creature will be spawned. Set "0" to disable all creatures spawn.
-    Chance: 0
-    # The checking range near the spawn creature.
-    Range:
-      X: 8
-      Y: 5
-      Z: 8
-    Ignore-Reasons: []
-    Ignore-Worlds: []
-    List-Enable: true
-    List:
-      - ZOMBIE
-      - ZOMBIE_VILLAGER
-      - SKELETON
-      - CREEPER
-      - SPIDER
-      - WITCH
-      - ENDERMAN
-      - CAVE_SPIDER
-      - SLIME
-      - SILVERFISH
-      - PIG_ZOMBIE
-      - BLAZE
-      - WITHER_SKELETON
-      - MAGMA_CUBE
-      - GHAST
-      - STRAY
-      - HUSK
-      - DROWNED
-      - PHANTOM
-      - PILLAGER
-      - RAVAGER
-      - ILLUSIONER
-      - VINDICATOR
-      - EVOKER
-      - VEX
-      - VILLAGER
-      - IRON_GOLEM
-    # The creature will not be count in Max-Amount.
-    Ignore-List: []
-    MythicMobs-List-Enable: true
-    MythicMobs-List: []
-    MythicMobs-Ignore-List: []
-  # Need plugin: CMI
-  # If player is AFK, the entity will decrease spawning creatures.
-  # Bypass permission: entityplus.bypass.spawnlimit.afk
-  AFK:
-    Enable: false
-    # Set "-1" to disable Max-Amount.
-    Max-Amount: -1
-    Chance: 0
-    Ignore-Reasons: []
-    Ignore-Worlds: []
-    List-Enable: true
-    List:
-      - ZOMBIE
-      - ZOMBIE_VILLAGER
-      - SKELETON
-      - CREEPER
-      - SPIDER
-      - WITCH
-      - ENDERMAN
-      - CAVE_SPIDER
-      - SLIME
-      - SILVERFISH
-      - PIG_ZOMBIE
-      - BLAZE
-      - WITHER_SKELETON
-      - MAGMA_CUBE
-      - GHAST
-      - STRAY
-      - HUSK
-      - DROWNED
-      - PHANTOM
-      - PILLAGER
-      - RAVAGER
-      - ILLUSIONER
-      - VINDICATOR
-      - EVOKER
-      - VEX
-      - VILLAGER
-      - IRON_GOLEM
-    MythicMobs-List-Enable: true
-    MythicMobs-List: []
-
-# This feature only support creatures.
-# Entity type: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/entity/EntityType.html
-# Spawn reason: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/entity/CreatureSpawnEvent.SpawnReason.html
-#   Normal reason: NATURAL, SPAWNER, SPAWNER_EGG
-#   Reason "CUSTOM" will not work if you have MythicMobs.
-# Spawn biome: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/block/Biome.html
-# Spawn water: true or false. It will check if the spawn location in water or air.
-# Spawn day: true or false. It will check if the world is day or night,
+# Control creatures spawn chance and conditions.
+# More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn
 Spawn:
   Enable: false
-  List:
-    PHANTOM:
-      Chance: 0.3
+  Settings:
+    Features:
+      # More information: https://github.com/momoservertw/EntityPlus/wiki/Custom-Groups
+      Custom-Groups: true
+      # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn-Limit
+      Limit:
+        Enable: true
+        AFK: true
+        Residnece-Flag: true
+      # More information: https://github.com/momoservertw/EntityPlus/wiki/Purge
+      Purge:
+        Enable: true
+        Check:
+          Schedule:
+            Enable: false
+            Interval: 60
+        Ignore:
+          Named: true
+          Tamed: true
+          With-Saddle: true
+          Baby-Animals: false
+          Equipped: false
+          Pickup-Equipped: true
+  Control:
+    # This custom groups is from groups.yml.
+    NormalMobs:
+      Enable: true
+      # The priority for checking the control list. The highest one will be select.
+      Priority: 0
+      Ignore-Reasons:
+        - SPAWNER_EGG
+      Location:
+        - world
+        - world_nether
+        - world_the_end
+      # If there are too many creatures over the spawn location, it will prevent spawning creatures.
+      # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn-Limit
+      Limit:
+        Enable: false
+        # More information: https://github.com/momoservertw/EntityPlus/wiki/Purge
+        Purge: true
+        # The chance of spawn creatures if the creature amount over the Max_Amount. Set "0" to cancel spawn every excess creatures.
+        Chance: 0
+        # The maximum amount near the spawn location.
+        Amount: 5
+        Range:
+          X: 8
+          Y: 5
+          Z: 8
+        Ignore-List: []
+        MythicMobs-Ignore-List: []
+      # Need plugin: CMI
+      # If player is AFK, it will reduce creatures' spawn chance.
+      # Bypass permission: entityplus.bypass.spawnlimit.afk
+      AFK-Limit:
+        Enable: false
+        Purge: true
+        Chance: 0
+        Amount: 0
+        Range:
+          X: 8
+          Y: 5
+          Z: 8
+    BreedableMobs:
+      Enable: true
+      Priority: 0
+      Ignore-Reasons:
+        - SPAWNER_EGG
+        - NATURAL
+        - BEEHIVE
+      Location:
+        - world
+        - world_nether
+        - world_the_end
+      Limit:
+        Purge: true
+        Chance: 0
+        Amount: 20
+        Range:
+          X: 16
+          Y: 10
+          Z: 16
+    WaterMobs:
+      Priority: 0
+      Chance: 0.2
       Reason: NATURAL
     BAT:
+      Priority: 2
       Chance: 0.2
       Reason: NATURAL
-    SALMON:
-      Chance: 0.2
-      Reason: NATURAL
-    PUFFERFISH:
-      Chance: 0.2
-      Reason: NATURAL
-    TROPICAL_FISH:
-      Chance: 0.2
+    PHANTOM:
+      Priority: 2
+      Chance: 0.3
       Reason: NATURAL
     GUARDIAN:
+      Priority: 2
       Chance: 0.01
       Reason: NATURAL
+    IRON_GOLEM:
+      Enable: false
+      Priority: 2
+      Chance: 0.3
+      Reason: VILLAGE_DEFENSE
+    PIG_ZOMBIE:
+      Enable: false
+      Priority: 2
+      Chance: 0.5
+      Reason: NETHER_PORTAL
+    WITHER_SKELETON:
+      Enable: false
+      Priority: 2
+      Chance: 0.1
+      Reason: NATURAL
+      Blocks:
+        - inWitherRose
 
-#  IRON_GOLEM:
-#    Chance: 0.3
-#    Reason: VILLAGE_DEFENSE
-#  PIG_ZOMBIE:
-#    Chance: 0.5
-#    Reason: NETHER_PORTAL
-
-# Normal example.
-#  WOLF:
-#    Chance: 0
-#    Reason: NATURAL
-#    Biome: DESERT
-#    Water: true
-#    Day: false
-#    Worlds:
-#      - world
-#      - world_nether
-#
-# Advanced example.
-# You can set several condition groups and set it's own group name.
-# More information: https://www.spigotmc.org/resources/entityplus.70592/
-#  WOLF:
-#    1:
-#      Chance: 0
-#      Reason: NATURAL
-#      Biome: DESERT
-#      Water: true
-#      Day: false
-#      Worlds:
-#        world:
-#          X: 1000                # 1000 -> -1000 ~ 1000
-#          Y: ">= 80"           # Support: >, <, =, >=, <=, ==
-#          Z: "-1000 ~ 1000"
-#    2:
-#      Chance: 0
-#      Reason: SPAWNER
-#      Worlds:
-#        world:
-#          "!X": 1000
-#          "!Z": 1000
-#        world_nether: []
-#    3:
-#      Chance: 0
-#      Reason: SPAWNER_EGG
-#      Worlds:
-#        world_the_end:
-#          R: 1000
-
-# The best way to change custom mobs spawn chance is in RandomSpawns.yml.
+# This "spawn" feature for MythicMobs.
 # MythicMobs: https://www.spigotmc.org/resources/%E2%9A%94-mythicmobs-free-version-%E2%96%BAthe-1-custom-mob-creator%E2%97%84.5702/
 # Spawn "reason" doesn't work here.
 MythicMobs-Spawn:
   Enable: false
-  List: []
-
-Spawner:
-  # Change or remove custom spawner when it spawn a creature.
-  Groups:
-    Normal:
-      Enable: false
-      Worlds:
+  Settings:
+    Features:
+      # More information: https://github.com/momoservertw/EntityPlus/wiki/Custom-Groups
+      Custom-Groups: true
+      # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn-Limit
+      Limit: true
+      AFK-Limit: true
+      # More information: https://github.com/momoservertw/EntityPlus/wiki/Purge
+      Purge:
+        Enable: true
+        Check:
+          Schedule:
+            Enable: false
+            Interval: 60
+        Ignore:
+          Named: true
+          Tamed: true
+          With-Saddle: true
+          Baby-Animals: false
+          Equipped: false
+          Pickup-Equipped: true
+  Control:
+    All:
+      Enable: true
+      Priority: 0
+      Location:
         - world
+        - world_nether
+        - world_the_end
+      Limit:
+        Enable: false
+        Purge: true
+        Chance: 0
+        Amount: 5
+        Range:
+          X: 8
+          Y: 5
+          Z: 8
+      AFK-Limit:
+        Enable: false
+        Purge: true
+        Chance: 0
+        Amount: 0
+        Range:
+          X: 8
+          Y: 5
+          Z: 8
+
+# Change illegal spawners and randomly choose a new type, then execute custom commands.
+# More information: https://github.com/momoservertw/EntityPlus/wiki/Spawner
+Spawner:
+  Enable: false
+  Change-Type:
+    Normal:
+      Enable: true
+      Location:
+        - world
+      # The type will not be changed.
       Allow-List:
         - ZOMBIE
         - SKELETON
         - SPIDER
         - CAVE_SPIDER
         - SILVERFISH
-      # The type of spawn will be change. If will
+      # The type and chance of spawner will be changed.
       Change-List:
         SKELETON: 0.25
         ZOMBIE: 0.25
         SPIDER: 0.25
         CAVE_SPIDER: 0.25
+      # It will execute commands when a spawner changed.
+      # More information: https://github.com/momoservertw/EntityPlus/wiki/Custom-Commands
       Commands:
-        - "log: &e%spawner% spawner &cat %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to &e%new_spawner% spawner&c, nearby players: &e%nearbyplayers%"
-        - "nearby-message: &e%spawner% spawner &fat %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to &e%new_spawner% spawner&f."
+        - "log: &e%spawner_type% spawner &cat %spawner_world%(%spawner_loc_x%, %spawner_loc_y%, %spawner_loc_z%) has been changed to &e%spawner_newspawner%&c, nearby players: &e%spawner_nearbyplayers%"
+        - "all-message: &e%spawner_type% spawner &cat %spawner_world%(%spawner_loc_x%, %spawner_loc_y%, %spawner_loc_z%) has been changed to &e%spawner_newspawner%&c."
     Nether:
-      Enable: false
-      Worlds:
+      Enable: true
+      Location:
         - world_nether
       Allow-List:
         - BLAZE
       Change-List:
         - BLAZE
       Commands:
-        - "log: &e%spawner% spawner &cat %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to &e%new_spawner% spawner&c, nearby players: &e%nearbyplayers%"
-        - "nearby-message: &e%spawner% spawner &fat %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to &e%new_spawner% spawner&f."
+        - "log: &e%spawner_type% spawner &cat %spawner_world%(%spawner_loc_x%, %spawner_loc_y%, %spawner_loc_z%) has been changed to &e%spawner_newspawner%&c, nearby players: &e%spawner_nearbyplayers%"
+        - "all-message: &e%spawner_type% spawner &cat %spawner_world%(%spawner_loc_x%, %spawner_loc_y%, %spawner_loc_z%) has been changed to &e%spawner_newspawner%&c."
     Remove:
-      Enable: false
+      Enable: true
       Remove: true
-      Worlds:
+      Location:
         - world_the_end
       Commands:
-        - "log: &e%spawner% spawner &cat %world%(%loc_x%, %loc_y%, %loc_z%) has been &eremoved&f, nearby players: &e%nearbyplayers%"
-        - "nearby-message: &e%spawner% spawner &fat %world%(%loc_x%, %loc_y%, %loc_z%) has been &eremoved&f."
-    Example:
-      Enable: false
-      Remove: false
-      Worlds:
-        - example_world
-        - example_world2
-      # If you have Residence, you can add custom flag "spawnerbypass" to bypass the change event.
-      Ignore:
-        # The location format is the same as the "Generate" function, more information is in the plugin page.
-        Location:
-          example_world:
-            "R": "1000"
-          example_world2:
-            "X": "1000"
-            "Z": "1000"
-      Allow-List:
-        - ZOMBIE
-        - SKELETON
-        - SPIDER
-        - CAVE_SPIDER
-        - SILVERFISH
-      Change-List:
-        ZOMBIE: 2
-        SKELETON: 2
-        SPIDER: 2
-        CAVE_SPIDER: 1
-      # Execute commands when changing a spawner.
-      # Placeholders: %spawner%, %new_spawner%, %world%, %loc%, %loc_x%, %loc_y%, %loc_z%, %nearbyplayers%, and PlaceholderAPI.
-      # PlaceholderAPI: https://www.spigotmc.org/resources/placeholderapi.6245/
-      #
-      # Commands can be executed by following types.
-      # log: sends the message to server's console.
-      # broadcast: sends the message to all players.
-      # console: executes the command by server.
-      #
-      # It will execute command for every players nearby the spawner.
-      # nearby-console: executes the command by server.
-      # nearby-op: executes the player command as operator. It will bypass that command permission.
-      # nearby-player: executes the player command.
-      # nearby-chat: sends chat message from player.
-      # nearby-message: sends message to player.
-      # nearby-bungee: executes BungeeCord command. (need BungeeCord)
-      # nearby-switch: sends player to another server. (need BungeeCord)
-      Commands:
-        - "log: &e%spawner% spawner &cat %world%(%loc_x%, %loc_y%, %loc_z%) has been &eremoved&f, nearby players: &e%nearbyplayers%"
-        - "nearby-message: &e%spawner% spawner &fat %world%(%loc_x%, %loc_y%, %loc_z%) has been &eremoved&f."
-        - 'console: Say hi! This is a test message.'
-        - 'broadcast: hi! This is another test message.'
+        - "log: &e%spawner_type% spawner &cat %spawner_world%(%spawner_loc_x%, %spawner_loc_y%, %spawner_loc_z%) has been removed&c, nearby players: &e%spawner_nearbyplayers%"
+        - "all-message: &e%spawner_type% spawner &cat %spawner_world%(%spawner_loc_x%, %spawner_loc_y%, %spawner_loc_z%) has been removed."
 
+# Change the reward for killing MythicMobs.
+# More information: https://github.com/momoservertw/EntityPlus/wiki/MythicMobs-Drop
 MythicMobs-Drop:
   Enable: false
   # If player has multiple multipliers, he will get more rewards than the highest multiplier.
   # Calculation method: "+" or "*"
-  Combined-Enable: true
-  Combined-Method: "+"
+  Combined:
+    Enable: true
+    Mode: "+"
   # You can add more multipliers. And the highest multiplier is the maximum number of group name.
   # Permission: "entityplus.drop.multiplier.GROUP"
   Multipliers:
-    1:
-      money: 1.5
-      exp: 1.5
+    1:                  # The priority of this group. It must be a number.
+      money: 1.5        # Give 150% money to player.
+      exp: 1.5          # Give 150% exp to player.
     2:
       money: 2
       exp: 2
+
+# Skip the damage duration and then damage the creature immediately.
+# More information: https://github.com/momoservertw/EntityPlus/wiki/Damage-Skip-Duration
+Damage-Skip-Duration:
+  Enable: false
+  # If the creature is close to the player, it will not kill creature or skip the duration of damage.
+  No-Player-Range: 10
+  Types:
+    Fire:
+      Enable: true
+      Ignore-Sunburn: true
+    Wither:
+      Enable: true
+    Poison:
+      Enable: true
+  Location:
+    - world
+    - world_nether
+    - world_the_end
+  # The list of creature type. If you set this option to "[]", it will affect to every creatures.
+  # You can set the creature type from groups.yml. More information: https://github.com/momoservertw/EntityPlus/wiki/Custom-Groups
+  List: []
+  Ignore-List: []
+  MythicMobs-List: []
+  MythicMobs-Ignore-List: []
+
+# Control creatures damage and modify it.
+# More information: https://github.com/momoservertw/EntityPlus/wiki/Damage
+Damage:
+  Enable: false
+  Control:
+    # Kill dying creatures directly and save CPU performance.
+    Fast-Kill:
+      Enable: true
+      No-Player-Range: 10
+      Action:
+        Kill: true
+      Reasons:
+        - CRAMMING
+        - DRYOUT
+    Fast-Kill-HatFloor:
+      Enable: true
+      No-Player-Range: 10
+      Action:
+        Kill: true
+      Reasons:
+        - HOT_FLOOR
+      Blocks:
+        MAGMA_BLOCK:
+          Offset: -1
+          Ignore:
+            Machines:
+              Offset: 0
+              List:
+                - Item-Machines
+    Fast-Kill-WitherRose:
+      Enable: true
+      No-Player-Range: 10
+      Action:
+        Kill: true
+      Reasons:
+        - WITHER
+      Blocks:
+        - WitherRose
+    # It will prevent creature from dying if the creature is nearby the block end_portal.
+    End-Portal-Duplicate:
+      Enable: true
+      Action:
+        Damage: 0
+      Blocks:
+        END_PORTAL:
+          Range:
+            X: 3
+            Y: 5
+            Z: 3
+      Location:
+        - world
+        - world_nether
+      List:
+        - ChestedHorse
 
 Message:
   prefix: '&7[&dEntityPlus&7]&r '
@@ -362,5 +336,6 @@ Message:
   EntityPlus:
     Commands:
       title: "&8▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩ &d&lEntityPlus &8▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩"
-      help: "&a/entityplus help &8- &7This help menu."
-      reload: "&a/entityplus reload &8- &7Reloads config file."
+      help: "&a/ep help &8- &7This help menu."
+      reload: "&a/ep reload &8- &7Reloads config file."
+      version: '&f/ep version &8- &7Checks the plugin version and updates.'

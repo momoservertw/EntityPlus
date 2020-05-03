@@ -1,12 +1,17 @@
 package tw.momocraft.entityplus.utils;
 
+import com.bekvon.bukkit.residence.Residence;
+import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.ServerHandler;
+import tw.momocraft.entityplus.utils.entities.BlocksMap;
+import tw.momocraft.entityplus.utils.entities.LocationMap;
 
 import java.util.List;
+import java.util.Map;
 
 public class LocationAPI {
 
@@ -25,7 +30,6 @@ public class LocationAPI {
 
     /**
      * @param loc  the checking location.
-     * @param path the path of Blocks setting in config.yml.
      * @return if there are certain blocks nearby the location.
      * <p>
      * Blocks:
@@ -35,23 +39,19 @@ public class LocationAPI {
      * Y: 5
      * Z: 3
      */
-    public static boolean isBlocks(Location loc, String path) {
-        ConfigurationSection blocksConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection(path);
-        if (blocksConfig != null) {
-            ConfigurationSection blockTypeConfig;
-            for (String blockType : blocksConfig.getKeys(false)) {
-                blockTypeConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection(path + "." + blockType);
-                if (blockTypeConfig != null) {
-                    for (String type : blockTypeConfig.getKeys(false)) {
-                        switch (type) {
-                            case "Range":
-                                return getRangeBlocks(loc, blockType, path);
-                            case "Offset":
-                                return getOffsetBlocks(loc, blockType, path);
-                            case "Ignore":
-                                return getIgnoreBlocks(loc, path + "." + blockType);
-                        }
-                    }
+    public static boolean checkBlocks(Location loc, BlocksMap blocksMap) {
+        String blockType = blocksMap.getBlockType();
+        if (blocksMap.isRange()) {
+            if (getRangeBlocks(loc, blockType, blocksMap.getRangeX(), blocksMap.getRangeY(), blocksMap.getRangeZ())) {
+                if (blocksMap.isIgnore()) {
+                    return getIgnoreBlocks(loc, blocksMap);
+                }
+            }
+        }
+        if (blocksMap.getOffset() != null) {
+            if (getOffsetBlocks(loc, blockType, blocksMap.getOffset())) {
+                if (blocksMap.isIgnore()) {
+                    return getIgnoreBlocks(loc, blocksMap);
                 }
             }
         }
@@ -61,13 +61,9 @@ public class LocationAPI {
     /**
      * @param loc   the checking location.
      * @param block the target block type.
-     * @param path  the path of Blocks setting in config.yml.
      * @return Check if there are matching materials nearby.
      */
-    private static boolean getRangeBlocks(Location loc, String block, String path) {
-        int rangeX = ConfigHandler.getConfig("config.yml").getInt(path + ".Range.X");
-        int rangeY = ConfigHandler.getConfig("config.yml").getInt(path + ".Range.Y");
-        int rangeZ = ConfigHandler.getConfig("config.yml").getInt(path + ".Range.Z");
+    private static boolean getRangeBlocks(Location loc, String block, int rangeX, int rangeY, int rangeZ) {
         Location blockLoc;
         for (int x = -rangeX; x <= rangeX; x++) {
             for (int y = -rangeY; y <= rangeY; y++) {
@@ -84,18 +80,16 @@ public class LocationAPI {
 
     /**
      * @param loc   the checking location.
-     * @param block the target block type.
-     * @param path  the path of blocks setting in config.yml.
+     * @param blockType the target block type.
      * @return Check if the relative Y-block material is match.
      */
-    private static boolean getOffsetBlocks(Location loc, String block, String path) {
-        ConfigurationSection blocksConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection(path);
-        if (blocksConfig != null) {
-            return loc.add(0, ConfigHandler.getConfig("config.yml").getDouble(path + "." + block + ".Offset"), 0)
-                    .getBlock().getType().name().equals(block);
+    private static boolean getOffsetBlocks(Location loc, String blockType, String offset) {
+        if (offset != null) {
+            return loc.add(0, Integer.valueOf(offset), 0)
+                    .getBlock().getType().name().equals(blockType);
         }
         ServerHandler.sendConsoleMessage("&cThere is an error occurred. Please check the \"Blocks\" format.");
-        ServerHandler.sendConsoleMessage("&ePath: " + path);
+        ServerHandler.sendConsoleMessage("&eBlock: " + blockType);
         return false;
     }
 
@@ -131,50 +125,38 @@ public class LocationAPI {
 
     /**
      * @param loc  location.
-     * @param path the path of location setting in config.yml.
+     * @param locationMaps the settings from configuration.
      * @return if the block is in the range of setting in the config.yml.
      */
-    public static boolean checkLocation(Location loc, String path) {
-        // Simple world list.
-        List<String> locationList = ConfigHandler.getConfig("config.yml").getStringList(path);
-        if (!locationList.isEmpty()) {
-            World world;
-            for (String worldName : locationList) {
-                world = loc.getWorld();
-                if (world != null) {
-                    return world.getName().equalsIgnoreCase(worldName);
-                }
-            }
-            return false;
-        }
-
-        // Location settings.
-        ConfigurationSection locationConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection(path);
-        if (locationConfig != null) {
-            ConfigurationSection xyzConfig;
-            World world;
-            back:
-            for (String worldName : locationConfig.getKeys(false)) {
-                world = loc.getWorld();
-                if (world != null) {
-                    if (!world.getName().equalsIgnoreCase(worldName)) {
-                        continue;
-                    }
-                } else {
-                    continue;
-                }
-                xyzConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection(path + "." + worldName);
-                if (xyzConfig != null) {
-                    for (String key : xyzConfig.getKeys(false)) {
-                        if (!getXYZ(loc, key, ConfigHandler.getConfig("config.yml").getString(path + "." + worldName + "." + key))) {
-                            continue back;
-                        }
+    public static boolean checkLocation(Location loc, List<LocationMap> locationMaps, String resBypassFlag) {
+        if (!resBypassFlag.equals("")) {
+            if (ConfigHandler.getDepends().ResidenceEnabled()) {
+                ClaimedResidence res = Residence.getInstance().getResidenceManager().getByLoc(loc);
+                if (res != null) {
+                    if (res.getPermissions().has("spawnerbypass", false)) {
+                        return false;
                     }
                 }
-                return true;
             }
         }
-        return false;
+        String worldName = loc.getWorld().getName();
+        Map<String, String> cord;
+        back:
+        for (LocationMap locationMap : locationMaps) {
+            if (!worldName.equalsIgnoreCase(locationMap.getWorld())) {
+                continue;
+            }
+            cord = locationMap.getCord();
+            if (cord != null) {
+                for (String key : cord.keySet()) {
+                    if (!getXYZ(loc, key, cord.get(key))) {
+                        continue back;
+                    }
+                }
+            }
+            return true;
+        }
+        return true;
     }
 
     /**
