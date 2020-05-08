@@ -1,5 +1,7 @@
 package tw.momocraft.entityplus.utils.entities;
 
+import jdk.nashorn.internal.ir.Block;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,9 +16,8 @@ public class EntityMap {
     private boolean water;
     private boolean day;
     private List<LocationMap> locationMaps = new ArrayList<>();
-    private String blocks;
-    private LimitMap limit;
-    private LimitMap limitAFK;
+    private List<BlocksMap> blocksMaps = new ArrayList<>();
+    private LimitMap limitMap;
 
 
     public String getGroupName() {
@@ -55,16 +56,12 @@ public class EntityMap {
         return locationMaps;
     }
 
-    public String getBlocks() {
-        return blocks;
+    public List<BlocksMap> getBlocksMaps() {
+        return blocksMaps;
     }
 
-    public LimitMap getLimit() {
-        return limit;
-    }
-
-    public LimitMap getLimitAFK() {
-        return limitAFK;
+    public LimitMap getLimitMap() {
+        return limitMap;
     }
 
 
@@ -104,12 +101,15 @@ public class EntityMap {
         locationMaps.add(locationMap);
     }
 
-    public void setLimit(LimitMap limit) {
-        this.limit = limit;
+    public void setBlocksMaps(List<BlocksMap> blocksMaps) {
+        this.blocksMaps = blocksMaps;
     }
 
-    public void setLimitAFK(LimitMap limitAFK) {
-        this.limitAFK = limitAFK;
+    public void setLocationMaps(List<LocationMap> locationMaps) {
+        this.locationMaps = locationMaps;
     }
 
+    public void setLimitMap(LimitMap limitMap) {
+        this.limitMap = limitMap;
+    }
 }

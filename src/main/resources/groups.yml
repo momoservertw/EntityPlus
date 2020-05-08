@@ -3,22 +3,38 @@ Groups-Version: 1
 
 Location:
   NormalWorlds:
-    world:
-      X: 1000
-      Y: ">= 80"
-      Z: "-1000 ~ 1000"
-    world2: []
-    world3: []
+    Worlds:
+      - world
+  NetherWorlds:
+    Worlds:
+      - world_nether
+  EndWorlds:
+    Worlds:
+      - world_the_end
+  NormalBorder:
+    Worlds:
+      - world
+    Area:
+      S: 10000
 
 Blocks:
   # When creatures spawn in wither_rose.
-  onWitherRose:
-    WITHER_ROSE:
-      Offset: 0
+  WitherRose:
+    Types:
+      - WITHER_ROSE:
+    Search:
+      V: 0
+  Monument:
+    Types:
+      - PRISMARINE
+      - DARK_PRISMARINE
+      - PRISMARINE_BRICKS
+    Search:
+      S: 5
+      Y: 5
 
-Items:
-  Item-Machines:
-    - WATER
+Materials:
+  ItemMachines:
     - STONE_PRESSURE_PLATE
     - OAK_PRESSURE_PLATE
     - BIRCH_PRESSURE_PLATE
@@ -29,7 +45,7 @@ Items:
     - STRING
 
 MythicMobs:
-  MythicMobs-Example:
+  MythicMobsEx:
     - SkeletonKing
     - SkeletalKnight
 

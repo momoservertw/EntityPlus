@@ -1,6 +1,5 @@
 # --{ =-=-=-=-=-=-=-=-=-= EntityPlus's Configuration Settings, by Momocraft =-=-=-=-=-=-=-=-=-= }--
 Config-Version: 7
-Log-Coloration: true
 Debugging: false
 Check-Updates: true
 Custom-Groups: true
@@ -9,25 +8,23 @@ General:
   # The searching players range from a location.
   Nearby-Players-Range: 32
 
-# Control creatures spawn chance and conditions.
+# Control entities spawn and conditions.
 # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn
 Spawn:
   Enable: false
   Settings:
     Features:
-      # More information: https://github.com/momoservertw/EntityPlus/wiki/Custom-Groups
-      Custom-Groups: true
       # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn#spawn-limit-example
       Limit:
         Enable: true
         AFK: true
         Residnece-Flag: true
   Control:
-    # This custom groups is from groups.yml.
     NormalMobs:
       Enable: true
-      # The priority for checking the control list. The highest one will be select.
-      Priority: 0
+      Types:
+        - NormalMobs
+      Priority: 2
       Ignore-Reasons:
         - SPAWNER_EGG
       Location:
@@ -40,31 +37,26 @@ Spawn:
         Enable: false
         # More information: https://github.com/momoservertw/EntityPlus/wiki/Purge
         Purge: true
-        # The chance of spawn creatures if the creature amount over the Max_Amount. Set "0" to cancel spawn every excess creatures.
+        # The chance of spawn creatures if the creature amount over the "Amount". Set "0" to cancel spawn every excess creatures.
         Chance: 0
-        # The maximum amount near the spawn location.
+        # The maximum creature amount near the spawn location.
         Amount: 5
-        Range:
+        # Need plugin: CMI
+        # Set the low creature spawn chance if all nearby players are AFK.
+        # Bypass permission: entityplus.bypass.spawnlimit.afk
+        AFK:
+          Enable: false
+          Chance: 0
+          Amount: 5
+        # The Searching range form the center.
+        Search:
           X: 8
-          Y: 5
           Z: 8
-        Ignore-List: []
-        MythicMobs-Ignore-List: []
-      # Need plugin: CMI
-      # If player is AFK, it will reduce creatures' spawn chance.
-      # Bypass permission: entityplus.bypass.spawnlimit.afk
-      AFK-Limit:
-        Enable: false
-        Purge: true
-        Chance: 0
-        Amount: 0
-        Range:
-          X: 8
           Y: 5
-          Z: 8
     BreedableMobs:
       Enable: true
-      Priority: 0
+      Types: BreedableMobs
+      Priority: 2
       Ignore-Reasons:
         - SPAWNER_EGG
         - NATURAL
@@ -77,70 +69,69 @@ Spawn:
         Purge: true
         Chance: 0
         Amount: 20
-        Range:
+        Search:
           X: 16
-          Y: 10
           Z: 16
+          Y: 10
     WaterMobs:
-      Priority: 0
-      Chance: 0.2
-      Reason: NATURAL
-    BAT:
+      Enable: true
+      Types: WaterMobs
       Priority: 2
       Chance: 0.2
       Reason: NATURAL
-    PHANTOM:
-      Priority: 2
+      Limit:
+        Purge: true
+        Chance: 0
+        Amount: 10
+        Search:
+          X: 16
+          Z: 16
+          Y: 10
+    Bat:
+      Types: BAT
+      Priority: 3
+      Chance: 0.2
+      Reason: NATURAL
+    Phantom:
+      Types: PHANTOM
+      Priority: 3
       Chance: 0.3
       Reason: NATURAL
-    GUARDIAN:
-      Priority: 2
+    Guardian:
+      Enable: false
+      Types: GUARDIAN
+      Priority: 3
       Chance: 0.01
       Reason: NATURAL
-    IRON_GOLEM:
+      Blocks: Monument
+    Iron_Golem:
       Enable: false
-      Priority: 2
+      Types: IRON_GOLEM
+      Priority: 3
       Chance: 0.3
-      Reason: VILLAGE_DEFENSE
-    PIG_ZOMBIE:
+      Reasons: VILLAGE_DEFENSE
+    Pig_Zombie:
       Enable: false
-      Priority: 2
+      Priority: 3
       Chance: 0.5
       Reason: NETHER_PORTAL
-    WITHER_SKELETON:
+    Wither_Skeleton:
       Enable: false
-      Priority: 2
+      Priority: 3
       Chance: 0.1
       Reason: NATURAL
-      Blocks:
-        - inWitherRose
+      Blocks: WitherRose
 
-# This "spawn" feature for MythicMobs.
+# The "spawn" feature for MythicMobs.
 # MythicMobs: https://www.spigotmc.org/resources/%E2%9A%94-mythicmobs-free-version-%E2%96%BAthe-1-custom-mob-creator%E2%97%84.5702/
 # Spawn "reason" doesn't work here.
 MythicMobs-Spawn:
   Enable: false
   Settings:
     Features:
-      # More information: https://github.com/momoservertw/EntityPlus/wiki/Custom-Groups
-      Custom-Groups: true
-      # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn-Limit
-      Limit: true
-      AFK-Limit: true
-      # More information: https://github.com/momoservertw/EntityPlus/wiki/Purge
-      Purge:
+      Limit:
         Enable: true
-        Check:
-          Schedule:
-            Enable: false
-            Interval: 60
-        Ignore:
-          Named: true
-          Tamed: true
-          With-Saddle: true
-          Baby-Animals: false
-          Equipped: false
-          Pickup-Equipped: true
+        AFK: true
   Control:
     All:
       Enable: true
@@ -154,19 +145,14 @@ MythicMobs-Spawn:
         Purge: true
         Chance: 0
         Amount: 5
-        Range:
+        Search:
           X: 8
-          Y: 5
           Z: 8
+          Y: 5
       AFK-Limit:
         Enable: false
-        Purge: true
         Chance: 0
         Amount: 0
-        Range:
-          X: 8
-          Y: 5
-          Z: 8
 
 # More information: https://github.com/momoservertw/EntityPlus/wiki/Purge
 Purge:

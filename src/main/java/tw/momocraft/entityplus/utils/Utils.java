@@ -24,13 +24,6 @@ public class Utils {
         return false;
     }
 
-    public static String stripLogColors(CommandSender sender, String message) {
-        if (sender instanceof ConsoleCommandSender && !ConfigHandler.getConfig("config.yml").getBoolean("Log-Coloration")) {
-            return ChatColor.stripColor(message);
-        }
-        return message;
-    }
-
     public static boolean isInt(String s) {
         try {
             Integer.parseInt(s);

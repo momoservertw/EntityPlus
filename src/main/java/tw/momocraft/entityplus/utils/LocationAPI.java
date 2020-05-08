@@ -4,7 +4,6 @@ import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.configuration.ConfigurationSection;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.ServerHandler;
 import tw.momocraft.entityplus.utils.entities.BlocksMap;
@@ -16,20 +15,7 @@ import java.util.Map;
 public class LocationAPI {
 
     /**
-     * @param loc       location
-     * @param worldName the name of world.
-     * @return if the entity spawn world match that world name.
-     */
-    public static boolean isWorld(Location loc, String worldName) {
-        World world = loc.getWorld();
-        if (world != null) {
-            return world.getName().equalsIgnoreCase(worldName);
-        }
-        return true;
-    }
-
-    /**
-     * @param loc  the checking location.
+     * @param loc the checking location.
      * @return if there are certain blocks nearby the location.
      * <p>
      * Blocks:
@@ -39,20 +25,25 @@ public class LocationAPI {
      * Y: 5
      * Z: 3
      */
-    public static boolean checkBlocks(Location loc, BlocksMap blocksMap) {
-        String blockType = blocksMap.getBlockType();
-        if (blocksMap.isRange()) {
-            if (getRangeBlocks(loc, blockType, blocksMap.getRangeX(), blocksMap.getRangeY(), blocksMap.getRangeZ())) {
-                if (blocksMap.isIgnore()) {
-                    return getIgnoreBlocks(loc, blocksMap);
+    public static boolean checkBlocks(Location loc, List<BlocksMap> blocksMaps) {
+        String blockType = loc.getBlock().getType().name();
+        for (BlocksMap blocksMap : blocksMaps) {
+            if (blocksMap.getBlockType().contains(blockType)) {
+                if (blocksMap.isVertical()) {
+                    if (!getVerticalBlocks(loc, blockType, blocksMap.getY())) {
+                        continue;
+                    }
+                } else {
+                    if (!getSearchBlocks(loc, blockType, blocksMap.getX(), blocksMap.getY(), blocksMap.getZ(), blocksMap.getRadiusType())) {
+                        continue;
+                    }
                 }
-            }
-        }
-        if (blocksMap.getOffset() != null) {
-            if (getOffsetBlocks(loc, blockType, blocksMap.getOffset())) {
-                if (blocksMap.isIgnore()) {
-                    return getIgnoreBlocks(loc, blocksMap);
+                if (blocksMap.getIgnoreMaps() != null) {
+                    if (checkBlocks(loc, blocksMap.getIgnoreMaps())) {
+                        continue;
+                    }
                 }
+                return false;
             }
         }
         return true;
@@ -63,68 +54,49 @@ public class LocationAPI {
      * @param block the target block type.
      * @return Check if there are matching materials nearby.
      */
-    private static boolean getRangeBlocks(Location loc, String block, int rangeX, int rangeY, int rangeZ) {
+    private static boolean getSearchBlocks(Location loc, String block, int rangeX, int rangeY, int rangeZ, String radiusType) {
         Location blockLoc;
-        for (int x = -rangeX; x <= rangeX; x++) {
-            for (int y = -rangeY; y <= rangeY; y++) {
-                for (int z = -rangeZ; z <= rangeZ; z++) {
-                    blockLoc = loc.add(x, y, z);
-                    if (blockLoc.getBlock().getType().name().equals(block)) {
-                        return true;
+        if (radiusType.equals("squared")) {
+            for (int x = -rangeX; x <= rangeX; x++) {
+                for (int y = -rangeY; y <= rangeY; y++) {
+                    for (int z = -rangeZ; z <= rangeZ; z++) {
+                        blockLoc = loc.add(x, y, z);
+                        if (blockLoc.getBlock().getType().name().equals(block)) {
+                            return true;
+                        }
                     }
                 }
             }
-        }
-        return false;
-    }
-
-    /**
-     * @param loc   the checking location.
-     * @param blockType the target block type.
-     * @return Check if the relative Y-block material is match.
-     */
-    private static boolean getOffsetBlocks(Location loc, String blockType, String offset) {
-        if (offset != null) {
-            return loc.add(0, Integer.valueOf(offset), 0)
-                    .getBlock().getType().name().equals(blockType);
-        }
-        ServerHandler.sendConsoleMessage("&cThere is an error occurred. Please check the \"Blocks\" format.");
-        ServerHandler.sendConsoleMessage("&eBlock: " + blockType);
-        return false;
-    }
-
-    /**
-     * @param loc  the checking location.
-     * @param path the path of blocks setting in config.yml.
-     * @return Check if the location has certain blocks.
-     */
-    private static boolean getIgnoreBlocks(Location loc, String path) {
-        ConfigurationSection blocksConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection(path);
-        if (blocksConfig != null) {
-            ConfigurationSection blockTypeConfig;
-            for (String blockType : blocksConfig.getKeys(false)) {
-                blockTypeConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection(path + "." + blockType);
-                if (blockTypeConfig != null) {
-                    for (String type : blockTypeConfig.getKeys(false)) {
-                        switch (type) {
-                            case "Range":
-                                return !getRangeBlocks(loc, blockType, path);
-                            case "Offset":
-                                return !getOffsetBlocks(loc, blockType, path);
-                            case "Ignore":
-                                return !getIgnoreBlocks(loc, path + "." + blockType);
+        } else if (radiusType.equals("round")) {
+            for (int x = -rangeX; x <= rangeX; x++) {
+                for (int z = -rangeZ; z <= rangeZ; z++) {
+                    if (x * z > rangeX) {
+                        continue;
+                    }
+                    for (int y = -rangeY; y <= rangeY; y++) {
+                        blockLoc = loc.add(x, y, z);
+                        if (blockLoc.getBlock().getType().name().equals(block)) {
+                            return true;
                         }
                     }
                 }
             }
         }
-        ServerHandler.sendConsoleMessage("&cThere is an error occurred. Please check the \"Blocks\" format.");
-        ServerHandler.sendConsoleMessage("&ePath: " + path);
         return false;
     }
 
     /**
-     * @param loc  location.
+     * @param loc       the checking location.
+     * @param blockType the target block type.
+     * @return Check if the relative Y-block material is match.
+     */
+    private static boolean getVerticalBlocks(Location loc, String blockType, int V) {
+        return loc.add(0, V, 0)
+                .getBlock().getType().name().equals(blockType);
+    }
+
+    /**
+     * @param loc          location.
      * @param locationMaps the settings from configuration.
      * @return if the block is in the range of setting in the config.yml.
      */

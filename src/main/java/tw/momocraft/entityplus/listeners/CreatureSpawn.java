@@ -30,30 +30,18 @@ public class CreatureSpawn implements Listener {
                 return;
             }
         }
-        // Spawn
         if (ConfigHandler.getConfigPath().isSpawn()) {
             // Get entity properties in configuration.
             Map<String, List<EntityMap>> entityProp = ConfigHandler.getConfigPath().getEntityProperties();
             // Checks properties of this entity.
-            if (entityProp.keySet().contains(entityType)) {
+            if (entityProp.containsKey(entityType)) {
                 // Checks every groups of this entity.
                 Location loc = entity.getLocation();
-                EntityMap entityMap;
-                for (String group : entityProp.keySet()) {
-                    entityMap = entityProp.(entityType, group);
-                    // If all players in the range is AFK, it will cancel or reduce the chance of spawn event.
-                    if (ConfigHandler.getConfigPath().isSpawnLimitAFK() && ConfigHandler.getDepends().CMIEnabled()) {
-                        if (!EntityUtils.checkAFKLimit(entity, loc, entityMap.getLimit())) {
-                            ServerHandler.sendFeatureMessage("Spawn", entityType, "AFK-Limit", "cancel",
-                                    new Throwable().getStackTrace()[0]);
-                            e.setCancelled(true);
-                            return;
-                        }
-                    }
+                for (EntityMap entityMap : entityProp.get(entityType)) {
                     // If the creature spawn location has reach the maximum creature amount, it will cancel the spawn event.
                     if (ConfigHandler.getConfigPath().isSpawnLimit()) {
-                        if (!EntityUtils.checkLimit(entity, loc, entityMap.getLimit())) {
-                            ServerHandler.sendFeatureMessage("Spawn", entityType, "Limit", "cancel",
+                        if (!EntityUtils.checkLimit(entity, loc, entityMap.getLimitMap())) {
+                            ServerHandler.sendFeatureMessage("Spawn", entityType, "!Limit", "cancel",
                                     new Throwable().getStackTrace()[0]);
                             e.setCancelled(true);
                             return;
@@ -66,7 +54,7 @@ public class CreatureSpawn implements Listener {
                         return;
                     }
                     // The creature's spawn "reason" isn't match.
-                    if (!EntityUtils.containReasons(e.getSpawnReason().name(), entityMap.getReasons())) {
+                    if (!EntityUtils.containReasons(reason, entityMap.getReasons())) {
                         ServerHandler.sendFeatureMessage("Spawn", entityType, "!Reason", "return",
                                 new Throwable().getStackTrace()[0]);
                         return;
@@ -91,13 +79,13 @@ public class CreatureSpawn implements Listener {
                         return;
                     }
                     // The creature's spawn "location" isn't match.
-                    if (!LocationAPI.checkLocation(loc, "Spawn.List." + entityType + ".Location")) {
+                    if (!LocationAPI.checkLocation(loc, entityMap.getLocationMaps(), "")) {
                         ServerHandler.sendFeatureMessage("Spawn", entityType, "!Location", "return",
                                 new Throwable().getStackTrace()[0]);
                         return;
                     }
                     // The creature's spawn isn't near certain "blocks".
-                    if (!LocationAPI.isBlocks(loc, "Spawn.List." + entityType + "Blocks")) {
+                    if (!LocationAPI.checkBlocks(loc, entityMap.getBlocksMaps())) {
                         ServerHandler.sendFeatureMessage("Spawn", entityType, "!Blocks", "return",
                                 new Throwable().getStackTrace()[0]);
                         return;

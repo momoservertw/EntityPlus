@@ -1,73 +1,74 @@
 package tw.momocraft.entityplus.utils.entities;
 
+import java.util.List;
+
 public class BlocksMap {
 
-    private String blockType;
+    private List<String> blockType;
+    private int X;
+    private int Z;
+    private int Y;
+    private String radiusType = null;
+    private boolean vertical = false;
+    private List<BlocksMap> ignoreMaps;
 
-    private boolean range = false;
-    private int rangeX;
-    private int rangeY;
-    private int rangeZ;
-    private String offset = null;
 
-    // Ignore
-    private BlocksMap ignoreMap = null;
-
-    public String getBlockType() {
+    public List<String> getBlockType() {
         return blockType;
     }
 
-    public boolean isRange() {
-        return range;
+    public int getX() {
+        return X;
     }
 
-    public int getRangeX() {
-        return rangeX;
+    public int getZ() {
+        return Z;
     }
 
-    public int getRangeY() {
-        return rangeY;
+    public int getY() {
+        return Y;
     }
 
-    public int getRangeZ() {
-        return rangeZ;
+    public String getRadiusType() {
+        return radiusType;
     }
 
-    public String getOffset() {
-        return offset;
-    }
-
-    public BlocksMap getIgnoreMap() {
-        return ignoreMap;
+    public boolean isVertical() {
+        return vertical;
     }
 
 
-    public void setBlockType(String blockType) {
+    public List<BlocksMap> getIgnoreMaps() {
+        return ignoreMaps;
+    }
+
+    public void setBlockType(List<String> blockType) {
         this.blockType = blockType;
     }
 
-    public void setRange(boolean range) {
-        this.range = range;
+    public void setX(int X) {
+        this.X = X;
     }
 
-    public void setRangeX(int rangeX) {
-        this.rangeX = rangeX;
+    public void setZ(int z) {
+        this.Z = z;
     }
 
-    public void setRangeY(int rangeY) {
-        this.rangeY = rangeY;
+    public void setY(int y) {
+        this.Y = y;
     }
 
-    public void setRangeZ(int rangeZ) {
-        this.rangeZ = rangeZ;
+
+    public void setRadiusType(String radiusType) {
+        this.radiusType = radiusType;
     }
 
-    public void setOffset(String offset) {
-        this.offset = offset;
+    public void setVertical(boolean vertical) {
+        this.vertical = vertical;
     }
 
-    public void setIgnoreMap(BlocksMap ignoreMap) {
-        this.ignoreMap = ignoreMap;
+    public void setIgnoreMaps(List<BlocksMap> ignoreMaps) {
+        this.ignoreMaps = ignoreMaps;
     }
 }
 

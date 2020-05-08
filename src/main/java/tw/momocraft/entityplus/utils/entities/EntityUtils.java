@@ -34,96 +34,76 @@ public class EntityUtils {
                 }
             }
         }
-        List<Entity> nearbyEntities = entity.getNearbyEntities(limitMap.getRangeX(), limitMap.getRangeY(), limitMap.getRangeZ());
+        List<Entity> nearbyEntities = entity.getNearbyEntities(limitMap.getSearchX(), limitMap.getSearchY(), limitMap.getSearchZ());
         Iterator<Entity> iterator = nearbyEntities.iterator();
         Entity en;
-        int amount = limitMap.getAmount();
-        long chance = limitMap.getChance();
-        int nearbyAmount = nearbyEntities.size();
-        double random = new Random().nextDouble();
-        while (iterator.hasNext()) {
-            en = iterator.next();
-            if (!(en instanceof LivingEntity) || en instanceof Player) {
-                iterator.remove();
-                continue;
-            }
-            if (ConfigHandler.getDepends().MythicMobsEnabled()) {
-                if (MythicMobs.inst().getAPIHelper().isMythicMob(en)) {
-                    if (limitMap.getIgnoreMMList().contains(MythicMobs.inst().getAPIHelper().getMythicMobInstance(en).getType().getInternalName())) {
-                        iterator.remove();
-                    }
-                    continue;
-                }
-            }
-            if (limitMap.getIgnoreList().contains(en.getType().name())) {
-                iterator.remove();
-            }
-        }
-        if (amount != -1) {
-            if (nearbyAmount < amount) {
-                return true;
-            }
-        }
-        return !(chance < random);
-    }
-
-    /**
-     * @param entity   the checking entity.
-     * @param loc      the location of this entity.
-     * @param limitMap the limit map of this type of entity.
-     * @return if all player in the range is AFK, it will return true.
-     */
-    public static boolean checkAFKLimit(Entity entity, Location loc, LimitMap limitMap) {
-        if (ConfigHandler.getDepends().ResidenceEnabled()) {
-            if (ConfigHandler.getConfigPath().isSpawnLimitRes()) {
-                ClaimedResidence res = Residence.getInstance().getResidenceManager().getByLoc(loc);
-                if (res != null) {
-                    if (res.getPermissions().has("spawnlimitbypass", false)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        List<Entity> nearbyEntities = entity.getNearbyEntities(limitMap.getRangeX(), limitMap.getRangeY(), limitMap.getRangeZ());
-        Iterator<Entity> iterator = nearbyEntities.iterator();
-        Entity en;
+        String enType;
         Player player;
         int amount = limitMap.getAmount();
         long chance = limitMap.getChance();
-        int nearbyAmount = nearbyEntities.size();
-        double random = new Random().nextDouble();
+        boolean AFK = limitMap.isAFK();
+        List<String> list = limitMap.getList();
+        List<String> mmList = limitMap.getMMList();
+        List<String> ignoreList = limitMap.getIgnoreList();
+        List<String> ignoreMMList = limitMap.getIgnoreMMList();
         while (iterator.hasNext()) {
             en = iterator.next();
             if (!(en instanceof LivingEntity)) {
                 iterator.remove();
                 continue;
             }
+            enType = en.getType().name();
             if (en instanceof Player) {
-                player = (Player) en;
-                if (CMI.getInstance().getPlayerManager().getUser(player).isAfk()) {
-                    if (PermissionsHandler.hasPermission(player, "entityplus.bypass.spawnlimit.afk")) {
-                        return true;
+                if (ConfigHandler.getDepends().CMIEnabled()) {
+                    if (AFK) {
+                        player = (Player) en;
+                        if (CMI.getInstance().getPlayerManager().getUser(player).isAfk()) {
+                            if (PermissionsHandler.hasPermission(player, "entityplus.bypass.spawnlimit.afk")) {
+                                amount = limitMap.getAmount();
+                                chance = limitMap.getChance();
+                                iterator.remove();
+                                continue;
+                            }
+                            amount = limitMap.getAFKAmount();
+                            chance = limitMap.getAFKChance();
+                            continue;
+                        }
                     }
                 }
+                iterator.remove();
+                continue;
             }
             if (ConfigHandler.getDepends().MythicMobsEnabled()) {
                 if (MythicMobs.inst().getAPIHelper().isMythicMob(en)) {
-                    if (limitMap.getIgnoreMMList().contains(MythicMobs.inst().getAPIHelper().getMythicMobInstance(en).getType().getInternalName())) {
-                        iterator.remove();
+                    if (mmList.isEmpty()) {
+                        if (ignoreMMList.contains(MythicMobs.inst().getAPIHelper().getMythicMobInstance(en).getType().getInternalName())) {
+                            iterator.remove();
+                            continue;
+                        }
+                    } else {
+                        if (!mmList.contains(MythicMobs.inst().getAPIHelper().getMythicMobInstance(en).getType().getInternalName())) {
+                            iterator.remove();
+                            continue;
+                        }
                     }
-                    continue;
                 }
             }
-            if (limitMap.getIgnoreList().contains(en.getType().name())) {
-                iterator.remove();
+            if (list.isEmpty()) {
+                if (ignoreList.contains(enType)) {
+                    iterator.remove();
+                }
+            } else {
+                if (!list.contains(enType)) {
+                    iterator.remove();
+                }
             }
         }
         if (amount != -1) {
-            if (nearbyAmount > amount) {
+            if (nearbyEntities.size() < amount) {
                 return true;
             }
         }
-        return !(chance < random);
+        return !(chance < new Random().nextDouble());
     }
 
     /**
