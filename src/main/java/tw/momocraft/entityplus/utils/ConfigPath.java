@@ -4,7 +4,9 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.ServerHandler;
+import tw.momocraft.entityplus.utils.blocksapi.BlocksMap;
 import tw.momocraft.entityplus.utils.entities.*;
+import tw.momocraft.entityplus.utils.locationapi.LocationMap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -110,12 +112,12 @@ public class ConfigPath {
                         entityMap.setDay(ConfigHandler.getConfig("config.yml").getBoolean("Spawn.Control." + group + ".Day"));
                         // Blocks settings.
                         blocksMaps = getBlocksMaps("Spawn.Control." + group + ".Blocks");
-                        if (blocksMaps != null) {
+                        if (!blocksMaps.isEmpty()) {
                             entityMap.setBlocksMaps(blocksMaps);
                         }
                         // Location settings
                         locMaps = getLocationMaps("Spawn.Control." + group + ".Location");
-                        if (locMaps != null) {
+                        if (!locMaps.isEmpty()) {
                             entityMap.setLocMaps(locMaps);
                         }
                         // Limit settings
@@ -186,7 +188,7 @@ public class ConfigPath {
                         if (blocksMaps != null) {
                             entityMap.setBlocksMaps(blocksMaps);
                         }
-                        locMaps = getLocationMaps("MythicMobs-Spawn.Control." + group + ".Location");
+                        locMaps = getLocationMaps("MythicMobs-Spawn.Control." + group + ".Blocks");
                         if (locMaps != null) {
                             entityMap.setLocMaps(locMaps);
                         }
@@ -320,32 +322,31 @@ public class ConfigPath {
             BlocksMap blocksMap;
             ConfigurationSection searchConfig;
             ConfigurationSection ignoreConfig;
-            String V;
-            String R;
-            String S;
+            String v;
+            String r;
+            String s;
             for (String group : config.getKeys(false)) {
                 blocksMap = new BlocksMap();
                 blocksMap.setBlockType(ConfigHandler.getConfig("config.yml").getStringList(path + "." + group + ".Types"));
                 searchConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection(path + "." + group + ".Search");
                 if (searchConfig != null) {
-                    blocksMap.setBlockType(ConfigHandler.getConfig("config.yml").getStringList(path + "." + group + ".Types"));
-                    R = ConfigHandler.getConfig("config.yml").getString(path + "." + group + ".Search.R");
-                    S = ConfigHandler.getConfig("config.yml").getString(path + "." + group + ".Search.S");
-                    if (R != null) {
-                        blocksMap.setX(Integer.parseInt(R));
-                        blocksMap.setZ(Integer.parseInt(R));
+                    r = ConfigHandler.getConfig("config.yml").getString(path + "." + group + ".Search.R");
+                    s = ConfigHandler.getConfig("config.yml").getString(path + "." + group + ".Search.S");
+                    if (r != null) {
+                        blocksMap.setX(Integer.parseInt(r));
+                        blocksMap.setZ(Integer.parseInt(r));
                         blocksMap.setRadiusType("round");
-                    } else if (S != null) {
-                        blocksMap.setX(Integer.parseInt(S));
-                        blocksMap.setZ(Integer.parseInt(S));
+                    } else if (s != null) {
+                        blocksMap.setX(Integer.parseInt(s));
+                        blocksMap.setZ(Integer.parseInt(s));
                         blocksMap.setRadiusType("squared");
                     } else {
                         blocksMap.setX(ConfigHandler.getConfig("config.yml").getInt(path + "." + group + ".Search.X"));
                         blocksMap.setZ(ConfigHandler.getConfig("config.yml").getInt(path + "." + group + ".Search.Z"));
                     }
-                    V = ConfigHandler.getConfig("config.yml").getString(path + "." + group + "." + ".Search.V");
-                    if (V != null) {
-                        blocksMap.setY(Integer.parseInt(V));
+                    v = ConfigHandler.getConfig("config.yml").getString(path + "." + group + ".Search.V");
+                    if (v != null) {
+                        blocksMap.setY(Integer.parseInt(v));
                         blocksMap.setVertical(true);
                     } else {
                         blocksMap.setY(ConfigHandler.getConfig("config.yml").getInt(path + "." + group + ".Search.Y"));
@@ -372,7 +373,6 @@ public class ConfigPath {
                 blocksMap.setBlockType(ConfigHandler.getConfig("groups.yml").getStringList("Location." + group + ".Types"));
                 searchConfig = ConfigHandler.getConfig("groups.yml").getConfigurationSection("Location." + group + ".Search");
                 if (searchConfig != null) {
-                    blocksMap.setBlockType(ConfigHandler.getConfig("groups.yml").getStringList("Location." + group + ".Types"));
                     R = ConfigHandler.getConfig("groups.yml").getString("Location." + group + ".Search.R");
                     S = ConfigHandler.getConfig("groups.yml").getString("Location." + group + ".Search.S");
                     if (R != null) {
@@ -397,7 +397,7 @@ public class ConfigPath {
                 }
                 ignoreConfig = ConfigHandler.getConfig("groups.yml").getConfigurationSection("Location." + group + ".Ignore");
                 if (ignoreConfig != null) {
-                    blocksMap.setIgnoreMaps(getBlocksMaps("Location." + group + "." + ".Ignore"));
+                    blocksMap.setIgnoreMaps(getBlocksMaps("Location." + group + ".Ignore"));
                 }
                 blocksMaps.add(blocksMap);
             }

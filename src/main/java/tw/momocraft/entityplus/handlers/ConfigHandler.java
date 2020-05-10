@@ -1,29 +1,21 @@
 package tw.momocraft.entityplus.handlers;
 
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
-import io.lumine.xikage.mythicmobs.MythicMobs;
-import io.lumine.xikage.mythicmobs.mobs.MythicMob;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import tw.momocraft.entityplus.Commands;
 import tw.momocraft.entityplus.EntityPlus;
 import tw.momocraft.entityplus.listeners.*;
 import tw.momocraft.entityplus.utils.ConfigPath;
 import tw.momocraft.entityplus.utils.DependAPI;
-import tw.momocraft.entityplus.utils.LocationAPI;
 import org.bukkit.Location;
 import tw.momocraft.entityplus.utils.TabComplete;
 
 import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 public class ConfigHandler {
 

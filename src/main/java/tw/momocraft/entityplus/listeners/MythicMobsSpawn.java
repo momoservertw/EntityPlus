@@ -8,7 +8,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.ServerHandler;
-import tw.momocraft.entityplus.utils.LocationAPI;
+import tw.momocraft.entityplus.utils.blocksapi.BlocksAPI;
+import tw.momocraft.entityplus.utils.locationapi.LocationAPI;
 import tw.momocraft.entityplus.utils.entities.EntityMap;
 import tw.momocraft.entityplus.utils.entities.EntityUtils;
 
@@ -71,7 +72,7 @@ public class MythicMobsSpawn implements Listener {
                         return;
                     }
                     // The creature's spawn isn't near certain "blocks".
-                    if (!LocationAPI.checkBlocks(loc, mythicMobsMap.getBlocksMaps())) {
+                    if (!BlocksAPI.checkBlocks(loc, mythicMobsMap.getBlocksMaps())) {
                         ServerHandler.sendFeatureMessage("MythicMobs-Spawn", entityType, "!Blocks", "return",
                                 new Throwable().getStackTrace()[0]);
                         return;

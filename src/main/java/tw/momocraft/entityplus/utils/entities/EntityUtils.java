@@ -137,7 +137,6 @@ public class EntityUtils {
      * @return if the entity spawn biome match the config setting.
      */
     public static boolean containBiomes(Location loc, List<String> biomes) {
-        ServerHandler.sendConsoleMessage(loc.getBlock().getBiome().name() + "  " + biomes.toString());
         if (biomes.isEmpty()) {
             return true;
         }

@@ -8,8 +8,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.ServerHandler;
+import tw.momocraft.entityplus.utils.blocksapi.BlocksAPI;
 import tw.momocraft.entityplus.utils.entities.EntityMap;
-import tw.momocraft.entityplus.utils.LocationAPI;
+import tw.momocraft.entityplus.utils.locationapi.LocationAPI;
 import tw.momocraft.entityplus.utils.entities.EntityUtils;
 
 import java.util.List;
@@ -85,7 +86,7 @@ public class CreatureSpawn implements Listener {
                         return;
                     }
                     // The creature's spawn isn't near certain "blocks".
-                    if (!LocationAPI.checkBlocks(loc, entityMap.getBlocksMaps())) {
+                    if (!BlocksAPI.checkBlocks(loc, entityMap.getBlocksMaps())) {
                         ServerHandler.sendFeatureMessage("Spawn", entityType, "!Blocks", "return",
                                 new Throwable().getStackTrace()[0]);
                         return;

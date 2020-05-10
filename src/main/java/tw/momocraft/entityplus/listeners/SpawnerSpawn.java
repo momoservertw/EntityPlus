@@ -17,7 +17,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.SpawnerSpawnEvent;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.ServerHandler;
-import tw.momocraft.entityplus.utils.LocationAPI;
+import tw.momocraft.entityplus.utils.locationapi.LocationAPI;
 import tw.momocraft.entityplus.utils.entities.SpawnerMap;
 
 import java.util.*;
