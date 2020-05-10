@@ -2,35 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="db9de2ae-2a97-4e0b-968d-c3ef6fdf69c0" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/blocksapi/BlocksAPI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/locationapi/LocationAPI.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/handlers/ConfigHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/handlers/ConfigHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/CreatureSpawn.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/CreatureSpawn.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/EntityDamage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/EntityDamage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/MythicMobsSpawn.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/MythicMobsSpawn.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/SpawnerSpawn.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/SpawnerSpawn.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/ConfigPath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/ConfigPath.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/LocationAPI.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/BlocksMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/blocksapi/BlocksMap.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/EntityMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/EntityMap.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/EntityUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/EntityUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/LocationMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/locationapi/LocationMap.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/SpawnerMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/SpawnerMap.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/blocksapi/BlocksAPI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/blocksapi/BlocksAPI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/blocksapi/BlocksMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/blocksapi/BlocksMap.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/EntityPlus-1.2.0.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/EntityPlus-1.2.0.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/handlers/ConfigHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/handlers/ConfigHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/listeners/CreatureSpawn.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/listeners/CreatureSpawn.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/listeners/EntityDamage.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/listeners/EntityDamage.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/listeners/MythicMobsSpawn.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/listeners/MythicMobsSpawn.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/listeners/SpawnerSpawn.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/listeners/SpawnerSpawn.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/utils/ConfigPath.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/utils/ConfigPath.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/utils/LocationAPI.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/utils/entities/BlocksMap.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/utils/entities/EntityMap.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/utils/entities/EntityMap.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/utils/entities/LocationMap.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/utils/entities/SpawnerMap.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/utils/entities/SpawnerMap.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/utils/blocksapi/BlocksAPI.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/utils/blocksapi/BlocksAPI.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/utils/blocksapi/BlocksMap.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/utils/blocksapi/BlocksMap.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,30 +84,30 @@
       <screen x="0" y="0" width="1280" height="689" />
     </state>
     <state x="371" y="92" key="#com.intellij.refactoring.typeMigration.ui.FailedConversionsDialog/0.0.1280.689@0.0.1280.689" timestamp="1588750467559" />
-    <state width="1237" height="168" key="GridCell.Tab.0.bottom" timestamp="1589100739324">
+    <state width="1237" height="168" key="GridCell.Tab.0.bottom" timestamp="1589106444075">
       <screen x="0" y="0" width="1280" height="689" />
     </state>
-    <state width="1237" height="168" key="GridCell.Tab.0.bottom/0.0.1280.689@0.0.1280.689" timestamp="1589100739324" />
-    <state width="1237" height="168" key="GridCell.Tab.0.center" timestamp="1589100739324">
+    <state width="1237" height="168" key="GridCell.Tab.0.bottom/0.0.1280.689@0.0.1280.689" timestamp="1589106444075" />
+    <state width="1237" height="168" key="GridCell.Tab.0.center" timestamp="1589106444074">
       <screen x="0" y="0" width="1280" height="689" />
     </state>
-    <state width="1237" height="168" key="GridCell.Tab.0.center/0.0.1280.689@0.0.1280.689" timestamp="1589100739324" />
-    <state width="1237" height="168" key="GridCell.Tab.0.left" timestamp="1589100739323">
+    <state width="1237" height="168" key="GridCell.Tab.0.center/0.0.1280.689@0.0.1280.689" timestamp="1589106444074" />
+    <state width="1237" height="168" key="GridCell.Tab.0.left" timestamp="1589106444074">
       <screen x="0" y="0" width="1280" height="689" />
     </state>
-    <state width="1237" height="168" key="GridCell.Tab.0.left/0.0.1280.689@0.0.1280.689" timestamp="1589100739323" />
-    <state width="1237" height="168" key="GridCell.Tab.0.right" timestamp="1589100739324">
+    <state width="1237" height="168" key="GridCell.Tab.0.left/0.0.1280.689@0.0.1280.689" timestamp="1589106444074" />
+    <state width="1237" height="168" key="GridCell.Tab.0.right" timestamp="1589106444074">
       <screen x="0" y="0" width="1280" height="689" />
     </state>
-    <state width="1237" height="168" key="GridCell.Tab.0.right/0.0.1280.689@0.0.1280.689" timestamp="1589100739324" />
+    <state width="1237" height="168" key="GridCell.Tab.0.right/0.0.1280.689@0.0.1280.689" timestamp="1589106444074" />
     <state x="295" y="0" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1589096764181">
       <screen x="0" y="0" width="1280" height="689" />
     </state>
     <state x="295" y="0" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.1280.689@0.0.1280.689" timestamp="1589096764181" />
-    <state x="256" y="45" width="769" height="600" key="find.popup" timestamp="1589095105458">
+    <state x="256" y="45" width="769" height="600" key="find.popup" timestamp="1589106171503">
       <screen x="0" y="0" width="1280" height="689" />
     </state>
-    <state x="256" y="45" width="769" height="600" key="find.popup/0.0.1280.689@0.0.1280.689" timestamp="1589095105458" />
+    <state x="256" y="45" width="769" height="600" key="find.popup/0.0.1280.689@0.0.1280.689" timestamp="1589106171503" />
     <state x="303" y="10" width="672" height="678" key="search.everywhere.popup" timestamp="1588228412748">
       <screen x="0" y="0" width="1280" height="689" />
     </state>

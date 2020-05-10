@@ -185,11 +185,11 @@ public class ConfigPath {
                         entityMap.setWater(ConfigHandler.getConfig("config.yml").getBoolean("MythicMobs-Spawn.Control." + group + ".Water"));
                         entityMap.setDay(ConfigHandler.getConfig("config.yml").getBoolean("MythicMobs-Spawn.Control." + group + ".Day"));
                         blocksMaps = getBlocksMaps("MythicMobs-Spawn.Control." + group + ".Blocks");
-                        if (blocksMaps != null) {
+                        if (!blocksMaps.isEmpty()) {
                             entityMap.setBlocksMaps(blocksMaps);
                         }
                         locMaps = getLocationMaps("MythicMobs-Spawn.Control." + group + ".Blocks");
-                        if (locMaps != null) {
+                        if (!locMaps.isEmpty()) {
                             entityMap.setLocMaps(locMaps);
                         }
                         limitMap = getLimitMap("MythicMobs-Spawn.Control." + group + ".Limit");
@@ -235,14 +235,14 @@ public class ConfigPath {
             spawnerResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Spawner.Settings.Features.Bypass.Residence-Flag");
             spawnerConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawner.Change-Type");
             if (spawnerConfig != null) {
-                String enable;
+                String spawnerEnable;
                 SpawnerMap spawnerMap = new SpawnerMap();
                 List<BlocksMap> blocksMaps;
                 List<LocationMap> locMaps;
                 HashMap<String, Long> changeMap = new HashMap<>();
                 for (String group : spawnerConfig.getKeys(false)) {
-                    enable = ConfigHandler.getConfig("config.yml").getString("Spawner.Change-Type." + group + ".Enable");
-                    if (enable == null || enable.equals("true")) {
+                    spawnerEnable = ConfigHandler.getConfig("config.yml").getString("Spawner.Change-Type." + group + ".Enable");
+                    if (spawnerEnable == null || spawnerEnable.equals("true")) {
                         spawnerMap.setGroupName(group);
                         spawnerMap.setRemove(ConfigHandler.getConfig("config.yml").getBoolean("Spawner.Change-Type." + group + ".Remove"));
                         spawnerMap.setAllowList(ConfigHandler.getConfig("config.yml").getStringList("Spawner.Change-Type." + group + ".Allow-List"));
@@ -254,12 +254,12 @@ public class ConfigPath {
                         spawnerMap.setChangeMap(changeMap);
                         // Blocks settings.
                         blocksMaps = getBlocksMaps("Spawn.Control." + group + ".Blocks");
-                        if (blocksMaps != null) {
+                        if (!blocksMaps.isEmpty()) {
                             spawnerMap.setBlocksMaps(blocksMaps);
                         }
                         // Location settings
                         locMaps = getLocationMaps("Spawn.Control." + group + ".Location");
-                        if (locMaps != null) {
+                        if (!locMaps.isEmpty()) {
                             spawnerMap.setLocMaps(locMaps);
                         }
                         spawnerProp.put(group, spawnerMap);
@@ -270,9 +270,9 @@ public class ConfigPath {
     }
 
     private List<LocationMap> getLocationMaps(String path) {
+        List<LocationMap> locMaps = new ArrayList<>();
         ConfigurationSection locConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection(path);
         if (locConfig != null) {
-            List<LocationMap> locMaps = new ArrayList<>();
             LocationMap locMap;
             ConfigurationSection areaConfig;
             for (String group : locConfig.getKeys(false)) {
@@ -288,7 +288,6 @@ public class ConfigPath {
             }
             return locMaps;
         }
-        List<LocationMap> locMaps = new ArrayList<>();
         LocationMap locMap;
         LocationMap worldListMap = new LocationMap();
         List<String> worlds = new ArrayList<>();
@@ -316,9 +315,9 @@ public class ConfigPath {
     }
 
     private List<BlocksMap> getBlocksMaps(String path) {
+        List<BlocksMap> blocksMaps = new ArrayList<>();
         ConfigurationSection config = ConfigHandler.getConfig("config.yml").getConfigurationSection(path);
         if (config != null) {
-            List<BlocksMap> blocksMaps = new ArrayList<>();
             BlocksMap blocksMap;
             ConfigurationSection searchConfig;
             ConfigurationSection ignoreConfig;
@@ -327,7 +326,7 @@ public class ConfigPath {
             String s;
             for (String group : config.getKeys(false)) {
                 blocksMap = new BlocksMap();
-                blocksMap.setBlockType(ConfigHandler.getConfig("config.yml").getStringList(path + "." + group + ".Types"));
+                blocksMap.setBlockTypes(ConfigHandler.getConfig("config.yml").getStringList(path + "." + group + ".Types"));
                 searchConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection(path + "." + group + ".Search");
                 if (searchConfig != null) {
                     r = ConfigHandler.getConfig("config.yml").getString(path + "." + group + ".Search.R");
@@ -335,11 +334,11 @@ public class ConfigPath {
                     if (r != null) {
                         blocksMap.setX(Integer.parseInt(r));
                         blocksMap.setZ(Integer.parseInt(r));
-                        blocksMap.setRadiusType("round");
+                        blocksMap.setRadiusType("R");
                     } else if (s != null) {
                         blocksMap.setX(Integer.parseInt(s));
                         blocksMap.setZ(Integer.parseInt(s));
-                        blocksMap.setRadiusType("squared");
+                        blocksMap.setRadiusType("S");
                     } else {
                         blocksMap.setX(ConfigHandler.getConfig("config.yml").getInt(path + "." + group + ".Search.X"));
                         blocksMap.setZ(ConfigHandler.getConfig("config.yml").getInt(path + "." + group + ".Search.Z"));
@@ -351,48 +350,47 @@ public class ConfigPath {
                     } else {
                         blocksMap.setY(ConfigHandler.getConfig("config.yml").getInt(path + "." + group + ".Search.Y"));
                     }
+                    ignoreConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection(path + "." + group + ".Ignore");
+                    if (ignoreConfig != null) {
+                        blocksMap.setIgnoreMaps(getBlocksMaps(path + "." + group + "." + ".Ignore"));
+                    }
+                    blocksMaps.add(blocksMap);
                 }
-                ignoreConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection(path + "." + group + ".Ignore");
-                if (ignoreConfig != null) {
-                    blocksMap.setIgnoreMaps(getBlocksMaps(path + "." + group + "." + ".Ignore"));
-                }
-                blocksMaps.add(blocksMap);
+                return blocksMaps;
             }
-            return blocksMaps;
         }
-        List<BlocksMap> blocksMaps = new ArrayList<>();
         BlocksMap blocksMap;
         ConfigurationSection searchConfig;
         ConfigurationSection ignoreConfig;
-        String V;
-        String R;
-        String S;
+        String v;
+        String r;
+        String s;
         for (String group : ConfigHandler.getConfig("config.yml").getStringList(path)) {
             if (ConfigHandler.getConfig("groups.yml").getConfigurationSection("Location." + group) != null) {
                 blocksMap = new BlocksMap();
-                blocksMap.setBlockType(ConfigHandler.getConfig("groups.yml").getStringList("Location." + group + ".Types"));
+                blocksMap.setBlockTypes(ConfigHandler.getConfig("groups.yml").getStringList("Location." + group + ".Types"));
                 searchConfig = ConfigHandler.getConfig("groups.yml").getConfigurationSection("Location." + group + ".Search");
                 if (searchConfig != null) {
-                    R = ConfigHandler.getConfig("groups.yml").getString("Location." + group + ".Search.R");
-                    S = ConfigHandler.getConfig("groups.yml").getString("Location." + group + ".Search.S");
-                    if (R != null) {
-                        blocksMap.setX(Integer.parseInt(R));
-                        blocksMap.setZ(Integer.parseInt(R));
-                        blocksMap.setRadiusType("round");
-                    } else if (S != null) {
-                        blocksMap.setX(Integer.parseInt(S));
-                        blocksMap.setZ(Integer.parseInt(S));
-                        blocksMap.setRadiusType("squared");
+                    r = ConfigHandler.getConfig("groups.yml").getString("Location." + group + ".Search.R");
+                    s = ConfigHandler.getConfig("groups.yml").getString("Location." + group + ".Search.S");
+                    if (r != null) {
+                        blocksMap.setX(Integer.parseInt(r));
+                        blocksMap.setZ(Integer.parseInt(r));
+                        blocksMap.setRadiusType("R");
+                    } else if (s != null) {
+                        blocksMap.setX(Integer.parseInt(s));
+                        blocksMap.setZ(Integer.parseInt(s));
+                        blocksMap.setRadiusType("S");
                     } else {
-                        blocksMap.setX(ConfigHandler.getConfig("groups.yml").getInt("Location." + group + ".Search.X"));
-                        blocksMap.setZ(ConfigHandler.getConfig("groups.yml").getInt("Location." + group + ".Search.Z"));
+                        blocksMap.setX(ConfigHandler.getConfig("config.yml").getInt("Location." + group + ".Search.X"));
+                        blocksMap.setZ(ConfigHandler.getConfig("config.yml").getInt("Location." + group + ".Search.Z"));
                     }
-                    V = ConfigHandler.getConfig("groups.yml").getString("Location." + group + "." + ".Search.V");
-                    if (V != null) {
-                        blocksMap.setY(Integer.parseInt(V));
+                    v = ConfigHandler.getConfig("groups.yml").getString("Location." + group + "." + ".Search.V");
+                    if (v != null) {
+                        blocksMap.setY(Integer.parseInt(v));
                         blocksMap.setVertical(true);
                     } else {
-                        blocksMap.setY(ConfigHandler.getConfig("groups.yml").getInt("Location." + group + ".Search.Y"));
+                        blocksMap.setY(ConfigHandler.getConfig("config.yml").getInt("Location." + group + ".Search.Y"));
                     }
                 }
                 ignoreConfig = ConfigHandler.getConfig("groups.yml").getConfigurationSection("Location." + group + ".Ignore");
@@ -402,6 +400,7 @@ public class ConfigPath {
                 blocksMaps.add(blocksMap);
             }
         }
+
         return blocksMaps;
     }
 

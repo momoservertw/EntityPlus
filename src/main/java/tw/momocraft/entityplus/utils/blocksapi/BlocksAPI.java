@@ -23,53 +23,52 @@ public class BlocksAPI {
      * Z: 3
      */
     public static boolean checkBlocks(Location loc, List<BlocksMap> blocksMaps) {
-        String blockType = loc.getBlock().getType().name();
         if (blocksMaps.isEmpty()) {
             return true;
         }
+        List<String> blockTypes;
         for (BlocksMap blocksMap : blocksMaps) {
-            ServerHandler.sendConsoleMessage("31");
-            if (blocksMap.getBlockType().contains(blockType)) {
-                if (blocksMap.isVertical()) {
-                    if (!getVerticalBlocks(loc, blockType, blocksMap.getY())) {
-                        continue;
-                    }
-                } else {
-                    if (!getSearchBlocks(loc, blockType, blocksMap.getX(), blocksMap.getY(), blocksMap.getZ(), blocksMap.getRadiusType())) {
-                        continue;
-                    }
+            blockTypes = blocksMap.getBlockTypes();
+            if (blocksMap.isVertical()) {
+                if (getVerticalBlocks(loc, blockTypes, blocksMap.getY())) {
+                    return true;
                 }
-                if (blocksMap.getIgnoreMaps() != null) {
-                    if (checkBlocks(loc, blocksMap.getIgnoreMaps())) {
-                        continue;
-                    }
+            } else {
+                if (getSearchBlocks(loc, blockTypes, blocksMap.getX(), blocksMap.getY(), blocksMap.getZ(), blocksMap.getRadiusType())) {
+                    return true;
                 }
-                return true;
+            }
+            if (blocksMap.getIgnoreMaps() != null) {
+                if (checkBlocks(loc, blocksMap.getIgnoreMaps())) {
+                    return true;
+                }
             }
         }
         return false;
     }
 
     /**
-     * @param loc       the checking location.
-     * @param blockType the target block type.
+     * @param loc        the checking location.
+     * @param blockTypes the target block types.
      * @return Check if there are matching materials nearby.
      */
-    private static boolean getSearchBlocks(Location loc, String blockType, int rangeX, int rangeY, int rangeZ, String radiusType) {
-        ServerHandler.sendConsoleMessage(blockType + " " + rangeX + " " + rangeY + " " + rangeZ + " " + radiusType);
+    private static boolean getSearchBlocks(Location loc, List<String> blockTypes, int rangeX, int rangeY, int rangeZ, String radiusType) {
+        ServerHandler.sendConsoleMessage(blockTypes + " " + rangeX + " " + rangeY + " " + rangeZ + " " + radiusType);
         Location blockLoc;
-        if (radiusType.equals("squared")) {
+        if (radiusType.equals("S")) {
             for (int x = -rangeX; x <= rangeX; x++) {
                 for (int y = -rangeY; y <= rangeY; y++) {
                     for (int z = -rangeZ; z <= rangeZ; z++) {
                         blockLoc = loc.add(x, y, z);
-                        if (blockLoc.getBlock().getType().name().equals(blockType)) {
+                        ServerHandler.sendConsoleMessage(blockLoc.getBlock().getType().name());
+                        if (blockTypes.contains(blockLoc.getBlock().getType().name())) {
+                            ServerHandler.sendConsoleMessage("true");
                             return true;
                         }
                     }
                 }
             }
-        } else if (radiusType.equals("round")) {
+        } else if (radiusType.equals("R")) {
             for (int x = -rangeX; x <= rangeX; x++) {
                 for (int z = -rangeZ; z <= rangeZ; z++) {
                     if (x * z > rangeX) {
@@ -77,7 +76,7 @@ public class BlocksAPI {
                     }
                     for (int y = -rangeY; y <= rangeY; y++) {
                         blockLoc = loc.add(x, y, z);
-                        if (blockLoc.getBlock().getType().name().equals(blockType)) {
+                        if (blockTypes.contains(blockLoc.getBlock().getType().name())) {
                             return true;
                         }
                     }
@@ -88,12 +87,11 @@ public class BlocksAPI {
     }
 
     /**
-     * @param loc       the checking location.
-     * @param blockType the target block type.
+     * @param loc        the checking location.
+     * @param blockTypes the target block types.
      * @return Check if the relative Y-block material is match.
      */
-    private static boolean getVerticalBlocks(Location loc, String blockType, int v) {
-        return loc.add(0, v, 0)
-                .getBlock().getType().name().equals(blockType);
+    private static boolean getVerticalBlocks(Location loc, List<String> blockTypes, int v) {
+        return blockTypes.contains(loc.add(0, v, 0).getBlock().getType().name());
     }
 }

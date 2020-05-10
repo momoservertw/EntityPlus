@@ -4,17 +4,17 @@ import java.util.List;
 
 public class BlocksMap {
 
-    private List<String> blockType;
-    private int X;
-    private int Z;
-    private int Y;
+    private List<String> blockTypes;
+    private int X = 0;
+    private int Z = 0;
+    private int Y = 0;
     private String radiusType = null;
     private boolean vertical = false;
     private List<BlocksMap> ignoreMaps;
 
 
-    public List<String> getBlockType() {
-        return blockType;
+    public List<String> getBlockTypes() {
+        return blockTypes;
     }
 
     public int getX() {
@@ -42,8 +42,8 @@ public class BlocksMap {
         return ignoreMaps;
     }
 
-    public void setBlockType(List<String> blockType) {
-        this.blockType = blockType;
+    public void setBlockTypes(List<String> blockTypes) {
+        this.blockTypes = blockTypes;
     }
 
     public void setX(int X) {
