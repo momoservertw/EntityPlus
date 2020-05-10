@@ -1,23 +1,23 @@
 package tw.momocraft.entityplus.utils.entities;
 
-import org.bukkit.configuration.ConfigurationSection;
-
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class SpawnerMap {
 
-    private String group = null;
+    private String groupName = null;
     private boolean remove = false;
     private LocationMap location = null;
     private List<String> allowList = null;
     private List<String> changeList = null;
-    private ConfigurationSection changeConfig = null;
     private List<String> commands = null;
-    private List<LocationMap> locationMaps = new ArrayList<>();
+    private List<LocationMap> locMaps = new ArrayList<>();
+    private List<BlocksMap> blocksMaps = new ArrayList<>();
+    private HashMap changeMap = new HashMap();
 
-    public String getGroup() {
-        return group;
+    public String getGroupName() {
+        return groupName;
     }
 
     public boolean isRemove() {
@@ -36,28 +36,29 @@ public class SpawnerMap {
         return changeList;
     }
 
-    public ConfigurationSection getChangeConfig() {
-        return changeConfig;
-    }
-
     public List<String> getCommands() {
         return commands;
     }
 
-    public List<LocationMap> getLocationMaps() {
-        return locationMaps;
+    public List<LocationMap> getLocMaps() {
+        return locMaps;
     }
 
-    public void setGroupName(String group) {
-        this.group = group;
+    public List<BlocksMap> getBlocksMaps() {
+        return blocksMaps;
+    }
+
+    public HashMap<String, Long> getChangeMap() {
+        return changeMap;
+    }
+
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 
     public void setRemove(boolean remove) {
         this.remove = remove;
-    }
-
-    public void setLocation(LocationMap location) {
-        this.location = location;
     }
 
     public void setAllowList(List<String> allowList) {
@@ -68,15 +69,19 @@ public class SpawnerMap {
         this.changeList = changeList;
     }
 
-    public void setChangeConfig(ConfigurationSection changeConfig) {
-        this.changeConfig = changeConfig;
-    }
-
     public void setCommands(List<String> commands) {
         this.commands = commands;
     }
 
-    public void addLocation(LocationMap locationMap) {
-        locationMaps.add(locationMap);
+    public void setLocMaps(List<LocationMap> locMaps) {
+        this.locMaps = locMaps;
+    }
+
+    public void setBlocksMaps(List<BlocksMap> blocksMaps) {
+        this.blocksMaps = blocksMaps;
+    }
+
+    public void setChangeMap(HashMap changeMap) {
+        this.changeMap = changeMap;
     }
 }

@@ -49,14 +49,11 @@ public class ConfigHandler {
 
         EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new CreatureSpawn(), EntityPlus.getInstance());
         EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new SpawnerSpawn(), EntityPlus.getInstance());
-        EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new EntityDamage(), EntityPlus.getInstance());
+        //EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new EntityDamage(), EntityPlus.getInstance());
 
         if (ConfigHandler.getDepends().MythicMobsEnabled()) {
             EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new MythicMobsSpawn(), EntityPlus.getInstance());
             EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new MythicMobsLootDrop(), EntityPlus.getInstance());
-        }
-        if (ConfigHandler.getDepends().CMIEnabled()) {
-            EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new CMIAfkEnter(), EntityPlus.getInstance());
         }
         if (ConfigHandler.getDepends().ResidenceEnabled()) {
             FlagPermissions.addFlag("spawnbypass");

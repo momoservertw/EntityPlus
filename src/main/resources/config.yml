@@ -36,7 +36,9 @@ Spawn:
       Limit:
         Enable: false
         # More information: https://github.com/momoservertw/EntityPlus/wiki/Purge
-        Purge: true
+        Purge:
+          Enable: true
+          Amount: 10
         # The chance of spawn creatures if the creature amount over the "Amount". Set "0" to cancel spawn every excess creatures.
         Chance: 0
         # The maximum creature amount near the spawn location.
@@ -66,7 +68,6 @@ Spawn:
         - world_nether
         - world_the_end
       Limit:
-        Purge: true
         Chance: 0
         Amount: 20
         Search:
@@ -158,6 +159,7 @@ MythicMobs-Spawn:
 Purge:
   Enable: false
   Check:
+    Load: true
     Schedule:
       Enable: false
       Interval: 60
@@ -168,12 +170,20 @@ Purge:
     Baby-Animals: false
     Equipped: false
     Pickup-Equipped: true
+    Reasons:
+      - SPAWNER_EGG
+
+
 
 
 # Change illegal spawners and randomly choose a new type, then execute custom commands.
 # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawner
 Spawner:
   Enable: false
+  Settings:
+    Features:
+      Bypass:
+        Residnece-Flag: true
   Control:
     Zombie:
       Enable: true

@@ -18,6 +18,7 @@ import java.util.List;
 
 public class EntityDamage implements Listener {
 
+    /*
     @EventHandler(priority = EventPriority.HIGH)
     public void onEntityDamage(EntityDamageEvent e) {
         String damageCause = e.getCause().name();
@@ -129,13 +130,12 @@ public class EntityDamage implements Listener {
                         if (ConfigHandler.getMythicMobs(en, "Damage.Control." + group + ".MythicMobs-Ignore-List")) {
                             return;
                         }
-                        /*if (!LocationAPI.checkBlocks(entityLoc, "Damage.Control." + group + ".Blocks")) {
+                        if (!LocationAPI.checkBlocks(entityLoc, "Damage.Control." + group + ".Blocks")) {
 
                             return;
                         }
-
-                         */
-
+*/
+    /*
                         String newDamage = ConfigHandler.getConfig("config.yml").getString("Damage.Control." + group + ".Modified-Damage");
                         if (newDamage != null) {
                             damage = Integer.valueOf(newDamage);
@@ -166,6 +166,7 @@ public class EntityDamage implements Listener {
      * @param path  the path of spawn reason in config.yml.
      * @return if the entity spawn reason match the config setting.
      */
+    /*
     private boolean getReason(String cause, String path) {
         String reason = ConfigHandler.getConfig("config.yml").getString(path);
         if (reason != null) {
@@ -173,5 +174,7 @@ public class EntityDamage implements Listener {
         }
         return true;
     }
+
+    */
 }
 

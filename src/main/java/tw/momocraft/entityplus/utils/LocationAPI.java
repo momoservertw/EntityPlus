@@ -105,7 +105,7 @@ public class LocationAPI {
             if (ConfigHandler.getDepends().ResidenceEnabled()) {
                 ClaimedResidence res = Residence.getInstance().getResidenceManager().getByLoc(loc);
                 if (res != null) {
-                    if (res.getPermissions().has("spawnerbypass", false)) {
+                    if (res.getPermissions().has(resBypassFlag, false)) {
                         return false;
                     }
                 }
@@ -115,7 +115,7 @@ public class LocationAPI {
         Map<String, String> cord;
         back:
         for (LocationMap locationMap : locationMaps) {
-            if (!worldName.equalsIgnoreCase(locationMap.getWorld())) {
+            if (!locationMap.getWorlds().contains(worldName)) {
                 continue;
             }
             cord = locationMap.getCord();

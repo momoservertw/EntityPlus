@@ -32,7 +32,7 @@ public class CreatureSpawn implements Listener {
         }
         if (ConfigHandler.getConfigPath().isSpawn()) {
             // Get entity properties in configuration.
-            Map<String, List<EntityMap>> entityProp = ConfigHandler.getConfigPath().getEntityProperties();
+            Map<String, List<EntityMap>> entityProp = ConfigHandler.getConfigPath().getEntityProp();
             // Checks properties of this entity.
             if (entityProp.containsKey(entityType)) {
                 // Checks every groups of this entity.
@@ -79,7 +79,7 @@ public class CreatureSpawn implements Listener {
                         return;
                     }
                     // The creature's spawn "location" isn't match.
-                    if (!LocationAPI.checkLocation(loc, entityMap.getLocationMaps(), "")) {
+                    if (!LocationAPI.checkLocation(loc, entityMap.getLocMaps(), "")) {
                         ServerHandler.sendFeatureMessage("Spawn", entityType, "!Location", "return",
                                 new Throwable().getStackTrace()[0]);
                         return;

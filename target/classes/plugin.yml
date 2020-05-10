@@ -2,7 +2,7 @@ name: EntityPlus
 main: tw.momocraft.entityplus.EntityPlus
 author: Momocraft
 api-version: 1.13
-version: 1.1.6
+version: 1.2.0
 description: Control creatures spawn and spawner. And add more features for MythicMobs and CMI.
 softdepend: [Vault, MythicMobs, CMI, Residence, PlaceHolderAPI]
 
