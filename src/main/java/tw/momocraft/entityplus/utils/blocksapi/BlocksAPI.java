@@ -53,12 +53,14 @@ public class BlocksAPI {
      * @return Check if there are matching materials nearby.
      */
     private static boolean getSearchBlocks(Location loc, List<String> blockTypes, int rangeX, int rangeY, int rangeZ, String radiusType) {
+        ServerHandler.sendConsoleMessage(loc.getBlock() + " " + loc.getBlockY() + " " + loc.getBlockZ());
         ServerHandler.sendConsoleMessage(blockTypes + " " + rangeX + " " + rangeY + " " + rangeZ + " " + radiusType);
         Location blockLoc;
         if (radiusType.equals("S")) {
             for (int x = -rangeX; x <= rangeX; x++) {
                 for (int y = -rangeY; y <= rangeY; y++) {
                     for (int z = -rangeZ; z <= rangeZ; z++) {
+                        ServerHandler.sendConsoleMessage(x +  " " + y + " " + z);
                         blockLoc = loc.add(x, y, z);
                         ServerHandler.sendConsoleMessage(blockLoc.getBlock().getType().name());
                         if (blockTypes.contains(blockLoc.getBlock().getType().name())) {
