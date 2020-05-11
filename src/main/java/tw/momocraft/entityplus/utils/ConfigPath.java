@@ -61,7 +61,6 @@ public class ConfigPath {
     //  ============================================== //
     private boolean spawner;
     private boolean spawnerResFlag;
-    private ConfigurationSection spawnerConfig;
     private Map<String, SpawnerMap> spawnerProp = new HashMap<>();
 
 
@@ -233,7 +232,7 @@ public class ConfigPath {
         spawner = ConfigHandler.getConfig("config.yml").getBoolean("Spawner.Enable");
         if (spawner) {
             spawnerResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Spawner.Settings.Features.Bypass.Residence-Flag");
-            spawnerConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawner.Change-Type");
+            ConfigurationSection spawnerConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawner.Change-Type");
             if (spawnerConfig != null) {
                 String spawnerEnable;
                 SpawnerMap spawnerMap = new SpawnerMap();
@@ -326,9 +325,9 @@ public class ConfigPath {
             String s;
             for (String group : config.getKeys(false)) {
                 blocksMap = new BlocksMap();
-                blocksMap.setBlockTypes(ConfigHandler.getConfig("config.yml").getStringList(path + "." + group + ".Types"));
                 searchConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection(path + "." + group + ".Search");
                 if (searchConfig != null) {
+                    blocksMap.setBlockTypes(ConfigHandler.getConfig("config.yml").getStringList(path + "." + group + ".Types"));
                     r = ConfigHandler.getConfig("config.yml").getString(path + "." + group + ".Search.R");
                     s = ConfigHandler.getConfig("config.yml").getString(path + "." + group + ".Search.S");
                     if (r != null) {
@@ -356,8 +355,8 @@ public class ConfigPath {
                     }
                     blocksMaps.add(blocksMap);
                 }
-                return blocksMaps;
             }
+            return blocksMaps;
         }
         BlocksMap blocksMap;
         ConfigurationSection searchConfig;
@@ -368,9 +367,9 @@ public class ConfigPath {
         for (String group : ConfigHandler.getConfig("config.yml").getStringList(path)) {
             if (ConfigHandler.getConfig("groups.yml").getConfigurationSection("Location." + group) != null) {
                 blocksMap = new BlocksMap();
-                blocksMap.setBlockTypes(ConfigHandler.getConfig("groups.yml").getStringList("Location." + group + ".Types"));
                 searchConfig = ConfigHandler.getConfig("groups.yml").getConfigurationSection("Location." + group + ".Search");
                 if (searchConfig != null) {
+                    blocksMap.setBlockTypes(ConfigHandler.getConfig("groups.yml").getStringList("Location." + group + ".Types"));
                     r = ConfigHandler.getConfig("groups.yml").getString("Location." + group + ".Search.R");
                     s = ConfigHandler.getConfig("groups.yml").getString("Location." + group + ".Search.S");
                     if (r != null) {

@@ -10,6 +10,7 @@ commands:
   entityplus:
     description: Displays main command menu.
     permission: entityplus.use
+    aliases: [ep]
     usage: |
       /entityplus
 

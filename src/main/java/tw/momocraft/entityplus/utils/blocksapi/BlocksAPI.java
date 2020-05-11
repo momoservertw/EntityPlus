@@ -30,6 +30,8 @@ public class BlocksAPI {
         for (BlocksMap blocksMap : blocksMaps) {
             blockTypes = blocksMap.getBlockTypes();
             if (blocksMap.isVertical()) {
+                ServerHandler.sendConsoleMessage(loc.getBlock() + " " + loc.getBlockY() + " " + loc.getBlockZ());
+                ServerHandler.sendConsoleMessage("34");
                 if (getVerticalBlocks(loc, blockTypes, blocksMap.getY())) {
                     return true;
                 }
@@ -53,7 +55,7 @@ public class BlocksAPI {
      * @return Check if there are matching materials nearby.
      */
     private static boolean getSearchBlocks(Location loc, List<String> blockTypes, int rangeX, int rangeY, int rangeZ, String radiusType) {
-        ServerHandler.sendConsoleMessage(loc.getBlock() + " " + loc.getBlockY() + " " + loc.getBlockZ());
+        ServerHandler.sendConsoleMessage(loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ());
         ServerHandler.sendConsoleMessage(blockTypes + " " + rangeX + " " + rangeY + " " + rangeZ + " " + radiusType);
         Location blockLoc;
         if (radiusType.equals("S")) {
@@ -62,7 +64,9 @@ public class BlocksAPI {
                     for (int z = -rangeZ; z <= rangeZ; z++) {
                         ServerHandler.sendConsoleMessage(x +  " " + y + " " + z);
                         blockLoc = loc.add(x, y, z);
+                        ServerHandler.sendConsoleMessage(blockLoc + " ");
                         ServerHandler.sendConsoleMessage(blockLoc.getBlock().getType().name());
+                        ServerHandler.sendConsoleMessage(" ");
                         if (blockTypes.contains(blockLoc.getBlock().getType().name())) {
                             ServerHandler.sendConsoleMessage("true");
                             return true;
@@ -94,6 +98,7 @@ public class BlocksAPI {
      * @return Check if the relative Y-block material is match.
      */
     private static boolean getVerticalBlocks(Location loc, List<String> blockTypes, int v) {
+        ServerHandler.sendConsoleMessage(blockTypes + " " + v);
         return blockTypes.contains(loc.add(0, v, 0).getBlock().getType().name());
     }
 }
