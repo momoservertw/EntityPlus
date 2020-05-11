@@ -21,6 +21,9 @@ public class LocationAPI {
      * @return if the block is in the range of setting in the config.yml.
      */
     public static boolean checkLocation(Location loc, List<LocationMap> locationMaps, String resBypassFlag) {
+        if (locationMaps.isEmpty()) {
+            return true;
+        }
         if (!resBypassFlag.equals("")) {
             if (ConfigHandler.getDepends().ResidenceEnabled()) {
                 ClaimedResidence res = Residence.getInstance().getResidenceManager().getByLoc(loc);
@@ -30,9 +33,6 @@ public class LocationAPI {
                     }
                 }
             }
-        }
-        if (locationMaps.isEmpty()) {
-            return true;
         }
         String worldName = loc.getWorld().getName();
         Map<String, String> cord;

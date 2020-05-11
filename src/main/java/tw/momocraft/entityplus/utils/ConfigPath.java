@@ -341,6 +341,7 @@ public class ConfigPath {
                     } else {
                         blocksMap.setX(ConfigHandler.getConfig("config.yml").getInt(path + "." + group + ".Search.X"));
                         blocksMap.setZ(ConfigHandler.getConfig("config.yml").getInt(path + "." + group + ".Search.Z"));
+                        blocksMap.setRadiusType("S");
                     }
                     v = ConfigHandler.getConfig("config.yml").getString(path + "." + group + ".Search.V");
                     if (v != null) {

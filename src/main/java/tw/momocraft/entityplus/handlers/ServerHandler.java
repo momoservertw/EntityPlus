@@ -77,19 +77,19 @@ public class ServerHandler {
             case "remove":
             case "kill":
             case "damage":
-                ServerHandler.sendDebugMessage("&8" + feature + " - " + target + "&8 : &f" + check + "&8, " + "&c" + action + "&8, " + detail
-                        + " &8(" + ste.getClassName() + " " + ste.getMethodName() + " " + ste.getLineNumber() + ")" , true);
+                ServerHandler.sendDebugMessage("&7" + feature + " - " + target + "&8 : &f" + check + "&8, " + "&c" + action + "&8, " + detail
+                        + " &8(" + ste.getClassName() + " " + ste.getMethodName() + " " + ste.getLineNumber() + ")", true);
                 break;
             case "continue":
             case "bypass":
             case "change":
-                ServerHandler.sendDebugMessage("&8" + feature + " - " + target + "&8 : &f" + check + "&8, " + "&e" + action + "&8, " + detail
-                        + " &8(" + ste.getClassName() + " " + ste.getMethodName() + " " + ste.getLineNumber() + ")" , true);
+                ServerHandler.sendDebugMessage("&7" + feature + " - " + target + "&8 : &f" + check + "&8, " + "&e" + action + "&8, " + detail
+                        + " &8(" + ste.getClassName() + " " + ste.getMethodName() + " " + ste.getLineNumber() + ")", true);
                 break;
             case "return":
             default:
-                ServerHandler.sendDebugMessage("&8" + feature + " - " + target + "&8 : &f" + check + "&8, " + "&a" + action + "&8, " + detail
-                        + " &8(" + ste.getClassName() + " " + ste.getMethodName() + " " + ste.getLineNumber() + ")" , true);
+                ServerHandler.sendDebugMessage("&7" + feature + " - " + target + "&8 : &f" + check + "&8, " + "&a" + action + "&8, " + detail
+                        + " &8(" + ste.getClassName() + " " + ste.getMethodName() + " " + ste.getLineNumber() + ")", true);
                 break;
         }
     }
@@ -103,19 +103,19 @@ public class ServerHandler {
             case "remove":
             case "kill":
             case "damage":
-                ServerHandler.sendDebugMessage("&8" + feature + " - " + target + "&8 : &f" + check + "&8, " + "&c" + action
-                        + " &8(" + ste.getClassName() + " " + ste.getMethodName() + " " + ste.getLineNumber() + ")" , true);
+                ServerHandler.sendDebugMessage("&7" + feature + " - " + target + "&8 : &f" + check + "&8, " + "&c" + action
+                        + " &8(" + ste.getClassName() + " " + ste.getMethodName() + " " + ste.getLineNumber() + ")", true);
                 break;
             case "continue":
             case "bypass":
             case "change":
-                ServerHandler.sendDebugMessage("&8" + feature + " - " + target + "&8 : &f" + check + "&8, " + "&e" + action
-                        + " &8(" + ste.getClassName() + " " + ste.getMethodName() + " " + ste.getLineNumber() + ")" , true);
+                ServerHandler.sendDebugMessage("&7" + feature + " - " + target + "&8 : &f" + check + "&8, " + "&e" + action
+                        + " &8(" + ste.getClassName() + " " + ste.getMethodName() + " " + ste.getLineNumber() + ")", true);
                 break;
             case "return":
             default:
-                ServerHandler.sendDebugMessage("&8" + feature + " - " + target + "&8 : &f" + check + "&8, " + "&a" + action
-                        + " &8(" + ste.getClassName() + " " + ste.getMethodName() + " " + ste.getLineNumber() + ")" , true);
+                ServerHandler.sendDebugMessage("&7" + feature + " - " + target + "&8 : &f" + check + "&8, " + "&a" + action
+                        + " &8(" + ste.getClassName() + " " + ste.getMethodName() + " " + ste.getLineNumber() + ")", true);
                 break;
         }
     }

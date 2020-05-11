@@ -37,10 +37,10 @@ public class BlocksMap {
         return vertical;
     }
 
-
     public List<BlocksMap> getIgnoreMaps() {
         return ignoreMaps;
     }
+
 
     public void setBlockTypes(List<String> blockTypes) {
         this.blockTypes = blockTypes;
