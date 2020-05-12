@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.PermissionsHandler;
 import tw.momocraft.entityplus.utils.Language;
+import tw.momocraft.entityplus.utils.customgroups.GroupsGenerator;
 
 
 public class Commands implements CommandExecutor {
@@ -53,6 +54,13 @@ public class Commands implements CommandExecutor {
             if (PermissionsHandler.hasPermission(sender, "entityplus.command.version")) {
                 Language.dispatchMessage(sender, "&d&lEntityPlus &e&lv" + EntityPlus.getInstance().getDescription().getVersion() + "&8 - &fby Momocraft");
                 ConfigHandler.getUpdater().checkUpdates(sender, false);
+            } else {
+                Language.sendLangMessage("Message.noPermission", sender);
+            }
+            return true;
+        } else if (args.length == 2 && args[0].equalsIgnoreCase("test")) {
+            if (PermissionsHandler.hasPermission(sender, "entityplus.test")) {
+                GroupsGenerator.groupsManager(sender, args[1]);
             } else {
                 Language.sendLangMessage("Message.noPermission", sender);
             }

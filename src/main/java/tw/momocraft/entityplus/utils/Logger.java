@@ -19,18 +19,14 @@ public class Logger {
     private static File file;
     private static File folder;
 
-    public Logger() {
-        setUp();
-    }
-
     /**
      * Logger:
-     * Enable: true
-     * Folder: "Log"
-     * FileName: "lastest"
-     * Path: "C:\Server"
+     *   Enable: true
+     *   Folder: "Log"
+     *   FileName: "latest"
+     *   Path: "C:\Server"
      */
-    private void setUp() {
+    public Logger() {
         if (ConfigHandler.getConfig("config.yml").getBoolean("Logger.Enable")) {
             folderName = ConfigHandler.getConfig("config.yml").getString("Logger.Folder");
             if (folderName == null) {
@@ -45,7 +41,8 @@ public class Logger {
                 path = EntityPlus.getInstance().getDataFolder().getPath();
             }
             folder = new File(path + "\\" + folderName);
-            file = new File(path + "\\" + folderName);
+            file = new File(path + "\\" + folderName + "\\" + fileName);
+            createLog();
         }
     }
 
@@ -113,11 +110,35 @@ public class Logger {
                 DateFormat dateFormat = new SimpleDateFormat("YYYY/MM/dd HH:mm:ss");
                 String date = dateFormat.format(new Date());
                 message = "[" + date + "]: " + message + "\n";
+                break;
             case "List":
                 message = " - " + message + "\n";
+                break;
             case "Array":
                 message = message + ", ";
+                break;
         }
         addLog(message);
+    }
+
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public String getFolderName() {
+        return folderName;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public static File getFile() {
+        return file;
+    }
+
+    public static File getFolder() {
+        return folder;
     }
 }

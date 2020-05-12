@@ -1,3 +1,4 @@
+tw\momocraft\entityplus\utils\Logger.class
 tw\momocraft\entityplus\listeners\MythicMobsSpawn.class
 tw\momocraft\entityplus\listeners\PlayerLogin.class
 tw\momocraft\entityplus\utils\entities\EntityMap.class
@@ -20,6 +21,7 @@ tw\momocraft\entityplus\utils\entities\SpawnerMap.class
 tw\momocraft\entityplus\listeners\PlayerTeleport.class
 tw\momocraft\entityplus\utils\blocksapi\BlocksAPI.class
 tw\momocraft\entityplus\utils\DependAPI.class
+tw\momocraft\entityplus\utils\customgroups\GroupsGenerator.class
 tw\momocraft\entityplus\utils\entities\EntityUtils.class
 tw\momocraft\entityplus\utils\blocksapi\BlocksMap.class
 tw\momocraft\entityplus\Commands.class

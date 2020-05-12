@@ -11,6 +11,7 @@ import tw.momocraft.entityplus.listeners.*;
 import tw.momocraft.entityplus.utils.ConfigPath;
 import tw.momocraft.entityplus.utils.DependAPI;
 import org.bukkit.Location;
+import tw.momocraft.entityplus.utils.Logger;
 import tw.momocraft.entityplus.utils.TabComplete;
 
 import java.io.File;
@@ -25,6 +26,7 @@ public class ConfigHandler {
     private static DependAPI depends;
     private static ConfigPath configPath;
     private static UpdateHandler updater;
+    private static Logger logger;
 
     public static void generateData() {
         configFile();
@@ -33,6 +35,7 @@ public class ConfigHandler {
         sendUtilityDepends();
         setConfigPath(new ConfigPath());
         setUpdater(new UpdateHandler());
+        setLogger(new Logger());
     }
 
     public static void registerEvents() {
@@ -212,6 +215,14 @@ public class ConfigHandler {
 
     private static void setUpdater(UpdateHandler update) {
         updater = update;
+    }
+
+    private static void setLogger(Logger log) {
+        logger = log;
+    }
+
+    public static Logger getLogger() {
+        return logger;
     }
 
     /**

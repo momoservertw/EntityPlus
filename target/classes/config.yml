@@ -4,6 +4,12 @@ Debugging: false
 Check-Updates: true
 Custom-Groups: true
 
+Logger:
+  Enable: true
+  Folder: "Log"
+  FileName: "latest"
+  Path: "C:\\Server"
+
 General:
   # The searching players range from a location.
   Nearby-Players-Range: 32

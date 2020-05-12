@@ -34,7 +34,15 @@ Blocks:
       Y: 5
 
 Materials:
-  ItemMachines:
+  Machines:
+    - REDSTONE
+    - REDSTONE_BLOCK
+    - REDSTONE_LAMP
+    - REDSTONE_TORCH
+    - REDSTONE_WALL_TORCH
+    - REDSTONE_WIRE
+    - OBSERVER
+    -
     - STONE_PRESSURE_PLATE
     - OAK_PRESSURE_PLATE
     - BIRCH_PRESSURE_PLATE
@@ -43,6 +51,8 @@ Materials:
     - JUNGLE_PRESSURE_PLATE
     - DARK_OAK_PRESSURE_PLATE
     - STRING
+  Container:
+    -
 
 MythicMobs:
   MythicMobsEx:
