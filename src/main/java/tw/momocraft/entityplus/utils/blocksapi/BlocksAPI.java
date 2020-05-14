@@ -1,15 +1,10 @@
 package tw.momocraft.entityplus.utils.blocksapi;
 
 import org.bukkit.Location;
-import tw.momocraft.entityplus.handlers.ServerHandler;
 
 import java.util.List;
 
 public class BlocksAPI {
-
-    //  ============================================== //
-    //         Blocks Settings                         //
-    //  ============================================== //
 
     /**
      * @param loc        the checking location.
@@ -20,13 +15,17 @@ public class BlocksAPI {
         if (blocksMaps.isEmpty()) {
             return true;
         }
+        List<BlocksMap> ignoreMaps;
         for (BlocksMap blocksMap : blocksMaps) {
-            if (getSearchBlocks(loc, blocksMap)) {
-                for (BlocksMap ignoreMap : blocksMap.getIgnoreMaps()) {
+            ignoreMaps = blocksMap.getIgnoreMaps();
+            if (ignoreMaps != null) {
+                for (BlocksMap ignoreMap : ignoreMaps) {
                     if (getSearchBlocks(loc, ignoreMap)) {
                         return false;
                     }
                 }
+            }
+            if (getSearchBlocks(loc, blocksMap)) {
                 return true;
             }
         }
@@ -38,17 +37,12 @@ public class BlocksAPI {
      * @return Check if there are matching materials nearby.
      */
     private static boolean getSearchBlocks(Location loc, BlocksMap blocksMap) {
-        ServerHandler.sendConsoleMessage(loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ());
-
         List<String> blockTypes = blocksMap.getBlockTypes();
         int rangeX = blocksMap.getX();
         int rangeY = blocksMap.getY();
         int rangeZ = blocksMap.getZ();
-        String radiusType = blocksMap.getRadiusType();
-        boolean vertical = blocksMap.isVertical();
-
         Location blockLoc;
-        if (vertical) {
+        if (blocksMap.isVertical()) {
             for (int x = -rangeX; x <= rangeX; x++) {
                 for (int z = -rangeZ; z <= rangeZ; z++) {
                     blockLoc = loc.clone().add(x, rangeY, z);
@@ -57,7 +51,7 @@ public class BlocksAPI {
                     }
                 }
             }
-        } else if (radiusType.equals("S")) {
+        } else if (blocksMap.isRound()) {
             for (int x = -rangeX; x <= rangeX; x++) {
                 for (int z = -rangeZ; z <= rangeZ; z++) {
                     for (int y = -rangeY; y <= rangeY; y++) {
@@ -68,7 +62,7 @@ public class BlocksAPI {
                     }
                 }
             }
-        } else if (radiusType.equals("R")) {
+        } else {
             for (int x = -rangeX; x <= rangeX; x++) {
                 for (int z = -rangeZ; z <= rangeZ; z++) {
                     if (x * z <= rangeX) {

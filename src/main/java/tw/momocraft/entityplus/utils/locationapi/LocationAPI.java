@@ -11,10 +11,6 @@ import java.util.Map;
 
 public class LocationAPI {
 
-    //  ============================================== //
-    //         Location Settings                       //
-    //  ============================================== //
-
     /**
      * @param loc          location.
      * @param locationMaps the settings from configuration.
@@ -41,7 +37,7 @@ public class LocationAPI {
             if (locationMap.getWorlds().isEmpty()) {
                 return true;
             }
-            if (!locationMap.getWorlds().contains(worldName)) {
+            if (!locationMap.getWorlds().contains(worldName) && !locationMap.getWorlds().contains("global")) {
                 continue;
             }
             cord = locationMap.getCord();

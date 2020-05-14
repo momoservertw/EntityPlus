@@ -8,36 +8,35 @@ public class BlocksMap {
     private int X = 0;
     private int Z = 0;
     private int Y = 0;
-    private String radiusType = null;
+    private boolean round = false;
     private boolean vertical = false;
     private List<BlocksMap> ignoreMaps;
 
-
-    public List<String> getBlockTypes() {
+    List<String> getBlockTypes() {
         return blockTypes;
     }
 
-    public int getX() {
+    int getX() {
         return X;
     }
 
-    public int getZ() {
+    int getZ() {
         return Z;
     }
 
-    public int getY() {
+    int getY() {
         return Y;
     }
 
-    public String getRadiusType() {
-        return radiusType;
+    boolean isRound() {
+        return round;
     }
 
-    public boolean isVertical() {
+    boolean isVertical() {
         return vertical;
     }
 
-    public List<BlocksMap> getIgnoreMaps() {
+    List<BlocksMap> getIgnoreMaps() {
         return ignoreMaps;
     }
 
@@ -58,9 +57,8 @@ public class BlocksMap {
         this.Y = y;
     }
 
-
-    public void setRadiusType(String radiusType) {
-        this.radiusType = radiusType;
+    public void setRound(boolean round) {
+        this.round = round;
     }
 
     public void setVertical(boolean vertical) {

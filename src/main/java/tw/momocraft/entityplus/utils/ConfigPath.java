@@ -1,5 +1,6 @@
 package tw.momocraft.entityplus.utils;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
@@ -110,12 +111,12 @@ public class ConfigPath {
                         entityMap.setWater(ConfigHandler.getConfig("config.yml").getBoolean("Spawn.Control." + group + ".Water"));
                         entityMap.setDay(ConfigHandler.getConfig("config.yml").getBoolean("Spawn.Control." + group + ".Day"));
                         // Blocks settings.
-                        blocksMaps = getBlocksMaps("Spawn.Control." + group + ".Blocks");
+                        blocksMaps = getBlocksMaps("Spawn.Control." + group + ".Blocks", false);
                         if (!blocksMaps.isEmpty()) {
                             entityMap.setBlocksMaps(blocksMaps);
                         }
                         // Location settings
-                        locMaps = getLocationMaps("Spawn.Control." + group + ".Location");
+                        locMaps = getLocationMaps("Spawn.Control." + group + ".Location", false);
                         if (!locMaps.isEmpty()) {
                             entityMap.setLocMaps(locMaps);
                         }
@@ -183,11 +184,11 @@ public class ConfigPath {
                         entityMap.setBoimes(ConfigHandler.getConfig("config.yml").getStringList("MythicMobs-Spawn.Control." + group + ".Boimes"));
                         entityMap.setWater(ConfigHandler.getConfig("config.yml").getBoolean("MythicMobs-Spawn.Control." + group + ".Water"));
                         entityMap.setDay(ConfigHandler.getConfig("config.yml").getBoolean("MythicMobs-Spawn.Control." + group + ".Day"));
-                        blocksMaps = getBlocksMaps("MythicMobs-Spawn.Control." + group + ".Blocks");
+                        blocksMaps = getBlocksMaps("MythicMobs-Spawn.Control." + group + ".Blocks", false);
                         if (!blocksMaps.isEmpty()) {
                             entityMap.setBlocksMaps(blocksMaps);
                         }
-                        locMaps = getLocationMaps("MythicMobs-Spawn.Control." + group + ".Blocks");
+                        locMaps = getLocationMaps("MythicMobs-Spawn.Control." + group + ".Blocks", false);
                         if (!locMaps.isEmpty()) {
                             entityMap.setLocMaps(locMaps);
                         }
@@ -252,12 +253,12 @@ public class ConfigPath {
                         }
                         spawnerMap.setChangeMap(changeMap);
                         // Blocks settings.
-                        blocksMaps = getBlocksMaps("Spawn.Control." + group + ".Blocks");
+                        blocksMaps = getBlocksMaps("Spawner.Control." + group + ".Blocks", false);
                         if (!blocksMaps.isEmpty()) {
                             spawnerMap.setBlocksMaps(blocksMaps);
                         }
                         // Location settings
-                        locMaps = getLocationMaps("Spawn.Control." + group + ".Location");
+                        locMaps = getLocationMaps("Spawner.Control." + group + ".Location", false);
                         if (!locMaps.isEmpty()) {
                             spawnerMap.setLocMaps(locMaps);
                         }
@@ -268,139 +269,151 @@ public class ConfigPath {
         }
     }
 
-    private List<LocationMap> getLocationMaps(String path) {
+    private List<LocationMap> getLocationMaps(String path, boolean customGroup) {
         List<LocationMap> locMaps = new ArrayList<>();
+        LocationMap locMap;
+        LocationMap locWorldMap = new LocationMap();
+        List<String> worlds = new ArrayList<>();
+        ConfigurationSection areaConfig;
         ConfigurationSection locConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection(path);
         if (locConfig != null) {
-            LocationMap locMap;
-            ConfigurationSection areaConfig;
             for (String group : locConfig.getKeys(false)) {
+                if (ConfigHandler.getConfig("config.yml").getConfigurationSection(path + "." + group) == null) {
+                    worlds.add(group);
+                    continue;
+                }
                 locMap = new LocationMap();
-                locMap.setWorlds(ConfigHandler.getConfig("config.yml").getStringList(path + "." + group + ".Worlds"));
-                areaConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection(path + "." + group + ".Area");
-                if (areaConfig != null) {
-                    for (String type : areaConfig.getKeys(false)) {
-                        locMap.addCord(type, ConfigHandler.getConfig("config.yml").getString(path + "." + group + ".Area." + type));
+                if (customGroup) {
+                    locMap.setWorlds(ConfigHandler.getConfig("groups.yml").getStringList("Location." + group + ".Worlds"));
+                    areaConfig = ConfigHandler.getConfig("groups.yml").getConfigurationSection("Location." + group + ".Area");
+                    if (areaConfig != null) {
+                        for (String area : areaConfig.getKeys(false)) {
+                            locMap.addCord(area, ConfigHandler.getConfig("config.yml").getString("Location." + group + ".Area." + area));
+                        }
+                    }
+                } else {
+                    locMap.setWorlds(ConfigHandler.getConfig("config.yml").getStringList(path + "." + group + ".Worlds"));
+                    areaConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection(path + "." + group + ".Area");
+                    if (areaConfig != null) {
+                        for (String type : areaConfig.getKeys(false)) {
+                            locMap.addCord(type, ConfigHandler.getConfig("config.yml").getString(path + "." + group + ".Area." + type));
+                        }
                     }
                 }
                 locMaps.add(locMap);
             }
-            return locMaps;
-        }
-        LocationMap locMap;
-        LocationMap worldListMap = new LocationMap();
-        List<String> worlds = new ArrayList<>();
-        for (String world : ConfigHandler.getConfig("config.yml").getStringList(path)) {
-            if (ConfigHandler.getConfig("groups.yml").getConfigurationSection("Location." + world) != null) {
+        } else {
+            for (String group : ConfigHandler.getConfig("config.yml").getStringList(path)) {
+                if (ConfigHandler.getConfig("groups.yml").getConfigurationSection("Location." + group) == null) {
+                    worlds.add(group);
+                    continue;
+                }
                 locMap = new LocationMap();
-                ConfigurationSection areaConfig;
-                locMap.setWorlds(ConfigHandler.getConfig("groups.yml").getStringList("Location." + world + ".Worlds"));
-                areaConfig = ConfigHandler.getConfig("groups.yml").getConfigurationSection("Location." + world + ".Area");
+                locMap.setWorlds(ConfigHandler.getConfig("groups.yml").getStringList("Location." + group + ".Worlds"));
+                areaConfig = ConfigHandler.getConfig("groups.yml").getConfigurationSection("Location." + group + ".Area");
                 if (areaConfig != null) {
                     for (String area : areaConfig.getKeys(false)) {
-                        locMap.addCord(area, ConfigHandler.getConfig("config.yml").getString("Location." + world + ".Area." + area));
+                        locMap.addCord(area, ConfigHandler.getConfig("config.yml").getString("Location." + group + ".Area." + area));
                     }
                 }
                 locMaps.add(locMap);
-            } else {
-                worlds.add(world);
             }
-        }
-        if (!worlds.isEmpty()) {
-            worldListMap.setWorlds(worlds);
-            locMaps.add(worldListMap);
+            locWorldMap.setWorlds(worlds);
+            locMaps.add(locWorldMap);
         }
         return locMaps;
     }
 
-    private List<BlocksMap> getBlocksMaps(String path) {
+    private List<BlocksMap> getBlocksMaps(String path, boolean customGroup) {
         List<BlocksMap> blocksMaps = new ArrayList<>();
+        BlocksMap blocksMap;
+        int x;
+        int z;
+        int y;
+        String r;
+        String s;
+        String v;
         ConfigurationSection config = ConfigHandler.getConfig("config.yml").getConfigurationSection(path);
         if (config != null) {
-            BlocksMap blocksMap;
-            ConfigurationSection searchConfig;
-            ConfigurationSection ignoreConfig;
-            String v;
-            String r;
-            String s;
             for (String group : config.getKeys(false)) {
                 blocksMap = new BlocksMap();
-                searchConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection(path + "." + group + ".Search");
-                if (searchConfig != null) {
+                if (customGroup) {
+                    blocksMap.setBlockTypes(ConfigHandler.getConfig("groups.yml").getStringList("Blocks." + group + ".Types"));
+                    if (ConfigHandler.getConfig("groups.yml").getConfigurationSection("Blocks." + group + "." + ".Ignore") != null) {
+                        blocksMap.setIgnoreMaps(getBlocksMaps("Blocks." + group + "." + ".Ignore", true));
+                    }
+                    x = ConfigHandler.getConfig("groups.yml").getInt("Blocks." + group + ".Search.X");
+                    z = ConfigHandler.getConfig("groups.yml").getInt("Blocks." + group + ".Search.Z");
+                    y = ConfigHandler.getConfig("groups.yml").getInt("Blocks." + group + ".Search.Y");
+                    r = ConfigHandler.getConfig("groups.yml").getString("Blocks." + group + ".Search.R");
+                    s = ConfigHandler.getConfig("groups.yml").getString("Blocks." + group + ".Search.S");
+                    v = ConfigHandler.getConfig("groups.yml").getString("Blocks." + group + ".Search.V");
+                } else {
                     blocksMap.setBlockTypes(ConfigHandler.getConfig("config.yml").getStringList(path + "." + group + ".Types"));
+                    if (ConfigHandler.getConfig("config.yml").getConfigurationSection(path + "." + group + "." + ".Ignore") != null) {
+                        blocksMap.setIgnoreMaps(getBlocksMaps(path + "." + group + "." + ".Ignore", false));
+                    }
+                    x = ConfigHandler.getConfig("config.yml").getInt(path + "." + group + ".Search.X");
+                    z = ConfigHandler.getConfig("config.yml").getInt(path + "." + group + ".Search.Z");
+                    y = ConfigHandler.getConfig("config.yml").getInt(path + "." + group + ".Search.Y");
                     r = ConfigHandler.getConfig("config.yml").getString(path + "." + group + ".Search.R");
                     s = ConfigHandler.getConfig("config.yml").getString(path + "." + group + ".Search.S");
+                    v = ConfigHandler.getConfig("config.yml").getString(path + "." + group + ".Search.V");
+                }
+                if (r != null) {
+                    blocksMap.setRound(true);
+                    blocksMap.setX(Integer.parseInt(r));
+                    blocksMap.setZ(Integer.parseInt(r));
+                } else if (s != null) {
+                    blocksMap.setX(Integer.parseInt(s));
+                    blocksMap.setZ(Integer.parseInt(s));
+                } else {
+                    blocksMap.setX(x);
+                    blocksMap.setZ(z);
+                }
+                if (v != null) {
+                    blocksMap.setVertical(true);
+                    blocksMap.setY(Integer.parseInt(v));
+                } else {
+                    blocksMap.setY(y);
+                }
+                blocksMaps.add(blocksMap);
+            }
+        } else {
+            for (String group : ConfigHandler.getConfig("config.yml").getStringList(path)) {
+                if (ConfigHandler.getConfig("groups.yml").getConfigurationSection("Blocks." + group) != null) {
+                    blocksMap = new BlocksMap();
+                    blocksMap.setBlockTypes(ConfigHandler.getConfig("groups.yml").getStringList("Blocks." + group + ".Types"));
+                    if (ConfigHandler.getConfig("groups.yml").getConfigurationSection("Blocks." + group + "." + ".Ignore") != null) {
+                        blocksMap.setIgnoreMaps(getBlocksMaps("Blocks." + group + "." + ".Ignore", true));
+                    }
+                    x = ConfigHandler.getConfig("groups.yml").getInt("Blocks." + group + ".Search.X");
+                    z = ConfigHandler.getConfig("groups.yml").getInt("Blocks." + group + ".Search.Z");
+                    y = ConfigHandler.getConfig("groups.yml").getInt("Blocks." + group + ".Search.Y");
+                    r = ConfigHandler.getConfig("groups.yml").getString("Blocks." + group + ".Search.R");
+                    s = ConfigHandler.getConfig("groups.yml").getString("Blocks." + group + ".Search.S");
+                    v = ConfigHandler.getConfig("groups.yml").getString("Blocks." + group + ".Search.V");
                     if (r != null) {
+                        blocksMap.setRound(true);
                         blocksMap.setX(Integer.parseInt(r));
                         blocksMap.setZ(Integer.parseInt(r));
-                        blocksMap.setRadiusType("R");
                     } else if (s != null) {
                         blocksMap.setX(Integer.parseInt(s));
                         blocksMap.setZ(Integer.parseInt(s));
-                        blocksMap.setRadiusType("S");
                     } else {
-                        blocksMap.setX(ConfigHandler.getConfig("config.yml").getInt(path + "." + group + ".Search.X"));
-                        blocksMap.setZ(ConfigHandler.getConfig("config.yml").getInt(path + "." + group + ".Search.Z"));
-                        blocksMap.setRadiusType("S");
+                        blocksMap.setX(x);
+                        blocksMap.setZ(z);
                     }
-                    v = ConfigHandler.getConfig("config.yml").getString(path + "." + group + ".Search.V");
                     if (v != null) {
-                        blocksMap.setY(Integer.parseInt(v));
                         blocksMap.setVertical(true);
+                        blocksMap.setY(Integer.parseInt(v));
                     } else {
-                        blocksMap.setY(ConfigHandler.getConfig("config.yml").getInt(path + "." + group + ".Search.Y"));
-                    }
-                    ignoreConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection(path + "." + group + ".Ignore");
-                    if (ignoreConfig != null) {
-                        blocksMap.setIgnoreMaps(getBlocksMaps(path + "." + group + "." + ".Ignore"));
+                        blocksMap.setY(y);
                     }
                     blocksMaps.add(blocksMap);
                 }
             }
-            return blocksMaps;
         }
-        BlocksMap blocksMap;
-        ConfigurationSection searchConfig;
-        ConfigurationSection ignoreConfig;
-        String v;
-        String r;
-        String s;
-        for (String group : ConfigHandler.getConfig("config.yml").getStringList(path)) {
-            if (ConfigHandler.getConfig("groups.yml").getConfigurationSection("Location." + group) != null) {
-                blocksMap = new BlocksMap();
-                searchConfig = ConfigHandler.getConfig("groups.yml").getConfigurationSection("Location." + group + ".Search");
-                if (searchConfig != null) {
-                    blocksMap.setBlockTypes(ConfigHandler.getConfig("groups.yml").getStringList("Location." + group + ".Types"));
-                    r = ConfigHandler.getConfig("groups.yml").getString("Location." + group + ".Search.R");
-                    s = ConfigHandler.getConfig("groups.yml").getString("Location." + group + ".Search.S");
-                    if (r != null) {
-                        blocksMap.setX(Integer.parseInt(r));
-                        blocksMap.setZ(Integer.parseInt(r));
-                        blocksMap.setRadiusType("R");
-                    } else if (s != null) {
-                        blocksMap.setX(Integer.parseInt(s));
-                        blocksMap.setZ(Integer.parseInt(s));
-                        blocksMap.setRadiusType("S");
-                    } else {
-                        blocksMap.setX(ConfigHandler.getConfig("config.yml").getInt("Location." + group + ".Search.X"));
-                        blocksMap.setZ(ConfigHandler.getConfig("config.yml").getInt("Location." + group + ".Search.Z"));
-                    }
-                    v = ConfigHandler.getConfig("groups.yml").getString("Location." + group + "." + ".Search.V");
-                    if (v != null) {
-                        blocksMap.setY(Integer.parseInt(v));
-                        blocksMap.setVertical(true);
-                    } else {
-                        blocksMap.setY(ConfigHandler.getConfig("config.yml").getInt("Location." + group + ".Search.Y"));
-                    }
-                }
-                ignoreConfig = ConfigHandler.getConfig("groups.yml").getConfigurationSection("Location." + group + ".Ignore");
-                if (ignoreConfig != null) {
-                    blocksMap.setIgnoreMaps(getBlocksMaps("Location." + group + ".Ignore"));
-                }
-                blocksMaps.add(blocksMap);
-            }
-        }
-
         return blocksMaps;
     }
 
