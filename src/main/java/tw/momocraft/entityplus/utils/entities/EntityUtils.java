@@ -1,15 +1,12 @@
 package tw.momocraft.entityplus.utils.entities;
 
 import com.Zrips.CMI.CMI;
-import com.Zrips.CMI.Containers.CMIUser;
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 import io.lumine.xikage.mythicmobs.MythicMobs;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.*;
-import org.bukkit.scheduler.BukkitRunnable;
-import tw.momocraft.entityplus.EntityPlus;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.PermissionsHandler;
 import tw.momocraft.entityplus.handlers.ServerHandler;
@@ -47,6 +44,8 @@ public class EntityUtils {
         int amount = limitMap.getAmount();
         long chance = limitMap.getChance();
         boolean AFK = limitMap.isAFK();
+        int afkAmount = limitMap.getAFKAmount();
+        long afkChance = limitMap.getAFKChance();
         List<String> list = limitMap.getList();
         List<String> mmList = limitMap.getMMList();
         List<String> ignoreList = limitMap.getIgnoreList();
@@ -64,13 +63,11 @@ public class EntityUtils {
                         player = (Player) en;
                         if (CMI.getInstance().getPlayerManager().getUser(player).isAfk()) {
                             if (PermissionsHandler.hasPermission(player, "entityplus.bypass.spawnlimit.afk")) {
-                                amount = limitMap.getAmount();
-                                chance = limitMap.getChance();
                                 iterator.remove();
                                 continue;
                             }
-                            amount = limitMap.getAFKAmount();
-                            chance = limitMap.getAFKChance();
+                            amount = afkAmount;
+                            chance = afkChance;
                             continue;
                         }
                     }
@@ -80,42 +77,39 @@ public class EntityUtils {
             }
             if (ConfigHandler.getDepends().MythicMobsEnabled()) {
                 if (MythicMobs.inst().getAPIHelper().isMythicMob(en)) {
+                    if (ignoreMMList.contains(MythicMobs.inst().getAPIHelper().getMythicMobInstance(en).getType().getInternalName())) {
+                        iterator.remove();
+                        continue;
+                    }
                     if (mmList.isEmpty()) {
-                        if (ignoreMMList.contains(MythicMobs.inst().getAPIHelper().getMythicMobInstance(en).getType().getInternalName())) {
-                            iterator.remove();
-                            continue;
-                        }
-                    } else {
                         if (!mmList.contains(MythicMobs.inst().getAPIHelper().getMythicMobInstance(en).getType().getInternalName())) {
                             iterator.remove();
-                            continue;
                         }
                     }
+                    continue;
                 }
             }
-            if (list.isEmpty()) {
-                if (ignoreList.contains(enType)) {
-                    iterator.remove();
-                }
-            } else {
+            if (ignoreList.contains(enType)) {
+                iterator.remove();
+                continue;
+            }
+            if (!list.isEmpty()) {
                 if (!list.contains(enType)) {
                     iterator.remove();
                 }
             }
         }
-        if (amount != -1) {
-            if (nearbyEntities.size() < amount) {
-                return true;
-            }
+        if (nearbyEntities.size() < amount) {
+            return true;
         }
-        return !(chance < new Random().nextDouble());
+        return !isChance(chance);
     }
 
     /**
      * @param chance the spawn chance in configuration.
      * @return if the entity will spawn or not.
      */
-    public static boolean isChance(long chance) {
+    public static boolean isChance(double chance) {
         return chance < new Random().nextDouble();
     }
 

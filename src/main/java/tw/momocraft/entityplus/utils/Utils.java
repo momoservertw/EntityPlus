@@ -92,24 +92,71 @@ public class Utils {
     public static String translateLayout(String name, Player player) {
         String playerName = "EXEMPT";
 
-        if (player != null) { playerName = player.getName(); }
+        if (player != null) {
+            playerName = player.getName();
+        }
 
         if (player != null && !(player instanceof ConsoleCommandSender)) {
-            try { name = name.replace("%player%", playerName); } catch (Exception e) { ServerHandler.sendDebugTrace(e); }
-            try { name = name.replace("%mob_kills%", String.valueOf(player.getStatistic(Statistic.MOB_KILLS))); } catch (Exception e) { ServerHandler.sendDebugTrace(e); }
-            try { name = name.replace("%player_kills%", String.valueOf(player.getStatistic(Statistic.PLAYER_KILLS))); } catch (Exception e) { ServerHandler.sendDebugTrace(e); }
-            try { name = name.replace("%player_deaths%", String.valueOf(player.getStatistic(Statistic.DEATHS))); } catch (Exception e) { ServerHandler.sendDebugTrace(e); }
-            try { name = name.replace("%player_food%", String.valueOf(player.getFoodLevel())); } catch (Exception e) { ServerHandler.sendDebugTrace(e); }
-            try { name = name.replace("%player_health%", String.valueOf(player.getHealth())); } catch (Exception e) { ServerHandler.sendDebugTrace(e); }
-            try { name = name.replace("%player_location%", player.getLocation().getBlockX() + ", " + player.getLocation().getBlockY() + ", " + player.getLocation().getBlockZ() + ""); } catch (Exception e) { ServerHandler.sendDebugTrace(e); }
-            try { name = name.replace("%player_interact%", getNearbyPlayer(player, 3)); } catch (Exception e) { ServerHandler.sendDebugTrace(e); } }
-        if (player == null) { try { name = name.replace("%player%", "CONSOLE"); } catch (Exception e) { ServerHandler.sendDebugTrace(e); } }
+            try {
+                name = name.replace("%player%", playerName);
+            } catch (Exception e) {
+                ServerHandler.sendDebugTrace(e);
+            }
+            try {
+                name = name.replace("%mob_kills%", String.valueOf(player.getStatistic(Statistic.MOB_KILLS)));
+            } catch (Exception e) {
+                ServerHandler.sendDebugTrace(e);
+            }
+            try {
+                name = name.replace("%player_kills%", String.valueOf(player.getStatistic(Statistic.PLAYER_KILLS)));
+            } catch (Exception e) {
+                ServerHandler.sendDebugTrace(e);
+            }
+            try {
+                name = name.replace("%player_deaths%", String.valueOf(player.getStatistic(Statistic.DEATHS)));
+            } catch (Exception e) {
+                ServerHandler.sendDebugTrace(e);
+            }
+            try {
+                name = name.replace("%player_food%", String.valueOf(player.getFoodLevel()));
+            } catch (Exception e) {
+                ServerHandler.sendDebugTrace(e);
+            }
+            try {
+                name = name.replace("%player_health%", String.valueOf(player.getHealth()));
+            } catch (Exception e) {
+                ServerHandler.sendDebugTrace(e);
+            }
+            try {
+                name = name.replace("%player_location%", player.getLocation().getBlockX() + ", " + player.getLocation().getBlockY() + ", " + player.getLocation().getBlockZ() + "");
+            } catch (Exception e) {
+                ServerHandler.sendDebugTrace(e);
+            }
+            try {
+                name = name.replace("%player_interact%", getNearbyPlayer(player, 3));
+            } catch (Exception e) {
+                ServerHandler.sendDebugTrace(e);
+            }
+        }
+        if (player == null) {
+            try {
+                name = name.replace("%player%", "CONSOLE");
+            } catch (Exception e) {
+                ServerHandler.sendDebugTrace(e);
+            }
+        }
 
         name = ChatColor.translateAlternateColorCodes('&', name).toString();
         if (ConfigHandler.getDepends().PlaceHolderAPIEnabled()) {
-            try { try { return PlaceholderAPI.setPlaceholders(player, name); }
-            catch (NoSuchFieldError e) { ServerHandler.sendDebugMessage("Error has occured when setting the PlaceHolder " + e.getMessage() + ", if this issue persits contact the developer of PlaceholderAPI."); return name; }
-            } catch (Exception e) { }
+            try {
+                try {
+                    return PlaceholderAPI.setPlaceholders(player, name);
+                } catch (NoSuchFieldError e) {
+                    ServerHandler.sendDebugMessage("Error has occured when setting the PlaceHolder " + e.getMessage() + ", if this issue persits contact the developer of PlaceholderAPI.");
+                    return name;
+                }
+            } catch (Exception e) {
+            }
         }
         return name;
     }
@@ -126,6 +173,26 @@ public class Utils {
     public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map) {
         List<Map.Entry<K, V>> list = new ArrayList<>(map.entrySet());
         list.sort(Collections.reverseOrder(Map.Entry.comparingByValue()));
+
+        Map<K, V> result = new LinkedHashMap<>();
+        for (Map.Entry<K, V> entry : list) {
+            result.put(entry.getKey(), entry.getValue());
+        }
+        return result;
+    }
+
+    /**
+     * Sort Map keys by values.
+     * Low -> High
+     *
+     * @param map the input map.
+     * @param <K>
+     * @param <V>
+     * @return the sorted map.
+     */
+    public static <K, V extends Comparable<? super V>> Map<K, V> sortByValueLow(Map<K, V> map) {
+        List<Map.Entry<K, V>> list = new ArrayList<>(map.entrySet());
+        list.sort(Map.Entry.comparingByValue());
 
         Map<K, V> result = new LinkedHashMap<>();
         for (Map.Entry<K, V> entry : list) {

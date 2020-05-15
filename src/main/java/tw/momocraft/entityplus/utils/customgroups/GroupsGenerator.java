@@ -2,8 +2,7 @@ package tw.momocraft.entityplus.utils.customgroups;
 
 import org.bukkit.Material;
 import org.bukkit.block.Chest;
-import org.bukkit.block.Container;
-import org.bukkit.block.data.Attachable;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
@@ -46,12 +45,15 @@ public class GroupsGenerator {
     public static void getContainer(CommandSender sender) {
         for (Material material : Material.values()) {
             try {
-                if (material.createBlockData() instanceof Chest) {
-                    Language.dispatchMessage(sender, "&ainstanceof " + material.name());
+                BlockData blockData = material.createBlockData();
+                try {
+                    Chest container = (Chest) blockData;
+                    Language.dispatchMessage(sender, "&ainstanceof " + blockData.getMaterial().name());
                     ConfigHandler.getLogger().sendLog(material.name(), "List");
+                } catch (Exception e) {
+
                 }
             } catch (Exception e) {
-                Language.dispatchMessage(sender, "&cNull " + material.name());
             }
         }
         Language.dispatchMessage(sender, "&6Creating process has ended.");

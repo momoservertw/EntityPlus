@@ -77,18 +77,18 @@ public class ServerHandler {
             case "remove":
             case "kill":
             case "damage":
-                ServerHandler.sendDebugMessage("&7" + feature + " - " + target + "&8 : &f" + check + "&8, " + "&c" + action + "&8, " + detail
+                ServerHandler.sendDebugMessage("&f" + feature + "&8 - &f" + target + "&8 : &f" + check + "&8, &c" + action + "&8, &7" + detail
                         + " &8(" + ste.getClassName() + " " + ste.getMethodName() + " " + ste.getLineNumber() + ")", true);
                 break;
             case "continue":
             case "bypass":
             case "change":
-                ServerHandler.sendDebugMessage("&7" + feature + " - " + target + "&8 : &f" + check + "&8, " + "&e" + action + "&8, " + detail
+                ServerHandler.sendDebugMessage("&f" + feature + "&8 - &f" + target + "&8 : &f" + check + "&8, &e" + action + "&8, &7" + detail
                         + " &8(" + ste.getClassName() + " " + ste.getMethodName() + " " + ste.getLineNumber() + ")", true);
                 break;
             case "return":
             default:
-                ServerHandler.sendDebugMessage("&7" + feature + " - " + target + "&8 : &f" + check + "&8, " + "&a" + action + "&8, " + detail
+                ServerHandler.sendDebugMessage("&f" + feature + "&8 - &f" + target + "&8 : &f" + check + "&8, &a" + action + "&8, &7" + detail
                         + " &8(" + ste.getClassName() + " " + ste.getMethodName() + " " + ste.getLineNumber() + ")", true);
                 break;
         }
@@ -103,18 +103,18 @@ public class ServerHandler {
             case "remove":
             case "kill":
             case "damage":
-                ServerHandler.sendDebugMessage("&7" + feature + " - " + target + "&8 : &f" + check + "&8, " + "&c" + action
+                ServerHandler.sendDebugMessage("&f" + feature + "&8 - &f" + target + "&8 : &f" + check + "&8, &c" + action
                         + " &8(" + ste.getClassName() + " " + ste.getMethodName() + " " + ste.getLineNumber() + ")", true);
                 break;
             case "continue":
             case "bypass":
             case "change":
-                ServerHandler.sendDebugMessage("&7" + feature + " - " + target + "&8 : &f" + check + "&8, " + "&e" + action
+                ServerHandler.sendDebugMessage("&f" + feature + "&8 - &f" + target + "&8 : &f" + check + "&8, &e" + action
                         + " &8(" + ste.getClassName() + " " + ste.getMethodName() + " " + ste.getLineNumber() + ")", true);
                 break;
             case "return":
             default:
-                ServerHandler.sendDebugMessage("&7" + feature + " - " + target + "&8 : &f" + check + "&8, " + "&a" + action
+                ServerHandler.sendDebugMessage("&f" + feature + "&8 - &f" + target + "&8 : &f" + check + "&8, &a" + action
                         + " &8(" + ste.getClassName() + " " + ste.getMethodName() + " " + ste.getLineNumber() + ")", true);
                 break;
         }

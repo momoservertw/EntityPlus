@@ -6,7 +6,6 @@ C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\ha
 C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\listeners\PlayerTeleport.java
 C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\listeners\CreatureSpawn.java
 C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\utils\entities\EntityUtils.java
-C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\utils\customgroups\DefaultTypes.java
 C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\listeners\MythicMobsSpawn.java
 C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\utils\locationapi\LocationAPI.java
 C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\utils\BungeeCord.java
@@ -18,6 +17,7 @@ C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\ha
 C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\listeners\MythicMobsLootDrop.java
 C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\utils\ConfigPath.java
 C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\handlers\ConfigHandler.java
+C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\utils\customgroups\GroupsGenerator.java
 C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\utils\TabComplete.java
 C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\utils\VaultAPI.java
 C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\utils\entities\LimitMap.java

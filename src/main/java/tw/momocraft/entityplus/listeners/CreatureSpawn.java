@@ -38,62 +38,64 @@ public class CreatureSpawn implements Listener {
             if (entityProp.containsKey(entityType)) {
                 // Checks every groups of this entity.
                 Location loc = entity.getLocation();
+                String groupName;
                 for (EntityMap entityMap : entityProp.get(entityType)) {
-                    // If the creature spawn location has reach the maximum creature amount, it will cancel the spawn event.
-                    if (ConfigHandler.getConfigPath().isSpawnLimit()) {
-                        if (!EntityUtils.checkLimit(entity, loc, entityMap.getLimitMap())) {
-                            ServerHandler.sendFeatureMessage("Spawn", entityType, "!Limit", "cancel",
-                                    new Throwable().getStackTrace()[0]);
-                            e.setCancelled(true);
-                            return;
-                        }
-                    }
-                    // The creature's spawn "chance" isn't success.
-                    if (!EntityUtils.isChance(entityMap.getChance())) {
-                        ServerHandler.sendFeatureMessage("Spawn", entityType, "!Chance", "return",
-                                new Throwable().getStackTrace()[0]);
-                        return;
-                    }
+                    groupName = entityMap.getGroupName();
                     // The creature's spawn "reason" isn't match.
                     if (!EntityUtils.containReasons(reason, entityMap.getReasons())) {
-                        ServerHandler.sendFeatureMessage("Spawn", entityType, "!Reason", "return",
+                        ServerHandler.sendFeatureMessage("Spawn", entityType, "!Reason", "continue", groupName,
                                 new Throwable().getStackTrace()[0]);
-                        return;
+                        continue;
                     }
                     // The creature's spawn "biome" isn't match.
                     if (!EntityUtils.containBiomes(loc, entityMap.getBoimes())) {
-                        ServerHandler.sendFeatureMessage("Spawn", entityType, "!Biome", "return",
+                        ServerHandler.sendFeatureMessage("Spawn", entityType, "!Biome", "continue", groupName,
                                 new Throwable().getStackTrace()[0]);
-                        return;
+                        continue;
                     }
-                    // Spawn: Water
                     // The creature's spawn "water" isn't match.
                     if (!EntityUtils.isWater(loc, entityMap.isWater())) {
-                        ServerHandler.sendFeatureMessage("Spawn", entityType, "!Water", "return",
+                        ServerHandler.sendFeatureMessage("Spawn", entityType, "!Water", "continue", groupName,
                                 new Throwable().getStackTrace()[0]);
-                        return;
+                        continue;
                     }
                     // The creature's spawn "day" isn't match.
                     if (!EntityUtils.isDay(loc, entityMap.isDay())) {
-                        ServerHandler.sendFeatureMessage("Spawn", entityType, "!Day", "return",
+                        ServerHandler.sendFeatureMessage("Spawn", entityType, "!Day", "continue", groupName,
                                 new Throwable().getStackTrace()[0]);
-                        return;
+                        continue;
                     }
                     // The creature's spawn "location" isn't match.
                     if (!LocationAPI.checkLocation(loc, entityMap.getLocMaps(), "")) {
-                        ServerHandler.sendFeatureMessage("Spawn", entityType, "!Location", "return",
+                        ServerHandler.sendFeatureMessage("Spawn", entityType, "!Location", "continue", groupName,
                                 new Throwable().getStackTrace()[0]);
-                        return;
+                        continue;
                     }
                     // The creature's spawn isn't near certain "blocks".
                     if (!BlocksAPI.checkBlocks(loc, entityMap.getBlocksMaps())) {
-                        ServerHandler.sendFeatureMessage("Spawn", entityType, "!Blocks", "return",
+                        ServerHandler.sendFeatureMessage("Spawn", entityType, "!Blocks", "continue", groupName,
                                 new Throwable().getStackTrace()[0]);
-                        return;
+                        continue;
                     }
-                    ServerHandler.sendFeatureMessage("Spawn", entityType, "Final", "cancel",
+                    // The creature's spawn "chance" isn't success.
+                    if (!EntityUtils.isChance(entityMap.getChance())) {
+                        // If the creature spawn location has reach the maximum creature amount, it will cancel the spawn event.
+                        if (entityMap.getLimitMap() != null) {
+                            if (EntityUtils.checkLimit(entity, loc, entityMap.getLimitMap())) {
+                                ServerHandler.sendFeatureMessage("Spawn", entityType, "Limit", "return", groupName,
+                                        new Throwable().getStackTrace()[0]);
+                                return;
+                            }
+                        } else {
+                            ServerHandler.sendFeatureMessage("Spawn", entityType, "!Chance", "return", groupName,
+                                    new Throwable().getStackTrace()[0]);
+                            return;
+                        }
+                    }
+                    ServerHandler.sendFeatureMessage("Spawn", entityType, "Final", "cancel", groupName,
                             new Throwable().getStackTrace()[0]);
                     e.setCancelled(true);
+                    return;
                 }
             }
         }

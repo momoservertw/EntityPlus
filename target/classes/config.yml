@@ -8,7 +8,6 @@ Logger:
   Enable: true
   Folder: "Log"
   FileName: "latest"
-  Path: "C:\\Server"
 
 General:
   # The searching players range from a location.
@@ -62,7 +61,7 @@ Spawn:
           Z: 8
           Y: 5
     BreedableMobs:
-      Enable: true
+      Enable: false
       Types: BreedableMobs
       Priority: 2
       Ignore-Reasons:
@@ -81,7 +80,7 @@ Spawn:
           Z: 16
           Y: 10
     WaterMobs:
-      Enable: true
+      Enable: false
       Types: WaterMobs
       Priority: 2
       Chance: 0.2
@@ -119,15 +118,18 @@ Spawn:
       Reasons: VILLAGE_DEFENSE
     Pig_Zombie:
       Enable: false
+      Types: PIG_ZOMBIE
       Priority: 3
       Chance: 0.5
-      Reason: NETHER_PORTAL
+      Reasons: NETHER_PORTAL
     Wither_Skeleton:
       Enable: false
+      Types: WITHER_SKELETON
       Priority: 3
       Chance: 0.1
-      Reason: NATURAL
-      Blocks: WitherRose
+      Reasons: NATURAL
+      Blocks:
+        - WitherRose
 
 # The "spawn" feature for MythicMobs.
 # MythicMobs: https://www.spigotmc.org/resources/%E2%9A%94-mythicmobs-free-version-%E2%96%BAthe-1-custom-mob-creator%E2%97%84.5702/
@@ -178,9 +180,6 @@ Purge:
     Pickup-Equipped: true
     Reasons:
       - SPAWNER_EGG
-
-
-
 
 # Change illegal spawners and randomly choose a new type, then execute custom commands.
 # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawner

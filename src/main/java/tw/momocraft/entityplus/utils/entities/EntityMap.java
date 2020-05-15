@@ -11,7 +11,7 @@ public class EntityMap {
     private String groupName;
     private List<String> types;
     private int priority;
-    private long chance;
+    private double chance;
     private List<String> reasons;
     private List<String> boimes;
     private boolean water;
@@ -33,7 +33,7 @@ public class EntityMap {
         return priority;
     }
 
-    public long getChance() {
+    public double getChance() {
         return chance;
     }
 
@@ -78,7 +78,7 @@ public class EntityMap {
         this.priority = priority;
     }
 
-    public void setChance(long chance) {
+    public void setChance(double chance) {
         this.chance = chance;
     }
 

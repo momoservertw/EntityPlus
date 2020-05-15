@@ -8,7 +8,6 @@ Logger:
   Enable: true
   Folder: "Log"
   FileName: "latest"
-  Path: "C:\\Server"
 
 General:
   # The searching players range from a location.
@@ -20,6 +19,10 @@ Spawn:
   Enable: false
   Settings:
     Features:
+      # The "spawn" feature for MythicMobs.
+      # MythicMobs: https://www.spigotmc.org/resources/%E2%9A%94-mythicmobs-free-version-%E2%96%BAthe-1-custom-mob-creator%E2%97%84.5702/
+      # The spawn "reason" doesn't work when checking a MythicMobs.
+      MythicMobs: true
       # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn#spawn-limit-example
       Limit:
         Enable: true
@@ -62,8 +65,9 @@ Spawn:
           Z: 8
           Y: 5
     BreedableMobs:
-      Enable: true
-      Types: BreedableMobs
+      Enable: false
+      Types:
+        - BreedableMobs
       Priority: 2
       Ignore-Reasons:
         - SPAWNER_EGG
@@ -81,11 +85,13 @@ Spawn:
           Z: 16
           Y: 10
     WaterMobs:
-      Enable: true
-      Types: WaterMobs
+      Enable: false
+      Types:
+        - WaterMobs
       Priority: 2
       Chance: 0.2
-      Reason: NATURAL
+      Reasons:
+        - NATURAL
       Limit:
         Purge: true
         Chance: 0
@@ -95,71 +101,61 @@ Spawn:
           Z: 16
           Y: 10
     Bat:
-      Types: BAT
+      Types:
+        - BAT
       Priority: 3
       Chance: 0.2
-      Reason: NATURAL
+      Reasons:
+        - NATURAL
     Phantom:
-      Types: PHANTOM
+      Types:
+        - PHANTOM
       Priority: 3
       Chance: 0.3
-      Reason: NATURAL
+      Reasons:
+        - NATURAL
     Guardian:
       Enable: false
-      Types: GUARDIAN
+      Types:
+        - GUARDIAN
       Priority: 3
       Chance: 0.01
-      Reason: NATURAL
-      Blocks: Monument
+      Reasons:
+        - NATURAL
+      Blocks:
+        - Monument
     Iron_Golem:
       Enable: false
-      Types: IRON_GOLEM
+      Types:
+        - IRON_GOLEM
       Priority: 3
       Chance: 0.3
-      Reasons: VILLAGE_DEFENSE
+      Reasons:
+        - VILLAGE_DEFENSE
     Pig_Zombie:
       Enable: false
+      Types:
+        - PIG_ZOMBIE
       Priority: 3
       Chance: 0.5
-      Reason: NETHER_PORTAL
+      Reasons:
+        - NETHER_PORTAL
     Wither_Skeleton:
       Enable: false
+      Types:
+        - WITHER_SKELETON
       Priority: 3
       Chance: 0.1
-      Reason: NATURAL
-      Blocks: WitherRose
-
-# The "spawn" feature for MythicMobs.
-# MythicMobs: https://www.spigotmc.org/resources/%E2%9A%94-mythicmobs-free-version-%E2%96%BAthe-1-custom-mob-creator%E2%97%84.5702/
-# Spawn "reason" doesn't work here.
-MythicMobs-Spawn:
-  Enable: false
-  Settings:
-    Features:
-      Limit:
-        Enable: true
-        AFK: true
-  Control:
-    All:
-      Enable: true
-      Priority: 0
-      Location:
-        - world
-        - world_nether
-        - world_the_end
-      Limit:
-        Enable: false
-        Purge: true
-        Chance: 0
-        Amount: 5
-        Search:
-          X: 8
-          Z: 8
-          Y: 5
-      AFK-Limit:
-        Enable: false
-        Chance: 0
-        Amount: 0
+      Reasons:
+        - NATURAL
+      Blocks:
+        - WitherRose
+    MythicMobs_Example:
+      Enable: false
+      Types:
+        - SkeletonKing
+      Priority: 3
+      Chance: 0.1
 
 # More information: https://github.com/momoservertw/EntityPlus/wiki/Purge
 Purge:
@@ -178,9 +174,6 @@ Purge:
     Pickup-Equipped: true
     Reasons:
       - SPAWNER_EGG
-
-
-
 
 # Change illegal spawners and randomly choose a new type, then execute custom commands.
 # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawner
