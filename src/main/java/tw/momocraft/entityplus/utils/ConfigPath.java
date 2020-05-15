@@ -34,7 +34,6 @@ public class ConfigPath {
     private boolean spawnLimitRes;
 
     private Map<String, List<EntityMap>> entityProp = new HashMap<>();
-    private Map<String, List<EntityMap>> mythicMobsProp = new HashMap<>();
     //  ============================================== //
     //         Purge Settings                          //
     //  ============================================== //
@@ -71,7 +70,7 @@ public class ConfigPath {
         // Spawn
         spawn = ConfigHandler.getConfig("config.yml").getBoolean("Spawn.Enable");
         if (spawn) {
-            spawnMythicMobs = ConfigHandler.getConfig("config.yml").getBoolean("MythicMobs-Spawn.Enable");
+            spawnMythicMobs = ConfigHandler.getConfig("config.yml").getBoolean("Spawn.Settings.Features.MythicMobs");
             spawnLimit = ConfigHandler.getConfig("config.yml").getBoolean("Spawn.Settings.Features.Limit.Enable");
             spawnLimitAFK = ConfigHandler.getConfig("config.yml").getBoolean("Spawn.Settings.Features.Limit.AFK");
             spawnLimitRes = ConfigHandler.getConfig("config.yml").getBoolean("Spawn.Settings.Features.Limit.Residence-Flag");
@@ -85,7 +84,6 @@ public class ConfigPath {
                 LimitMap limitMap;
                 List<String> entityList;
                 List<String> customList;
-                boolean mmEnable = ConfigHandler.getDepends().MythicMobsEnabled();
                 for (String group : spawnConfig.getKeys(false)) {
                     groupEnable = ConfigHandler.getConfig("config.yml").getString("Spawn.Control." + group + ".Enable");
                     if (groupEnable == null || groupEnable.equals("true")) {
@@ -98,23 +96,11 @@ public class ConfigPath {
                             } catch (Exception e) {
                                 customList = ConfigHandler.getConfig("groups.yml").getStringList("Entities." + customType);
                                 if (customList.isEmpty()) {
-                                    if (mmEnable) {
-                                        entityList.add(EntityType.valueOf(customType).name());
-                                        continue;
-                                    }
-                                    ServerHandler.sendConsoleMessage("&cThere is an error occurred. Please check your groups.yml \"" + customType + "\".");
-                                } else {
-                                    for (String entityType : ConfigHandler.getConfig("groups.yml").getStringList("Entities." + customType)) {
-                                        try {
-                                            entityList.add(EntityType.valueOf(entityType).name());
-                                        } catch (Exception ex) {
-                                            if (mmEnable) {
-                                                entityList.add(EntityType.valueOf(entityType).name());
-                                                continue;
-                                            }
-                                            ServerHandler.sendConsoleMessage("&cThere is an error occurred. Please check your groups.yml \"" + customType + " - " + entityType + "\".");
-                                        }
-                                    }
+                                    entityList.add(customType);
+                                    continue;
+                                }
+                                for (String entityType : customList) {
+                                    entityList.add(EntityType.valueOf(entityType).name());
                                 }
                             }
                         }
@@ -151,7 +137,7 @@ public class ConfigPath {
                         for (String entityType : entityMap.getTypes()) {
                             try {
                                 entityProp.get(entityType).add(entityMap);
-                            } catch (Exception e) {
+                            } catch (Exception ex) {
                                 entityProp.put(entityType, new ArrayList<>());
                                 entityProp.get(entityType).add(entityMap);
                             }
@@ -432,10 +418,6 @@ public class ConfigPath {
 
     public boolean isSpawnMythicMobs() {
         return spawnMythicMobs;
-    }
-
-    public Map<String, List<EntityMap>> getMythicMobsProp() {
-        return mythicMobsProp;
     }
 
     public boolean isSpawner() {
