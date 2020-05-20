@@ -1,1 +1,132 @@
 Config-Version: 1
+
+Entities:
+  NormalMobs:
+    Enable: false
+    Priority: 2
+    Types:
+      - NormalMobs
+    Ignore-Reasons:
+      - SPAWNER_EGG
+    Location:
+      - world
+      - world_nether
+      - world_the_end
+    # If there are too many creatures over the spawn location, it will prevent spawning creatures.
+    # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn#spawn-limit-example
+    Limit:
+      Enable: false
+      # More information: https://github.com/momoservertw/EntityPlus/wiki/Purge
+      Purge:
+        Enable: true
+        Amount: 10
+      # The chance of spawn creatures if the creature amount over the "Amount". Set "0" to cancel spawn every excess creatures.
+      Chance: 0
+      # The maximum creature amount near the spawn location.
+      Amount: 5
+      # Need plugin: CMI
+      # Set the low creature spawn chance if all nearby players are AFK.
+      # Bypass permission: entityplus.bypass.spawnlimit.afk
+      AFK:
+        Enable: false
+        Chance: 0
+        Amount: 5
+      # The Searching range form the center.
+      Search:
+        X: 8
+        Z: 8
+        Y: 5
+    Drop:
+      Enable: true
+  BreedableMobs:
+    Enable: false
+    Types:
+      - BreedableMobs
+    Priority: 2
+    Ignore-Reasons:
+      - SPAWNER_EGG
+      - NATURAL
+      - BEEHIVE
+    Location:
+      - world
+      - world_nether
+      - world_the_end
+    Limit:
+      Chance: 0
+      Amount: 20
+      Search:
+        X: 16
+        Z: 16
+        Y: 10
+  WaterMobs:
+    Enable: false
+    Types:
+      - WaterMobs
+    Priority: 2
+    Chance: 0.2
+    Reasons:
+      - NATURAL
+    Limit:
+      Purge: true
+      Chance: 0
+      Amount: 10
+      Search:
+        X: 16
+        Z: 16
+        Y: 10
+  Bat:
+    Types:
+      - BAT
+    Priority: 3
+    Chance: 0.2
+    Reasons:
+      - NATURAL
+  Phantom:
+    Types:
+      - PHANTOM
+    Priority: 3
+    Chance: 0.3
+    Reasons:
+      - NATURAL
+  Guardian:
+    Enable: false
+    Types:
+      - GUARDIAN
+    Priority: 3
+    Chance: 0.01
+    Reasons:
+      - NATURAL
+    Blocks:
+      - Monument
+  Iron_Golem:
+    Enable: false
+    Types:
+      - IRON_GOLEM
+    Priority: 3
+    Chance: 0.3
+    Reasons:
+      - VILLAGE_DEFENSE
+  Pig_Zombie:
+    Enable: false
+    Types:
+      - PIG_ZOMBIE
+    Priority: 3
+    Chance: 0.5
+    Reasons:
+      - NETHER_PORTAL
+  Wither_Skeleton:
+    Enable: false
+    Types:
+      - WITHER_SKELETON
+    Priority: 3
+    Chance: 0.1
+    Reasons:
+      - NATURAL
+    Blocks:
+      - WitherRose
+  MythicMobs_Example:
+    Enable: false
+    Types:
+      - SkeletonKing
+    Priority: 3
+    Chance: 0.1

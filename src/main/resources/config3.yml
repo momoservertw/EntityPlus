@@ -9,55 +9,16 @@ General:
   Nearby-Players-Range: 32
 
 Entities:
-  # The default settings for entities.yml.
-  # Using command "/ep file create entities" to regenerate a new file.
-  File-Generator:
-    "%creative%":
-      Enable: false
-      Priority: 3
-      Drop:
-        Money:
-          Enabled: false
-          Chance: 1
-          Amount: "1 ? 100"
-        Exp:
-          Enabled: false
-          Chance: 1
-          Amount: "1 ~ 100"
-        Commands:
-          Enabled: false
-          List:
-            - '%1%Console: say {player} killed an entity!'
-        Items:
-          Enabled: false
-          Keep-Default: false
-          List:
-            Gold_Nugget:
-              Type: GOLD_NUGGET
-              Chance: 1
-              Amount: "1 ~ 5"
-  # The
   Control:
     NormalMobs:
       Enable: false
-      Types:
+      Entities:
         - NormalMobs
-      Priority: 2
-      Ignore-Reasons:
-        - SPAWNER_EGG
-      Location:
-        - world
-        - world_nether
-        - world_the_end
-      # If there are too many creatures over the spawn location, it will prevent spawning creatures.
-      # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn#spawn-limit-example
       Limit:
         Enable: false
-        # More information: https://github.com/momoservertw/EntityPlus/wiki/Purge
         Purge:
           Enable: true
           Amount: 10
-        # The chance of spawn creatures if the creature amount over the "Amount". Set "0" to cancel spawn every excess creatures.
         Chance: 0
         # The maximum creature amount near the spawn location.
         Amount: 5
@@ -183,6 +144,7 @@ Spawn:
         AFK: true
         Residnece-Flag: true
 
+# Control entities amount and save CPU performance.
 # More information: https://github.com/momoservertw/EntityPlus/wiki/Purge
 Purge:
   Enable: false
