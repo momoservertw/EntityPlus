@@ -4,33 +4,42 @@ Debugging: false
 Check-Updates: true
 Custom-Groups: true
 
-Logger:
-  Enable: true
-  Folder: "Log"
-  FileName: "latest"
-
 General:
   # The searching players range from a location.
   Nearby-Players-Range: 32
 
-# Control entities spawn and conditions.
-# More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn
-Spawn:
-  Enable: false
-  Settings:
-    Features:
-      # The "spawn" feature for MythicMobs.
-      # MythicMobs: https://www.spigotmc.org/resources/%E2%9A%94-mythicmobs-free-version-%E2%96%BAthe-1-custom-mob-creator%E2%97%84.5702/
-      # The spawn "reason" doesn't work when checking a MythicMobs.
-      MythicMobs: true
-      # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn#spawn-limit-example
-      Limit:
-        Enable: true
-        AFK: true
-        Residnece-Flag: true
+Entities:
+  # The default settings for entities.yml.
+  # Using command "/ep file create entities" to regenerate a new file.
+  File-Generator:
+    "%creative%":
+      Enable: false
+      Priority: 3
+      Drop:
+        Money:
+          Enabled: false
+          Chance: 1
+          Amount: "1 ? 100"
+        Exp:
+          Enabled: false
+          Chance: 1
+          Amount: "1 ~ 100"
+        Commands:
+          Enabled: false
+          List:
+            - '%1%Console: say {player} killed an entity!'
+        Items:
+          Enabled: false
+          Keep-Default: false
+          List:
+            Gold_Nugget:
+              Type: GOLD_NUGGET
+              Chance: 1
+              Amount: "1 ~ 5"
+  # The
   Control:
     NormalMobs:
-      Enable: true
+      Enable: false
       Types:
         - NormalMobs
       Priority: 2
@@ -157,6 +166,23 @@ Spawn:
       Priority: 3
       Chance: 0.1
 
+
+# Control entities spawn and conditions.
+# More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn
+Spawn:
+  Enable: false
+  Settings:
+    Features:
+      # Control MythicMobs spawn and conditions.
+      # MythicMobs: https://www.spigotmc.org/resources/%E2%9A%94-mythicmobs-free-version-%E2%96%BAthe-1-custom-mob-creator%E2%97%84.5702/
+      # The "CUSTOM" reason does not work if you have MythicMobs.
+      MythicMobs: true
+      # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn#spawn-limit-example
+      Limit:
+        Enable: true
+        AFK: true
+        Residnece-Flag: true
+
 # More information: https://github.com/momoservertw/EntityPlus/wiki/Purge
 Purge:
   Enable: false
@@ -189,7 +215,6 @@ Spawner:
       Types:
         - ZOMBIE
         - SKELETON
-        -
       Location:
         - world
     Normal:
@@ -234,15 +259,36 @@ Spawner:
         - "log: &e%spawner_type% spawner &cat %spawner_world%(%spawner_loc_x%, %spawner_loc_y%, %spawner_loc_z%) has been removed&c, nearby players: &e%spawner_nearbyplayers%"
         - "all-message: &e%spawner_type% spawner &cat %spawner_world%(%spawner_loc_x%, %spawner_loc_y%, %spawner_loc_z%) has been removed."
 
+Drop:
+  Enable:
+  Settings:
+
+  Control:
+    NormalMobs:
+      Enable: false
+      Types:
+        - NormalMobs
+      Priority: 2
+      Ignore-Cause:
+        - SPAWNER_EGG
+      Location:
+        - world
+        - world_nether
+        - world_the_end
+      Multipliers:
+
+
 # Change the reward for killing MythicMobs.
 # More information: https://github.com/momoservertw/EntityPlus/wiki/MythicMobs-Drop
 MythicMobs-Drop:
   Enable: false
-  # If player has multiple multipliers, he will get more rewards than the highest multiplier.
-  # Calculation method: "+" or "*"
-  Combined:
-    Enable: true
-    Mode: "+"
+  Settings:
+    Has-Killer: true
+    # If player has multiple multipliers, he will get more rewards than the highest multiplier.
+    # Calculation method: "+" or "*"
+    Combined:
+      Enable: true
+      Mode: "+"
   # You can add more multipliers. And the highest multiplier is the maximum number of group name.
   # Permission: "entityplus.drop.multiplier.GROUP"
   Multipliers:

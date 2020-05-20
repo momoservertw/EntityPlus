@@ -46,7 +46,7 @@ public class Logger {
         }
     }
 
-    public void createLog() {
+    private void createLog() {
         if (!folder.exists()) {
             try {
                 if (!folder.mkdir()) {

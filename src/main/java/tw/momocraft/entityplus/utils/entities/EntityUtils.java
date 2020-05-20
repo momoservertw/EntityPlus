@@ -5,12 +5,9 @@ import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 import io.lumine.xikage.mythicmobs.MythicMobs;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.*;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.PermissionsHandler;
-import tw.momocraft.entityplus.handlers.ServerHandler;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -56,7 +53,6 @@ public class EntityUtils {
                 iterator.remove();
                 continue;
             }
-            enType = en.getType().name();
             if (en instanceof Player) {
                 if (ConfigHandler.getDepends().CMIEnabled()) {
                     if (AFK) {
@@ -89,6 +85,7 @@ public class EntityUtils {
                     continue;
                 }
             }
+            enType = en.getType().name();
             if (ignoreList.contains(enType)) {
                 iterator.remove();
                 continue;
@@ -114,11 +111,15 @@ public class EntityUtils {
     }
 
     /**
-     * @param reasons the spawn reasons in configuration.
-     * @param reason  the spawn reason of this entity.
+     * @param reason        the spawn reason of this entity.
+     * @param reasons       the spawn Reasons in configuration.
+     * @param ignoreReasons the spawn Ignore-Reasons in configuration.
      * @return if the entity spawn reason match the config setting.
      */
-    public static boolean containReasons(String reason, List<String> reasons) {
+    public static boolean containReasons(String reason, List<String> reasons, List<String> ignoreReasons) {
+        if (ignoreReasons.contains(reason)) {
+            return false;
+        }
         if (reasons.isEmpty()) {
             return true;
         }
@@ -126,35 +127,44 @@ public class EntityUtils {
     }
 
     /**
-     * @param loc    the checking location..
-     * @param biomes the spawn biomes in configuration.
+     * @param biome        the spawn biome of this entity.
+     * @param biomes       the spawn Biomes in configuration.
+     * @param ignoreBiomes the spawn Ignore-Biomes in configuration.
      * @return if the entity spawn biome match the config setting.
      */
-    public static boolean containBiomes(Location loc, List<String> biomes) {
+    public static boolean containBiomes(String biome, List<String> biomes, List<String> ignoreBiomes) {
+        if (ignoreBiomes.contains(biome)) {
+            return false;
+        }
         if (biomes.isEmpty()) {
             return true;
         }
-        return biomes.contains(loc.getBlock().getBiome().name());
+        return biomes.contains(biome);
     }
 
     /**
-     * @param loc   the checking location..
-     * @param water the spawn water/air in configuration.
+     * @param blockType the checking block type..
+     * @param water     the spawn water/air in configuration.
      * @return if the entity spawned in water and match the config setting.
      */
-    public static boolean isWater(Location loc, boolean water) {
-        boolean matchWater = loc.getBlock().getType() == Material.WATER;
-        return water && matchWater || !water && !matchWater;
+    public static boolean isWater(String blockType, String water) {
+        if (water == null) {
+            return true;
+        }
+        boolean matchWater = blockType.equals("WATER");
+        return water.equals("true") && matchWater || water.equals("false") && !matchWater;
     }
 
     /**
-     * @param loc the checking location..
-     * @param day the spawn day/night in configuration.
+     * @param time the checking word time..
+     * @param day  the spawn day/night in configuration.
      * @return if the entity spawn day match the config setting.
      */
-    public static boolean isDay(Location loc, boolean day) {
-        double time = loc.getWorld().getTime();
-        return day && (time < 12300 || time > 23850) || !day && (time >= 12300 || time <= 23850);
+    public static boolean isDay(double time, String day) {
+        if (day == null) {
+            return true;
+        }
+        return day.equals("true") && (time < 12300 || time > 23850) || day.equals("false") && (time >= 12300 || time <= 23850);
     }
 
     /*

@@ -5,6 +5,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.PermissionsHandler;
+import tw.momocraft.entityplus.utils.EntitiesFile;
 import tw.momocraft.entityplus.utils.Language;
 import tw.momocraft.entityplus.utils.customgroups.GroupsGenerator;
 
@@ -61,6 +62,13 @@ public class Commands implements CommandExecutor {
         } else if (args.length == 2 && args[0].equalsIgnoreCase("test")) {
             if (PermissionsHandler.hasPermission(sender, "entityplus.test")) {
                 GroupsGenerator.groupsManager(sender, args[1]);
+            } else {
+                Language.sendLangMessage("Message.noPermission", sender);
+            }
+            return true;
+        } else if (args.length == 2 && args[0].equalsIgnoreCase("file")) {
+            if (PermissionsHandler.hasPermission(sender, "entityplus.file")) {
+                EntitiesFile.createEntities(sender);
             } else {
                 Language.sendLangMessage("Message.noPermission", sender);
             }

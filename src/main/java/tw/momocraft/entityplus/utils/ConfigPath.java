@@ -25,6 +25,12 @@ public class ConfigPath {
     private int mobSpawnRange;
 
     //  ============================================== //
+    //         Entities.yml Settings                   //
+    //  ============================================== //
+
+
+
+    //  ============================================== //
     //         Spawn Settings                          //
     //  ============================================== //
     private boolean spawn;
@@ -59,6 +65,9 @@ public class ConfigPath {
     private boolean spawnerResFlag;
     private Map<String, SpawnerMap> spawnerProp = new HashMap<>();
 
+    //  ============================================== //
+    //         Drop Settings                           //
+    //  ============================================== //
 
     //  ============================================== //
     //         Setup all configuration.                //
@@ -113,9 +122,11 @@ public class ConfigPath {
                             entityMap.setChance(Double.parseDouble(chance));
                         }
                         entityMap.setReasons(ConfigHandler.getConfig("config.yml").getStringList("Spawn.Control." + group + ".Reasons"));
+                        entityMap.setIgnoreReasons(ConfigHandler.getConfig("config.yml").getStringList("Spawn.Control." + group + ".Ignore-Reasons"));
                         entityMap.setBoimes(ConfigHandler.getConfig("config.yml").getStringList("Spawn.Control." + group + ".Biomes"));
-                        entityMap.setWater(ConfigHandler.getConfig("config.yml").getBoolean("Spawn.Control." + group + ".Water"));
-                        entityMap.setDay(ConfigHandler.getConfig("config.yml").getBoolean("Spawn.Control." + group + ".Day"));
+                        entityMap.setIgnoreBoimes(ConfigHandler.getConfig("config.yml").getStringList("Spawn.Control." + group + ".Ignore-Biomes"));
+                        entityMap.setWater(ConfigHandler.getConfig("config.yml").getString("Spawn.Control." + group + ".Water"));
+                        entityMap.setDay(ConfigHandler.getConfig("config.yml").getString("Spawn.Control." + group + ".Day"));
                         // Blocks settings.
                         blocksMaps = getBlocksMaps("Spawn.Control." + group + ".Blocks", false);
                         if (!blocksMaps.isEmpty()) {
@@ -151,9 +162,6 @@ public class ConfigPath {
                         sortMap.put(em, em.getPriority());
                     }
                     sortMap = Utils.sortByValue(sortMap);
-                    for (EntityMap entityMap1 : sortMap.keySet()) {
-                        ServerHandler.sendConsoleMessage(entityMap1.getGroupName());
-                    }
                     entityProp.put(entityType, new ArrayList<>(sortMap.keySet()));
                 }
             }

@@ -9,162 +9,136 @@ General:
   Nearby-Players-Range: 32
 
 Entities:
-  # The default settings for entities.yml.
-  # Using command "/ep file create entities" to regenerate a new file.
-  File-Generator:
-    "%creative%":
+  NormalMobs:
+    Priority: 1
+    Types:
+      - NormalMobs
+    Spawn:
       Enable: false
-      Priority: 3
-      Drop:
-        Money:
-          Enabled: false
-          Chance: 1
-          Amount: "1 ? 100"
-        Exp:
-          Enabled: false
-          Chance: 1
-          Amount: "1 ~ 100"
-        Commands:
-          Enabled: false
-          List:
-            - '%1%Console: say {player} killed an entity!'
-        Items:
-          Enabled: false
-          Keep-Default: false
-          List:
-            Gold_Nugget:
-              Type: GOLD_NUGGET
-              Chance: 1
-              Amount: "1 ~ 5"
-  # The
-  Control:
-    NormalMobs:
-      Enable: false
-      Types:
-        - NormalMobs
-      Priority: 2
       Ignore-Reasons:
         - SPAWNER_EGG
-      Location:
-        - world
-        - world_nether
-        - world_the_end
-      # If there are too many creatures over the spawn location, it will prevent spawning creatures.
-      # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn#spawn-limit-example
       Limit:
         Enable: false
-        # More information: https://github.com/momoservertw/EntityPlus/wiki/Purge
         Purge:
           Enable: true
           Amount: 10
-        # The chance of spawn creatures if the creature amount over the "Amount". Set "0" to cancel spawn every excess creatures.
         Chance: 0
-        # The maximum creature amount near the spawn location.
         Amount: 5
-        # Need plugin: CMI
-        # Set the low creature spawn chance if all nearby players are AFK.
-        # Bypass permission: entityplus.bypass.spawnlimit.afk
         AFK:
           Enable: false
           Chance: 0
           Amount: 5
-        # The Searching range form the center.
         Search:
           X: 8
           Z: 8
           Y: 5
-    BreedableMobs:
-      Enable: false
-      Types:
-        - BreedableMobs
-      Priority: 2
-      Ignore-Reasons:
-        - SPAWNER_EGG
-        - NATURAL
-        - BEEHIVE
       Location:
         - world
         - world_nether
         - world_the_end
-      Limit:
-        Chance: 0
-        Amount: 20
-        Search:
-          X: 16
-          Z: 16
-          Y: 10
+    Drop:
+      Enable: true
+      BreedableMobs:
+        Enable: false
+        Types:
+          - BreedableMobs
+        Priority: 2
+        Ignore-Reasons:
+          - SPAWNER_EGG
+          - NATURAL
+          - BEEHIVE
+        Location:
+          - world
+          - world_nether
+          - world_the_end
+        Limit:
+          Chance: 0
+          Amount: 20
+          Search:
+            X: 16
+            Z: 16
+            Y: 10
     WaterMobs:
       Enable: false
       Types:
         - WaterMobs
       Priority: 2
-      Chance: 0.2
-      Reasons:
-        - NATURAL
-      Limit:
-        Purge: true
-        Chance: 0
-        Amount: 10
-        Search:
-          X: 16
-          Z: 16
-          Y: 10
+      Spawn:
+        Chance: 0.2
+        Reasons:
+          - NATURAL
+        Limit:
+          Purge: true
+          Chance: 0
+          Amount: 10
+          Search:
+            X: 16
+            Z: 16
+            Y: 10
     Bat:
+      Priority: 3
       Types:
         - BAT
-      Priority: 3
-      Chance: 0.2
-      Reasons:
-        - NATURAL
+      Spawn:
+        Chance: 0.2
+        Reasons:
+          - NATURAL
     Phantom:
       Types:
         - PHANTOM
       Priority: 3
-      Chance: 0.3
-      Reasons:
-        - NATURAL
+      Spawn:
+        Chance: 0.2
+        Reasons:
+          - NATURAL
     Guardian:
       Enable: false
       Types:
         - GUARDIAN
       Priority: 3
-      Chance: 0.01
-      Reasons:
-        - NATURAL
-      Blocks:
-        - Monument
+      Spawn:
+        Chance: 0.01
+        Reasons:
+          - NATURAL
+        Blocks:
+          - Monument
     Iron_Golem:
       Enable: false
+      Priority: 3
       Types:
         - IRON_GOLEM
-      Priority: 3
-      Chance: 0.3
-      Reasons:
-        - VILLAGE_DEFENSE
+      Spawn:
+        Chance: 0.3
+        Reasons:
+          - VILLAGE_DEFENSE
     Pig_Zombie:
       Enable: false
+      Priority: 3
       Types:
         - PIG_ZOMBIE
-      Priority: 3
-      Chance: 0.5
-      Reasons:
-        - NETHER_PORTAL
+      Spawn:
+        Chance: 0.5
+        Reasons:
+          - NETHER_PORTAL
     Wither_Skeleton:
       Enable: false
+      Priority: 3
       Types:
         - WITHER_SKELETON
-      Priority: 3
-      Chance: 0.1
-      Reasons:
-        - NATURAL
-      Blocks:
-        - WitherRose
+      Spawn:
+        Chance: 0.1
+        Reasons:
+          - NATURAL
+        Blocks:
+          - WitherRose
     MythicMobs_Example:
       Enable: false
+      Priority: 3
       Types:
         - SkeletonKing
-      Priority: 3
       Chance: 0.1
+
+
 
 
 # Control entities spawn and conditions.
@@ -260,22 +234,38 @@ Spawner:
         - "all-message: &e%spawner_type% spawner &cat %spawner_world%(%spawner_loc_x%, %spawner_loc_y%, %spawner_loc_z%) has been removed."
 
 Drop:
-  Enable:
+  Enable: true
   Settings:
-
-  Control:
-    NormalMobs:
-      Enable: false
-      Types:
-        - NormalMobs
+    Has-Killer: true
+    # If player has multiple multipliers, he will get more rewards than the highest multiplier.
+    # Calculation method: "+" or "*"
+    Combined:
+      Enable: true
+      Mode: "+"
+  # You can add more multipliers. And the highest multiplier is the maximum number of group name.
+  # Permission: "entityplus.drop.multiplier.GROUP"
+  Multipliers:
+    lucky1:
+      Priority: 1
+      Rewards:
+        Money: 1.5
+        Exp: 1.5
+        Items: 1.5
+        MythicMobs-Items: 1.5
+    lucky2:
       Priority: 2
-      Ignore-Cause:
-        - SPAWNER_EGG
-      Location:
-        - world
-        - world_nether
-        - world_the_end
-      Multipliers:
+      Rewards:
+        Money: 2
+        Exp: 2
+        Items: 2
+        MythicMobs-Items: 2
+    lucky3:
+      Priority: 3
+      Rewards:
+        Money: 2.5
+        Exp: 2.5
+        Items: 2.5
+        MythicMobs-Items: 2
 
 
 # Change the reward for killing MythicMobs.
@@ -292,12 +282,27 @@ MythicMobs-Drop:
   # You can add more multipliers. And the highest multiplier is the maximum number of group name.
   # Permission: "entityplus.drop.multiplier.GROUP"
   Multipliers:
-    1:                  # The priority of this group. It must be a number.
-      money: 1.5        # Give 150% money to player.
-      exp: 1.5          # Give 150% exp to player.
-    2:
-      money: 2
-      exp: 2
+    lucky1:
+      Priority: 1
+      Rewards:
+        Money: 1.5
+        Exp: 1.5
+        Items: 1.5
+        MythicMobs-Items: 1.5
+    lucky2:
+      Priority: 2
+      Rewards:
+        Money: 2
+        Exp: 2
+        Items: 2
+        MythicMobs-Items: 2
+    lucky3:
+      Priority: 3
+      Rewards:
+        Money: 2.5
+        Exp: 2.5
+        Items: 2.5
+        MythicMobs-Items: 2
 
 # Skip the damage duration and then damage the creature immediately.
 # More information: https://github.com/momoservertw/EntityPlus/wiki/Damage-Skip-Duration

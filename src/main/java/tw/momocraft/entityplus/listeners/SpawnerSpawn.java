@@ -32,7 +32,7 @@ public class SpawnerSpawn implements Listener {
             SpawnerMap spawnerMap = spawnerProp.get(spawnType);
             if (!spawnerMap.getAllowList().contains(spawnType)) {
                 Location loc = e.getLocation();
-                if (!LocationAPI.checkLocation(loc, spawnerMap.getLocMaps(), "")) {
+                if (!LocationAPI.checkLocation(loc, spawnerMap.getLocMaps(), "spawnerbypass")) {
                     return;
                 }
                 if (ConfigHandler.getDepends().ResidenceEnabled()) {

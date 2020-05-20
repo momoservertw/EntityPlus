@@ -1,5 +1,6 @@
 package tw.momocraft.entityplus.listeners;
 
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
@@ -27,10 +28,8 @@ public class CreatureSpawn implements Listener {
         String entityType = entity.getType().name();
         String reason = e.getSpawnReason().name();
         // Stop checking MythicMobs.
-        if (ConfigHandler.getDepends().MythicMobsEnabled()) {
+        if (ConfigHandler.getDepends().MythicMobsEnabled() && ConfigHandler.getConfigPath().isSpawnMythicMobs()) {
             if (reason.equals("CUSTOM")) {
-                ServerHandler.sendFeatureMessage("Spawn", entityType, "MythicMobsEnabled", "return",
-                        new Throwable().getStackTrace()[0]);
                 return;
             }
         }
@@ -41,34 +40,36 @@ public class CreatureSpawn implements Listener {
             // Checks every groups of this entity.
             Location loc = entity.getLocation();
             String groupName;
+            Block block;
             for (EntityMap entityMap : entityProp.get(entityType)) {
                 groupName = entityMap.getGroupName();
                 // The creature's spawn "reason" isn't match.
-                if (!EntityUtils.containReasons(reason, entityMap.getReasons())) {
+                if (!EntityUtils.containReasons(reason, entityMap.getReasons(), entityMap.getIgnoreReasons())) {
                     ServerHandler.sendFeatureMessage("Spawn", entityType, "!Reason", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // The creature's spawn "biome" isn't match.
-                if (!EntityUtils.containBiomes(loc, entityMap.getBoimes())) {
+                block = loc.getBlock();
+                if (!EntityUtils.containBiomes(block.getBiome().name(), entityMap.getBoimes(), entityMap.getIgnoreBoimes())) {
                     ServerHandler.sendFeatureMessage("Spawn", entityType, "!Biome", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // The creature's spawn "water" isn't match.
-                if (!EntityUtils.isWater(loc, entityMap.isWater())) {
+                if (!EntityUtils.isWater(block.getType().name(), entityMap.getWater())) {
                     ServerHandler.sendFeatureMessage("Spawn", entityType, "!Water", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // The creature's spawn "day" isn't match.
-                if (!EntityUtils.isDay(loc, entityMap.isDay())) {
+                if (!EntityUtils.isDay(loc.getWorld().getTime(), entityMap.getDay())) {
                     ServerHandler.sendFeatureMessage("Spawn", entityType, "!Day", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // The creature's spawn "location" isn't match.
-                if (!LocationAPI.checkLocation(loc, entityMap.getLocMaps(), "")) {
+                if (!LocationAPI.checkLocation(loc, entityMap.getLocMaps(), "spawnbypass")) {
                     ServerHandler.sendFeatureMessage("Spawn", entityType, "!Location", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;

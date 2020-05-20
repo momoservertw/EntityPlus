@@ -1,6 +1,7 @@
 package tw.momocraft.entityplus.listeners;
 
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobSpawnEvent;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
@@ -32,35 +33,37 @@ public class MythicMobsSpawn implements Listener {
             // Checks every groups of this entity.
             Location loc = entity.getLocation();
             String groupName;
+            Block block;
             for (EntityMap entityMap : entityProp.get(entityType)) {
                 groupName = entityMap.getGroupName();
                 // The creature's spawn "biome" isn't match.
-                if (!EntityUtils.containBiomes(loc, entityMap.getBoimes())) {
-                    ServerHandler.sendFeatureMessage("MythicMobs-Spawn", entityType, "!Biome", "continue", groupName,
+                block = loc.getBlock();
+                if (!EntityUtils.containBiomes(block.getBiome().name(), entityMap.getBoimes(), entityMap.getIgnoreBoimes())) {
+                    ServerHandler.sendFeatureMessage("Spawn", entityType, "!Biome", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // The creature's spawn "water" isn't match.
-                if (!EntityUtils.isWater(loc, entityMap.isWater())) {
-                    ServerHandler.sendFeatureMessage("MythicMobs-Spawn", entityType, "!Water", "continue", groupName,
+                if (!EntityUtils.isWater(block.getType().name(), entityMap.getWater())) {
+                    ServerHandler.sendFeatureMessage("Spawn", entityType, "!Water", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // The creature's spawn "day" isn't match.
-                if (!EntityUtils.isDay(loc, entityMap.isDay())) {
-                    ServerHandler.sendFeatureMessage("MythicMobs-Spawn", entityType, "!Day", "continue", groupName,
+                if (!EntityUtils.isDay(loc.getWorld().getTime(), entityMap.getDay())) {
+                    ServerHandler.sendFeatureMessage("Spawn", entityType, "!Day", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // The creature's spawn "location" isn't match.
-                if (!LocationAPI.checkLocation(loc, entityMap.getLocMaps(), "")) {
-                    ServerHandler.sendFeatureMessage("MythicMobs-Spawn", entityType, "!Location", "continue", groupName,
+                if (!LocationAPI.checkLocation(loc, entityMap.getLocMaps(), "spawnbypass")) {
+                    ServerHandler.sendFeatureMessage("Spawn", entityType, "!Location", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // The creature's spawn isn't near certain "blocks".
                 if (!BlocksAPI.checkBlocks(loc, entityMap.getBlocksMaps())) {
-                    ServerHandler.sendFeatureMessage("MythicMobs-Spawn", entityType, "!Blocks", "continue", groupName,
+                    ServerHandler.sendFeatureMessage("Spawn", entityType, "!Blocks", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
@@ -69,17 +72,17 @@ public class MythicMobsSpawn implements Listener {
                     // If the creature spawn location has reach the maximum creature amount, it will cancel the spawn event.
                     if (entityMap.getLimitMap() != null) {
                         if (EntityUtils.checkLimit(entity, loc, entityMap.getLimitMap())) {
-                            ServerHandler.sendFeatureMessage("MythicMobs-Spawn", entityType, "Limit", "return", groupName,
+                            ServerHandler.sendFeatureMessage("Spawn", entityType, "Limit", "return", groupName,
                                     new Throwable().getStackTrace()[0]);
                             return;
                         }
                     } else {
-                        ServerHandler.sendFeatureMessage("MythicMobs-Spawn", entityType, "!Chance", "return", groupName,
+                        ServerHandler.sendFeatureMessage("Spawn", entityType, "!Chance", "return", groupName,
                                 new Throwable().getStackTrace()[0]);
                         return;
                     }
                 }
-                ServerHandler.sendFeatureMessage("MythicMobs-Spawn", entityType, "Final", "cancel", groupName,
+                ServerHandler.sendFeatureMessage("Spawn", entityType, "Final", "cancel", groupName,
                         new Throwable().getStackTrace()[0]);
                 e.setCancelled();
                 return;

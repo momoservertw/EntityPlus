@@ -13,9 +13,11 @@ public class EntityMap {
     private int priority;
     private double chance;
     private List<String> reasons;
+    private List<String> ignoreReasons;
     private List<String> boimes;
-    private boolean water;
-    private boolean day;
+    private List<String> ignoreBoimes;
+    private String water;
+    private String day;
     private List<LocationMap> locMaps = new ArrayList<>();
     private List<BlocksMap> blocksMaps = new ArrayList<>();
     private LimitMap limitMap;
@@ -37,20 +39,28 @@ public class EntityMap {
         return chance;
     }
 
-    public boolean isDay() {
+    public String getDay() {
         return day;
     }
 
-    public boolean isWater() {
+    public String getWater() {
         return water;
+    }
+
+    public List<String> getReasons() {
+        return reasons;
+    }
+
+    public List<String> getIgnoreReasons() {
+        return ignoreReasons;
     }
 
     public List<String> getBoimes() {
         return boimes;
     }
 
-    public List<String> getReasons() {
-        return reasons;
+    public List<String> getIgnoreBoimes() {
+        return ignoreBoimes;
     }
 
     public List<LocationMap> getLocMaps() {
@@ -86,15 +96,23 @@ public class EntityMap {
         this.reasons = reasons;
     }
 
+    public void setIgnoreReasons(List<String> ignoreReasons) {
+        this.ignoreReasons = ignoreReasons;
+    }
+
     public void setBoimes(List<String> boimes) {
         this.boimes = boimes;
     }
 
-    public void setWater(boolean water) {
+    public void setIgnoreBoimes(List<String> ignoreBoimes) {
+        this.ignoreBoimes = ignoreBoimes;
+    }
+
+    public void setWater(String water) {
         this.water = water;
     }
 
-    public void setDay(boolean day) {
+    public void setDay(String day) {
         this.day = day;
     }
 
