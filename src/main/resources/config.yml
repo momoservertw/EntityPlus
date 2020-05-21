@@ -1,14 +1,14 @@
 # --{ =-=-=-=-=-=-=-=-=-= EntityPlus's Configuration Settings, by Momocraft =-=-=-=-=-=-=-=-=-= }--
 Config-Version: 7
-Debugging: false
 Check-Updates: true
+Debugging: false
 Custom-Groups: true
 
 General:
   # The searching players range from a location.
   Nearby-Players-Range: 32
 
-# Control entities spawn and conditions.
+# Control entities spawn amount and conditions.
 # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn
 Spawn:
   Enable: false
