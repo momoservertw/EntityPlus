@@ -29,6 +29,7 @@ Spawn-Conditions:
         - world
         - world_nether
         - world_the_end
+      Limit: NormalMobs
     BreedableMobs:
       Enable: false
       Priority: 2
@@ -124,29 +125,18 @@ Spawn-Limits:
   Enable: false
   Settings:
     Features:
+      AFK: true
       Bypass:
         Residence-Flag: true
-      AFK: true
   Groups:
     NormalMobs:
       Enable: true
-      Types:
-        - NormalMobs
-      Priority: 2
-      # The chance of spawn creatures if the creature amount over the "Amount". Set "0" to cancel spawn every excess creatures.
       Chance: 0
-      # The limit creature amount near the spawn location.
       Amount: 10
-      # The maximum creature amount near the spawn location.
-      Max-Amount: 10
-      # Need plugin: CMI
-      # Set the low creature spawn chance if all nearby players are AFK.
-      # Bypass permission: entityplus.bypass.spawnlimit.afk
       AFK:
         Enable: false
         Amount: 5
         Chance: 0
-      # The Searching range form the center.
       Search:
         X: 8
         Z: 8
@@ -299,7 +289,7 @@ Damage:
       List:
         - ChestedHorse
 
-# Change illegal spawners and randomly choose a new type, then execute custom commands.
+# Change the illegal spawner and randomly select a new type for it, and then execute the custom command.
 # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawner
 Spawner:
   Enable: false
@@ -309,28 +299,20 @@ Spawner:
   Groups:
     Normal:
       Enable: true
-      # Location of the world.
-      # More information: https://github.com/momoservertw/EntityPlus/wiki/Location.
       Location:
         - world
-      # Blocks near the location.
-      # More information: https://github.com/momoservertw/EntityPlus/wiki/Blocks.
       Blocks: []
-      # The spawner type will not be changed.
       Allow-Types:
         - ZOMBIE
         - SKELETON
         - SPIDER
         - CAVE_SPIDER
         - SILVERFISH
-      # The changing spawner type and chance.
       Change-Types:
         SKELETON: 1
         ZOMBIE: 1
         SPIDER: 1
         CAVE_SPIDER: 1
-      # Execute commands when changed a spawner.
-      # More information: https://github.com/momoservertw/EntityPlus/wiki/Custom-Commands
       Commands:
         - "log: &e%spawner_type% spawner &cat %spawner_world%(%spawner_loc_x%, %spawner_loc_y%, %spawner_loc_z%) has been changed to &e%spawner_newspawner%&c, nearby players: &e%spawner_nearbyplayers%"
         - "all-message: &e%spawner_type% spawner &cat %spawner_world%(%spawner_loc_x%, %spawner_loc_y%, %spawner_loc_z%) has been changed to &e%spawner_newspawner%&c."

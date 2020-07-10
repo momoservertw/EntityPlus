@@ -20,15 +20,18 @@ import java.util.Map;
 public class MythicMobsSpawn implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onMythpMobsSpawn(MythicMobSpawnEvent e) {
+    public void onMythicMobsSpawn(MythicMobSpawnEvent e) {
+        if (!ConfigHandler.getConfigPath().isSpawnConditions()) {
+            return;
+        }
         if (!ConfigHandler.getConfigPath().isSpawnMythicMobs()) {
             return;
         }
         Entity entity = e.getEntity();
         String entityType = e.getMobType().getInternalName();
-        // Get entity properties in configuration.
+        // Get entity properties.
         Map<String, List<EntityMap>> entityProp = ConfigHandler.getConfigPath().getEntityProp();
-        // Checks properties of this entity.
+        // Checks if the properties contains this type of entity.
         if (entityProp.containsKey(entityType)) {
             // Checks every groups of this entity.
             Location loc = entity.getLocation();
@@ -36,39 +39,39 @@ public class MythicMobsSpawn implements Listener {
             Block block;
             for (EntityMap entityMap : entityProp.get(entityType)) {
                 groupName = entityMap.getGroupName();
-                // The creature's spawn "biome" isn't match.
+                // Checks the spawn "biome".
                 block = loc.getBlock();
-                if (!EntityUtils.containBiomes(block.getBiome().name(), entityMap.getBoimes(), entityMap.getIgnoreBoimes())) {
+                if (!EntityUtils.containValue(block.getBiome().name(), entityMap.getBoimes(), entityMap.getIgnoreBoimes())) {
                     ServerHandler.sendFeatureMessage("Spawn", entityType, "!Biome", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
-                // The creature's spawn "water" isn't match.
-                if (!EntityUtils.isWater(block.getType().name(), entityMap.getWater())) {
-                    ServerHandler.sendFeatureMessage("Spawn", entityType, "!Water", "continue", groupName,
+                // Checks the spawn location is "liquid" or not.
+                if (!EntityUtils.isLiquid(block, entityMap.getLiquid())) {
+                    ServerHandler.sendFeatureMessage("Spawn", entityType, "!Liquid", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
-                // The creature's spawn "day" isn't match.
+                // Checks the spawn time is "Day" or not.
                 if (!EntityUtils.isDay(loc.getWorld().getTime(), entityMap.getDay())) {
                     ServerHandler.sendFeatureMessage("Spawn", entityType, "!Day", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
-                // The creature's spawn "location" isn't match.
+                // Checks the spawn "location".
                 if (!LocationAPI.checkLocation(loc, entityMap.getLocMaps(), "spawnbypass")) {
                     ServerHandler.sendFeatureMessage("Spawn", entityType, "!Location", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
-                // The creature's spawn isn't near certain "blocks".
-                if (!BlocksAPI.checkBlocks(loc, entityMap.getBlocksMaps())) {
+                // Checks the "blocks" nearby the spawn location.
+                if (!BlocksAPI.checkBlocks(loc, entityMap.getBlocksMaps(), "spawnbypass")) {
                     ServerHandler.sendFeatureMessage("Spawn", entityType, "!Blocks", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
-                // The creature's spawn "chance" isn't success.
-                if (!EntityUtils.isChance(entityMap.getChance())) {
+                // Checks the spawn "chance".
+                if (!EntityUtils.isRandomChance(entityMap.getChance())) {
                     // If the creature spawn location has reach the maximum creature amount, it will cancel the spawn event.
                     if (entityMap.getLimitMap() != null) {
                         if (EntityUtils.checkLimit(entity, loc, entityMap.getLimitMap())) {

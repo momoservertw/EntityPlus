@@ -25,14 +25,14 @@ public class ConfigPath {
     private int nearbyPlayerRange;
 
     //  ============================================== //
-    //         Spawn Settings                          //
+    //         Spawn Conditions Settings               //
     //  ============================================== //
-    private boolean spawn;
+    private boolean spawnConditions;
     private boolean spawnMythicMobs;
-    private boolean spawnLimit;
-    private boolean spawnLimitAFK;
-    private boolean spawnLimitRes;
     private Map<String, List<EntityMap>> entityProp = new HashMap<>();
+
+    private boolean spawnLimits;
+    private boolean spawnLimitRes;
 
     //  ============================================== //
     //         Purge Settings                          //
@@ -79,14 +79,18 @@ public class ConfigPath {
         setSpawner();
     }
 
+    /**
+     * Setup the Spawn-Conditions.
+     */
     private void setSpawnCondition() {
-        spawn = ConfigHandler.getConfig("config.yml").getBoolean("Spawn.Enable");
-        if (spawn) {
-            spawnMythicMobs = ConfigHandler.getConfig("config.yml").getBoolean("Spawn.Settings.Features.MythicMobs");
-            spawnLimit = ConfigHandler.getConfig("config.yml").getBoolean("Spawn.Settings.Features.Limit.Enable");
-            spawnLimitAFK = ConfigHandler.getConfig("config.yml").getBoolean("Spawn.Settings.Features.Limit.AFK");
-            spawnLimitRes = ConfigHandler.getConfig("config.yml").getBoolean("Spawn.Settings.Features.Limit.Residence-Flag");
-            ConfigurationSection groupsConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn.Groups");
+        spawnConditions = ConfigHandler.getConfig("config.yml").getBoolean("Spawn-Conditions.Enable");
+        if (spawnConditions) {
+            spawnLimits = ConfigHandler.getConfig("config.yml").getBoolean("Spawn-Limits.Enable");
+            if (spawnLimits) {
+                spawnLimitRes = ConfigHandler.getConfig("config.yml").getBoolean("Spawn-Limits.Settings.Features.Bypass.Residence-Flag");
+            }
+            spawnMythicMobs = ConfigHandler.getConfig("config.yml").getBoolean("Spawn-Conditions.Settings.Features.MythicMobs");
+            ConfigurationSection groupsConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn-Conditions.Groups");
             if (groupsConfig != null) {
                 String groupEnable;
                 String chance;
@@ -97,12 +101,12 @@ public class ConfigPath {
                 List<String> entityList;
                 List<String> customList;
                 for (String group : groupsConfig.getKeys(false)) {
-                    groupEnable = ConfigHandler.getConfig("config.yml").getString("Spawn.Groups." + group + ".Enable");
+                    groupEnable = ConfigHandler.getConfig("config.yml").getString("Spawn-Conditions.Groups." + group + ".Enable");
                     if (groupEnable == null || groupEnable.equals("true")) {
                         entityMap = new EntityMap();
                         entityList = new ArrayList<>();
                         entityMap.setGroupName(group);
-                        for (String customType : ConfigHandler.getConfig("config.yml").getStringList("Spawn.Groups." + group + ".Types")) {
+                        for (String customType : ConfigHandler.getConfig("config.yml").getStringList("Spawn-Conditions.Groups." + group + ".Types")) {
                             try {
                                 entityList.add(EntityType.valueOf(customType).name());
                             } catch (Exception e) {
@@ -117,35 +121,33 @@ public class ConfigPath {
                             }
                         }
                         entityMap.setTypes(entityList);
-                        entityMap.setPriority(ConfigHandler.getConfig("config.yml").getInt("Spawn.Groups." + group + ".Priority"));
-                        chance = ConfigHandler.getConfig("config.yml").getString("Spawn.Groups." + group + ".Chance");
+                        entityMap.setPriority(ConfigHandler.getConfig("config.yml").getInt("Spawn-Conditions.Groups." + group + ".Priority"));
+                        chance = ConfigHandler.getConfig("config.yml").getString("Spawn-Conditions.Groups." + group + ".Chance");
                         if (chance == null) {
                             entityMap.setChance(1);
                         } else {
                             entityMap.setChance(Double.parseDouble(chance));
                         }
-                        entityMap.setReasons(ConfigHandler.getConfig("config.yml").getStringList("Spawn.Groups." + group + ".Reasons"));
-                        entityMap.setIgnoreReasons(ConfigHandler.getConfig("config.yml").getStringList("Spawn.Groups." + group + ".Ignore-Reasons"));
-                        entityMap.setBoimes(ConfigHandler.getConfig("config.yml").getStringList("Spawn.Groups." + group + ".Biomes"));
-                        entityMap.setIgnoreBoimes(ConfigHandler.getConfig("config.yml").getStringList("Spawn.Groups." + group + ".Ignore-Biomes"));
-                        entityMap.setWater(ConfigHandler.getConfig("config.yml").getString("Spawn.Groups." + group + ".Water"));
-                        entityMap.setDay(ConfigHandler.getConfig("config.yml").getString("Spawn.Groups." + group + ".Day"));
+                        entityMap.setReasons(ConfigHandler.getConfig("config.yml").getStringList("Spawn-Conditions.Groups." + group + ".Reasons"));
+                        entityMap.setIgnoreReasons(ConfigHandler.getConfig("config.yml").getStringList("Spawn-Conditions.Groups." + group + ".Ignore-Reasons"));
+                        entityMap.setBoimes(ConfigHandler.getConfig("config.yml").getStringList("Spawn-Conditions.Groups." + group + ".Biomes"));
+                        entityMap.setIgnoreBoimes(ConfigHandler.getConfig("config.yml").getStringList("Spawn-Conditions.Groups." + group + ".Ignore-Biomes"));
+                        entityMap.setLiquid(ConfigHandler.getConfig("config.yml").getString("Spawn-Conditions.Groups." + group + ".Liquid"));
+                        entityMap.setDay(ConfigHandler.getConfig("config.yml").getString("Spawn-Conditions.Groups." + group + ".Day"));
                         // Blocks settings.
-                        blocksMaps = getBlocksMaps("Spawn.Groups." + group + ".Blocks", false);
+                        blocksMaps = getBlocksMaps("Spawn-Conditions.Groups." + group + ".Blocks", false);
                         if (!blocksMaps.isEmpty()) {
                             entityMap.setBlocksMaps(blocksMaps);
                         }
                         // Location settings
-                        locMaps = getLocationMaps("Spawn.Groups." + group + ".Location", false);
+                        locMaps = getLocationMaps("Spawn-Conditions.Groups." + group + ".Location", false);
                         if (!locMaps.isEmpty()) {
                             entityMap.setLocMaps(locMaps);
                         }
-                        // Limit settings
-                        if (spawnLimit) {
-                            limitMap = getLimitMap("Spawn.Groups." + group + ".Limit");
-                            if (limitMap != null) {
-                                entityMap.setLimitMap(limitMap);
-                            }
+                        // Limits settings
+                        limitMap = getLimitMap("Spawn-Conditions.Groups." + group + ".Limit");
+                        if (limitMap != null) {
+                            entityMap.setLimitMap(limitMap);
                         }
                         // Add properties to all entities.
                         for (String entityType : entityMap.getTypes()) {
@@ -187,7 +189,7 @@ public class ConfigPath {
             if (groupsConfig != null) {
                 String groupEnable;
                 for (String group : groupsConfig.getKeys(false)) {
-                    groupEnable = ConfigHandler.getConfig("config.yml").getString("Spawn.Groups." + group + ".Enable");
+                    groupEnable = ConfigHandler.getConfig("config.yml").getString("Spawn-Conditions.Groups." + group + ".Enable");
                     if (groupEnable == null || groupEnable.equals("true")) {
 
                     }
@@ -424,33 +426,24 @@ public class ConfigPath {
         return blocksMaps;
     }
 
-    private LimitMap getLimitMap(String path) {
-        ConfigurationSection config = ConfigHandler.getConfig("config.yml").getConfigurationSection(path);
+    private LimitMap getLimitMap(String group) {
+        ConfigurationSection config = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn-Limits.Groups." + group);
         if (config != null) {
-            LimitMap limitMap = new LimitMap();
-            limitMap.setChance(ConfigHandler.getConfig("config.yml").getLong(path + ".Chance"));
-            limitMap.setAmount(ConfigHandler.getConfig("config.yml").getInt(path + ".Amount"));
-            limitMap.setSearchX(ConfigHandler.getConfig("config.yml").getInt(path + ".Search.X"));
-            limitMap.setSearchY(ConfigHandler.getConfig("config.yml").getInt(path + ".Search.Y"));
-            limitMap.setSearchZ(ConfigHandler.getConfig("config.yml").getInt(path + ".Search.Z"));
-            limitMap.setList(ConfigHandler.getConfig("config.yml").getStringList(path + ".List"));
-            limitMap.setMMList(ConfigHandler.getConfig("config.yml").getStringList(path + ".MythicMobs-List"));
-            limitMap.setIgnoreList(ConfigHandler.getConfig("config.yml").getStringList(path + ".Ignore-List"));
-            limitMap.setIgnoreMMList(ConfigHandler.getConfig("config.yml").getStringList(path + ".MythicMobs-Ignore-List"));
-            limitMap.setAFK(ConfigHandler.getConfig("config.yml").getBoolean(path + ".AFK.Enable"));
-            String afkAmount = ConfigHandler.getConfig("config.yml").getString(path + ".AFK.Amount");
-            if (afkAmount != null) {
-                limitMap.setAFKAmount(ConfigHandler.getConfig("config.yml").getInt(path + ".AFK.Amount"));
-            } else {
-                limitMap.setAFKAmount(ConfigHandler.getConfig("config.yml").getInt(path + ".Amount"));
+            if (ConfigHandler.getConfig("config.yml").getBoolean("Spawn-Limits.Groups." + group + ".Enable")) {
+                LimitMap limitMap = new LimitMap();
+                limitMap.setChance(ConfigHandler.getConfig("config.yml").getLong("Spawn-Limits.Groups." + group + ".Chance"));
+                limitMap.setAmount(ConfigHandler.getConfig("config.yml").getInt("Spawn-Limits.Groups." + group + ".Amount"));
+                boolean afkEnable = ConfigHandler.getConfig("config.yml").getBoolean("Spawn-Limits.Groups." + group + ".AFK.Enable");
+                limitMap.setAFK(afkEnable);
+                if (afkEnable) {
+                    limitMap.setAFKAmount(ConfigHandler.getConfig("config.yml").getInt("Spawn-Limits.Groups." + group + ".AFK.Amount"));
+                    limitMap.setAFKChance(ConfigHandler.getConfig("config.yml").getInt("Spawn-Limits.Groups." + group + ".Chance"));
+                }
+                limitMap.setSearchX(ConfigHandler.getConfig("config.yml").getInt("Spawn-Limits.Groups." + group + ".Search.X"));
+                limitMap.setSearchY(ConfigHandler.getConfig("config.yml").getInt("Spawn-Limits.Groups." + group + ".Search.Y"));
+                limitMap.setSearchZ(ConfigHandler.getConfig("config.yml").getInt("Spawn-Limits.Groups." + group + ".Search.Z"));
+                return limitMap;
             }
-            String afkChance = ConfigHandler.getConfig("config.yml").getString(path + ".AFK.Chance");
-            if (afkChance != null) {
-                limitMap.setAFKAmount(Integer.parseInt(afkChance));
-            } else {
-                limitMap.setAFKChance(ConfigHandler.getConfig("config.yml").getInt(path + ".Chance"));
-            }
-            return limitMap;
         }
         return null;
     }
@@ -463,16 +456,12 @@ public class ConfigPath {
         return nearbyPlayerRange;
     }
 
-    public boolean isSpawn() {
-        return spawn;
+    public boolean isSpawnConditions() {
+        return spawnConditions;
     }
 
     public Map<String, List<EntityMap>> getEntityProp() {
         return entityProp;
-    }
-
-    public boolean isSpawnLimitAFK() {
-        return spawnLimitAFK;
     }
 
     public boolean isSpawnMythicMobs() {
@@ -492,8 +481,8 @@ public class ConfigPath {
         return spawnerResFlag;
     }
 
-    public boolean isSpawnLimit() {
-        return spawnLimit;
+    public boolean isSpawnLimits() {
+        return spawnLimits;
     }
 
     public boolean isSpawnLimitRes() {

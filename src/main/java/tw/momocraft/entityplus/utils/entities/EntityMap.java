@@ -20,7 +20,7 @@ public class EntityMap {
     private String day;
     private List<LocationMap> locMaps = new ArrayList<>();
     private List<BlocksMap> blocksMaps = new ArrayList<>();
-    private LimitMap limitMap;
+    private LimitMap limitMap = null;
 
 
     public String getGroupName() {
@@ -43,7 +43,7 @@ public class EntityMap {
         return day;
     }
 
-    public String getWater() {
+    public String getLiquid() {
         return water;
     }
 
@@ -108,7 +108,7 @@ public class EntityMap {
         this.ignoreBoimes = ignoreBoimes;
     }
 
-    public void setWater(String water) {
+    public void setLiquid(String water) {
         this.water = water;
     }
 

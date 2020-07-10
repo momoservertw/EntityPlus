@@ -1,23 +1,17 @@
 package tw.momocraft.entityplus.utils.entities;
 
-import java.util.List;
-
 public class LimitMap {
 
-    private long chance;
+    private double chance;
     private int amount;
     private boolean AFK;
-    private long AFKChance;
+    private double AFKChance;
     private int AFKAmount;
     private int searchX;
     private int searchY;
     private int searchZ;
-    private List<String> list;
-    private List<String> ignoreList;
-    private List<String> MMList;
-    private List<String> ignoreMMList;
 
-    public void setChance(long chance) {
+    public void setChance(double chance) {
         this.chance = chance;
     }
 
@@ -30,7 +24,7 @@ public class LimitMap {
         this.AFK = AFK;
     }
 
-    public long getAFKChance() {
+    public double getAFKChance() {
         return AFKChance;
     }
 
@@ -50,24 +44,8 @@ public class LimitMap {
         this.searchZ = searchZ;
     }
 
-    public void setList(List<String> list) {
-        this.list = list;
-    }
 
-    public void setMMList(List<String> MMList) {
-        this.MMList = MMList;
-    }
-
-    public void setIgnoreList(List<String> ignoreList) {
-        this.ignoreList = ignoreList;
-    }
-
-    public void setIgnoreMMList(List<String> ignoreMMList) {
-        this.ignoreMMList = ignoreMMList;
-    }
-
-
-    public long getChance() {
+    public double getChance() {
         return chance;
     }
 
@@ -79,7 +57,7 @@ public class LimitMap {
         return AFK;
     }
 
-    public void setAFKChance(long AFKChance) {
+    public void setAFKChance(double AFKChance) {
         this.AFKChance = AFKChance;
     }
 
@@ -97,21 +75,5 @@ public class LimitMap {
 
     public int getSearchZ() {
         return searchZ;
-    }
-
-    public List<String> getList() {
-        return list;
-    }
-
-    public List<String> getMMList() {
-        return MMList;
-    }
-
-    public List<String> getIgnoreList() {
-        return ignoreList;
-    }
-
-    public List<String> getIgnoreMMList() {
-        return ignoreMMList;
     }
 }
