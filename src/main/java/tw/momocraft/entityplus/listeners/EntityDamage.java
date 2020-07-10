@@ -1,10 +1,19 @@
 package tw.momocraft.entityplus.listeners;
 
+import org.bukkit.entity.Damageable;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
+import tw.momocraft.entityplus.handlers.ConfigHandler;
+import tw.momocraft.entityplus.handlers.ServerHandler;
+
+import java.util.List;
 
 public class EntityDamage implements Listener {
 
-    /*
     @EventHandler(priority = EventPriority.HIGH)
     public void onEntityDamage(EntityDamageEvent e) {
         String damageCause = e.getCause().name();
@@ -94,42 +103,41 @@ public class EntityDamage implements Listener {
 
         // Damage
         if (ConfigHandler.getConfig("config.yml").getBoolean("Damage.Enable")) {
-            ConfigurationSection damageConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Damage.Control");
+            ConfigurationSection damageConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Damage.Groups");
             if (damageConfig != null) {
                 for (String group : damageConfig.getKeys(false)) {
-                    if (ConfigHandler.getConfig("config.yml").getBoolean("Damage.Control." + group + ".Enable")) {
-                        if (!getReason(damageCause, "Damage.Control." + group + ".Reasons")) {
+                    if (ConfigHandler.getConfig("config.yml").getBoolean("Damage.Groups." + group + ".Enable")) {
+                        if (!getReason(damageCause, "Damage.Groups." + group + ".Reasons")) {
                             return;
                         }
-                        if (getReason(damageCause, "Damage.Control." + group + ".Ignore-Reasons")) {
+                        if (getReason(damageCause, "Damage.Groups." + group + ".Ignore-Reasons")) {
                             return;
                         }
-                        if (!ConfigHandler.getEntity(en, "Damage.Control." + group + ".List")) {
+                        if (!ConfigHandler.getEntity(en, "Damage.Groups." + group + ".List")) {
                             return;
                         }
-                        if (ConfigHandler.getEntity(en, "Damage.Control." + group + ".Ignore-List")) {
+                        if (ConfigHandler.getEntity(en, "Damage.Groups." + group + ".Ignore-List")) {
                             return;
                         }
-                        if (!ConfigHandler.getMythicMobs(en, "Damage.Control." + group + ".MythicMobs-List")) {
+                        if (!ConfigHandler.getMythicMobs(en, "Damage.Groups." + group + ".MythicMobs-List")) {
                             return;
                         }
-                        if (ConfigHandler.getMythicMobs(en, "Damage.Control." + group + ".MythicMobs-Ignore-List")) {
+                        if (ConfigHandler.getMythicMobs(en, "Damage.Groups." + group + ".MythicMobs-Ignore-List")) {
                             return;
                         }
-                        if (!LocationAPI.checkBlocks(entityLoc, "Damage.Control." + group + ".Blocks")) {
+                        if (!LocationAPI.checkBlocks(entityLoc, "Damage.Groups." + group + ".Blocks")) {
 
                             return;
                         }
-*/
-    /*
-                        String newDamage = ConfigHandler.getConfig("config.yml").getString("Damage.Control." + group + ".Modified-Damage");
+
+                        String newDamage = ConfigHandler.getConfig("config.yml").getString("Damage.Groups." + group + ".Modified-Damage");
                         if (newDamage != null) {
                             damage = Integer.valueOf(newDamage);
                             e.setDamage(damage);
                             return;
                         }
 
-                        String newDamagePercent = ConfigHandler.getConfig("config.yml").getString("Damage.Control." + group + ".Modified-Damage-Percent");
+                        String newDamagePercent = ConfigHandler.getConfig("config.yml").getString("Damage.Groups." + group + ".Modified-Damage-Percent");
                         if (newDamagePercent != null) {
                             damage *= Integer.valueOf(newDamagePercent);
                             e.setDamage(damage);
@@ -147,7 +155,6 @@ public class EntityDamage implements Listener {
         }
     }
 
-    /**
      * @param cause the damage cause.
      * @param path  the path of spawn reason in config.yml.
      * @return if the entity spawn reason match the config setting.
@@ -160,7 +167,5 @@ public class EntityDamage implements Listener {
         }
         return true;
     }
-
-    */
 }
 

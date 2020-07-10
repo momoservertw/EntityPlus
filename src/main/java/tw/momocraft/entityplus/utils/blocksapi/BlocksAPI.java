@@ -1,6 +1,9 @@
 package tw.momocraft.entityplus.utils.blocksapi;
 
+import com.bekvon.bukkit.residence.Residence;
+import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 import org.bukkit.Location;
+import tw.momocraft.entityplus.handlers.ConfigHandler;
 
 import java.util.List;
 
@@ -11,9 +14,19 @@ public class BlocksAPI {
      * @param blocksMaps the Blocks settings.
      * @return if there are certain blocks nearby the location.
      */
-    public static boolean checkBlocks(Location loc, List<BlocksMap> blocksMaps) {
+    public static boolean checkBlocks(Location loc, List<BlocksMap> blocksMaps, String resBypassFlag) {
         if (blocksMaps.isEmpty()) {
             return true;
+        }
+        if (!resBypassFlag.equals("")) {
+            if (ConfigHandler.getDepends().ResidenceEnabled()) {
+                ClaimedResidence res = Residence.getInstance().getResidenceManager().getByLoc(loc);
+                if (res != null) {
+                    if (res.getPermissions().has(resBypassFlag, false)) {
+                        return false;
+                    }
+                }
+            }
         }
         List<BlocksMap> ignoreMaps;
         for (BlocksMap blocksMap : blocksMaps) {

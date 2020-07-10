@@ -1,9 +1,7 @@
 package tw.momocraft.entityplus.listeners;
 
-import io.lumine.xikage.mythicmobs.MythicMobs;
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobLootDropEvent;
 import io.lumine.xikage.mythicmobs.drops.Drop;
-import io.lumine.xikage.mythicmobs.drops.droppables.MythicDropsDrop;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

@@ -229,7 +229,7 @@ Spawner:
         - CAVE_SPIDER
         - SILVERFISH
       # The type and chance of spawner will be changed.
-      Change-List:
+      Change-Types:
         SKELETON: 0.25
         ZOMBIE: 0.25
         SPIDER: 0.25
@@ -245,7 +245,7 @@ Spawner:
         - world_nether
       Allow-List:
         - BLAZE
-      Change-List:
+      Change-Types:
         - BLAZE
       Commands:
         - "log: &e%spawner_type% spawner &cat %spawner_world%(%spawner_loc_x%, %spawner_loc_y%, %spawner_loc_z%) has been changed to &e%spawner_newspawner%&c, nearby players: &e%spawner_nearbyplayers%"

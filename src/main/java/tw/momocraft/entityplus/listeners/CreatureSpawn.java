@@ -75,7 +75,7 @@ public class CreatureSpawn implements Listener {
                     continue;
                 }
                 // The creature's spawn isn't near certain "blocks".
-                if (!BlocksAPI.checkBlocks(loc, entityMap.getBlocksMaps())) {
+                if (!BlocksAPI.checkBlocks(loc, entityMap.getBlocksMaps(), "spawnbypass")) {
                     ServerHandler.sendFeatureMessage("Spawn", entityType, "!Blocks", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;

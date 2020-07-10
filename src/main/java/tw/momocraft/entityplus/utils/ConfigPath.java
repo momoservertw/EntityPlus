@@ -19,16 +19,10 @@ public class ConfigPath {
     }
 
     //  ============================================== //
-    //         General Settings                          //
+    //         General Settings                        //
     //  ============================================== //
-    private boolean customGroup;
     private int mobSpawnRange;
-
-    //  ============================================== //
-    //         Entities.yml Settings                   //
-    //  ============================================== //
-
-
+    private int nearbyPlayerRange;
 
     //  ============================================== //
     //         Spawn Settings                          //
@@ -38,12 +32,11 @@ public class ConfigPath {
     private boolean spawnLimit;
     private boolean spawnLimitAFK;
     private boolean spawnLimitRes;
-
     private Map<String, List<EntityMap>> entityProp = new HashMap<>();
+
     //  ============================================== //
     //         Purge Settings                          //
     //  ============================================== //
-    /*
     private boolean purge;
     private boolean purgeSchedule;
     private int purgeScheduleInt;
@@ -54,37 +47,47 @@ public class ConfigPath {
     private boolean purgeEquipped;
     private boolean purgePickup;
 
-    private Map<, LimitMap> purge;
-
-     */
-
     //  ============================================== //
     //         Spawner Settings                        //
     //  ============================================== //
     private boolean spawner;
     private boolean spawnerResFlag;
-    private Map<String, SpawnerMap> spawnerProp = new HashMap<>();
+    private Map<String, List<SpawnerMap>> spawnerProp = new HashMap<>();
 
     //  ============================================== //
     //         Drop Settings                           //
     //  ============================================== //
+    private boolean drop;
+    private boolean dropMoney;
+    private boolean dropExp;
+    private boolean dropItem;
+    private boolean dropMythicMobs;
+    private boolean dropHasKiller;
+    private boolean dropBonus;
+    private boolean dropBonusMode;
 
     //  ============================================== //
     //         Setup all configuration.                //
     //  ============================================== //
     private void setUp() {
         mobSpawnRange = ConfigHandler.getServerConfig("spigot.yml").getInt("world-settings.default.mob-spawn-range") * 16;
-        customGroup = ConfigHandler.getConfig("config.yml").getBoolean("Custom-Groups");
+        nearbyPlayerRange = ConfigHandler.getServerConfig("config.yml").getInt("General.Nearby-Players-Range");
 
-        // Spawn
+        setSpawnCondition();
+        setDrop();
+        setPurge();
+        setSpawner();
+    }
+
+    private void setSpawnCondition() {
         spawn = ConfigHandler.getConfig("config.yml").getBoolean("Spawn.Enable");
         if (spawn) {
             spawnMythicMobs = ConfigHandler.getConfig("config.yml").getBoolean("Spawn.Settings.Features.MythicMobs");
             spawnLimit = ConfigHandler.getConfig("config.yml").getBoolean("Spawn.Settings.Features.Limit.Enable");
             spawnLimitAFK = ConfigHandler.getConfig("config.yml").getBoolean("Spawn.Settings.Features.Limit.AFK");
             spawnLimitRes = ConfigHandler.getConfig("config.yml").getBoolean("Spawn.Settings.Features.Limit.Residence-Flag");
-            ConfigurationSection spawnConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn.Control");
-            if (spawnConfig != null) {
+            ConfigurationSection groupsConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn.Groups");
+            if (groupsConfig != null) {
                 String groupEnable;
                 String chance;
                 EntityMap entityMap;
@@ -93,13 +96,13 @@ public class ConfigPath {
                 LimitMap limitMap;
                 List<String> entityList;
                 List<String> customList;
-                for (String group : spawnConfig.getKeys(false)) {
-                    groupEnable = ConfigHandler.getConfig("config.yml").getString("Spawn.Control." + group + ".Enable");
+                for (String group : groupsConfig.getKeys(false)) {
+                    groupEnable = ConfigHandler.getConfig("config.yml").getString("Spawn.Groups." + group + ".Enable");
                     if (groupEnable == null || groupEnable.equals("true")) {
                         entityMap = new EntityMap();
                         entityList = new ArrayList<>();
                         entityMap.setGroupName(group);
-                        for (String customType : ConfigHandler.getConfig("config.yml").getStringList("Spawn.Control." + group + ".Types")) {
+                        for (String customType : ConfigHandler.getConfig("config.yml").getStringList("Spawn.Groups." + group + ".Types")) {
                             try {
                                 entityList.add(EntityType.valueOf(customType).name());
                             } catch (Exception e) {
@@ -114,32 +117,32 @@ public class ConfigPath {
                             }
                         }
                         entityMap.setTypes(entityList);
-                        entityMap.setPriority(ConfigHandler.getConfig("config.yml").getInt("Spawn.Control." + group + ".Priority"));
-                        chance = ConfigHandler.getConfig("config.yml").getString("Spawn.Control." + group + ".Chance");
+                        entityMap.setPriority(ConfigHandler.getConfig("config.yml").getInt("Spawn.Groups." + group + ".Priority"));
+                        chance = ConfigHandler.getConfig("config.yml").getString("Spawn.Groups." + group + ".Chance");
                         if (chance == null) {
                             entityMap.setChance(1);
                         } else {
                             entityMap.setChance(Double.parseDouble(chance));
                         }
-                        entityMap.setReasons(ConfigHandler.getConfig("config.yml").getStringList("Spawn.Control." + group + ".Reasons"));
-                        entityMap.setIgnoreReasons(ConfigHandler.getConfig("config.yml").getStringList("Spawn.Control." + group + ".Ignore-Reasons"));
-                        entityMap.setBoimes(ConfigHandler.getConfig("config.yml").getStringList("Spawn.Control." + group + ".Biomes"));
-                        entityMap.setIgnoreBoimes(ConfigHandler.getConfig("config.yml").getStringList("Spawn.Control." + group + ".Ignore-Biomes"));
-                        entityMap.setWater(ConfigHandler.getConfig("config.yml").getString("Spawn.Control." + group + ".Water"));
-                        entityMap.setDay(ConfigHandler.getConfig("config.yml").getString("Spawn.Control." + group + ".Day"));
+                        entityMap.setReasons(ConfigHandler.getConfig("config.yml").getStringList("Spawn.Groups." + group + ".Reasons"));
+                        entityMap.setIgnoreReasons(ConfigHandler.getConfig("config.yml").getStringList("Spawn.Groups." + group + ".Ignore-Reasons"));
+                        entityMap.setBoimes(ConfigHandler.getConfig("config.yml").getStringList("Spawn.Groups." + group + ".Biomes"));
+                        entityMap.setIgnoreBoimes(ConfigHandler.getConfig("config.yml").getStringList("Spawn.Groups." + group + ".Ignore-Biomes"));
+                        entityMap.setWater(ConfigHandler.getConfig("config.yml").getString("Spawn.Groups." + group + ".Water"));
+                        entityMap.setDay(ConfigHandler.getConfig("config.yml").getString("Spawn.Groups." + group + ".Day"));
                         // Blocks settings.
-                        blocksMaps = getBlocksMaps("Spawn.Control." + group + ".Blocks", false);
+                        blocksMaps = getBlocksMaps("Spawn.Groups." + group + ".Blocks", false);
                         if (!blocksMaps.isEmpty()) {
                             entityMap.setBlocksMaps(blocksMaps);
                         }
                         // Location settings
-                        locMaps = getLocationMaps("Spawn.Control." + group + ".Location", false);
+                        locMaps = getLocationMaps("Spawn.Groups." + group + ".Location", false);
                         if (!locMaps.isEmpty()) {
                             entityMap.setLocMaps(locMaps);
                         }
                         // Limit settings
                         if (spawnLimit) {
-                            limitMap = getLimitMap("Spawn.Control." + group + ".Limit");
+                            limitMap = getLimitMap("Spawn.Groups." + group + ".Limit");
                             if (limitMap != null) {
                                 entityMap.setLimitMap(limitMap);
                             }
@@ -166,9 +169,98 @@ public class ConfigPath {
                 }
             }
         }
+    }
 
-        /*
-        // Purge
+    private void setDrop() {
+        drop = ConfigHandler.getConfig("config.yml").getBoolean("Drop.Enable");
+        if (drop) {
+            dropBonus = ConfigHandler.getConfig("config.yml").getBoolean("Drop.Enable");
+            dropBonusMode = ConfigHandler.getConfig("config.yml").getBoolean("Drop.Enable");
+            dropMoney = ConfigHandler.getConfig("config.yml").getBoolean("Drop.Settings.Features.Money");
+            dropExp = ConfigHandler.getConfig("config.yml").getBoolean("Drop.Settings.Features.Money");
+            dropItem = ConfigHandler.getConfig("config.yml").getBoolean("Drop.Settings.Features.Money");
+            dropMythicMobs = ConfigHandler.getConfig("config.yml").getBoolean("Drop.Settings.Features.MythicMobs-Items");
+            dropBonus = ConfigHandler.getConfig("config.yml").getBoolean("Drop.Settings.Bonus.Enable");
+            dropBonusMode = ConfigHandler.getConfig("config.yml").getBoolean("Drop.Settings.Bonus.Mode");
+            dropHasKiller = ConfigHandler.getConfig("config.yml").getBoolean("Drop.Settings.Has-Killer");
+            ConfigurationSection groupsConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Drop.Groups");
+            if (groupsConfig != null) {
+                String groupEnable;
+                for (String group : groupsConfig.getKeys(false)) {
+                    groupEnable = ConfigHandler.getConfig("config.yml").getString("Spawn.Groups." + group + ".Enable");
+                    if (groupEnable == null || groupEnable.equals("true")) {
+
+                    }
+                }
+            }
+        }
+    }
+
+    private void setSpawner() {
+        spawner = ConfigHandler.getConfig("config.yml").getBoolean("Spawner.Enable");
+        if (spawner) {
+            spawnerResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Spawner.Settings.Bypass.Residence-Flag");
+            ConfigurationSection spawnerConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawner.Groups");
+            if (spawnerConfig != null) {
+                SpawnerMap spawnerMap;
+                String groupEnable;
+                ConfigurationSection spawnerListConfig;
+                List<BlocksMap> blocksMaps;
+                List<LocationMap> locMaps;
+                HashMap<String, Long> changeMap;
+                for (String group : spawnerConfig.getKeys(false)) {
+                    groupEnable = ConfigHandler.getConfig("config.yml").getString("Spawner.Groups." + group + ".Enable");
+                    if (groupEnable == null || groupEnable.equals("true")) {
+                        spawnerMap = new SpawnerMap();
+                        changeMap = new HashMap<>();
+                        spawnerMap.setGroupName(group);
+                        spawnerMap.setRemove(ConfigHandler.getConfig("config.yml").getBoolean("Spawner.Groups." + group + ".Remove"));
+                        spawnerMap.setCommands(ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Commands"));
+                        spawnerMap.setAllowList(ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Allow-Types"));
+                        spawnerListConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawner.Groups." + group + ".Change-Types");
+                        if (spawnerListConfig != null) {
+                            for (String changeType : spawnerListConfig.getKeys(false)) {
+                                changeMap.put(changeType, ConfigHandler.getConfig("config.yml").getLong("Spawner.Groups." + group + ".Change-Types." + changeType));
+                            }
+                        } else {
+                            for (String changeType : ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Change-Types")) {
+                                changeMap.put(changeType, 1L);
+                            }
+                        }
+                        spawnerMap.setChangeMap(changeMap);
+                        blocksMaps = getBlocksMaps("Spawner.Groups." + group + ".Blocks", false);
+                        if (!blocksMaps.isEmpty()) {
+                            spawnerMap.setBlocksMaps(blocksMaps);
+                        }
+                        locMaps = getLocationMaps("Spawner.Groups." + group + ".Location", false);
+                        if (!locMaps.isEmpty()) {
+                            spawnerMap.setLocMaps(locMaps);
+                        }
+                        // Add properties to all entities.
+                        for (String entityType : spawnerMap.getAllowList()) {
+                            try {
+                                spawnerProp.get(entityType).add(spawnerMap);
+                            } catch (Exception ex) {
+                                spawnerProp.put(entityType, new ArrayList<>());
+                                spawnerProp.get(entityType).add(spawnerMap);
+                            }
+                        }
+                    }
+                }
+                Map<SpawnerMap, Integer> sortMap;
+                for (String entityType : spawnerProp.keySet()) {
+                    sortMap = new HashMap<>();
+                    for (SpawnerMap em : spawnerProp.get(entityType)) {
+                        sortMap.put(em, em.getPriority());
+                    }
+                    sortMap = Utils.sortByValue(sortMap);
+                    spawnerProp.put(entityType, new ArrayList<>(sortMap.keySet()));
+                }
+            }
+        }
+    }
+
+    private void setPurge() {
         purge = ConfigHandler.getConfig("config.yml").getBoolean("Purge.Enable");
         if (purge) {
             purgeSchedule = ConfigHandler.getConfig("config.yml").getBoolean("Purge.Check.Schedule.Enable");
@@ -179,47 +271,6 @@ public class ConfigPath {
             purgeBaby = ConfigHandler.getConfig("config.yml").getBoolean("Purge.Ignore.Baby-Animals");
             purgeEquipped = ConfigHandler.getConfig("config.yml").getBoolean("Purge.Ignore.Equipped");
             purgePickup = ConfigHandler.getConfig("config.yml").getBoolean("Purge.Ignore.Pickup-Equipped");
-        }
-
-         */
-
-        // Spawner
-        spawner = ConfigHandler.getConfig("config.yml").getBoolean("Spawner.Enable");
-        if (spawner) {
-            spawnerResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Spawner.Settings.Features.Bypass.Residence-Flag");
-            ConfigurationSection spawnerConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawner.Change-Type");
-            if (spawnerConfig != null) {
-                String spawnerEnable;
-                SpawnerMap spawnerMap = new SpawnerMap();
-                List<BlocksMap> blocksMaps;
-                List<LocationMap> locMaps;
-                HashMap<String, Long> changeMap = new HashMap<>();
-                for (String group : spawnerConfig.getKeys(false)) {
-                    spawnerEnable = ConfigHandler.getConfig("config.yml").getString("Spawner.Change-Type." + group + ".Enable");
-                    if (spawnerEnable == null || spawnerEnable.equals("true")) {
-                        spawnerMap.setGroupName(group);
-                        spawnerMap.setRemove(ConfigHandler.getConfig("config.yml").getBoolean("Spawner.Change-Type." + group + ".Remove"));
-                        spawnerMap.setAllowList(ConfigHandler.getConfig("config.yml").getStringList("Spawner.Change-Type." + group + ".Allow-List"));
-                        spawnerMap.setChangeList(ConfigHandler.getConfig("config.yml").getStringList("Spawner.Change-Type." + group + ".Change-List"));
-                        spawnerMap.setCommands(ConfigHandler.getConfig("config.yml").getStringList("Spawner.Change-Type." + group + ".Commands"));
-                        for (String changeType : ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawner.Change-Type." + group + ".Change-List").getKeys(false)) {
-                            changeMap.put(changeType, ConfigHandler.getConfig("config.yml").getLong("Spawner.Change-Type." + group + ".Change-List." + changeType));
-                        }
-                        spawnerMap.setChangeMap(changeMap);
-                        // Blocks settings.
-                        blocksMaps = getBlocksMaps("Spawner.Control." + group + ".Blocks", false);
-                        if (!blocksMaps.isEmpty()) {
-                            spawnerMap.setBlocksMaps(blocksMaps);
-                        }
-                        // Location settings
-                        locMaps = getLocationMaps("Spawner.Control." + group + ".Location", false);
-                        if (!locMaps.isEmpty()) {
-                            spawnerMap.setLocMaps(locMaps);
-                        }
-                        spawnerProp.put(group, spawnerMap);
-                    }
-                }
-            }
         }
     }
 
@@ -404,12 +455,12 @@ public class ConfigPath {
         return null;
     }
 
-    public boolean isCustomGroup() {
-        return customGroup;
-    }
-
     public int getMobSpawnRange() {
         return mobSpawnRange;
+    }
+
+    public int getNearbyPlayerRange() {
+        return nearbyPlayerRange;
     }
 
     public boolean isSpawn() {
@@ -428,11 +479,12 @@ public class ConfigPath {
         return spawnMythicMobs;
     }
 
+
     public boolean isSpawner() {
         return spawner;
     }
 
-    public Map<String, SpawnerMap> getSpawnerProp() {
+    public Map<String, List<SpawnerMap>> getSpawnerProp() {
         return spawnerProp;
     }
 
@@ -448,7 +500,6 @@ public class ConfigPath {
         return spawnLimitRes;
     }
 
-    /*
     public boolean isPurgeSchedule() {
         return purgeSchedule;
     }
@@ -485,6 +536,4 @@ public class ConfigPath {
     public boolean isPurge() {
         return purge;
     }
-
-     */
 }

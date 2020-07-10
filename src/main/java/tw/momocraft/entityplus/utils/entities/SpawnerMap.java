@@ -10,10 +10,11 @@ import java.util.List;
 public class SpawnerMap {
 
     private String groupName = null;
+    private List<String> types;
+    private int priority;
     private boolean remove = false;
     private LocationMap location = null;
     private List<String> allowList = null;
-    private List<String> changeList = null;
     private List<String> commands = null;
     private List<LocationMap> locMaps = new ArrayList<>();
     private List<BlocksMap> blocksMaps = new ArrayList<>();
@@ -21,6 +22,14 @@ public class SpawnerMap {
 
     public String getGroupName() {
         return groupName;
+    }
+
+    public List<String> getTypes() {
+        return types;
+    }
+
+    public int getPriority() {
+        return priority;
     }
 
     public boolean isRemove() {
@@ -35,10 +44,6 @@ public class SpawnerMap {
         return allowList;
     }
 
-    public List<String> getChangeList() {
-        return changeList;
-    }
-
     public List<String> getCommands() {
         return commands;
     }
@@ -47,9 +52,7 @@ public class SpawnerMap {
         return locMaps;
     }
 
-    public List<BlocksMap> getBlocksMaps() {
-        return blocksMaps;
-    }
+    public List<BlocksMap> getBlocksMaps() { return blocksMaps; }
 
     public HashMap<String, Long> getChangeMap() {
         return changeMap;
@@ -60,16 +63,20 @@ public class SpawnerMap {
         this.groupName = groupName;
     }
 
+    public void setTypes(List<String> types) {
+        this.types = types;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
     public void setRemove(boolean remove) {
         this.remove = remove;
     }
 
     public void setAllowList(List<String> allowList) {
         this.allowList = allowList;
-    }
-
-    public void setChangeList(List<String> changeList) {
-        this.changeList = changeList;
     }
 
     public void setCommands(List<String> commands) {
