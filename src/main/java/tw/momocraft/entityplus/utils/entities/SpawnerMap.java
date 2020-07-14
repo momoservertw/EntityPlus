@@ -11,7 +11,7 @@ public class SpawnerMap {
 
     private String groupName = null;
     private List<String> types;
-    private int priority;
+    private long priority;
     private boolean remove = false;
     private LocationMap location = null;
     private List<String> allowList = null;
@@ -28,7 +28,7 @@ public class SpawnerMap {
         return types;
     }
 
-    public int getPriority() {
+    public long getPriority() {
         return priority;
     }
 
@@ -67,7 +67,7 @@ public class SpawnerMap {
         this.types = types;
     }
 
-    public void setPriority(int priority) {
+    public void setPriority(long priority) {
         this.priority = priority;
     }
 

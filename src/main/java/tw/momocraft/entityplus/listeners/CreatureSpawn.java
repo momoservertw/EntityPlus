@@ -1,5 +1,6 @@
 package tw.momocraft.entityplus.listeners;
 
+import javafx.util.Pair;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.Location;
@@ -21,7 +22,7 @@ public class CreatureSpawn implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onCreatureSpawn(CreatureSpawnEvent e) {
-        if (!ConfigHandler.getConfigPath().isSpawnConditions()) {
+        if (!ConfigHandler.getConfigPath().isSpawn()) {
             return;
         }
         Entity entity = e.getEntity();
@@ -34,14 +35,16 @@ public class CreatureSpawn implements Listener {
             }
         }
         // Get entity properties.
-        Map<String, List<EntityMap>> entityProp = ConfigHandler.getConfigPath().getEntityProp();
+        Map<String, List<Pair<String, EntityMap>>> entityProp = ConfigHandler.getConfigPath().getEntityProp();
         // Checks if the properties contains this type of entity.
         if (entityProp.containsKey(entityType)) {
             // Checks every groups of this entity.
             Location loc = entity.getLocation();
             String groupName;
             Block block;
-            for (EntityMap entityMap : entityProp.get(entityType)) {
+            EntityMap entityMap;
+            for (Pair<String, EntityMap> entityPair : entityProp.get(entityType)) {
+                entityMap = entityPair.getValue();
                 groupName = entityMap.getGroupName();
                 // Checks the spawn "reasons".
                 if (!EntityUtils.containValue(reason, entityMap.getReasons(), entityMap.getIgnoreReasons())) {
@@ -85,11 +88,15 @@ public class CreatureSpawn implements Listener {
                     // If the creature spawn location has reach the maximum creature amount, it will cancel the spawn event.
                     if (entityMap.getLimitMap() != null) {
                         if (EntityUtils.checkLimit(entity, loc, entityMap.getLimitMap())) {
+                            // Add a tag for this creature.
+                            ConfigHandler.getConfigPath().getLivingEntityMap().addMap(entity.getUniqueId(), new Pair<>(entityType, groupName));
                             ServerHandler.sendFeatureMessage("Spawn", entityType, "Limit", "return", groupName,
                                     new Throwable().getStackTrace()[0]);
                             return;
                         }
                     } else {
+                        // Add a tag for this creature.
+                        ConfigHandler.getConfigPath().getLivingEntityMap().addMap(entity.getUniqueId(), new Pair<>(entityType, groupName));
                         ServerHandler.sendFeatureMessage("Spawn", entityType, "!Chance", "return", groupName,
                                 new Throwable().getStackTrace()[0]);
                         return;

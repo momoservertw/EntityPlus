@@ -1,8 +1,10 @@
 package tw.momocraft.entityplus.listeners;
 
+import com.google.common.collect.Table;
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobLootDropEvent;
 import io.lumine.xikage.mythicmobs.drops.Drop;
-import org.bukkit.Bukkit;
+import javafx.util.Pair;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -10,6 +12,7 @@ import org.bukkit.event.Listener;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.PermissionsHandler;
 import tw.momocraft.entityplus.handlers.ServerHandler;
+import tw.momocraft.entityplus.utils.entities.EntityMap;
 
 import java.util.*;
 
@@ -17,26 +20,41 @@ public class MythicMobsLootDrop implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onMythicMobsDeath(MythicMobLootDropEvent e) {
-        if (e.getKiller() == null) {
+        if (!ConfigHandler.getConfigPath().isDropMythicMobs()) {
             return;
         }
-        Player player = Bukkit.getPlayer(e.getKiller().getUniqueId());
-        if (player == null) {
-            return;
-        }
-        if (!ConfigHandler.getConfig("config.yml").getBoolean("MythicMobs-Drop.Enable")) {
+        Player player;
+        try {
+            player = (Player) e.getKiller();
+        } catch (Exception ex) {
             return;
         }
 
-        List<String> playerMultiList = new ArrayList<>();
+        Entity entity = e.getEntity();
+        String entityType = entity.getType().name();
+        UUID entityUUID = entity.getUniqueId();
+        Map<UUID, Pair<String, String>> mobsMap = ConfigHandler.getConfigPath().getLivingEntityMap().getMobsMap();
+        if (!mobsMap.keySet().contains(entityUUID)) {
+            return;
+        }
+
+        // Get entity properties.
+        Map<String, List<EntityMap>> entityProp = ConfigHandler.getConfigPath().getEntityProp();
+
+        entityProp.get(mobsMap.get(entityUUID).getKey()).g;
+        mobsMap.get(entityUUID).getKey()
+
+
+
+        List<String> permsList = new ArrayList<>();
         Set<String> multiList = ConfigHandler.getConfig("config.yml").getConfigurationSection("MythicMobs-Drop.Multipliers").getKeys(false);
         for (String key : multiList) {
             if (PermissionsHandler.hasPermission(player, "entityplus.drop.multiplier." + key)) {
-                playerMultiList.add(key);
+                permsList.add(key);
             }
         }
 
-        if (playerMultiList.isEmpty()) {
+        if (permsList.isEmpty()) {
             return;
         }
 
@@ -46,8 +64,9 @@ public class MythicMobsLootDrop implements Listener {
         double money;
         double exp;
         double item;
-        if (ConfigHandler.getConfig("config.yml").getBoolean("MythicMobs-Drop.Combined-Enable")) {
-            String combinedMethod = ConfigHandler.getConfig("config.yml").getString("MythicMobs-Drop.Combined-Method");
+        double mmItem;
+        if (ConfigHandler.getConfig("config.yml").getBoolean("MythicMobs-Drop.Bonus.Enable")) {
+            String combinedMethod = ConfigHandler.getConfig("config.yml").getString("MythicMobs-Drop.Bonus.Mode");
             for (String key : multiList) {
                 if (PermissionsHandler.hasPermission(player, "entityplus.drop.multiplier." + key)) {
                     money = ConfigHandler.getConfig("config.yml").getDouble("MythicMobs-Drop.Multipliers." + key + ".money");
@@ -70,7 +89,7 @@ public class MythicMobsLootDrop implements Listener {
                 }
             }
         } else {
-            String maxMulti = Collections.max(playerMultiList);
+            String maxMulti = Collections.max(permsList);
             totalMoney = ConfigHandler.getConfig("config.yml").getDouble("MythicMobs-Drop.Multipliers." + maxMulti + ".money");
             totalExp = ConfigHandler.getConfig("config.yml").getDouble("MythicMobs-Drop.Multipliers." + maxMulti + ".exp");
             totalItem = ConfigHandler.getConfig("config.yml").getDouble("MythicMobs-Drop.Multipliers." + maxMulti + ".item");
@@ -85,7 +104,7 @@ public class MythicMobsLootDrop implements Listener {
         e.setExp(dropExp);
 
         Collection<Drop> dropItem = e.getPhysicalDrops();
-        for (Drop drop: dropItem) {
+        for (Drop drop : dropItem) {
             drop.setAmount(drop.getAmount() * totalItem);
         }
         ServerHandler.sendConsoleMessage(String.valueOf(dropItem));

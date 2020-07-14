@@ -17,13 +17,12 @@ Location:
       S: 10000
 Blocks:
   # When creatures spawn in wither_rose.
-  WitherRose:
+  InWitherRose:
     Types:
       - WITHER_ROSE
     Search:
-      S: 0
       Y: 1
-  Monument:
+  NearbyMonument:
     Types:
       - PRISMARINE
       - DARK_PRISMARINE

@@ -21,7 +21,7 @@ public class MythicMobsSpawn implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onMythicMobsSpawn(MythicMobSpawnEvent e) {
-        if (!ConfigHandler.getConfigPath().isSpawnConditions()) {
+        if (!ConfigHandler.getConfigPath().isSpawn()) {
             return;
         }
         if (!ConfigHandler.getConfigPath().isSpawnMythicMobs()) {

@@ -1,5 +1,6 @@
 package tw.momocraft.entityplus.utils;
 
+import javafx.util.Pair;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
@@ -8,10 +9,7 @@ import tw.momocraft.entityplus.utils.blocksapi.BlocksMap;
 import tw.momocraft.entityplus.utils.entities.*;
 import tw.momocraft.entityplus.utils.locationapi.LocationMap;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ConfigPath {
     public ConfigPath() {
@@ -25,14 +23,28 @@ public class ConfigPath {
     private int nearbyPlayerRange;
 
     //  ============================================== //
-    //         Spawn Conditions Settings               //
+    //         Spawn Settings                          //
     //  ============================================== //
-    private boolean spawnConditions;
+    private boolean spawn;
     private boolean spawnMythicMobs;
-    private Map<String, List<EntityMap>> entityProp = new HashMap<>();
 
-    private boolean spawnLimits;
-    private boolean spawnLimitRes;
+    private boolean limits;
+    private boolean limitRes;
+
+    private Map<String, List<Pair<String, EntityMap>>> entityProp = new HashMap<>();
+    private LivingEntityMap livingEntityMap;
+
+    //  ============================================== //
+    //         Drop Settings                           //
+    //  ============================================== //
+    private boolean drop;
+    private boolean dropMoney;
+    private boolean dropExp;
+    private boolean dropItem;
+    private boolean dropMythicMobs;
+    private boolean dropBonus;
+
+    private List<DropMap> dropProp = new ArrayList<>();
 
     //  ============================================== //
     //         Purge Settings                          //
@@ -52,45 +64,40 @@ public class ConfigPath {
     //  ============================================== //
     private boolean spawner;
     private boolean spawnerResFlag;
-    private Map<String, List<SpawnerMap>> spawnerProp = new HashMap<>();
 
-    //  ============================================== //
-    //         Drop Settings                           //
-    //  ============================================== //
-    private boolean drop;
-    private boolean dropMoney;
-    private boolean dropExp;
-    private boolean dropItem;
-    private boolean dropMythicMobs;
-    private boolean dropHasKiller;
-    private boolean dropBonus;
-    private boolean dropBonusMode;
+    private Map<String, List<SpawnerMap>> spawnerProp = new HashMap<>();
 
     //  ============================================== //
     //         Setup all configuration.                //
     //  ============================================== //
     private void setUp() {
+        livingEntityMap = new LivingEntityMap();
         mobSpawnRange = ConfigHandler.getServerConfig("spigot.yml").getInt("world-settings.default.mob-spawn-range") * 16;
         nearbyPlayerRange = ConfigHandler.getServerConfig("config.yml").getInt("General.Nearby-Players-Range");
 
-        setSpawnCondition();
+        setSpawnEntity();
         setDrop();
         setPurge();
         setSpawner();
     }
 
+
+    public LivingEntityMap getLivingEntityMap() {
+        return livingEntityMap;
+    }
+
     /**
      * Setup the Spawn-Conditions.
      */
-    private void setSpawnCondition() {
-        spawnConditions = ConfigHandler.getConfig("config.yml").getBoolean("Spawn-Conditions.Enable");
-        if (spawnConditions) {
-            spawnLimits = ConfigHandler.getConfig("config.yml").getBoolean("Spawn-Limits.Enable");
-            if (spawnLimits) {
-                spawnLimitRes = ConfigHandler.getConfig("config.yml").getBoolean("Spawn-Limits.Settings.Features.Bypass.Residence-Flag");
+    private void setSpawnEntity() {
+        spawn = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Enable");
+        if (spawn) {
+            limits = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Limits.Enable");
+            if (limits) {
+                limitRes = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Limits.Settings.Features.Bypass.Residence-Flag");
             }
-            spawnMythicMobs = ConfigHandler.getConfig("config.yml").getBoolean("Spawn-Conditions.Settings.Features.MythicMobs");
-            ConfigurationSection groupsConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn-Conditions.Groups");
+            spawnMythicMobs = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Settings.Features.MythicMobs");
+            ConfigurationSection groupsConfig = ConfigHandler.getConfig("entities.yml").getConfigurationSection("Entities");
             if (groupsConfig != null) {
                 String groupEnable;
                 String chance;
@@ -98,15 +105,16 @@ public class ConfigPath {
                 List<BlocksMap> blocksMaps;
                 List<LocationMap> locMaps;
                 LimitMap limitMap;
+                DropMap dropMap;
                 List<String> entityList;
                 List<String> customList;
                 for (String group : groupsConfig.getKeys(false)) {
-                    groupEnable = ConfigHandler.getConfig("config.yml").getString("Spawn-Conditions.Groups." + group + ".Enable");
+                    groupEnable = ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Enable");
                     if (groupEnable == null || groupEnable.equals("true")) {
                         entityMap = new EntityMap();
                         entityList = new ArrayList<>();
                         entityMap.setGroupName(group);
-                        for (String customType : ConfigHandler.getConfig("config.yml").getStringList("Spawn-Conditions.Groups." + group + ".Types")) {
+                        for (String customType : ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Types")) {
                             try {
                                 entityList.add(EntityType.valueOf(customType).name());
                             } catch (Exception e) {
@@ -121,50 +129,55 @@ public class ConfigPath {
                             }
                         }
                         entityMap.setTypes(entityList);
-                        entityMap.setPriority(ConfigHandler.getConfig("config.yml").getInt("Spawn-Conditions.Groups." + group + ".Priority"));
-                        chance = ConfigHandler.getConfig("config.yml").getString("Spawn-Conditions.Groups." + group + ".Chance");
+                        entityMap.setPriority(ConfigHandler.getConfig("config.yml").getInt("Entities." + group + ".Priority"));
+                        chance = ConfigHandler.getConfig("config.yml").getString("Entities." + group + ".Chance");
                         if (chance == null) {
                             entityMap.setChance(1);
                         } else {
                             entityMap.setChance(Double.parseDouble(chance));
                         }
-                        entityMap.setReasons(ConfigHandler.getConfig("config.yml").getStringList("Spawn-Conditions.Groups." + group + ".Reasons"));
-                        entityMap.setIgnoreReasons(ConfigHandler.getConfig("config.yml").getStringList("Spawn-Conditions.Groups." + group + ".Ignore-Reasons"));
-                        entityMap.setBoimes(ConfigHandler.getConfig("config.yml").getStringList("Spawn-Conditions.Groups." + group + ".Biomes"));
-                        entityMap.setIgnoreBoimes(ConfigHandler.getConfig("config.yml").getStringList("Spawn-Conditions.Groups." + group + ".Ignore-Biomes"));
-                        entityMap.setLiquid(ConfigHandler.getConfig("config.yml").getString("Spawn-Conditions.Groups." + group + ".Liquid"));
-                        entityMap.setDay(ConfigHandler.getConfig("config.yml").getString("Spawn-Conditions.Groups." + group + ".Day"));
+                        entityMap.setReasons(ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Reasons"));
+                        entityMap.setIgnoreReasons(ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Ignore-Reasons"));
+                        entityMap.setBoimes(ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Biomes"));
+                        entityMap.setIgnoreBoimes(ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Ignore-Biomes"));
+                        entityMap.setLiquid(ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Liquid"));
+                        entityMap.setDay(ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Day"));
                         // Blocks settings.
-                        blocksMaps = getBlocksMaps("Spawn-Conditions.Groups." + group + ".Blocks", false);
+                        blocksMaps = getBlocksMaps("Entities." + group + ".Blocks", false);
                         if (!blocksMaps.isEmpty()) {
                             entityMap.setBlocksMaps(blocksMaps);
                         }
                         // Location settings
-                        locMaps = getLocationMaps("Spawn-Conditions.Groups." + group + ".Location", false);
+                        locMaps = getLocationMaps("Entities." + group + ".Location", false);
                         if (!locMaps.isEmpty()) {
                             entityMap.setLocMaps(locMaps);
                         }
                         // Limits settings
-                        limitMap = getLimitMap("Spawn-Conditions.Groups." + group + ".Limit");
+                        limitMap = getLimitMap("Entities." + group + ".Limit");
                         if (limitMap != null) {
                             entityMap.setLimitMap(limitMap);
+                        }
+                        // Drop settings
+                        dropMap = getDropMap("Entities." + group + ".Drop");
+                        if (limitMap != null) {
+                            entityMap.setDropMap(dropMap);
                         }
                         // Add properties to all entities.
                         for (String entityType : entityMap.getTypes()) {
                             try {
-                                entityProp.get(entityType).add(entityMap);
+                                entityProp.get(entityType).add(new Pair<>(group, entityMap));
                             } catch (Exception ex) {
                                 entityProp.put(entityType, new ArrayList<>());
-                                entityProp.get(entityType).add(entityMap);
+                                entityProp.get(entityType).add(new Pair<>(group, entityMap));
                             }
                         }
                     }
                 }
-                Map<EntityMap, Integer> sortMap;
+                Map<Pair<String, EntityMap>, Long> sortMap;
                 for (String entityType : entityProp.keySet()) {
                     sortMap = new HashMap<>();
-                    for (EntityMap em : entityProp.get(entityType)) {
-                        sortMap.put(em, em.getPriority());
+                    for (Pair<String, EntityMap> em : entityProp.get(entityType)) {
+                        sortMap.put(em, em.getValue().getPriority());
                     }
                     sortMap = Utils.sortByValue(sortMap);
                     entityProp.put(entityType, new ArrayList<>(sortMap.keySet()));
@@ -173,26 +186,51 @@ public class ConfigPath {
         }
     }
 
+    private LimitMap getLimitMap(String group) {
+        ConfigurationSection config = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn-Limits.Groups." + group);
+        if (config != null) {
+            if (ConfigHandler.getConfig("config.yml").getBoolean("Spawn-Limits.Groups." + group + ".Enable")) {
+                LimitMap limitMap = new LimitMap();
+                limitMap.setGroupName(ConfigHandler.getConfig("config.yml").getString(group));
+                limitMap.setChance(ConfigHandler.getConfig("config.yml").getLong("Spawn-Limits.Groups." + group + ".Chance"));
+                limitMap.setAmount(ConfigHandler.getConfig("config.yml").getInt("Spawn-Limits.Groups." + group + ".Amount"));
+                boolean afkEnable = ConfigHandler.getConfig("config.yml").getBoolean("Spawn-Limits.Groups." + group + ".AFK.Enable");
+                limitMap.setAFK(afkEnable);
+                if (afkEnable) {
+                    limitMap.setAFKAmount(ConfigHandler.getConfig("config.yml").getInt("Spawn-Limits.Groups." + group + ".AFK.Amount"));
+                    limitMap.setAFKChance(ConfigHandler.getConfig("config.yml").getInt("Spawn-Limits.Groups." + group + ".AFK.Chance"));
+                }
+                limitMap.setSearchX(ConfigHandler.getConfig("config.yml").getInt("Spawn-Limits.Groups." + group + ".Search.X"));
+                limitMap.setSearchY(ConfigHandler.getConfig("config.yml").getInt("Spawn-Limits.Groups." + group + ".Search.Y"));
+                limitMap.setSearchZ(ConfigHandler.getConfig("config.yml").getInt("Spawn-Limits.Groups." + group + ".Search.Z"));
+                return limitMap;
+            }
+        }
+        return null;
+    }
+
     private void setDrop() {
         drop = ConfigHandler.getConfig("config.yml").getBoolean("Drop.Enable");
         if (drop) {
             dropBonus = ConfigHandler.getConfig("config.yml").getBoolean("Drop.Enable");
             dropBonusMode = ConfigHandler.getConfig("config.yml").getBoolean("Drop.Enable");
+            dropBonus = ConfigHandler.getConfig("config.yml").getBoolean("Drop.Settings.Bonus.Enable");
+            dropBonusMode = ConfigHandler.getConfig("config.yml").getBoolean("Drop.Settings.Bonus.Mode");
             dropMoney = ConfigHandler.getConfig("config.yml").getBoolean("Drop.Settings.Features.Money");
             dropExp = ConfigHandler.getConfig("config.yml").getBoolean("Drop.Settings.Features.Money");
             dropItem = ConfigHandler.getConfig("config.yml").getBoolean("Drop.Settings.Features.Money");
             dropMythicMobs = ConfigHandler.getConfig("config.yml").getBoolean("Drop.Settings.Features.MythicMobs-Items");
-            dropBonus = ConfigHandler.getConfig("config.yml").getBoolean("Drop.Settings.Bonus.Enable");
-            dropBonusMode = ConfigHandler.getConfig("config.yml").getBoolean("Drop.Settings.Bonus.Mode");
-            dropHasKiller = ConfigHandler.getConfig("config.yml").getBoolean("Drop.Settings.Has-Killer");
             ConfigurationSection groupsConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Drop.Groups");
             if (groupsConfig != null) {
-                String groupEnable;
                 for (String group : groupsConfig.getKeys(false)) {
-                    groupEnable = ConfigHandler.getConfig("config.yml").getString("Spawn-Conditions.Groups." + group + ".Enable");
-                    if (groupEnable == null || groupEnable.equals("true")) {
-
-                    }
+                    DropMap dropMap = new DropMap();
+                    dropMap.setGroupName(group);
+                    dropMap.setPriority(ConfigHandler.getConfig("config.yml").getLong("Drop.Groups." + group + ".Priority"));
+                    dropMap.setMoney(ConfigHandler.getConfig("config.yml").getLong("Drop.Groups." + group + ".Money"));
+                    dropMap.setExp(ConfigHandler.getConfig("config.yml").getLong("Drop.Groups." + group + ".Exp"));
+                    dropMap.setItems(ConfigHandler.getConfig("config.yml").getLong("Drop.Groups." + group + ".Items"));
+                    dropMap.setMmItems(ConfigHandler.getConfig("config.yml").getLong("Drop.Groups." + group + ".MythicMobs-Items"));
+                    dropProp.add(dropMap);
                 }
             }
         }
@@ -249,7 +287,7 @@ public class ConfigPath {
                         }
                     }
                 }
-                Map<SpawnerMap, Integer> sortMap;
+                Map<SpawnerMap, Long> sortMap;
                 for (String entityType : spawnerProp.keySet()) {
                     sortMap = new HashMap<>();
                     for (SpawnerMap em : spawnerProp.get(entityType)) {
@@ -426,28 +464,6 @@ public class ConfigPath {
         return blocksMaps;
     }
 
-    private LimitMap getLimitMap(String group) {
-        ConfigurationSection config = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn-Limits.Groups." + group);
-        if (config != null) {
-            if (ConfigHandler.getConfig("config.yml").getBoolean("Spawn-Limits.Groups." + group + ".Enable")) {
-                LimitMap limitMap = new LimitMap();
-                limitMap.setChance(ConfigHandler.getConfig("config.yml").getLong("Spawn-Limits.Groups." + group + ".Chance"));
-                limitMap.setAmount(ConfigHandler.getConfig("config.yml").getInt("Spawn-Limits.Groups." + group + ".Amount"));
-                boolean afkEnable = ConfigHandler.getConfig("config.yml").getBoolean("Spawn-Limits.Groups." + group + ".AFK.Enable");
-                limitMap.setAFK(afkEnable);
-                if (afkEnable) {
-                    limitMap.setAFKAmount(ConfigHandler.getConfig("config.yml").getInt("Spawn-Limits.Groups." + group + ".AFK.Amount"));
-                    limitMap.setAFKChance(ConfigHandler.getConfig("config.yml").getInt("Spawn-Limits.Groups." + group + ".Chance"));
-                }
-                limitMap.setSearchX(ConfigHandler.getConfig("config.yml").getInt("Spawn-Limits.Groups." + group + ".Search.X"));
-                limitMap.setSearchY(ConfigHandler.getConfig("config.yml").getInt("Spawn-Limits.Groups." + group + ".Search.Y"));
-                limitMap.setSearchZ(ConfigHandler.getConfig("config.yml").getInt("Spawn-Limits.Groups." + group + ".Search.Z"));
-                return limitMap;
-            }
-        }
-        return null;
-    }
-
     public int getMobSpawnRange() {
         return mobSpawnRange;
     }
@@ -456,11 +472,11 @@ public class ConfigPath {
         return nearbyPlayerRange;
     }
 
-    public boolean isSpawnConditions() {
-        return spawnConditions;
+    public boolean isSpawn() {
+        return spawn;
     }
 
-    public Map<String, List<EntityMap>> getEntityProp() {
+    public Map<String, List<Pair<String, EntityMap>>> getEntityProp() {
         return entityProp;
     }
 
@@ -468,6 +484,33 @@ public class ConfigPath {
         return spawnMythicMobs;
     }
 
+    public boolean isDrop() {
+        return drop;
+    }
+
+    public boolean isDropBonus() {
+        return dropBonus;
+    }
+
+    public boolean isDropBonusMode() {
+        return dropBonusMode;
+    }
+
+    public boolean isDropMoney() {
+        return dropMoney;
+    }
+
+    public boolean isDropExp() {
+        return dropExp;
+    }
+
+    public boolean isDropItem() {
+        return dropItem;
+    }
+
+    public boolean isDropMythicMobs() {
+        return dropMythicMobs;
+    }
 
     public boolean isSpawner() {
         return spawner;
@@ -481,12 +524,12 @@ public class ConfigPath {
         return spawnerResFlag;
     }
 
-    public boolean isSpawnLimits() {
-        return spawnLimits;
+    public boolean isLimits() {
+        return limits;
     }
 
-    public boolean isSpawnLimitRes() {
-        return spawnLimitRes;
+    public boolean isLimitRes() {
+        return limitRes;
     }
 
     public boolean isPurgeSchedule() {

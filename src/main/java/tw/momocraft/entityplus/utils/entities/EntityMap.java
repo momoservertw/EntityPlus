@@ -10,18 +10,18 @@ public class EntityMap {
 
     private String groupName;
     private List<String> types;
-    private int priority;
+    private long priority;
     private double chance;
     private List<String> reasons;
     private List<String> ignoreReasons;
     private List<String> boimes;
     private List<String> ignoreBoimes;
-    private String water;
+    private String liquid;
     private String day;
     private List<LocationMap> locMaps = new ArrayList<>();
     private List<BlocksMap> blocksMaps = new ArrayList<>();
     private LimitMap limitMap = null;
-
+    private DropMap dropMap = null;
 
     public String getGroupName() {
         return groupName;
@@ -31,7 +31,7 @@ public class EntityMap {
         return types;
     }
 
-    public int getPriority() {
+    public long getPriority() {
         return priority;
     }
 
@@ -44,7 +44,7 @@ public class EntityMap {
     }
 
     public String getLiquid() {
-        return water;
+        return liquid;
     }
 
     public List<String> getReasons() {
@@ -75,6 +75,9 @@ public class EntityMap {
         return limitMap;
     }
 
+    public DropMap getDropMap() {
+        return dropMap;
+    }
 
     public void setGroupName(String groupName) {
         this.groupName = groupName;
@@ -84,7 +87,7 @@ public class EntityMap {
         this.types = types;
     }
 
-    public void setPriority(int priority) {
+    public void setPriority(long priority) {
         this.priority = priority;
     }
 
@@ -108,8 +111,8 @@ public class EntityMap {
         this.ignoreBoimes = ignoreBoimes;
     }
 
-    public void setLiquid(String water) {
-        this.water = water;
+    public void setLiquid(String liquid) {
+        this.liquid = liquid;
     }
 
     public void setDay(String day) {
@@ -126,5 +129,9 @@ public class EntityMap {
 
     public void setLimitMap(LimitMap limitMap) {
         this.limitMap = limitMap;
+    }
+
+    public void setDropMap(DropMap dropMap) {
+        this.dropMap = dropMap;
     }
 }

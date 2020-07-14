@@ -2,6 +2,7 @@ package tw.momocraft.entityplus.utils.entities;
 
 public class LimitMap {
 
+    private String groupName;
     private double chance;
     private int amount;
     private boolean AFK;
@@ -11,6 +12,10 @@ public class LimitMap {
     private int searchY;
     private int searchZ;
 
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
     public void setChance(double chance) {
         this.chance = chance;
     }
@@ -19,17 +24,16 @@ public class LimitMap {
         this.amount = amount;
     }
 
-
     public void setAFK(boolean AFK) {
         this.AFK = AFK;
     }
 
-    public double getAFKChance() {
-        return AFKChance;
+    public void setAFKChance(double AFKChance) {
+        this.AFKChance = AFKChance;
     }
 
-    public int getAFKAmount() {
-        return AFKAmount;
+    public void setAFKAmount(int AFKAmount) {
+        this.AFKAmount = AFKAmount;
     }
 
     public void setSearchX(int searchX) {
@@ -45,6 +49,10 @@ public class LimitMap {
     }
 
 
+    public String getGroupName() {
+        return groupName;
+    }
+
     public double getChance() {
         return chance;
     }
@@ -57,12 +65,12 @@ public class LimitMap {
         return AFK;
     }
 
-    public void setAFKChance(double AFKChance) {
-        this.AFKChance = AFKChance;
+    public double getAFKChance() {
+        return AFKChance;
     }
 
-    public void setAFKAmount(int AFKAmount) {
-        this.AFKAmount = AFKAmount;
+    public int getAFKAmount() {
+        return AFKAmount;
     }
 
     public int getSearchX() {

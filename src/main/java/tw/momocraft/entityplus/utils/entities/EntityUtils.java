@@ -21,14 +21,14 @@ public class EntityUtils {
      * @return if spawn location reach the maximum entity amount.
      */
     public static boolean checkLimit(Entity entity, Location loc, LimitMap limitMap) {
-        if (!ConfigHandler.getConfigPath().isSpawnLimits()) {
+        if (!ConfigHandler.getConfigPath().isLimits()) {
             return true;
         }
         if (limitMap == null) {
             return true;
         }
         if (ConfigHandler.getDepends().ResidenceEnabled()) {
-            if (ConfigHandler.getConfigPath().isSpawnLimitRes()) {
+            if (ConfigHandler.getConfigPath().isLimitRes()) {
                 ClaimedResidence res = Residence.getInstance().getResidenceManager().getByLoc(loc);
                 if (res != null) {
                     if (res.getPermissions().has("spawnlimitbypass", false)) {
