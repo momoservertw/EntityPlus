@@ -1,1 +1,95 @@
-Config-Version: 1
+# Control entities spawn conditions.
+# More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn-Conditions
+Entities:
+  NormalMobs:
+    Enable: false
+    Priority: 2
+    Types:
+      - NormalMobs
+    Ignore-Reasons:
+      - SPAWNER_EGG
+    Location:
+      - world
+      - world_nether
+      - world_the_end
+    Limit: NormalMobs
+    Drop:
+      - lucky1
+      - lucky2
+  BreedableMobs:
+    Enable: false
+    Priority: 2
+    Types:
+      - BreedableMobs
+    Ignore-Reasons:
+      - SPAWNER_EGG
+      - NATURAL
+      - BEEHIVE
+    Limit: BreedableMobs
+  WaterMobs:
+    Enable: false
+    Priority: 2
+    Types:
+      - WaterMobs
+    Chance: 0.2
+    Reasons:
+      - NATURAL
+    Limit: WaterMobs
+  Bat:
+    Enable: false
+    Priority: 3
+    Types:
+      - BAT
+    Chance: 0.2
+    Reasons:
+      - NATURAL
+  Phantom:
+    Enable: false
+    Priority: 3
+    Types:
+      - PHANTOM
+    Chance: 0.3
+    Reasons:
+      - NATURAL
+  Guardian:
+    Enable: false
+    Priority: 3
+    Types:
+      - GUARDIAN
+    Chance: 0.01
+    Reasons:
+      - NATURAL
+    Blocks:
+      - Monument
+  Iron_Golem:
+    Enable: false
+    Priority: 3
+    Types:
+      - IRON_GOLEM
+    Chance: 0.3
+    Reasons:
+      - VILLAGE_DEFENSE
+  Pig_Zombie:
+    Enable: false
+    Priority: 3
+    Types:
+      - PIG_ZOMBIE
+    Chance: 0.5
+    Reasons:
+      - NETHER_PORTAL
+  Wither_Skeleton:
+    Enable: false
+    Priority: 3
+    Types:
+      - WITHER_SKELETON
+    Chance: 0.1
+    Reasons:
+      - NATURAL
+    Blocks:
+      - WitherRose
+  MythicMobs_Example:
+    Enable: false
+    Priority: 3
+    Types:
+      - SkeletonKing
+    Chance: 0.1

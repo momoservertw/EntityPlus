@@ -1,6 +1,5 @@
 package tw.momocraft.entityplus.listeners;
 
-import com.google.common.collect.Table;
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobLootDropEvent;
 import io.lumine.xikage.mythicmobs.drops.Drop;
 import javafx.util.Pair;
@@ -12,7 +11,7 @@ import org.bukkit.event.Listener;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.PermissionsHandler;
 import tw.momocraft.entityplus.handlers.ServerHandler;
-import tw.momocraft.entityplus.utils.entities.EntityMap;
+import tw.momocraft.entityplus.utils.entities.DropMap;
 
 import java.util.*;
 
@@ -20,7 +19,7 @@ public class MythicMobsLootDrop implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onMythicMobsDeath(MythicMobLootDropEvent e) {
-        if (!ConfigHandler.getConfigPath().isDropMythicMobs()) {
+        if (!ConfigHandler.getConfigPath().isDrop()) {
             return;
         }
         Player player;
@@ -31,7 +30,6 @@ public class MythicMobsLootDrop implements Listener {
         }
 
         Entity entity = e.getEntity();
-        String entityType = entity.getType().name();
         UUID entityUUID = entity.getUniqueId();
         Map<UUID, Pair<String, String>> mobsMap = ConfigHandler.getConfigPath().getLivingEntityMap().getMobsMap();
         if (!mobsMap.keySet().contains(entityUUID)) {
@@ -39,16 +37,13 @@ public class MythicMobsLootDrop implements Listener {
         }
 
         // Get entity properties.
-        Map<String, List<EntityMap>> entityProp = ConfigHandler.getConfigPath().getEntityProp();
-
-        entityProp.get(mobsMap.get(entityUUID).getKey()).g;
-        mobsMap.get(entityUUID).getKey()
-
-
+        Map<String, DropMap> dropMap = ConfigHandler.getConfigPath().getEntityProp().get(mobsMap.get(entityUUID).getKey()).get(mobsMap.get(entityUUID).getValue()).getDropMap();
+        if (dropMap == null) {
+            return;
+        }
 
         List<String> permsList = new ArrayList<>();
-        Set<String> multiList = ConfigHandler.getConfig("config.yml").getConfigurationSection("MythicMobs-Drop.Multipliers").getKeys(false);
-        for (String key : multiList) {
+        for (String key : dropMap.keySet()) {
             if (PermissionsHandler.hasPermission(player, "entityplus.drop.multiplier." + key)) {
                 permsList.add(key);
             }
@@ -64,35 +59,39 @@ public class MythicMobsLootDrop implements Listener {
         double money;
         double exp;
         double item;
-        double mmItem;
-        if (ConfigHandler.getConfig("config.yml").getBoolean("MythicMobs-Drop.Bonus.Enable")) {
-            String combinedMethod = ConfigHandler.getConfig("config.yml").getString("MythicMobs-Drop.Bonus.Mode");
-            for (String key : multiList) {
+        if (ConfigHandler.getConfigPath().isDropBonus()) {
+            String combinedMethod = ConfigHandler.getConfigPath().getDropBonusMode();
+            for (String key : dropMap.keySet()) {
                 if (PermissionsHandler.hasPermission(player, "entityplus.drop.multiplier." + key)) {
-                    money = ConfigHandler.getConfig("config.yml").getDouble("MythicMobs-Drop.Multipliers." + key + ".money");
-                    exp = ConfigHandler.getConfig("config.yml").getDouble("MythicMobs-Drop.Multipliers." + key + ".exp");
-                    item = ConfigHandler.getConfig("config.yml").getDouble("MythicMobs-Drop.Multipliers." + key + ".item");
-                    if (combinedMethod != null && combinedMethod.equals("+")) {
+                    money = dropMap.get(key).getMoney();
+                    exp = dropMap.get(key).getExp();
+                    item = dropMap.get(key).getItems();
+                    if (combinedMethod.equals("plus")) {
                         money--;
                         exp--;
                         item--;
                         totalMoney += money;
                         totalExp += exp;
                         totalItem += item;
-                    } else if (combinedMethod.equals("*")) {
+                    } else if (combinedMethod.equals("multiply")) {
                         totalMoney *= money;
                         totalExp *= exp;
                         totalItem *= item;
                     } else {
-                        ServerHandler.sendConsoleMessage("&cThere is an error at MythicMobs-Drop: Combined-Method. Only support \"+\", \"*\"");
+                        money--;
+                        exp--;
+                        item--;
+                        totalMoney += money;
+                        totalExp += exp;
+                        totalItem += item;
                     }
                 }
             }
         } else {
             String maxMulti = Collections.max(permsList);
-            totalMoney = ConfigHandler.getConfig("config.yml").getDouble("MythicMobs-Drop.Multipliers." + maxMulti + ".money");
-            totalExp = ConfigHandler.getConfig("config.yml").getDouble("MythicMobs-Drop.Multipliers." + maxMulti + ".exp");
-            totalItem = ConfigHandler.getConfig("config.yml").getDouble("MythicMobs-Drop.Multipliers." + maxMulti + ".item");
+            totalMoney = dropMap.get(maxMulti).getMoney();
+            totalExp = dropMap.get(maxMulti).getExp();
+            totalItem = dropMap.get(maxMulti).getItems();
         }
 
         int dropMoney = e.getMoney();

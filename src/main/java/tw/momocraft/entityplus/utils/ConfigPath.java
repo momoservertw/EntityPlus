@@ -27,24 +27,27 @@ public class ConfigPath {
     //  ============================================== //
     private boolean spawn;
     private boolean spawnMythicMobs;
+    private boolean spawnResFlag;
 
-    private boolean limits;
-    private boolean limitRes;
+    private boolean limit;
+    private boolean limitResFlag;
 
-    private Map<String, List<Pair<String, EntityMap>>> entityProp = new HashMap<>();
+    private Map<String, TreeMap<String, EntityMap>> entityProp = new HashMap<>();
+    private Map<String, LimitMap> limitProp;
     private LivingEntityMap livingEntityMap;
 
     //  ============================================== //
     //         Drop Settings                           //
     //  ============================================== //
     private boolean drop;
+    private boolean dropBonus;
+    private String dropBonusMode;
     private boolean dropMoney;
     private boolean dropExp;
     private boolean dropItem;
-    private boolean dropMythicMobs;
-    private boolean dropBonus;
+    private boolean dropResFlag;
 
-    private List<DropMap> dropProp = new ArrayList<>();
+    private Map<String, DropMap> dropProp;
 
     //  ============================================== //
     //         Purge Settings                          //
@@ -75,8 +78,9 @@ public class ConfigPath {
         mobSpawnRange = ConfigHandler.getServerConfig("spigot.yml").getInt("world-settings.default.mob-spawn-range") * 16;
         nearbyPlayerRange = ConfigHandler.getServerConfig("config.yml").getInt("General.Nearby-Players-Range");
 
+        setDropProp();
+        setLimitProp();
         setSpawnEntity();
-        setDrop();
         setPurge();
         setSpawner();
     }
@@ -92,44 +96,42 @@ public class ConfigPath {
     private void setSpawnEntity() {
         spawn = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Enable");
         if (spawn) {
-            limits = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Limits.Enable");
-            if (limits) {
-                limitRes = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Limits.Settings.Features.Bypass.Residence-Flag");
-            }
             spawnMythicMobs = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Settings.Features.MythicMobs");
             ConfigurationSection groupsConfig = ConfigHandler.getConfig("entities.yml").getConfigurationSection("Entities");
             if (groupsConfig != null) {
                 String groupEnable;
                 String chance;
+                List<String> entityList;
+                List<String> customList;
                 EntityMap entityMap;
                 List<BlocksMap> blocksMaps;
                 List<LocationMap> locMaps;
-                LimitMap limitMap;
-                DropMap dropMap;
-                List<String> entityList;
-                List<String> customList;
+                String limitGroup;
+                Map<String, DropMap> dropMap;
                 for (String group : groupsConfig.getKeys(false)) {
                     groupEnable = ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Enable");
                     if (groupEnable == null || groupEnable.equals("true")) {
                         entityMap = new EntityMap();
                         entityList = new ArrayList<>();
                         entityMap.setGroupName(group);
-                        for (String customType : ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Types")) {
+                        for (String entityType : ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Types")) {
                             try {
-                                entityList.add(EntityType.valueOf(customType).name());
+                                entityList.add(EntityType.valueOf(entityType).name());
                             } catch (Exception e) {
-                                customList = ConfigHandler.getConfig("groups.yml").getStringList("Entities." + customType);
+                                customList = ConfigHandler.getConfig("groups.yml").getStringList("Entities." + entityType);
+                                // Add MythicMobs.
                                 if (customList.isEmpty()) {
-                                    entityList.add(customType);
+                                    entityList.add(entityType);
                                     continue;
                                 }
-                                for (String entityType : customList) {
-                                    entityList.add(EntityType.valueOf(entityType).name());
+                                // Add Custom Group.
+                                for (String customType : customList) {
+                                    entityList.add(EntityType.valueOf(customType).name());
                                 }
                             }
                         }
                         entityMap.setTypes(entityList);
-                        entityMap.setPriority(ConfigHandler.getConfig("config.yml").getInt("Entities." + group + ".Priority"));
+                        entityMap.setPriority(ConfigHandler.getConfig("config.yml").getLong("Entities." + group + ".Priority"));
                         chance = ConfigHandler.getConfig("config.yml").getString("Entities." + group + ".Chance");
                         if (chance == null) {
                             entityMap.setChance(1);
@@ -153,84 +155,108 @@ public class ConfigPath {
                             entityMap.setLocMaps(locMaps);
                         }
                         // Limits settings
-                        limitMap = getLimitMap("Entities." + group + ".Limit");
-                        if (limitMap != null) {
-                            entityMap.setLimitMap(limitMap);
+                        limitGroup = ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Limit");
+                        if (limitGroup != null) {
+                            if (limitProp.containsKey(limitGroup)) {
+                                entityMap.setLimitPair(new Pair<>(limitGroup, limitProp.get(limitGroup)));
+                            }
                         }
                         // Drop settings
-                        dropMap = getDropMap("Entities." + group + ".Drop");
-                        if (limitMap != null) {
-                            entityMap.setDropMap(dropMap);
+                        dropMap = new HashMap<>();
+                        for (String dropGroup : ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Drop")) {
+                            if (dropProp.containsKey(dropGroup)) {
+                                dropMap.put(dropGroup, dropProp.get(dropGroup));
+                            }
                         }
+                        entityMap.setDropMap(dropMap);
                         // Add properties to all entities.
                         for (String entityType : entityMap.getTypes()) {
                             try {
-                                entityProp.get(entityType).add(new Pair<>(group, entityMap));
+                                entityProp.get(entityType).put(group, entityMap);
                             } catch (Exception ex) {
-                                entityProp.put(entityType, new ArrayList<>());
-                                entityProp.get(entityType).add(new Pair<>(group, entityMap));
+                                entityProp.put(entityType, new TreeMap<>());
+                                entityProp.get(entityType).put(group, entityMap);
                             }
                         }
                     }
                 }
-                Map<Pair<String, EntityMap>, Long> sortMap;
+                Map<String, Long> sortMap;
+                TreeMap<String, EntityMap> newMap;
                 for (String entityType : entityProp.keySet()) {
                     sortMap = new HashMap<>();
-                    for (Pair<String, EntityMap> em : entityProp.get(entityType)) {
-                        sortMap.put(em, em.getValue().getPriority());
+                    newMap = new TreeMap<>();
+                    for (String group : entityProp.get(entityType).keySet()) {
+                        sortMap.put(group, entityProp.get(entityType).get(group).getPriority());
                     }
                     sortMap = Utils.sortByValue(sortMap);
-                    entityProp.put(entityType, new ArrayList<>(sortMap.keySet()));
+                    for (String group : sortMap.keySet()) {
+                        newMap.put(group, entityProp.get(entityType).get(group));
+                    }
+                    entityProp.remove(entityType);
+                    entityProp.put(entityType, newMap);
                 }
             }
         }
     }
 
-    private LimitMap getLimitMap(String group) {
-        ConfigurationSection config = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawn-Limits.Groups." + group);
-        if (config != null) {
-            if (ConfigHandler.getConfig("config.yml").getBoolean("Spawn-Limits.Groups." + group + ".Enable")) {
-                LimitMap limitMap = new LimitMap();
-                limitMap.setGroupName(ConfigHandler.getConfig("config.yml").getString(group));
-                limitMap.setChance(ConfigHandler.getConfig("config.yml").getLong("Spawn-Limits.Groups." + group + ".Chance"));
-                limitMap.setAmount(ConfigHandler.getConfig("config.yml").getInt("Spawn-Limits.Groups." + group + ".Amount"));
-                boolean afkEnable = ConfigHandler.getConfig("config.yml").getBoolean("Spawn-Limits.Groups." + group + ".AFK.Enable");
-                limitMap.setAFK(afkEnable);
-                if (afkEnable) {
-                    limitMap.setAFKAmount(ConfigHandler.getConfig("config.yml").getInt("Spawn-Limits.Groups." + group + ".AFK.Amount"));
-                    limitMap.setAFKChance(ConfigHandler.getConfig("config.yml").getInt("Spawn-Limits.Groups." + group + ".AFK.Chance"));
+    private void setLimitProp() {
+        limit = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Limit.Enable");
+        if (!limit) {
+            return;
+        }
+        limitResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Limit.Settings.Features.Bypass.Residence-Flag");
+        limitProp = new HashMap<>();
+        ConfigurationSection groupsConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Entities.Limit.Groups");
+        if (groupsConfig != null) {
+            LimitMap limitMap;
+            String groupEnable;
+            boolean afkEnable;
+            for (String group : groupsConfig.getKeys(false)) {
+                groupEnable = ConfigHandler.getConfig("config.yml").getString("Entities.Limit." + group + ".Enable");
+                if (groupEnable == null || groupEnable.equals("true")) {
+                    limitMap = new LimitMap();
+                    limitMap.setGroupName(group);
+                    limitMap.setChance(ConfigHandler.getConfig("config.yml").getLong("Entities.Limit.Groups." + group + ".Chance"));
+                    limitMap.setAmount(ConfigHandler.getConfig("config.yml").getInt("Entities.Limit.Groups." + group + ".Amount"));
+                    afkEnable = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Limits.Groups." + group + ".AFK.Enable");
+                    limitMap.setAFK(afkEnable);
+                    if (afkEnable) {
+                        limitMap.setAFKAmount(ConfigHandler.getConfig("config.yml").getInt("Spawn-Limits.Groups." + group + ".AFK.Amount"));
+                        limitMap.setAFKChance(ConfigHandler.getConfig("config.yml").getDouble("Spawn-Limits.Groups." + group + ".AFK.Chance"));
+                    }
+                    limitMap.setSearchX(ConfigHandler.getConfig("config.yml").getLong("Entities.Limit.Groups." + group + ".Search.X"));
+                    limitMap.setSearchY(ConfigHandler.getConfig("config.yml").getLong("Entities.Limit.Groups." + group + ".Search.Y"));
+                    limitMap.setSearchZ(ConfigHandler.getConfig("config.yml").getLong("Entities.Limit.Groups." + group + ".Search.Z"));
+                    limitProp.put(group, limitMap);
                 }
-                limitMap.setSearchX(ConfigHandler.getConfig("config.yml").getInt("Spawn-Limits.Groups." + group + ".Search.X"));
-                limitMap.setSearchY(ConfigHandler.getConfig("config.yml").getInt("Spawn-Limits.Groups." + group + ".Search.Y"));
-                limitMap.setSearchZ(ConfigHandler.getConfig("config.yml").getInt("Spawn-Limits.Groups." + group + ".Search.Z"));
-                return limitMap;
             }
         }
-        return null;
     }
 
-    private void setDrop() {
-        drop = ConfigHandler.getConfig("config.yml").getBoolean("Drop.Enable");
+    private void setDropProp() {
+        dropProp = new HashMap<>();
+        drop = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Enable");
         if (drop) {
-            dropBonus = ConfigHandler.getConfig("config.yml").getBoolean("Drop.Enable");
-            dropBonusMode = ConfigHandler.getConfig("config.yml").getBoolean("Drop.Enable");
-            dropBonus = ConfigHandler.getConfig("config.yml").getBoolean("Drop.Settings.Bonus.Enable");
-            dropBonusMode = ConfigHandler.getConfig("config.yml").getBoolean("Drop.Settings.Bonus.Mode");
-            dropMoney = ConfigHandler.getConfig("config.yml").getBoolean("Drop.Settings.Features.Money");
-            dropExp = ConfigHandler.getConfig("config.yml").getBoolean("Drop.Settings.Features.Money");
-            dropItem = ConfigHandler.getConfig("config.yml").getBoolean("Drop.Settings.Features.Money");
-            dropMythicMobs = ConfigHandler.getConfig("config.yml").getBoolean("Drop.Settings.Features.MythicMobs-Items");
-            ConfigurationSection groupsConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Drop.Groups");
+            dropBonus = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Bonus.Enable");
+            dropBonusMode = ConfigHandler.getConfig("config.yml").getString("Entities.Drop.Settings.Bonus.Mode");
+            dropMoney = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Features.Money");
+            dropExp = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Features.Money");
+            dropItem = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Features.Money");
+            ConfigurationSection groupsConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Entities.Drop.Groups");
             if (groupsConfig != null) {
+                DropMap dropMap;
+                String groupEnable;
                 for (String group : groupsConfig.getKeys(false)) {
-                    DropMap dropMap = new DropMap();
-                    dropMap.setGroupName(group);
-                    dropMap.setPriority(ConfigHandler.getConfig("config.yml").getLong("Drop.Groups." + group + ".Priority"));
-                    dropMap.setMoney(ConfigHandler.getConfig("config.yml").getLong("Drop.Groups." + group + ".Money"));
-                    dropMap.setExp(ConfigHandler.getConfig("config.yml").getLong("Drop.Groups." + group + ".Exp"));
-                    dropMap.setItems(ConfigHandler.getConfig("config.yml").getLong("Drop.Groups." + group + ".Items"));
-                    dropMap.setMmItems(ConfigHandler.getConfig("config.yml").getLong("Drop.Groups." + group + ".MythicMobs-Items"));
-                    dropProp.add(dropMap);
+                    groupEnable = ConfigHandler.getConfig("config.yml").getString("Entities.Drop." + group + ".Enable");
+                    if (groupEnable == null || groupEnable.equals("true")) {
+                        dropMap = new DropMap();
+                        dropMap.setGroupName(group);
+                        dropMap.setPriority(ConfigHandler.getConfig("config.yml").getLong("Entities.Drop.Groups." + group + ".Priority"));
+                        dropMap.setMoney(ConfigHandler.getConfig("config.yml").getLong("Entities.Drop.Groups." + group + ".Money"));
+                        dropMap.setExp(ConfigHandler.getConfig("config.yml").getLong("Entities.Drop.Groups." + group + ".Exp"));
+                        dropMap.setItems(ConfigHandler.getConfig("config.yml").getLong("Entities.Drop.Groups." + group + ".Items"));
+                        dropProp.put(group, dropMap);
+                    }
                 }
             }
         }
@@ -476,7 +502,7 @@ public class ConfigPath {
         return spawn;
     }
 
-    public Map<String, List<Pair<String, EntityMap>>> getEntityProp() {
+    public Map<String, TreeMap<String, EntityMap>> getEntityProp() {
         return entityProp;
     }
 
@@ -492,7 +518,7 @@ public class ConfigPath {
         return dropBonus;
     }
 
-    public boolean isDropBonusMode() {
+    public String getDropBonusMode() {
         return dropBonusMode;
     }
 
@@ -508,10 +534,6 @@ public class ConfigPath {
         return dropItem;
     }
 
-    public boolean isDropMythicMobs() {
-        return dropMythicMobs;
-    }
-
     public boolean isSpawner() {
         return spawner;
     }
@@ -524,12 +546,12 @@ public class ConfigPath {
         return spawnerResFlag;
     }
 
-    public boolean isLimits() {
-        return limits;
+    public boolean isLimit() {
+        return limit;
     }
 
-    public boolean isLimitRes() {
-        return limitRes;
+    public boolean isSpawnResFlag() {
+        return spawnResFlag;
     }
 
     public boolean isPurgeSchedule() {

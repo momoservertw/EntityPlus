@@ -17,6 +17,7 @@ import tw.momocraft.entityplus.utils.entities.EntityUtils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class CreatureSpawn implements Listener {
 
@@ -35,17 +36,15 @@ public class CreatureSpawn implements Listener {
             }
         }
         // Get entity properties.
-        Map<String, List<Pair<String, EntityMap>>> entityProp = ConfigHandler.getConfigPath().getEntityProp();
+        Map<String, TreeMap<String, EntityMap>> entityProp = ConfigHandler.getConfigPath().getEntityProp();
         // Checks if the properties contains this type of entity.
         if (entityProp.containsKey(entityType)) {
             // Checks every groups of this entity.
             Location loc = entity.getLocation();
-            String groupName;
             Block block;
             EntityMap entityMap;
-            for (Pair<String, EntityMap> entityPair : entityProp.get(entityType)) {
-                entityMap = entityPair.getValue();
-                groupName = entityMap.getGroupName();
+            for (String groupName : entityProp.get(entityType).keySet()) {
+                entityMap = entityProp.get(entityType).get(groupName);
                 // Checks the spawn "reasons".
                 if (!EntityUtils.containValue(reason, entityMap.getReasons(), entityMap.getIgnoreReasons())) {
                     ServerHandler.sendFeatureMessage("Spawn", entityType, "!Reason", "continue", groupName,
@@ -86,8 +85,8 @@ public class CreatureSpawn implements Listener {
                 // Checks the spawn "chance".
                 if (!EntityUtils.isRandomChance(entityMap.getChance())) {
                     // If the creature spawn location has reach the maximum creature amount, it will cancel the spawn event.
-                    if (entityMap.getLimitMap() != null) {
-                        if (EntityUtils.checkLimit(entity, loc, entityMap.getLimitMap())) {
+                    if (entityMap.getLimitPair() != null) {
+                        if (EntityUtils.checkLimit(entity, loc, entityMap.getLimitPair().getValue())) {
                             // Add a tag for this creature.
                             ConfigHandler.getConfigPath().getLivingEntityMap().addMap(entity.getUniqueId(), new Pair<>(entityType, groupName));
                             ServerHandler.sendFeatureMessage("Spawn", entityType, "Limit", "return", groupName,

@@ -8,6 +8,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.PermissionsHandler;
+import tw.momocraft.entityplus.handlers.ServerHandler;
 
 import java.util.Iterator;
 import java.util.List;
@@ -21,14 +22,14 @@ public class EntityUtils {
      * @return if spawn location reach the maximum entity amount.
      */
     public static boolean checkLimit(Entity entity, Location loc, LimitMap limitMap) {
-        if (!ConfigHandler.getConfigPath().isLimits()) {
+        if (!ConfigHandler.getConfigPath().isLimit()) {
             return true;
         }
         if (limitMap == null) {
             return true;
         }
         if (ConfigHandler.getDepends().ResidenceEnabled()) {
-            if (ConfigHandler.getConfigPath().isLimitRes()) {
+            if (ConfigHandler.getConfigPath().isSpawnResFlag()) {
                 ClaimedResidence res = Residence.getInstance().getResidenceManager().getByLoc(loc);
                 if (res != null) {
                     if (res.getPermissions().has("spawnlimitbypass", false)) {
@@ -86,7 +87,7 @@ public class EntityUtils {
     }
 
     /**
-     * @param value        the spawn reason of this entity.
+     * @param value      the spawn reason of this entity.
      * @param list       the spawn Reasons in configuration.
      * @param ignoreList the spawn Ignore-Reasons in configuration.
      * @return if the entity spawn reason match the config setting.
@@ -110,7 +111,8 @@ public class EntityUtils {
         if (value == null) {
             return true;
         }
-        return block.isLiquid();
+        boolean blockLiquid = block.isLiquid();
+        return value.equals("true") && blockLiquid || value.equals("false") && !blockLiquid;
     }
 
     /**

@@ -3,10 +3,12 @@ package tw.momocraft.entityplus.listeners;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.Location;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.ServerHandler;
 
@@ -14,6 +16,7 @@ import java.util.List;
 
 public class EntityDamage implements Listener {
 
+    /*
     @EventHandler(priority = EventPriority.HIGH)
     public void onEntityDamage(EntityDamageEvent e) {
         String damageCause = e.getCause().name();
@@ -39,7 +42,7 @@ public class EntityDamage implements Listener {
                     }
                 }
 
-                if (!ConfigHandler.getEntity(en, "Damage-Skip-Duration.List")) {
+                if (!ConfigHandler.getConfigPath().getEntity(en, "Damage-Skip-Duration.List")) {
                     return;
                 }
                 if (ConfigHandler.getEntity(en, "Damage-Skip-Duration.Ignore-List")) {
@@ -154,18 +157,6 @@ public class EntityDamage implements Listener {
             }
         }
     }
-
-     * @param cause the damage cause.
-     * @param path  the path of spawn reason in config.yml.
-     * @return if the entity spawn reason match the config setting.
-     */
-    /*
-    private boolean getReason(String cause, String path) {
-        String reason = ConfigHandler.getConfig("config.yml").getString(path);
-        if (reason != null) {
-            return cause.equalsIgnoreCase(reason);
-        }
-        return true;
-    }
+    */
 }
 

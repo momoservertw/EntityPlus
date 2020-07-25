@@ -8,9 +8,9 @@ public class LimitMap {
     private boolean AFK;
     private double AFKChance;
     private int AFKAmount;
-    private int searchX;
-    private int searchY;
-    private int searchZ;
+    private long searchX;
+    private long searchY;
+    private long searchZ;
 
     public void setGroupName(String groupName) {
         this.groupName = groupName;
@@ -36,15 +36,15 @@ public class LimitMap {
         this.AFKAmount = AFKAmount;
     }
 
-    public void setSearchX(int searchX) {
+    public void setSearchX(long searchX) {
         this.searchX = searchX;
     }
 
-    public void setSearchY(int searchY) {
+    public void setSearchY(long searchY) {
         this.searchY = searchY;
     }
 
-    public void setSearchZ(int searchZ) {
+    public void setSearchZ(long searchZ) {
         this.searchZ = searchZ;
     }
 
@@ -73,15 +73,15 @@ public class LimitMap {
         return AFKAmount;
     }
 
-    public int getSearchX() {
+    public long getSearchX() {
         return searchX;
     }
 
-    public int getSearchY() {
+    public long getSearchY() {
         return searchY;
     }
 
-    public int getSearchZ() {
+    public long getSearchZ() {
         return searchZ;
     }
 }

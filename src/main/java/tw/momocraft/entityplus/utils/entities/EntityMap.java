@@ -1,10 +1,14 @@
 package tw.momocraft.entityplus.utils.entities;
 
+import javafx.util.Pair;
+import tw.momocraft.entityplus.handlers.ServerHandler;
 import tw.momocraft.entityplus.utils.blocksapi.BlocksMap;
 import tw.momocraft.entityplus.utils.locationapi.LocationMap;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EntityMap {
 
@@ -20,8 +24,8 @@ public class EntityMap {
     private String day;
     private List<LocationMap> locMaps = new ArrayList<>();
     private List<BlocksMap> blocksMaps = new ArrayList<>();
-    private LimitMap limitMap = null;
-    private DropMap dropMap = null;
+    private Pair<String, LimitMap> limitPair = null;
+    private Map<String, DropMap> dropMap = new HashMap<>();
 
     public String getGroupName() {
         return groupName;
@@ -71,11 +75,11 @@ public class EntityMap {
         return blocksMaps;
     }
 
-    public LimitMap getLimitMap() {
-        return limitMap;
+    public Pair<String, LimitMap> getLimitPair() {
+        return limitPair;
     }
 
-    public DropMap getDropMap() {
+    public Map<String, DropMap> getDropMap() {
         return dropMap;
     }
 
@@ -127,11 +131,11 @@ public class EntityMap {
         this.locMaps = locationMaps;
     }
 
-    public void setLimitMap(LimitMap limitMap) {
-        this.limitMap = limitMap;
+    public void setLimitPair(Pair<String, LimitMap> limitPair) {
+        this.limitPair = limitPair;
     }
 
-    public void setDropMap(DropMap dropMap) {
+    public void setDropMap(Map<String, DropMap> dropMap) {
         this.dropMap = dropMap;
     }
 }

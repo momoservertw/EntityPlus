@@ -2,23 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="db9de2ae-2a97-4e0b-968d-c3ef6fdf69c0" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/DropMap.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/LivingEntityMap.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/entities.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/future.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/CreatureSpawn.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/CreatureSpawn.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/EntityDamage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/EntityDamage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/EntityDeath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/EntityDeath.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/MythicMobsLootDrop.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/MythicMobsLootDrop.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/MythicMobsSpawn.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/MythicMobsSpawn.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/ConfigPath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/ConfigPath.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/DropMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/DropMap.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/EntityMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/EntityMap.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/EntityUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/EntityUtils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/LimitMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/LimitMap.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/SpawnerMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/SpawnerMap.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/LivingEntityMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/LivingEntityMap.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/config2.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/config3.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/groups.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/groups.yml" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -32,21 +27,72 @@
     <option name="isMigrated" value="true" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/resources/config.yml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="42">
-              <caret line="2" column="19" lean-forward="true" selection-start-line="2" selection-start-column="19" selection-end-line="2" selection-end-column="19" />
+            <state relative-caret-position="226">
+              <caret line="66" column="19" selection-start-line="66" selection-start-column="19" selection-end-line="66" selection-end-column="19" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/resources/entities.yml">
+        <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/EntityDamage.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-948">
-              <caret line="19" column="17" lean-forward="true" selection-start-line="19" selection-start-column="17" selection-end-line="19" selection-end-column="17" />
+            <state relative-caret-position="378">
+              <caret line="18" column="6" selection-start-line="18" selection-start-column="6" selection-end-line="18" selection-end-column="6" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/ConfigPath.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="315">
+              <caret line="273" column="43" lean-forward="true" selection-start-line="273" selection-start-column="43" selection-end-line="273" selection-end-column="43" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#27705#27706#0" expanded="true" />
+                <element signature="e#27786#27787#0" expanded="true" />
+                <element signature="e#27846#27847#0" expanded="true" />
+                <element signature="e#28584#28585#0" expanded="true" />
+                <element signature="e#28617#28618#0" expanded="true" />
+                <element signature="e#28029#28030#0" expanded="true" />
+                <element signature="e#28087#28088#0" expanded="true" />
+                <element signature="e#28155#28156#0" expanded="true" />
+                <element signature="e#28863#28864#0" expanded="true" />
+                <element signature="e#28899#28900#0" expanded="true" />
+                <element signature="e#28299#28300#0" expanded="true" />
+                <element signature="e#28363#28364#0" expanded="true" />
+                <element signature="e#28429#28430#0" expanded="true" />
+                <element signature="e#28493#28494#0" expanded="true" />
+                <element signature="e#28588#28589#0" expanded="true" />
+                <element signature="e#28666#28667#0" expanded="true" />
+                <element signature="e#28726#28727#0" expanded="true" />
+                <element signature="e#28800#28801#0" expanded="true" />
+                <element signature="e#28876#28877#0" expanded="true" />
+                <element signature="e#28955#28956#0" expanded="true" />
+                <element signature="e#29024#29025#0" expanded="true" />
+                <element signature="e#29100#29101#0" expanded="true" />
+                <element signature="e#29170#29171#0" expanded="true" />
+                <element signature="e#29242#29243#0" expanded="true" />
+                <element signature="e#29314#29315#0" expanded="true" />
+                <element signature="e#29384#29385#0" expanded="true" />
+                <element signature="e#29444#29445#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/DropMap.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="210">
+              <caret line="10" selection-start-line="10" selection-end-line="10" />
             </state>
           </provider>
         </entry>
@@ -54,100 +100,46 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/CreatureSpawn.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="47" column="51" selection-start-line="47" selection-start-column="51" selection-end-line="47" selection-end-column="51" />
+            <state relative-caret-position="270">
+              <caret line="90" column="99" lean-forward="true" selection-start-line="90" selection-start-column="99" selection-end-line="90" selection-end-column="99" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/MythicMobsLootDrop.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1932">
+              <caret line="92" column="54" selection-start-line="92" selection-start-column="54" selection-end-line="92" selection-end-column="54" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/EntityDeath.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="21">
+              <caret line="1" selection-start-line="1" selection-end-line="1" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/ConfigPath.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/EntityUtils.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="357">
-              <caret line="88" column="7" lean-forward="true" selection-start-line="88" selection-start-column="7" selection-end-line="88" selection-end-column="7" />
+            <state relative-caret-position="1285">
+              <caret line="97" column="9" selection-start-line="97" selection-start-column="9" selection-end-line="97" selection-end-column="9" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#3222#3223#0" expanded="true" />
-                <element signature="e#3260#3261#0" expanded="true" />
-                <element signature="e#26473#26474#0" expanded="true" />
-                <element signature="e#26554#26555#0" expanded="true" />
-                <element signature="e#26614#26615#0" expanded="true" />
-                <element signature="e#26894#26895#0" expanded="true" />
-                <element signature="e#26927#26928#0" expanded="true" />
-                <element signature="e#26800#26801#0" expanded="true" />
-                <element signature="e#26858#26859#0" expanded="true" />
-                <element signature="e#26926#26927#0" expanded="true" />
-                <element signature="e#27002#27003#0" expanded="true" />
-                <element signature="e#27070#27071#0" expanded="true" />
-                <element signature="e#27134#27135#0" expanded="true" />
-                <element signature="e#27200#27201#0" expanded="true" />
-                <element signature="e#27278#27279#0" expanded="true" />
-                <element signature="e#27342#27343#0" expanded="true" />
-                <element signature="e#27437#27438#0" expanded="true" />
-                <element signature="e#27515#27516#0" expanded="true" />
-                <element signature="e#27577#27578#0" expanded="true" />
-                <element signature="e#27643#27644#0" expanded="true" />
-                <element signature="e#27719#27720#0" expanded="true" />
-                <element signature="e#27798#27799#0" expanded="true" />
-                <element signature="e#27867#27868#0" expanded="true" />
-                <element signature="e#27943#27944#0" expanded="true" />
-                <element signature="e#28013#28014#0" expanded="true" />
-                <element signature="e#28085#28086#0" expanded="true" />
-                <element signature="e#28157#28158#0" expanded="true" />
-                <element signature="e#28227#28228#0" expanded="true" />
-                <element signature="e#28287#28288#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/DependAPI.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-108">
-              <caret line="4" column="13" selection-start-line="4" selection-start-column="13" selection-end-line="4" selection-end-column="13" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/handlers/ConfigHandler.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-546">
-              <caret line="20" column="13" selection-start-line="20" selection-start-column="13" selection-end-line="20" selection-end-column="13" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/LivingEntityMap.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="189">
-              <caret line="9" column="18" selection-start-line="9" selection-start-column="14" selection-end-line="9" selection-end-column="18" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#271#272#0" expanded="true" />
-                <element signature="e#323#324#0" expanded="true" />
-                <element signature="e#401#402#0" expanded="true" />
-                <element signature="e#459#460#0" expanded="true" />
-                <element signature="e#508#509#0" expanded="true" />
-                <element signature="e#538#539#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/EntityMap.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="126">
-              <caret line="6" column="22" selection-start-line="6" selection-start-column="22" selection-end-line="6" selection-end-column="22" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#2559#2560#0" expanded="true" />
-                <element signature="e#2603#2604#0" expanded="true" />
-                <element signature="e#2948#2949#0" expanded="true" />
-                <element signature="e#2986#2987#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -156,20 +148,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/LimitMap.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-21">
-              <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/MythicMobsLootDrop.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="504">
-              <caret line="43" column="58" selection-start-line="43" selection-start-column="58" selection-end-line="43" selection-end-column="58" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state relative-caret-position="294">
+              <caret line="50" lean-forward="true" selection-start-line="50" selection-end-line="50" />
             </state>
           </provider>
         </entry>
@@ -188,6 +168,8 @@
       <find>Spawn-Limit</find>
       <find>Table</find>
       <find>Spawn-Conditions.Groups.</find>
+      <find>There is</find>
+      <find>Bypass</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -201,24 +183,45 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/SpawnerMap.java" />
-        <option value="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/LimitMap.java" />
-        <option value="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/DropMap.java" />
         <option value="$PROJECT_DIR$/src/main/resources/groups.yml" />
         <option value="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/LivingEntityTable.java" />
-        <option value="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/LivingEntityMap.java" />
-        <option value="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/MythicMobsLootDrop.java" />
-        <option value="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/EntityMap.java" />
         <option value="$PROJECT_DIR$/src/main/resources/entities.yml" />
-        <option value="$PROJECT_DIR$/src/main/resources/config.yml" />
+        <option value="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/locationapi/utils/customgroups/GroupsGenerator.java" />
+        <option value="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/LimitMap.java" />
+        <option value="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/EntityUtils.java" />
+        <option value="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/EntityMap.java" />
+        <option value="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/EntityDamage.java" />
         <option value="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/CreatureSpawn.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/config.yml" />
+        <option value="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/DropMap.java" />
         <option value="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/ConfigPath.java" />
+        <option value="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/MythicMobsLootDrop.java" />
+        <option value="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/EntityDeath.java" />
+        <option value="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/LivingEntityMap.java" />
       </list>
     </option>
   </component>
+  <component name="MavenProjectNavigator">
+    <treeState>
+      <expand>
+        <path>
+          <item name="" type="16c1761:MavenProjectsStructure$RootNode" />
+          <item name="EntityPlus" type="9519ce18:MavenProjectsStructure$ProjectNode" />
+        </path>
+        <path>
+          <item name="" type="16c1761:MavenProjectsStructure$RootNode" />
+          <item name="EntityPlus" type="9519ce18:MavenProjectsStructure$ProjectNode" />
+          <item name="Lifecycle" type="58874e2:MavenProjectsStructure$LifecycleNode" />
+        </path>
+      </expand>
+      <select />
+    </treeState>
+  </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-9" />
-    <option name="width" value="3870" />
-    <option name="height" value="1466" />
+    <option name="x" value="114" />
+    <option name="y" value="153" />
+    <option name="width" value="2175" />
+    <option name="height" value="1170" />
   </component>
   <component name="ProjectId" id="1b6UFVZVPsaZKNbyEvCTRVcJgh0" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -228,6 +231,7 @@
     </navigator>
     <panes>
       <pane id="ProjectPane" />
+      <pane id="PackagesPane" />
       <pane id="Scope">
         <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
           <expand>
@@ -268,35 +272,7 @@
               <item name="main" type="9f88c78c:ScopeViewTreeModel$FileNode" />
               <item name="java" type="9f88c78c:ScopeViewTreeModel$FileNode" />
               <item name="tw.momocraft.entityplus" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="handlers" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="EntityPlus" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="EntityPlus" type="2674bda8:ScopeViewTreeModel$GroupNode" />
-              <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="main" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="java" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="tw.momocraft.entityplus" type="9f88c78c:ScopeViewTreeModel$FileNode" />
               <item name="listeners" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="EntityPlus" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="EntityPlus" type="2674bda8:ScopeViewTreeModel$GroupNode" />
-              <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="main" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="java" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="tw.momocraft.entityplus" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="utils" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="EntityPlus" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="EntityPlus" type="2674bda8:ScopeViewTreeModel$GroupNode" />
-              <item name="src" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="main" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="java" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="tw.momocraft.entityplus" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="utils" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="entities" type="9f88c78c:ScopeViewTreeModel$FileNode" />
             </path>
             <path>
               <item name="EntityPlus" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
@@ -309,7 +285,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="ProjectViewState">
@@ -319,7 +294,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../BarrierPlus" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -327,23 +302,24 @@
     <property name="settings.editor.selected.configurable" value="preferences.editor" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\sayuri\IdeaProjects\EntityPlus\src\main\resources" />
-      <recent name="C:\Users\sayuri\IdeaProjects\EntityPlus\src\main\resources\Entities" />
-      <recent name="C:\Users\sayuri\IdeaProjects\EntityPlus" />
-    </key>
-    <key name="CopyClassDialog.RECENTS_KEY">
-      <recent name="tw.momocraft.entityplus.utils.entities" />
-      <recent name="tw.momocraft.entityplus.utils" />
-      <recent name="tw.momocraft.entityplus.handlers" />
-      <recent name="tw.momocraft.entityplus.listeners" />
-      <recent name="tw.momocraft.guardianplus" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\utils\locationapi" />
       <recent name="C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\resources" />
       <recent name="C:\Users\sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\handlers\test" />
       <recent name="C:\Users\sayuri\IdeaProjects\GuardianPlus\src\main\java\tw\momocraft\guardianplus\listeners" />
       <recent name="C:\Users\sayuri\IdeaProjects\GuardianPlus\src\main\java\tw\momocraft\guardianplus" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="tw.momocraft.entityplus" />
+      <recent name="tw.momocraft.entityplus.utils.entities" />
+      <recent name="tw.momocraft.entityplus.utils" />
+      <recent name="tw.momocraft.entityplus.handlers" />
+      <recent name="tw.momocraft.entityplus.listeners" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\sayuri\IdeaProjects\EntityPlus\src\main\resources" />
+      <recent name="C:\Users\sayuri\IdeaProjects\EntityPlus\src\main\resources\Entities" />
+      <recent name="C:\Users\sayuri\IdeaProjects\EntityPlus" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -372,19 +348,43 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="1721" height="935" extended-state="6" />
+    <frame x="-7" y="-7" width="1721" height="935" extended-state="7" />
     <editor active="true" />
     <layout>
-      <window_info id="Image Layers" />
-      <window_info id="Designer" />
-      <window_info id="UI Designer" />
-      <window_info id="Capture Tool" />
-      <window_info id="Favorites" side_tool="true" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.18220085" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17618762" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Version Control" />
-      <window_info anchor="bottom" id="Terminal" />
-      <window_info anchor="bottom" id="Event Log" side_tool="true" />
+      <window_info id="Image Layers" order="2" />
+      <window_info id="Designer" order="3" />
+      <window_info id="UI Designer" order="4" />
+      <window_info id="Capture Tool" order="5" />
+      <window_info id="Favorites" order="6" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32876712" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Terminal" order="7" />
+      <window_info anchor="bottom" id="Event Log" order="8" side_tool="true" />
+      <window_info anchor="bottom" id="Version Control" order="9" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Palette" order="3" />
+      <window_info anchor="right" id="Maven" order="4" weight="0.32952496" />
+      <window_info anchor="right" id="Theme Preview" order="5" />
+      <window_info anchor="right" id="Capture Analysis" order="6" />
+      <window_info anchor="right" id="Palette&#9;" order="7" />
+    </layout>
+    <layout-to-restore>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17438364" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Image Layers" order="2" />
+      <window_info id="Designer" order="3" />
+      <window_info id="UI Designer" order="4" />
+      <window_info id="Capture Tool" order="5" />
+      <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" />
@@ -392,41 +392,17 @@
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="right" id="Palette" />
-      <window_info anchor="right" id="Theme Preview" />
-      <window_info anchor="right" id="Maven" />
-      <window_info anchor="right" id="Capture Analysis" />
-      <window_info anchor="right" id="Palette&#9;" />
+      <window_info anchor="bottom" id="Terminal" order="7" />
+      <window_info anchor="bottom" id="Event Log" order="8" side_tool="true" />
+      <window_info anchor="bottom" id="Version Control" order="9" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-    </layout>
-    <layout-to-restore>
-      <window_info id="Image Layers" order="0" />
-      <window_info id="Designer" order="1" />
-      <window_info id="UI Designer" order="2" />
-      <window_info id="Capture Tool" order="3" />
-      <window_info id="Favorites" order="4" side_tool="true" />
-      <window_info active="true" content_ui="combo" id="Project" order="5" visible="true" weight="0.18220085" />
-      <window_info id="Structure" order="6" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Version Control" order="0" />
-      <window_info anchor="bottom" id="Terminal" order="1" />
-      <window_info anchor="bottom" id="Event Log" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Message" order="3" />
-      <window_info anchor="bottom" id="Find" order="4" />
-      <window_info anchor="bottom" id="Run" order="5" />
-      <window_info anchor="bottom" id="Debug" order="6" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="7" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="8" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="9" />
-      <window_info anchor="right" id="Palette" order="0" />
-      <window_info anchor="right" id="Capture Analysis" order="1" />
-      <window_info anchor="right" id="Theme Preview" order="2" />
-      <window_info anchor="right" id="Palette&#9;" order="3" />
+      <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="right" id="Maven" order="4" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="5" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="6" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="7" weight="0.25" />
+      <window_info anchor="right" id="Theme Preview" order="5" />
+      <window_info anchor="right" id="Capture Analysis" order="6" />
+      <window_info anchor="right" id="Palette&#9;" order="7" />
     </layout-to-restore>
   </component>
   <component name="WindowStateProjectService">
@@ -480,11 +456,7 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/resources/config2.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-7409" />
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/config2.yml" />
     <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/SpawnerMap.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="168">
@@ -492,58 +464,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/EntityUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="546">
-          <caret line="26" column="31" lean-forward="true" selection-start-line="26" selection-start-column="31" selection-end-line="26" selection-end-column="31" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/DropMap.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="8" column="22" selection-start-line="8" selection-start-column="22" selection-end-line="8" selection-end-column="22" />
-          <folding>
-            <element signature="e#259#260#0" expanded="true" />
-            <element signature="e#291#292#0" expanded="true" />
-            <element signature="e#324#325#0" expanded="true" />
-            <element signature="e#355#356#0" expanded="true" />
-            <element signature="e#385#386#0" expanded="true" />
-            <element signature="e#413#414#0" expanded="true" />
-            <element signature="e#441#442#0" expanded="true" />
-            <element signature="e#467#468#0" expanded="true" />
-            <element signature="e#442#443#0" expanded="true" />
-            <element signature="e#469#470#0" expanded="true" />
-            <element signature="e#554#555#0" expanded="true" />
-            <element signature="e#583#584#0" expanded="true" />
-            <element signature="e#273#274#0" expanded="true" />
-            <element signature="e#315#316#0" expanded="true" />
-            <element signature="e#724#725#0" expanded="true" />
-            <element signature="e#764#765#0" expanded="true" />
-            <element signature="e#950#951#0" expanded="true" />
-            <element signature="e#984#985#0" expanded="true" />
-            <element signature="e#351#352#0" expanded="true" />
-            <element signature="e#381#382#0" expanded="true" />
-            <element signature="e#944#945#0" expanded="true" />
-            <element signature="e#976#977#0" expanded="true" />
-            <element signature="e#1018#1019#0" expanded="true" />
-            <element signature="e#1054#1055#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/resources/future.yml">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/EntityDeath.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="84">
-          <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/resources/groups.yml">
       <provider selected="true" editor-type-id="text-editor">
@@ -552,123 +474,201 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/entities.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="399">
+          <caret line="19" column="17" selection-start-line="19" selection-start-column="17" selection-end-line="19" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/DependAPI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="84">
+          <caret line="4" column="13" selection-start-line="4" selection-start-column="13" selection-end-line="4" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/handlers/ConfigHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-546">
+        <state relative-caret-position="84">
           <caret line="20" column="13" selection-start-line="20" selection-start-column="13" selection-end-line="20" selection-end-column="13" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/LimitMap.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/locationapi/utils/locationapi/LocationMap.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/locationapi/utils/TabComplete.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/locationapi/utils/entities/DropMap.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/locationapi/utils/Language.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/locationapi/utils/blocksapi/BlocksAPI.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/locationapi/utils/ConfigPath.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/locationapi/utils/EntitiesFile.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/locationapi/utils/DependAPI.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/locationapi/utils/entities/EntityMap.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/locationapi/utils/customgroups/GroupsGenerator.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/Utils.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-21">
-          <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
+        <state relative-caret-position="3339">
+          <caret line="172" column="65" selection-start-line="172" selection-start-column="65" selection-end-line="172" selection-end-column="65" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/MythicMobsLootDrop.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/locationapi/LocationAPI.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="504">
-          <caret line="43" column="58" selection-start-line="43" selection-start-column="58" selection-end-line="43" selection-end-column="58" />
+        <state>
+          <caret column="18" selection-start-column="18" selection-end-column="18" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/DependAPI.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/handlers/ServerHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-108">
-          <caret line="4" column="13" selection-start-line="4" selection-start-column="13" selection-end-line="4" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/entities.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-948">
-          <caret line="19" column="17" lean-forward="true" selection-start-line="19" selection-start-column="17" selection-end-line="19" selection-end-column="17" />
+        <state relative-caret-position="3633">
+          <caret line="180" column="45" selection-start-line="180" selection-start-column="45" selection-end-line="181" selection-end-column="153" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/EntityMap.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="126">
-          <caret line="6" column="22" selection-start-line="6" selection-start-column="22" selection-end-line="6" selection-end-column="22" />
+        <state relative-caret-position="-255">
+          <caret line="12" column="13" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#2559#2560#0" expanded="true" />
-            <element signature="e#2603#2604#0" expanded="true" />
-            <element signature="e#2948#2949#0" expanded="true" />
-            <element signature="e#2986#2987#0" expanded="true" />
+            <element signature="e#2507#2508#0" expanded="true" />
+            <element signature="e#2543#2544#0" expanded="true" />
+            <element signature="e#2605#2606#0" expanded="true" />
+            <element signature="e#2653#2654#0" expanded="true" />
+            <element signature="e#2771#2772#0" expanded="true" />
+            <element signature="e#2801#2802#0" expanded="true" />
+            <element signature="e#2862#2863#0" expanded="true" />
+            <element signature="e#2906#2907#0" expanded="true" />
+            <element signature="e#2968#2969#0" expanded="true" />
+            <element signature="e#3011#3012#0" expanded="true" />
+            <element signature="e#3077#3078#0" expanded="true" />
+            <element signature="e#3119#3120#0" expanded="true" />
+            <element signature="e#3179#3180#0" expanded="true" />
+            <element signature="e#3217#3218#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/LimitMap.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="294">
+          <caret line="50" lean-forward="true" selection-start-line="50" selection-end-line="50" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/EntityDamage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="378">
+          <caret line="18" column="6" selection-start-line="18" selection-start-column="6" selection-end-line="18" selection-end-column="6" />
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/resources/config.yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="42">
-          <caret line="2" column="19" lean-forward="true" selection-start-line="2" selection-start-column="19" selection-end-line="2" selection-end-column="19" />
+        <state relative-caret-position="226">
+          <caret line="66" column="19" selection-start-line="66" selection-start-column="19" selection-end-line="66" selection-end-column="19" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/LivingEntityMap.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/DropMap.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="189">
-          <caret line="9" column="18" selection-start-line="9" selection-start-column="14" selection-end-line="9" selection-end-column="18" />
+        <state relative-caret-position="210">
+          <caret line="10" selection-start-line="10" selection-end-line="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/ConfigPath.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="273" column="43" lean-forward="true" selection-start-line="273" selection-start-column="43" selection-end-line="273" selection-end-column="43" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#271#272#0" expanded="true" />
-            <element signature="e#323#324#0" expanded="true" />
-            <element signature="e#401#402#0" expanded="true" />
-            <element signature="e#459#460#0" expanded="true" />
-            <element signature="e#508#509#0" expanded="true" />
-            <element signature="e#538#539#0" expanded="true" />
+            <element signature="e#27705#27706#0" expanded="true" />
+            <element signature="e#27786#27787#0" expanded="true" />
+            <element signature="e#27846#27847#0" expanded="true" />
+            <element signature="e#28584#28585#0" expanded="true" />
+            <element signature="e#28617#28618#0" expanded="true" />
+            <element signature="e#28029#28030#0" expanded="true" />
+            <element signature="e#28087#28088#0" expanded="true" />
+            <element signature="e#28155#28156#0" expanded="true" />
+            <element signature="e#28863#28864#0" expanded="true" />
+            <element signature="e#28899#28900#0" expanded="true" />
+            <element signature="e#28299#28300#0" expanded="true" />
+            <element signature="e#28363#28364#0" expanded="true" />
+            <element signature="e#28429#28430#0" expanded="true" />
+            <element signature="e#28493#28494#0" expanded="true" />
+            <element signature="e#28588#28589#0" expanded="true" />
+            <element signature="e#28666#28667#0" expanded="true" />
+            <element signature="e#28726#28727#0" expanded="true" />
+            <element signature="e#28800#28801#0" expanded="true" />
+            <element signature="e#28876#28877#0" expanded="true" />
+            <element signature="e#28955#28956#0" expanded="true" />
+            <element signature="e#29024#29025#0" expanded="true" />
+            <element signature="e#29100#29101#0" expanded="true" />
+            <element signature="e#29170#29171#0" expanded="true" />
+            <element signature="e#29242#29243#0" expanded="true" />
+            <element signature="e#29314#29315#0" expanded="true" />
+            <element signature="e#29384#29385#0" expanded="true" />
+            <element signature="e#29444#29445#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/CreatureSpawn.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="47" column="51" selection-start-line="47" selection-start-column="51" selection-end-line="47" selection-end-column="51" />
+        <state relative-caret-position="270">
+          <caret line="90" column="99" lean-forward="true" selection-start-line="90" selection-start-column="99" selection-end-line="90" selection-end-column="99" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/ConfigPath.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/MythicMobsLootDrop.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="88" column="7" lean-forward="true" selection-start-line="88" selection-start-column="7" selection-end-line="88" selection-end-column="7" />
+        <state relative-caret-position="1932">
+          <caret line="92" column="54" selection-start-line="92" selection-start-column="54" selection-end-line="92" selection-end-column="54" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#3222#3223#0" expanded="true" />
-            <element signature="e#3260#3261#0" expanded="true" />
-            <element signature="e#26473#26474#0" expanded="true" />
-            <element signature="e#26554#26555#0" expanded="true" />
-            <element signature="e#26614#26615#0" expanded="true" />
-            <element signature="e#26894#26895#0" expanded="true" />
-            <element signature="e#26927#26928#0" expanded="true" />
-            <element signature="e#26800#26801#0" expanded="true" />
-            <element signature="e#26858#26859#0" expanded="true" />
-            <element signature="e#26926#26927#0" expanded="true" />
-            <element signature="e#27002#27003#0" expanded="true" />
-            <element signature="e#27070#27071#0" expanded="true" />
-            <element signature="e#27134#27135#0" expanded="true" />
-            <element signature="e#27200#27201#0" expanded="true" />
-            <element signature="e#27278#27279#0" expanded="true" />
-            <element signature="e#27342#27343#0" expanded="true" />
-            <element signature="e#27437#27438#0" expanded="true" />
-            <element signature="e#27515#27516#0" expanded="true" />
-            <element signature="e#27577#27578#0" expanded="true" />
-            <element signature="e#27643#27644#0" expanded="true" />
-            <element signature="e#27719#27720#0" expanded="true" />
-            <element signature="e#27798#27799#0" expanded="true" />
-            <element signature="e#27867#27868#0" expanded="true" />
-            <element signature="e#27943#27944#0" expanded="true" />
-            <element signature="e#28013#28014#0" expanded="true" />
-            <element signature="e#28085#28086#0" expanded="true" />
-            <element signature="e#28157#28158#0" expanded="true" />
-            <element signature="e#28227#28228#0" expanded="true" />
-            <element signature="e#28287#28288#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/LivingEntityMap.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="378">
+          <caret line="22" column="1" lean-forward="true" selection-start-line="22" selection-start-column="1" selection-end-line="22" selection-end-column="1" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#513#514#0" expanded="true" />
+            <element signature="e#543#544#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/EntityDeath.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="21">
+          <caret line="1" selection-start-line="1" selection-end-line="1" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/EntityUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1285">
+          <caret line="97" column="9" selection-start-line="97" selection-start-column="9" selection-end-line="97" selection-end-column="9" />
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>

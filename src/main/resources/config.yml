@@ -16,15 +16,17 @@ Entities:
         # The "CUSTOM" reason does not work if you have MythicMobs.
         # MythicMobs: https://www.spigotmc.org/resources/%E2%9A%94-mythicmobs-free-version-%E2%96%BAthe-1-custom-mob-creator%E2%97%84.5702/
         MythicMobs: true
+        Bypass:
+          Residence-Flag: false
   # If there are too many creatures over the spawn location, it will prevent spawning creatures.
   # More information: https://github.com/momoservertw/EntityPlus/wiki/Limit
-  Limits:
+  Limit:
     Enable: false
     Settings:
       Features:
         AFK: true
         Bypass:
-          Residence-Flag: true
+          Residence-Flag: false
     Groups:
       NormalMobs:
         Enable: true
@@ -63,7 +65,8 @@ Entities:
         Money: true
         Exp: true
         Items: true
-        MythicMobs-Items: true
+        Bypass:
+          Residence-Flag: false
       # If players has multiple groups, they will get all extra rewards.
       # Mode: "plus" or "multiply"
       Bonus:
@@ -79,15 +82,12 @@ Entities:
         Money: 1.5
         Exp: 1.5
         Items: 1.5
-        # Change the reward for killing MythicMobs.
-        MythicMobs-Items: 1.5
       lucky2:
         Enable: true
         Priority: 2
         Money: 2
         Exp: 2
         Items: 2
-        MythicMobs-Items: 1.5
   # Control creatures damage and modify it.
   # More information: https://github.com/momoservertw/EntityPlus/wiki/Damage
   Damage:

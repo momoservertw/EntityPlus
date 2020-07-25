@@ -1,6 +1,5 @@
 # --{ =-=-=-=-=-=-=-=-=-= EntityPlus's Custom Groups Settings, by Momocraft =-=-=-=-=-=-=-=-=-= }--
 Config-Version: 1
-
 Location:
   NormalWorlds:
     Worlds:
@@ -16,16 +15,14 @@ Location:
       - world
     Area:
       S: 10000
-
 Blocks:
   # When creatures spawn in wither_rose.
-  WitherRose:
+  InWitherRose:
     Types:
       - WITHER_ROSE
     Search:
-      S: 0
       Y: 1
-  Monument:
+  NearbyMonument:
     Types:
       - PRISMARINE
       - DARK_PRISMARINE
@@ -33,7 +30,6 @@ Blocks:
     Search:
       S: 5
       Y: 5
-
 Materials:
   Machines:
     - PISTON
@@ -97,7 +93,6 @@ Materials:
     - OAK_FENCE_GATE
     - SPRUCE_FENCE_GATE
   Container: []
-
   UsableBlock:
     - ITEM_FRAME
     - BEACON
@@ -122,12 +117,10 @@ Materials:
     - DAYLIGHT_DETECTOR
     - DAYLIGHT_DETECTOR_INVERTED
     - LEVER
-
 MythicMobs:
   MythicMobsEx:
     - SkeletonKing
     - SkeletalKnight
-
 Entities:
   Monsters:
     - BLAZE

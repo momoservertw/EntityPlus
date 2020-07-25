@@ -7,7 +7,6 @@ public class DropMap {
     private long money;
     private long exp;
     private long items;
-    private long mmItems;
 
 
     public String getGroupName() {
@@ -30,11 +29,6 @@ public class DropMap {
         return items;
     }
 
-    public long getMmItems() {
-        return mmItems;
-    }
-
-
 
     public void setGroupName(String groupName) {
         this.groupName = groupName;
@@ -54,10 +48,6 @@ public class DropMap {
 
     public void setItems(long items) {
         this.items = items;
-    }
-
-    public void setMmItems(long mmItems) {
-        this.mmItems = mmItems;
     }
 
 }
