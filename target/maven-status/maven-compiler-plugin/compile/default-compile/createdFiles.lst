@@ -1,0 +1,6 @@
+tw\momocraft\entityplus\utils\Logger.class
+tw\momocraft\entityplus\handlers\UpdateHandler.class
+tw\momocraft\entityplus\utils\TabComplete.class
+tw\momocraft\entityplus\utils\EntitiesFile.class
+tw\momocraft\entityplus\Commands.class
+tw\momocraft\entityplus\utils\VaultAPI.class

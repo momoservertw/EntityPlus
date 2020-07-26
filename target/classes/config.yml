@@ -65,7 +65,6 @@ Entities:
         Money: true
         Exp: true
         Items: true
-        MythicMobs-Items: true
         Bypass:
           Residence-Flag: false
       # If players has multiple groups, they will get all extra rewards.
@@ -83,15 +82,12 @@ Entities:
         Money: 1.5
         Exp: 1.5
         Items: 1.5
-        # Change the reward for killing MythicMobs.
-        MythicMobs-Items: 1.5
       lucky2:
         Enable: true
         Priority: 2
         Money: 2
         Exp: 2
         Items: 2
-        MythicMobs-Items: 1.5
   # Control creatures damage and modify it.
   # More information: https://github.com/momoservertw/EntityPlus/wiki/Damage
   Damage:
