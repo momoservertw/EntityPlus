@@ -1,5 +1,6 @@
 package tw.momocraft.entityplus.listeners;
 
+import io.lumine.xikage.mythicmobs.drops.Drop;
 import javafx.util.Pair;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -29,13 +30,13 @@ public class EntityDeath implements Listener {
         }
 
         UUID entityUUID = entity.getUniqueId();
-        Map<UUID, Pair<String, String>> mobsMap = ConfigHandler.getConfigPath().getLivingEntityMap().getMobsMap();
-        if (!mobsMap.keySet().contains(entityUUID)) {
+        Pair<String, String> mobsPair = ConfigHandler.getConfigPath().getLivingEntityMap().getMobsMap().get(entityUUID);
+        if (mobsPair == null) {
             return;
         }
 
         // Get entity properties.
-        Map<String, DropMap> dropMap = ConfigHandler.getConfigPath().getEntityProp().get(mobsMap.get(entityUUID).getKey()).get(mobsMap.get(entityUUID).getValue()).getDropMap();
+        Map<String, DropMap> dropMap = ConfigHandler.getConfigPath().getEntityProp().get(mobsPair.getKey()).get(mobsPair.getValue()).getDropMap();
         if (dropMap == null) {
             return;
         }
@@ -82,15 +83,20 @@ public class EntityDeath implements Listener {
             totalItem = dropMap.get(maxMulti).getItems();
         }
 
-        int dropExp = e.getDroppedExp();
-        dropExp *= totalExp;
-        e.setDroppedExp(dropExp);
 
-        List<ItemStack> dropItem = e.getDrops();
-        for (ItemStack itemStack : dropItem) {
-            itemStack.setAmount((int) (itemStack.getAmount() * totalItem - 1));
-            entity.getWorld().dropItem(entity.getLocation(), new ItemStack(itemStack));
+        if (ConfigHandler.getConfigPath().isDropExp()) {
+            int dropExp = e.getDroppedExp();
+            dropExp *= totalExp;
+            e.setDroppedExp(dropExp);
         }
-        ServerHandler.sendConsoleMessage(String.valueOf(dropItem));
+
+        if (ConfigHandler.getConfigPath().isDropMmItem()) {
+            List<ItemStack> dropItem = e.getDrops();
+            for (ItemStack itemStack : dropItem) {
+                itemStack.setAmount((int) (itemStack.getAmount() * totalItem - 1));
+                entity.getWorld().dropItem(entity.getLocation(), new ItemStack(itemStack));
+                ServerHandler.sendConsoleMessage(String.valueOf(itemStack.getAmount()));
+            }
+        }
     }
 }

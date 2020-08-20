@@ -16,8 +16,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.SpawnerSpawnEvent;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.ServerHandler;
-import tw.momocraft.entityplus.utils.blocksapi.BlocksAPI;
-import tw.momocraft.entityplus.utils.locationapi.LocationAPI;
+import tw.momocraft.entityplus.utils.CustomCommands;
+import tw.momocraft.entityplus.utils.blocksutils.BlocksUtils;
+import tw.momocraft.entityplus.utils.locationutils.LocationAPI;
 import tw.momocraft.entityplus.utils.entities.SpawnerMap;
 
 import java.util.*;
@@ -38,7 +39,7 @@ public class SpawnerSpawn implements Listener {
                     if (!LocationAPI.checkLocation(loc, spawnerMap.getLocMaps(), "spawnerbypass")) {
                         return;
                     }
-                    if (!BlocksAPI.checkBlocks(loc, spawnerMap.getBlocksMaps(), "spawnerbypass")) {
+                    if (!BlocksUtils.checkBlocks(loc, spawnerMap.getBlocksMaps(), "spawnerbypass")) {
                         return;
                     }
                     if (ConfigHandler.getConfigPath().isSpawnerResFlag()) {
@@ -113,11 +114,11 @@ public class SpawnerSpawn implements Listener {
                 if (command.startsWith("nearby-")) {
                     command = command.replace("nearby-", "");
                     for (Player p : nearbyPlayers) {
-                        ServerHandler.executeCommands(p, command);
+                        CustomCommands.executeCommands(p, command);
                     }
                     continue;
                 }
-                ServerHandler.executeCommands(command);
+                CustomCommands.executeCommands(command);
             }
         }
     }

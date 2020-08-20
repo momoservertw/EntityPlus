@@ -1,4 +1,4 @@
-package tw.momocraft.entityplus.utils.locationapi;
+package tw.momocraft.entityplus.utils.locationutil;
 
 import java.util.HashMap;
 import java.util.List;

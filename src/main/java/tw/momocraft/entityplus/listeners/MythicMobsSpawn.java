@@ -1,6 +1,7 @@
 package tw.momocraft.entityplus.listeners;
 
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobSpawnEvent;
+import javafx.util.Pair;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.Location;
@@ -9,13 +10,12 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.ServerHandler;
-import tw.momocraft.entityplus.utils.blocksapi.BlocksAPI;
-import tw.momocraft.entityplus.utils.locationapi.LocationAPI;
+import tw.momocraft.entityplus.utils.blocksutils.BlocksUtils;
+import tw.momocraft.entityplus.utils.locationutils.LocationAPI;
 import tw.momocraft.entityplus.utils.entities.EntityMap;
 import tw.momocraft.entityplus.utils.entities.EntityUtils;
 
-import java.util.List;
-import java.util.Map;
+import java.util.TreeMap;
 
 public class MythicMobsSpawn implements Listener {
 
@@ -30,17 +30,16 @@ public class MythicMobsSpawn implements Listener {
         Entity entity = e.getEntity();
         String entityType = e.getMobType().getInternalName();
         // Get entity properties.
-        Map<String, List<EntityMap>> entityProp = ConfigHandler.getConfigPath().getEntityProp();
+        TreeMap<String, EntityMap> entityTypeProp = ConfigHandler.getConfigPath().getEntityProp().get(entityType);
         // Checks if the properties contains this type of entity.
-        if (entityProp.containsKey(entityType)) {
+        if (entityTypeProp != null) {
             // Checks every groups of this entity.
             Location loc = entity.getLocation();
-            String groupName;
-            Block block;
-            for (EntityMap entityMap : entityProp.get(entityType)) {
-                groupName = entityMap.getGroupName();
+            Block block = loc.getBlock();
+            EntityMap entityMap;
+            for (String groupName : entityTypeProp.keySet()) {
+                entityMap = entityTypeProp.get(groupName);
                 // Checks the spawn "biome".
-                block = loc.getBlock();
                 if (!EntityUtils.containValue(block.getBiome().name(), entityMap.getBoimes(), entityMap.getIgnoreBoimes())) {
                     ServerHandler.sendFeatureMessage("Spawn", entityType, "!Biome", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
@@ -65,7 +64,7 @@ public class MythicMobsSpawn implements Listener {
                     continue;
                 }
                 // Checks the "blocks" nearby the spawn location.
-                if (!BlocksAPI.checkBlocks(loc, entityMap.getBlocksMaps(), "spawnbypass")) {
+                if (!BlocksUtils.checkBlocks(loc, entityMap.getBlocksMaps(), "spawnbypass")) {
                     ServerHandler.sendFeatureMessage("Spawn", entityType, "!Blocks", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
@@ -73,13 +72,17 @@ public class MythicMobsSpawn implements Listener {
                 // Checks the spawn "chance".
                 if (!EntityUtils.isRandomChance(entityMap.getChance())) {
                     // If the creature spawn location has reach the maximum creature amount, it will cancel the spawn event.
-                    if (entityMap.getLimitMap() != null) {
-                        if (EntityUtils.checkLimit(entity, loc, entityMap.getLimitMap())) {
+                    if (entityMap.getLimitPair() != null) {
+                        if (EntityUtils.checkLimit(entity, loc, entityMap.getLimitPair().getValue())) {
+                            // Add a tag for this creature.
+                            ConfigHandler.getConfigPath().getLivingEntityMap().addMap(entity.getUniqueId(), new Pair<>(entityType, groupName));
                             ServerHandler.sendFeatureMessage("Spawn", entityType, "Limit", "return", groupName,
                                     new Throwable().getStackTrace()[0]);
                             return;
                         }
                     } else {
+                        // Add a tag for this creature.
+                        ConfigHandler.getConfigPath().getLivingEntityMap().addMap(entity.getUniqueId(), new Pair<>(entityType, groupName));
                         ServerHandler.sendFeatureMessage("Spawn", entityType, "!Chance", "return", groupName,
                                 new Throwable().getStackTrace()[0]);
                         return;

@@ -18,7 +18,7 @@ import java.util.*;
 public class MythicMobsLootDrop implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onMythicMobsDeath(MythicMobLootDropEvent e) {
+    public void onMythicMobLootDrop(MythicMobLootDropEvent e) {
         if (!ConfigHandler.getConfigPath().isDrop()) {
             return;
         }
@@ -31,13 +31,12 @@ public class MythicMobsLootDrop implements Listener {
 
         Entity entity = e.getEntity();
         UUID entityUUID = entity.getUniqueId();
-        Map<UUID, Pair<String, String>> mobsMap = ConfigHandler.getConfigPath().getLivingEntityMap().getMobsMap();
-        if (!mobsMap.keySet().contains(entityUUID)) {
+        Pair<String, String> mobsPair = ConfigHandler.getConfigPath().getLivingEntityMap().getMobsMap().get(entityUUID);
+        if (mobsPair == null) {
             return;
         }
 
-        // Get entity properties.
-        Map<String, DropMap> dropMap = ConfigHandler.getConfigPath().getEntityProp().get(mobsMap.get(entityUUID).getKey()).get(mobsMap.get(entityUUID).getValue()).getDropMap();
+        Map<String, DropMap> dropMap = ConfigHandler.getConfigPath().getEntityProp().get(mobsPair.getKey()).get(mobsPair.getValue()).getDropMap();
         if (dropMap == null) {
             return;
         }
@@ -48,7 +47,6 @@ public class MythicMobsLootDrop implements Listener {
                 permsList.add(key);
             }
         }
-
         if (permsList.isEmpty()) {
             return;
         }
@@ -94,18 +92,24 @@ public class MythicMobsLootDrop implements Listener {
             totalItem = dropMap.get(maxMulti).getItems();
         }
 
-        int dropMoney = e.getMoney();
-        dropMoney *= totalMoney;
-        e.setMoney(dropMoney);
-
-        int dropExp = e.getExp();
-        dropExp *= totalExp;
-        e.setExp(dropExp);
-
-        Collection<Drop> dropItem = e.getPhysicalDrops();
-        for (Drop drop : dropItem) {
-            drop.setAmount(drop.getAmount() * totalItem);
+        if (ConfigHandler.getConfigPath().isDropExp()) {
+            int dropExp = e.getExp();
+            dropExp *= totalExp;
+            e.setExp(dropExp);
         }
-        ServerHandler.sendConsoleMessage(String.valueOf(dropItem));
+
+        if (ConfigHandler.getConfigPath().isDropMmItem()) {
+            Collection<Drop> dropItem = e.getPhysicalDrops();
+            for (Drop drop : dropItem) {
+                drop.setAmount(drop.getAmount() * totalItem);
+                ServerHandler.sendConsoleMessage(String.valueOf(drop.getAmount() * totalItem));
+            }
+        }
+
+        if (ConfigHandler.getConfigPath().isDropMoney()) {
+            int dropMoney = e.getMoney();
+            dropMoney *= totalMoney;
+            e.setMoney(dropMoney);
+        }
     }
 }

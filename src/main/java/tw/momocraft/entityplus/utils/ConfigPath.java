@@ -5,9 +5,11 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.ServerHandler;
-import tw.momocraft.entityplus.utils.blocksapi.BlocksMap;
+import tw.momocraft.entityplus.utils.blocksutils.BlocksMap;
+import tw.momocraft.entityplus.utils.blocksutils.BlocksUtils;
 import tw.momocraft.entityplus.utils.entities.*;
-import tw.momocraft.entityplus.utils.locationapi.LocationMap;
+import tw.momocraft.entityplus.utils.locationutils.LocationMap;
+import tw.momocraft.entityplus.utils.locationutils.LocationUtils;
 
 import java.util.*;
 
@@ -42,9 +44,10 @@ public class ConfigPath {
     private boolean drop;
     private boolean dropBonus;
     private String dropBonusMode;
-    private boolean dropMoney;
     private boolean dropExp;
     private boolean dropItem;
+    private boolean dropMoney;
+    private boolean dropMmItem;
     private boolean dropResFlag;
 
     private Map<String, DropMap> dropProp;
@@ -68,7 +71,7 @@ public class ConfigPath {
     private boolean spawner;
     private boolean spawnerResFlag;
 
-    private Map<String, List<SpawnerMap>> spawnerProp = new HashMap<>();
+    private Map<String, TreeMap<String, SpawnerMap>> spawnerProp = new HashMap<>();
 
     //  ============================================== //
     //         Setup all configuration.                //
@@ -96,6 +99,7 @@ public class ConfigPath {
     private void setSpawnEntity() {
         spawn = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Enable");
         if (spawn) {
+            spawnerResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Settings.Features.Bypass.Residence-Flag");
             spawnMythicMobs = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Settings.Features.MythicMobs");
             ConfigurationSection groupsConfig = ConfigHandler.getConfig("entities.yml").getConfigurationSection("Entities");
             if (groupsConfig != null) {
@@ -145,12 +149,12 @@ public class ConfigPath {
                         entityMap.setLiquid(ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Liquid"));
                         entityMap.setDay(ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Day"));
                         // Blocks settings.
-                        blocksMaps = getBlocksMaps("Entities." + group + ".Blocks", false);
+                        blocksMaps = BlocksUtils.getBlocksMaps("Entities." + group + ".Blocks");
                         if (!blocksMaps.isEmpty()) {
                             entityMap.setBlocksMaps(blocksMaps);
                         }
                         // Location settings
-                        locMaps = getLocationMaps("Entities." + group + ".Location", false);
+                        locMaps = LocationUtils.getLocationMaps("Entities." + group + ".Location");
                         if (!locMaps.isEmpty()) {
                             entityMap.setLocMaps(locMaps);
                         }
@@ -239,9 +243,10 @@ public class ConfigPath {
         if (drop) {
             dropBonus = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Bonus.Enable");
             dropBonusMode = ConfigHandler.getConfig("config.yml").getString("Entities.Drop.Settings.Bonus.Mode");
-            dropMoney = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Features.Money");
-            dropExp = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Features.Money");
-            dropItem = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Features.Money");
+            dropExp = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Features.Exp");
+            dropItem = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Features.Item");
+            dropMoney = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Features.MythicMobs.Money");
+            dropMmItem = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Features.MythicMobs.Item");
             ConfigurationSection groupsConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Entities.Drop.Groups");
             if (groupsConfig != null) {
                 DropMap dropMap;
@@ -294,33 +299,39 @@ public class ConfigPath {
                             }
                         }
                         spawnerMap.setChangeMap(changeMap);
-                        blocksMaps = getBlocksMaps("Spawner.Groups." + group + ".Blocks", false);
+                        blocksMaps = BlocksUtils.getBlocksMaps("Spawner.Groups." + group + ".Blocks");
                         if (!blocksMaps.isEmpty()) {
                             spawnerMap.setBlocksMaps(blocksMaps);
                         }
-                        locMaps = getLocationMaps("Spawner.Groups." + group + ".Location", false);
+                        locMaps = LocationUtils.getLocationMaps("Spawner.Groups." + group + ".Location");
                         if (!locMaps.isEmpty()) {
                             spawnerMap.setLocMaps(locMaps);
                         }
                         // Add properties to all entities.
-                        for (String entityType : spawnerMap.getAllowList()) {
+                        for (String entityType : spawnerMap.getTypes()) {
                             try {
-                                spawnerProp.get(entityType).add(spawnerMap);
+                                spawnerProp.get(entityType).put(group, spawnerMap);
                             } catch (Exception ex) {
-                                spawnerProp.put(entityType, new ArrayList<>());
-                                spawnerProp.get(entityType).add(spawnerMap);
+                                spawnerProp.put(entityType, new TreeMap<>());
+                                spawnerProp.get(entityType).put(group, spawnerMap);
                             }
                         }
                     }
                 }
-                Map<SpawnerMap, Long> sortMap;
+                Map<String, Long> sortMap;
+                TreeMap<String, SpawnerMap> newMap;
                 for (String entityType : spawnerProp.keySet()) {
                     sortMap = new HashMap<>();
-                    for (SpawnerMap em : spawnerProp.get(entityType)) {
-                        sortMap.put(em, em.getPriority());
+                    newMap = new TreeMap<>();
+                    for (String group : spawnerProp.get(entityType).keySet()) {
+                        sortMap.put(group, spawnerProp.get(entityType).get(group).getPriority());
                     }
                     sortMap = Utils.sortByValue(sortMap);
-                    spawnerProp.put(entityType, new ArrayList<>(sortMap.keySet()));
+                    for (String group : sortMap.keySet()) {
+                        newMap.put(group, spawnerProp.get(entityType).get(group));
+                    }
+                    spawnerProp.remove(entityType);
+                    spawnerProp.put(entityType, newMap);
                 }
             }
         }
@@ -340,156 +351,6 @@ public class ConfigPath {
         }
     }
 
-    private List<LocationMap> getLocationMaps(String path, boolean customGroup) {
-        List<LocationMap> locMaps = new ArrayList<>();
-        LocationMap locMap;
-        LocationMap locWorldMap = new LocationMap();
-        List<String> worlds = new ArrayList<>();
-        ConfigurationSection areaConfig;
-        ConfigurationSection locConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection(path);
-        if (locConfig != null) {
-            for (String group : locConfig.getKeys(false)) {
-                if (ConfigHandler.getConfig("config.yml").getConfigurationSection(path + "." + group) == null) {
-                    worlds.add(group);
-                    continue;
-                }
-                locMap = new LocationMap();
-                if (customGroup) {
-                    locMap.setWorlds(ConfigHandler.getConfig("groups.yml").getStringList("Location." + group + ".Worlds"));
-                    areaConfig = ConfigHandler.getConfig("groups.yml").getConfigurationSection("Location." + group + ".Area");
-                    if (areaConfig != null) {
-                        for (String area : areaConfig.getKeys(false)) {
-                            locMap.addCord(area, ConfigHandler.getConfig("config.yml").getString("Location." + group + ".Area." + area));
-                        }
-                    }
-                } else {
-                    locMap.setWorlds(ConfigHandler.getConfig("config.yml").getStringList(path + "." + group + ".Worlds"));
-                    areaConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection(path + "." + group + ".Area");
-                    if (areaConfig != null) {
-                        for (String type : areaConfig.getKeys(false)) {
-                            locMap.addCord(type, ConfigHandler.getConfig("config.yml").getString(path + "." + group + ".Area." + type));
-                        }
-                    }
-                }
-                locMaps.add(locMap);
-            }
-        } else {
-            for (String group : ConfigHandler.getConfig("config.yml").getStringList(path)) {
-                if (ConfigHandler.getConfig("groups.yml").getConfigurationSection("Location." + group) == null) {
-                    worlds.add(group);
-                    continue;
-                }
-                locMap = new LocationMap();
-                locMap.setWorlds(ConfigHandler.getConfig("groups.yml").getStringList("Location." + group + ".Worlds"));
-                areaConfig = ConfigHandler.getConfig("groups.yml").getConfigurationSection("Location." + group + ".Area");
-                if (areaConfig != null) {
-                    for (String area : areaConfig.getKeys(false)) {
-                        locMap.addCord(area, ConfigHandler.getConfig("config.yml").getString("Location." + group + ".Area." + area));
-                    }
-                }
-                locMaps.add(locMap);
-            }
-            locWorldMap.setWorlds(worlds);
-            locMaps.add(locWorldMap);
-        }
-        return locMaps;
-    }
-
-    private List<BlocksMap> getBlocksMaps(String path, boolean customGroup) {
-        List<BlocksMap> blocksMaps = new ArrayList<>();
-        BlocksMap blocksMap;
-        int x;
-        int z;
-        int y;
-        String r;
-        String s;
-        String v;
-        ConfigurationSection config = ConfigHandler.getConfig("config.yml").getConfigurationSection(path);
-        if (config != null) {
-            for (String group : config.getKeys(false)) {
-                blocksMap = new BlocksMap();
-                if (customGroup) {
-                    blocksMap.setBlockTypes(ConfigHandler.getConfig("groups.yml").getStringList("Blocks." + group + ".Types"));
-                    if (ConfigHandler.getConfig("groups.yml").getConfigurationSection("Blocks." + group + "." + ".Ignore") != null) {
-                        blocksMap.setIgnoreMaps(getBlocksMaps("Blocks." + group + "." + ".Ignore", true));
-                    }
-                    x = ConfigHandler.getConfig("groups.yml").getInt("Blocks." + group + ".Search.X");
-                    z = ConfigHandler.getConfig("groups.yml").getInt("Blocks." + group + ".Search.Z");
-                    y = ConfigHandler.getConfig("groups.yml").getInt("Blocks." + group + ".Search.Y");
-                    r = ConfigHandler.getConfig("groups.yml").getString("Blocks." + group + ".Search.R");
-                    s = ConfigHandler.getConfig("groups.yml").getString("Blocks." + group + ".Search.S");
-                    v = ConfigHandler.getConfig("groups.yml").getString("Blocks." + group + ".Search.V");
-                } else {
-                    blocksMap.setBlockTypes(ConfigHandler.getConfig("config.yml").getStringList(path + "." + group + ".Types"));
-                    if (ConfigHandler.getConfig("config.yml").getConfigurationSection(path + "." + group + "." + ".Ignore") != null) {
-                        blocksMap.setIgnoreMaps(getBlocksMaps(path + "." + group + "." + ".Ignore", false));
-                    }
-                    x = ConfigHandler.getConfig("config.yml").getInt(path + "." + group + ".Search.X");
-                    z = ConfigHandler.getConfig("config.yml").getInt(path + "." + group + ".Search.Z");
-                    y = ConfigHandler.getConfig("config.yml").getInt(path + "." + group + ".Search.Y");
-                    r = ConfigHandler.getConfig("config.yml").getString(path + "." + group + ".Search.R");
-                    s = ConfigHandler.getConfig("config.yml").getString(path + "." + group + ".Search.S");
-                    v = ConfigHandler.getConfig("config.yml").getString(path + "." + group + ".Search.V");
-                }
-                if (r != null) {
-                    blocksMap.setRound(true);
-                    blocksMap.setX(Integer.parseInt(r));
-                    blocksMap.setZ(Integer.parseInt(r));
-                } else if (s != null) {
-                    blocksMap.setX(Integer.parseInt(s));
-                    blocksMap.setZ(Integer.parseInt(s));
-                } else {
-                    blocksMap.setX(x);
-                    blocksMap.setZ(z);
-                }
-                if (v != null) {
-                    blocksMap.setVertical(true);
-                    blocksMap.setY(Integer.parseInt(v));
-                } else {
-                    blocksMap.setY(y);
-                }
-                blocksMaps.add(blocksMap);
-            }
-        } else {
-            for (String group : ConfigHandler.getConfig("config.yml").getStringList(path)) {
-                if (ConfigHandler.getConfig("groups.yml").getConfigurationSection("Blocks." + group) != null) {
-                    blocksMap = new BlocksMap();
-                    blocksMap.setBlockTypes(ConfigHandler.getConfig("groups.yml").getStringList("Blocks." + group + ".Types"));
-                    if (ConfigHandler.getConfig("groups.yml").getConfigurationSection("Blocks." + group + "." + ".Ignore") != null) {
-                        blocksMap.setIgnoreMaps(getBlocksMaps("Blocks." + group + "." + ".Ignore", true));
-                    }
-                    x = ConfigHandler.getConfig("groups.yml").getInt("Blocks." + group + ".Search.X");
-                    z = ConfigHandler.getConfig("groups.yml").getInt("Blocks." + group + ".Search.Z");
-                    y = ConfigHandler.getConfig("groups.yml").getInt("Blocks." + group + ".Search.Y");
-                    r = ConfigHandler.getConfig("groups.yml").getString("Blocks." + group + ".Search.R");
-                    s = ConfigHandler.getConfig("groups.yml").getString("Blocks." + group + ".Search.S");
-                    v = ConfigHandler.getConfig("groups.yml").getString("Blocks." + group + ".Search.V");
-                    if (r != null) {
-                        blocksMap.setRound(true);
-                        blocksMap.setX(Integer.parseInt(r));
-                        blocksMap.setZ(Integer.parseInt(r));
-                    } else if (s != null) {
-                        blocksMap.setX(Integer.parseInt(s));
-                        blocksMap.setZ(Integer.parseInt(s));
-                    } else {
-                        blocksMap.setX(x);
-                        blocksMap.setZ(z);
-                    }
-                    if (v != null) {
-                        blocksMap.setVertical(true);
-                        blocksMap.setY(Integer.parseInt(v));
-                    } else {
-                        blocksMap.setY(y);
-                    }
-                    blocksMaps.add(blocksMap);
-                } else {
-                    ServerHandler.sendConsoleMessage("&cThere is an error occurred. Please check your groups.yml \"&e" + group + "&c\".");
-                }
-            }
-        }
-        return blocksMaps;
-    }
-
     public int getMobSpawnRange() {
         return mobSpawnRange;
     }
@@ -502,6 +363,10 @@ public class ConfigPath {
         return spawn;
     }
 
+    public boolean isSpawnResFlag() {
+        return spawnResFlag;
+    }
+
     public Map<String, TreeMap<String, EntityMap>> getEntityProp() {
         return entityProp;
     }
@@ -509,6 +374,16 @@ public class ConfigPath {
     public boolean isSpawnMythicMobs() {
         return spawnMythicMobs;
     }
+
+
+    public boolean isLimit() {
+        return limit;
+    }
+
+    public boolean isLimitResFlag() {
+        return limitResFlag;
+    }
+
 
     public boolean isDrop() {
         return drop;
@@ -534,11 +409,16 @@ public class ConfigPath {
         return dropItem;
     }
 
+    public boolean isDropMmItem() {
+        return dropMmItem;
+    }
+
+
     public boolean isSpawner() {
         return spawner;
     }
 
-    public Map<String, List<SpawnerMap>> getSpawnerProp() {
+    public Map<String, TreeMap<String, SpawnerMap>> getSpawnerProp() {
         return spawnerProp;
     }
 
@@ -546,13 +426,6 @@ public class ConfigPath {
         return spawnerResFlag;
     }
 
-    public boolean isLimit() {
-        return limit;
-    }
-
-    public boolean isSpawnResFlag() {
-        return spawnResFlag;
-    }
 
     public boolean isPurgeSchedule() {
         return purgeSchedule;
@@ -561,7 +434,6 @@ public class ConfigPath {
     public int getPurgeScheduleInt() {
         return purgeScheduleInt;
     }
-
 
     public boolean isPurgeBaby() {
         return purgeBaby;

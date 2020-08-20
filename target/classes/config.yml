@@ -62,9 +62,11 @@ Entities:
     Enable: false
     Settings:
       Features:
-        Money: true
         Exp: true
         Items: true
+        MythicMobs:
+          Money: true
+          Items: true
         Bypass:
           Residence-Flag: false
       # If players has multiple groups, they will get all extra rewards.

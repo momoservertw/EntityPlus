@@ -1,35 +1,4 @@
-# --{ =-=-=-=-=-=-=-=-=-= EntityPlus's Custom Groups Settings, by Momocraft =-=-=-=-=-=-=-=-=-= }--
-Config-Version: 1
-Location:
-  NormalWorlds:
-    Worlds:
-      - world
-  NetherWorlds:
-    Worlds:
-      - world_nether
-  EndWorlds:
-    Worlds:
-      - world_the_end
-  NormalBorder:
-    Worlds:
-      - world
-    Area:
-      S: 10000
-Blocks:
-  # When creatures spawn in wither_rose.
-  InWitherRose:
-    Types:
-      - WITHER_ROSE
-    Search:
-      Y: 1
-  NearbyMonument:
-    Types:
-      - PRISMARINE
-      - DARK_PRISMARINE
-      - PRISMARINE_BRICKS
-    Search:
-      S: 5
-      Y: 5
+# More information: https://github.com/momoservertw/EntityPlus/wiki/groups.yml
 Materials:
   Machines:
     - PISTON

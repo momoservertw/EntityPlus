@@ -1,39 +1,27 @@
-package tw.momocraft.entityplus.utils.locationapi;
+package tw.momocraft.entityplus.utils.locationutils;
 
-import com.bekvon.bukkit.residence.Residence;
-import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 import org.bukkit.Location;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.ServerHandler;
+import tw.momocraft.entityplus.utils.locationutil.LocationMap;
 
-import java.util.List;
 import java.util.Map;
 
-public class LocationAPI {
+public class LocationUtils {
 
     /**
      * @param loc          location.
      * @param locationMaps the settings from configuration.
      * @return if the block is in the range of setting in the config.yml.
      */
-    public static boolean checkLocation(Location loc, List<LocationMap> locationMaps, String resBypassFlag) {
+    public static boolean checkLocation(Location loc, Map<String, LocationMap> locationMaps, String resBypassFlag, boolean useResFlag) {
         if (locationMaps.isEmpty()) {
             return true;
-        }
-        if (!resBypassFlag.equals("")) {
-            if (ConfigHandler.getDepends().ResidenceEnabled()) {
-                ClaimedResidence res = Residence.getInstance().getResidenceManager().getByLoc(loc);
-                if (res != null) {
-                    if (res.getPermissions().has(resBypassFlag, false)) {
-                        return false;
-                    }
-                }
-            }
         }
         String worldName = loc.getWorld().getName();
         Map<String, String> cord;
         back:
-        for (LocationMap locationMap : locationMaps) {
+        for (LocationMap locationMap : locationMaps.values()) {
             if (locationMap.getWorlds().isEmpty()) {
                 return true;
             }
@@ -64,7 +52,7 @@ public class LocationAPI {
         int length = values.length;
         if (!isCordFormat(type, length, values)) {
             ServerHandler.sendConsoleMessage("&cThere is an error occurred. Please check the \"Location\" format.");
-            ServerHandler.sendConsoleMessage("&eType: " + value);
+            ServerHandler.sendConsoleMessage("&e" + type + ": " + value);
             return false;
         }
         if (length == 1) {
@@ -148,7 +136,7 @@ public class LocationAPI {
             }
         }
         ServerHandler.sendConsoleMessage("&cThere is an error occurred. Please check the \"Location\" format.");
-        ServerHandler.sendConsoleMessage("&eKey: " + value);
+        ServerHandler.sendConsoleMessage("&e" + type + ": " + value);
         return false;
     }
 

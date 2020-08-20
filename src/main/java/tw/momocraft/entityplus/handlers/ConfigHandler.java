@@ -51,9 +51,15 @@ public class ConfigHandler {
             EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new MythicMobsLootDrop(), EntityPlus.getInstance());
         }
         if (ConfigHandler.getDepends().ResidenceEnabled()) {
-            FlagPermissions.addFlag("spawnbypass");
-            FlagPermissions.addFlag("spawnlimitbypass");
-            FlagPermissions.addFlag("spawnerbypass");
+            if (ConfigHandler.getConfigPath().isSpawnResFlag()) {
+                FlagPermissions.addFlag("spawnbypass");
+            }
+            if (ConfigHandler.getConfigPath().isLimitResFlag()) {
+                FlagPermissions.addFlag("spawnlimitbypass");
+            }
+            if (ConfigHandler.getConfigPath().isSpawnerResFlag()) {
+                FlagPermissions.addFlag("spawnerbypass");
+            }
             FlagPermissions.addFlag("fastdamagebypass");
         }
     }

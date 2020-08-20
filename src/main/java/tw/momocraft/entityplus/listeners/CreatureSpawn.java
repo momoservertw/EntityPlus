@@ -10,13 +10,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.ServerHandler;
-import tw.momocraft.entityplus.utils.blocksapi.BlocksAPI;
+import tw.momocraft.entityplus.utils.ResidenceUtils;
+import tw.momocraft.entityplus.utils.blocksutils.BlocksUtils;
 import tw.momocraft.entityplus.utils.entities.EntityMap;
-import tw.momocraft.entityplus.utils.locationapi.LocationAPI;
+import tw.momocraft.entityplus.utils.locationutils.LocationUtils;
 import tw.momocraft.entityplus.utils.entities.EntityUtils;
 
-import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 
 public class CreatureSpawn implements Listener {
@@ -36,15 +35,16 @@ public class CreatureSpawn implements Listener {
             }
         }
         // Get entity properties.
-        Map<String, TreeMap<String, EntityMap>> entityProp = ConfigHandler.getConfigPath().getEntityProp();
+        TreeMap<String, EntityMap> entityTypeProp = ConfigHandler.getConfigPath().getEntityProp().get(entityType);
         // Checks if the properties contains this type of entity.
-        if (entityProp.containsKey(entityType)) {
+        if (entityTypeProp != null) {
             // Checks every groups of this entity.
             Location loc = entity.getLocation();
-            Block block;
+            Block block = loc.getBlock();
             EntityMap entityMap;
-            for (String groupName : entityProp.get(entityType).keySet()) {
-                entityMap = entityProp.get(entityType).get(groupName);
+            boolean resFlag = ConfigHandler.getConfigPath().isSpawnResFlag();
+            for (String groupName : entityTypeProp.keySet()) {
+                entityMap = entityTypeProp.get(groupName);
                 // Checks the spawn "reasons".
                 if (!EntityUtils.containValue(reason, entityMap.getReasons(), entityMap.getIgnoreReasons())) {
                     ServerHandler.sendFeatureMessage("Spawn", entityType, "!Reason", "continue", groupName,
@@ -52,7 +52,6 @@ public class CreatureSpawn implements Listener {
                     continue;
                 }
                 // Checks the spawn "biome".
-                block = loc.getBlock();
                 if (!EntityUtils.containValue(block.getBiome().name(), entityMap.getBoimes(), entityMap.getIgnoreBoimes())) {
                     ServerHandler.sendFeatureMessage("Spawn", entityType, "!Biome", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
@@ -70,14 +69,20 @@ public class CreatureSpawn implements Listener {
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
+                // Checks the spawn "Residence-Flag".
+                if (!ResidenceUtils.checkResFlag(loc, resFlag, "spawnbypass")) {
+                    ServerHandler.sendFeatureMessage("Spawn", entityType, "!Residence-Flag", "continue", groupName,
+                            new Throwable().getStackTrace()[0]);
+                    continue;
+                }
                 // Checks the spawn "location".
-                if (!LocationAPI.checkLocation(loc, entityMap.getLocMaps(), "spawnbypass")) {
+                if (!LocationUtils.checkLocation(loc, entityMap.getLocMaps())) {
                     ServerHandler.sendFeatureMessage("Spawn", entityType, "!Location", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checks the "blocks" nearby the spawn location.
-                if (!BlocksAPI.checkBlocks(loc, entityMap.getBlocksMaps(), "spawnbypass")) {
+                if (!BlocksUtils.checkBlocks(loc, entityMap.getBlocksMaps())) {
                     ServerHandler.sendFeatureMessage("Spawn", entityType, "!Blocks", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
