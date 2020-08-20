@@ -1,6 +1,7 @@
-package tw.momocraft.entityplus.utils.blocksapi;
+package tw.momocraft.entityplus.utils.blocksutils;
 
 import java.util.List;
+import java.util.Map;
 
 public class BlocksMap {
 
@@ -10,7 +11,7 @@ public class BlocksMap {
     private int Y = 0;
     private boolean round = false;
     private boolean vertical = false;
-    private List<BlocksMap> ignoreMaps;
+    private Map<String, BlocksMap> ignoreMaps;
 
     List<String> getBlockTypes() {
         return blockTypes;
@@ -36,36 +37,36 @@ public class BlocksMap {
         return vertical;
     }
 
-    List<BlocksMap> getIgnoreMaps() {
+    Map<String, BlocksMap> getIgnoreMaps() {
         return ignoreMaps;
     }
 
 
-    public void setBlockTypes(List<String> blockTypes) {
+    void setBlockTypes(List<String> blockTypes) {
         this.blockTypes = blockTypes;
     }
 
-    public void setX(int X) {
+    void setX(int X) {
         this.X = X;
     }
 
-    public void setZ(int z) {
+    void setZ(int z) {
         this.Z = z;
     }
 
-    public void setY(int y) {
+    void setY(int y) {
         this.Y = y;
     }
 
-    public void setRound(boolean round) {
+    void setRound(boolean round) {
         this.round = round;
     }
 
-    public void setVertical(boolean vertical) {
+    void setVertical(boolean vertical) {
         this.vertical = vertical;
     }
 
-    public void setIgnoreMaps(List<BlocksMap> ignoreMaps) {
+    void setIgnoreMaps(Map<String, BlocksMap> ignoreMaps) {
         this.ignoreMaps = ignoreMaps;
     }
 }

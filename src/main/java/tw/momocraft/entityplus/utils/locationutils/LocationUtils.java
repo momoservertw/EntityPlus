@@ -1,42 +1,83 @@
 package tw.momocraft.entityplus.utils.locationutils;
 
 import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.ServerHandler;
-import tw.momocraft.entityplus.utils.locationutil.LocationMap;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class LocationUtils {
 
     /**
-     * @param loc          location.
-     * @param locationMaps the settings from configuration.
-     * @return if the block is in the range of setting in the config.yml.
+     * @param path The path of location list.
+     * @return LocationMaps.
      */
-    public static boolean checkLocation(Location loc, Map<String, LocationMap> locationMaps, String resBypassFlag, boolean useResFlag) {
-        if (locationMaps.isEmpty()) {
+    public static Map<String, LocationMap> getLocationMaps(String path) {
+        Map<String, LocationMap> locMaps = new HashMap<>();
+        LocationMap locMap;
+        List<String> worldList = new ArrayList<>();
+        ConfigurationSection areaConfig;
+        for (String group : ConfigHandler.getConfig("config.yml").getStringList(path)) {
+            if (ConfigHandler.getConfig("config.yml").getConfigurationSection("General.Location." + group) == null) {
+                worldList.add(group);
+                continue;
+            }
+            locMap = new LocationMap();
+            locMap.setWorlds(ConfigHandler.getConfig("config.yml").getStringList("General.Location." + group + ".Worlds"));
+            areaConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("General.Location." + group + ".Area");
+            if (areaConfig != null) {
+                for (String area : areaConfig.getKeys(false)) {
+                    locMap.addCord(area, ConfigHandler.getConfig("config.yml").getString("General.Location." + group + ".Area." + area));
+                }
+            }
+            locMaps.put(group, locMap);
+        }
+        if (!worldList.isEmpty()) {
+            LocationMap locWorldMap = new LocationMap();
+            locWorldMap.setWorlds(worldList);
+            locMaps.put("worldList", locWorldMap);
+        }
+        return locMaps;
+    }
+
+    /**
+     * @param loc     location.
+     * @param locMaps the checking location maps.
+     * @return if the location is one of locMaps.
+     */
+    public static boolean checkLocation(Location loc, Map<String, LocationMap> locMaps) {
+        if (locMaps == null) {
             return true;
         }
         String worldName = loc.getWorld().getName();
         Map<String, String> cord;
         back:
-        for (LocationMap locationMap : locationMaps.values()) {
-            if (locationMap.getWorlds().isEmpty()) {
-                return true;
-            }
-            if (!locationMap.getWorlds().contains(worldName) && !locationMap.getWorlds().contains("global")) {
-                continue;
-            }
-            cord = locationMap.getCord();
-            if (cord != null) {
-                for (String key : cord.keySet()) {
-                    if (!isCord(loc, key, cord.get(key))) {
-                        continue back;
+        for (LocationMap locMap : locMaps.values()) {
+            if (locMap.getWorlds().contains("global")) {
+                cord = locMap.getCord();
+                if (cord != null) {
+                    for (String key : cord.keySet()) {
+                        if (!isCord(loc, key, cord.get(key))) {
+                            return false;
+                        }
                     }
                 }
+                return true;
+            } else if (locMap.getWorlds().contains(worldName)) {
+                cord = locMap.getCord();
+                if (cord != null) {
+                    for (String key : cord.keySet()) {
+                        if (!isCord(loc, key, cord.get(key))) {
+                            continue back;
+                        }
+                    }
+                }
+                return true;
             }
-            return true;
         }
         return false;
     }
@@ -50,167 +91,90 @@ public class LocationUtils {
     private static boolean isCord(Location loc, String type, String value) {
         String[] values = value.split("\\s+");
         int length = values.length;
-        if (!isCordFormat(type, length, values)) {
+        try {
+            if (length == 1) {
+                // X: 1000
+                // R: 1000
+                switch (type) {
+                    case "X":
+                        return getRange(loc.getBlockX(), Integer.parseInt(values[0]));
+                    case "Y":
+                        return getRange(loc.getBlockY(), Integer.parseInt(values[0]));
+                    case "Z":
+                        return getRange(loc.getBlockZ(), Integer.parseInt(values[0]));
+                    case "!X":
+                        return !getRange(loc.getBlockX(), Integer.parseInt(values[0]));
+                    case "!Y":
+                        return !getRange(loc.getBlockY(), Integer.parseInt(values[0]));
+                    case "!Z":
+                        return !getRange(loc.getBlockZ(), Integer.parseInt(values[0]));
+                    case "R":
+                        return getRound(loc, Integer.parseInt(values[0]));
+                    case "!R":
+                        return !getRound(loc, Integer.parseInt(values[0]));
+                    case "S":
+                        return getSquared(loc, Integer.parseInt(values[0]));
+                    case "!S":
+                        return !getSquared(loc, Integer.parseInt(values[0]));
+                }
+            } else if (length == 2) {
+                // X: ">= 1000"
+                switch (type) {
+                    case "X":
+                        return getCompare(values[0], loc.getBlockX(), Integer.parseInt(values[1]));
+                    case "Y":
+                        return getCompare(values[0], loc.getBlockY(), Integer.parseInt(values[1]));
+                    case "Z":
+                        return getCompare(values[0], loc.getBlockZ(), Integer.parseInt(values[1]));
+                    case "!X":
+                        return !getCompare(values[0], loc.getBlockX(), Integer.parseInt(values[1]));
+                    case "!Y":
+                        return !getCompare(values[0], loc.getBlockY(), Integer.parseInt(values[1]));
+                    case "!Z":
+                        return !getCompare(values[0], loc.getBlockZ(), Integer.parseInt(values[1]));
+                }
+            } else if (length == 3) {
+                // X: "-1000 ~ 1000"
+                // R: "1000 0 0"
+                switch (type) {
+                    case "X":
+                        return getRange(loc.getBlockX(), Integer.parseInt(values[0]), Integer.parseInt(values[2]));
+                    case "Y":
+                        return getRange(loc.getBlockY(), Integer.parseInt(values[0]), Integer.parseInt(values[2]));
+                    case "Z":
+                        return getRange(loc.getBlockZ(), Integer.parseInt(values[0]), Integer.parseInt(values[2]));
+                    case "!X":
+                        return !getRange(loc.getBlockX(), Integer.parseInt(values[0]), Integer.parseInt(values[2]));
+                    case "!Y":
+                        return !getRange(loc.getBlockY(), Integer.parseInt(values[0]), Integer.parseInt(values[2]));
+                    case "!Z":
+                        return !getRange(loc.getBlockZ(), Integer.parseInt(values[0]), Integer.parseInt(values[2]));
+                    case "R":
+                        return getRound(loc, Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]));
+                    case "!R":
+                        return !getRound(loc, Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]));
+                    case "S":
+                        return getSquared(loc, Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]));
+                    case "!S":
+                        return !getSquared(loc, Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]));
+                }
+            } else if (length == 4) {
+                // X: "-1000 ~ 1000"
+                // R: "1000 0 0"
+                switch (type) {
+                    case "R":
+                        return getRound(loc, Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]), Integer.parseInt(values[3]));
+                    case "!R":
+                        return !getRound(loc, Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]), Integer.parseInt(values[3]));
+                    case "S":
+                        return getSquared(loc, Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]), Integer.parseInt(values[3]));
+                    case "!S":
+                        return !getSquared(loc, Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]), Integer.parseInt(values[3]));
+                }
+            }
+        } catch (Exception e) {
             ServerHandler.sendConsoleMessage("&cThere is an error occurred. Please check the \"Location\" format.");
             ServerHandler.sendConsoleMessage("&e" + type + ": " + value);
-            return false;
-        }
-        if (length == 1) {
-            // X: 1000
-            // R: 1000
-            switch (type) {
-                case "X":
-                    return getRange(loc.getBlockX(), Integer.parseInt(values[0]));
-                case "Y":
-                    return getRange(loc.getBlockY(), Integer.parseInt(values[0]));
-                case "Z":
-                    return getRange(loc.getBlockZ(), Integer.parseInt(values[0]));
-                case "!X":
-                    return !getRange(loc.getBlockX(), Integer.parseInt(values[0]));
-                case "!Y":
-                    return !getRange(loc.getBlockY(), Integer.parseInt(values[0]));
-                case "!Z":
-                    return !getRange(loc.getBlockZ(), Integer.parseInt(values[0]));
-                case "R":
-                    return getRound(loc, Integer.parseInt(values[0]));
-                case "!R":
-                    return !getRound(loc, Integer.parseInt(values[0]));
-                case "S":
-                    return getSquared(loc, Integer.parseInt(values[0]));
-                case "!S":
-                    return !getSquared(loc, Integer.parseInt(values[0]));
-            }
-        } else if (length == 2) {
-            // X: ">= 1000"
-            switch (type) {
-                case "X":
-                    return getCompare(values[0], loc.getBlockX(), Integer.parseInt(values[1]));
-                case "Y":
-                    return getCompare(values[0], loc.getBlockY(), Integer.parseInt(values[1]));
-                case "Z":
-                    return getCompare(values[0], loc.getBlockZ(), Integer.parseInt(values[1]));
-                case "!X":
-                    return !getCompare(values[0], loc.getBlockX(), Integer.parseInt(values[1]));
-                case "!Y":
-                    return !getCompare(values[0], loc.getBlockY(), Integer.parseInt(values[1]));
-                case "!Z":
-                    return !getCompare(values[0], loc.getBlockZ(), Integer.parseInt(values[1]));
-            }
-        } else if (length == 3) {
-            // X: "-1000 ~ 1000"
-            // R: "1000 0 0"
-            switch (type) {
-                case "X":
-                    return getRange(loc.getBlockX(), Integer.parseInt(values[0]), Integer.parseInt(values[2]));
-                case "Y":
-                    return getRange(loc.getBlockY(), Integer.parseInt(values[0]), Integer.parseInt(values[2]));
-                case "Z":
-                    return getRange(loc.getBlockZ(), Integer.parseInt(values[0]), Integer.parseInt(values[2]));
-                case "!X":
-                    return !getRange(loc.getBlockX(), Integer.parseInt(values[0]), Integer.parseInt(values[2]));
-                case "!Y":
-                    return !getRange(loc.getBlockY(), Integer.parseInt(values[0]), Integer.parseInt(values[2]));
-                case "!Z":
-                    return !getRange(loc.getBlockZ(), Integer.parseInt(values[0]), Integer.parseInt(values[2]));
-                case "R":
-                    return getRound(loc, Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]));
-                case "!R":
-                    return !getRound(loc, Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]));
-                case "S":
-                    return getSquared(loc, Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]));
-                case "!S":
-                    return !getSquared(loc, Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]));
-            }
-        } else if (length == 4) {
-            // X: "-1000 ~ 1000"
-            // R: "1000 0 0"
-            switch (type) {
-                case "R":
-                    return getRound(loc, Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]), Integer.parseInt(values[3]));
-                case "!R":
-                    return !getRound(loc, Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]), Integer.parseInt(values[3]));
-                case "S":
-                    return getSquared(loc, Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]), Integer.parseInt(values[3]));
-                case "!S":
-                    return !getSquared(loc, Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]), Integer.parseInt(values[3]));
-            }
-        }
-        ServerHandler.sendConsoleMessage("&cThere is an error occurred. Please check the \"Location\" format.");
-        ServerHandler.sendConsoleMessage("&e" + type + ": " + value);
-        return false;
-    }
-
-    /**
-     * @param type   the location value. Like x, y, z, !x...
-     * @param length the format of xyz.
-     * @param values the value of the location.
-     * @return check if the location range format is correct.
-     */
-    private static boolean isCordFormat(String type, int length, String[] values) {
-        if (length == 1) {
-            if (type.length() == 1) {
-                if (type.matches("[XYZRS]")) {
-                    return values[0].matches("-?[0-9]\\d*$");
-                }
-            } else if (type.length() == 2) {
-                if (type.matches("[!][XYZRS]")) {
-                    return values[0].matches("-?[0-9]\\d*$");
-                } else if (type.matches("[XYZ][XYZ]")) {
-                    return values[0].matches("-?[0-9]\\d*$");
-                }
-            }
-        } else if (length == 2) {
-            if (type.length() == 1) {
-                if (type.matches("[XYZ]")) {
-                    if (values[0].length() == 1 && values[0].matches("[><=]") ||
-                            values[0].length() == 2 && values[0].matches("[><=][><=]")) {
-                        return values[1].matches("-?[0-9]\\d*$");
-                    }
-                }
-            } else if (type.length() == 2) {
-                if (type.matches("[!][XYZ]")) {
-                    if (values[0].length() == 1 && values[0].matches("[><=]") || values[0].length() == 2 &&
-                            values[0].matches("[><=][><=]")) {
-                        return values[1].matches("-?[0-9]\\d*$");
-                    }
-                }
-            }
-        } else if (length == 3) {
-            if (type.length() == 1) {
-                if (type.matches("[RS]")) {
-                    return values[0].matches("-?[0-9]\\d*$") && values[1].matches("-?[0-9]\\d*$") &&
-                            values[2].matches("-?[0-9]\\d*$");
-                } else if (type.matches("[XYZ]")) {
-                    if (values[0].matches("-?[0-9]\\d*$") && values[2].matches("-?[0-9]\\d*$")) {
-                        return values[1].equals("~");
-                    }
-                }
-            } else if (type.length() == 2) {
-                if (type.matches("[!][RS]")) {
-                    return values[0].matches("-?[0-9]\\d*$") && values[1].matches("-?[0-9]\\d*$") &&
-                            values[2].matches("-?[0-9]\\d*$");
-                } else if (type.matches("[XYZ][XYZ]")) {
-                    if (values[0].matches("-?[0-9]\\d*$") && values[2].matches("-?[0-9]\\d*$")) {
-                        return values[1].equals("~");
-                    }
-                } else if (type.matches("[!][XYZ]")) {
-                    if (values[0].matches("-?[0-9]\\d*$") && values[2].matches("-?[0-9]\\d*$")) {
-                        return values[1].equals("~");
-                    }
-                }
-            }
-        } else if (length == 4) {
-            if (type.length() == 1) {
-                if (type.matches("[RS]")) {
-                    return values[0].matches("-?[0-9]\\d*$") && values[1].matches("-?[0-9]\\d*$") &&
-                            values[2].matches("-?[0-9]\\d*$") && values[3].matches("-?[0-9]\\d*$");
-                }
-            } else if (type.length() == 2) {
-                if (type.matches("[!][RS]")) {
-                    return values[0].matches("-?[0-9]\\d*$") && values[1].matches("-?[0-9]\\d*$") &&
-                            values[2].matches("-?[0-9]\\d*$") && values[3].matches("-?[0-9]\\d*$");
-                }
-            }
         }
         return false;
     }
