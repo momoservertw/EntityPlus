@@ -1,13 +1,9 @@
 package tw.momocraft.entityplus.handlers;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import tw.momocraft.entityplus.EntityPlus;
-import tw.momocraft.entityplus.utils.BungeeCord;
-import tw.momocraft.entityplus.utils.Utils;
 
 public class ServerHandler {
     public static void sendConsoleMessage(String message) {

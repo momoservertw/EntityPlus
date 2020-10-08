@@ -1,5 +1,4 @@
-# Control entities spawn conditions.
-# More information: https://github.com/momoservertw/EntityPlus/wiki/Entities.yml
+# More information: https://github.com/momoservertw/EntityPlus/wiki/Entities
 Entities:
   NormalMobs:
     Enable: false

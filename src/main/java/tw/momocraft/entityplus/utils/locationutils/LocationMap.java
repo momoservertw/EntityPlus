@@ -2,6 +2,7 @@ package tw.momocraft.entityplus.utils.locationutils;
 
 import tw.momocraft.entityplus.handlers.ServerHandler;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +10,12 @@ import java.util.Map;
 public class LocationMap {
 
     private List<String> worlds;
-    private Map<String, String> cord = new HashMap<>();
+    private final Map<String, String> cord;
+
+    public LocationMap() {
+        worlds = new ArrayList<>();
+        cord = new HashMap<>();
+    }
 
     public void setWorlds(List<String> worlds) {
         this.worlds = worlds;

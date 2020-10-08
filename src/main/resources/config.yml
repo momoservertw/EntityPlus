@@ -1,4 +1,5 @@
 # --{ =-=-=-=-=-=-=-=-=-= EntityPlus's Configuration Settings, by Momocraft =-=-=-=-=-=-=-=-=-= }--
+# Wiki: https://github.com/momoservertw/EntityPlus/wiki
 Config-Version: 10
 Check-Updates: true
 Debugging: false
@@ -7,7 +8,7 @@ General:
   Settings:
     # The searching players range from a location.
     Nearby-Players-Range: 32
-  # To specify specific areas or worlds.
+  # Specifying the spawn locations.
   # More information: https://github.com/momoservertw/EntityPlus/wiki/Location
   Location:
     NormalWorlds:
@@ -42,58 +43,58 @@ General:
         S: 5
         Y: 5
 
-# Control entities spawn conditions.
-# You need to add entities settings in entities.yml.
-# More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn-Conditions
+# Controlling entities spawn conditions, rewards, and damage.
 Entities:
+  Settings:
+    Features:
+      # Control MythicMobs spawning and conditions.
+      # The "CUSTOM" reason does not work for MythicMobs.
+      MythicMobs: true
+  # Controlling entities spawn conditions.
+  # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn
   Spawn:
     Enable: false
     Settings:
       Features:
-        # Control MythicMobs spawning and conditions.
-        # The "CUSTOM" reason does not work if you have MythicMobs.
-        MythicMobs: true
         Bypass:
+          # Custom Residence flag "spawnbypass" to bypass the features.
           Residence-Flag: false
-  # If there are too many creatures over the spawn location, it will prevent spawning creatures.
-  # More information: https://github.com/momoservertw/EntityPlus/wiki/Limit
-  Limit:
-    Enable: false
-    Settings:
-      Features:
-        AFK: true
-        Bypass:
-          Residence-Flag: false
-    Groups:
-      NormalMobs:
-        Enable: true
-        Chance: 0
-        Amount: 10
-        AFK:
-          Enable: false
-          Amount: 5
+    # Prevent spawning new creatures if there are too many creatures nearby the location.
+    Limit:
+      Enable: false
+      Settings:
+        Features:
+          AFK: true
+      Groups:
+        NormalMobs:
+          Enable: true
           Chance: 0
-        Search:
-          X: 8
-          Z: 8
-          Y: 5
-      BreedableMobs:
-        Enable: false
-        Chance: 0
-        Amount: 20
-        Search:
-          X: 16
-          Z: 16
-          Y: 10
-      WaterMobs:
-        Enable: false
-        Chance: 0
-        Amount: 10
-        Search:
-          X: 16
-          Z: 16
-          Y: 10
-  # Change the reward for killing creatures.
+          Amount: 10
+          AFK:
+            Enable: false
+            Amount: 5
+            Chance: 0
+          Search:
+            X: 8
+            Z: 8
+            Y: 5
+        BreedableMobs:
+          Enable: false
+          Chance: 0
+          Amount: 20
+          Search:
+            X: 16
+            Z: 16
+            Y: 10
+        WaterMobs:
+          Enable: false
+          Chance: 0
+          Amount: 10
+          Search:
+            X: 16
+            Z: 16
+            Y: 10
+  # Changing the reward for killing creatures.
   # More information: https://github.com/momoservertw/EntityPlus/wiki/Drop
   Drop:
     Enable: false
@@ -116,17 +117,20 @@ Entities:
       lucky1:
         Enable: true
         Priority: 1
-        # Give 150% money to player. Need: MythicMobs.
-        Money: 1.5
         Exp: 1.5
         Items: 1.5
+        MythicMobs:
+          Money: 1.5
+          Items: 1.5
       lucky2:
         Enable: true
         Priority: 2
-        Money: 2
         Exp: 2
         Items: 2
-  # Control creatures damage and modify it.
+        MythicMobs:
+          Money: 2
+          Items: 2
+  # Controlling creatures damage.
   # More information: https://github.com/momoservertw/EntityPlus/wiki/Damage
   Damage:
     Enable: false
@@ -165,12 +169,12 @@ Entities:
         Blocks:
           - WitherRose
 
-# Skip the damage duration and then damage the creature immediately.
+# Skipping the damage duration and damaging the creature immediately.
 # More information: https://github.com/momoservertw/EntityPlus/wiki/Damage-Skip-Duration
 Damage-Skip-Duration:
   Enable: false
   Settings:
-    # If the creature is close to the player, it will not kill creature or skip the duration of damage.
+    # It will not affected to the creatures near the player.
     No-Player-Range: 10
     Features:
       Bypass:
@@ -194,7 +198,7 @@ Damage-Skip-Duration:
   MythicMobs-List: []
   MythicMobs-Ignore-List: []
 
-# Control entities amount and save CPU performance.
+# Controlling entities amount and save CPU performance.
 # More information: https://github.com/momoservertw/EntityPlus/wiki/Purge
 Purge:
   Enable: false

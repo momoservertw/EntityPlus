@@ -19,7 +19,7 @@ public class MythicMobsLootDrop implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onMythicMobLootDrop(MythicMobLootDropEvent e) {
-        if (!ConfigHandler.getConfigPath().isDrop()) {
+        if (!ConfigHandler.getConfigPath().isDropMmItem()) {
             return;
         }
         Player player;
@@ -51,45 +51,54 @@ public class MythicMobsLootDrop implements Listener {
             return;
         }
 
-        double totalMoney = 1;
         double totalExp = 1;
-        double totalItem = 1;
+        double totalItems = 1;
+        double totalMoney = 1;
+        double totalMmItems = 1;
         double money;
         double exp;
-        double item;
+        double items;
+        double mmItems;
         if (ConfigHandler.getConfigPath().isDropBonus()) {
             String combinedMethod = ConfigHandler.getConfigPath().getDropBonusMode();
             for (String key : dropMap.keySet()) {
                 if (PermissionsHandler.hasPermission(player, "entityplus.drop.multiplier." + key)) {
-                    money = dropMap.get(key).getMoney();
                     exp = dropMap.get(key).getExp();
-                    item = dropMap.get(key).getItems();
+                    items = dropMap.get(key).getItems();
+                    money = dropMap.get(key).getMoney();
+                    mmItems = dropMap.get(key).getMmItems();
                     if (combinedMethod.equals("plus")) {
-                        money--;
                         exp--;
-                        item--;
-                        totalMoney += money;
+                        items--;
+                        money--;
+                        mmItems--;
                         totalExp += exp;
-                        totalItem += item;
+                        totalItems += items;
+                        totalMoney += money;
+                        totalMmItems += mmItems;
                     } else if (combinedMethod.equals("multiply")) {
-                        totalMoney *= money;
                         totalExp *= exp;
-                        totalItem *= item;
+                        totalItems *= items;
+                        totalMoney *= money;
+                        totalMmItems *= mmItems;
                     } else {
-                        money--;
                         exp--;
-                        item--;
-                        totalMoney += money;
+                        items--;
+                        money--;
+                        mmItems--;
                         totalExp += exp;
-                        totalItem += item;
+                        totalItems += items;
+                        totalMoney += money;
+                        totalMmItems += mmItems;
                     }
                 }
             }
         } else {
             String maxMulti = Collections.max(permsList);
-            totalMoney = dropMap.get(maxMulti).getMoney();
             totalExp = dropMap.get(maxMulti).getExp();
-            totalItem = dropMap.get(maxMulti).getItems();
+            totalItems = dropMap.get(maxMulti).getItems();
+            totalMoney = dropMap.get(maxMulti).getMoney();
+            totalMmItems = dropMap.get(maxMulti).getMmItems();
         }
 
         if (ConfigHandler.getConfigPath().isDropExp()) {
@@ -101,8 +110,8 @@ public class MythicMobsLootDrop implements Listener {
         if (ConfigHandler.getConfigPath().isDropMmItem()) {
             Collection<Drop> dropItem = e.getPhysicalDrops();
             for (Drop drop : dropItem) {
-                drop.setAmount(drop.getAmount() * totalItem);
-                ServerHandler.sendConsoleMessage(String.valueOf(drop.getAmount() * totalItem));
+                drop.setAmount(drop.getAmount() * totalItems);
+                ServerHandler.sendConsoleMessage(String.valueOf(drop.getAmount() * totalItems));
             }
         }
 
@@ -110,6 +119,12 @@ public class MythicMobsLootDrop implements Listener {
             int dropMoney = e.getMoney();
             dropMoney *= totalMoney;
             e.setMoney(dropMoney);
+        }
+
+        if (ConfigHandler.getConfigPath().isDropMmItem()) {
+            int dropMmItems = ();
+            dropMmItems *= totalMmItems;
+            e.setMoney(dropMmItems);
         }
     }
 }

@@ -1,6 +1,5 @@
 package tw.momocraft.entityplus.utils;
 
-import javafx.util.Pair;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
@@ -21,6 +20,8 @@ public class ConfigPath {
     //  ============================================== //
     //         General Settings                        //
     //  ============================================== //
+    private static LocationUtils locationUtils;
+    private static BlocksUtils blocksUtils;
     private int mobSpawnRange;
     private int nearbyPlayerRange;
 
@@ -77,6 +78,9 @@ public class ConfigPath {
     //         Setup all configuration.                //
     //  ============================================== //
     private void setUp() {
+        locationUtils = new LocationUtils();
+        blocksUtils = new BlocksUtils();
+
         livingEntityMap = new LivingEntityMap();
         mobSpawnRange = ConfigHandler.getServerConfig("spigot.yml").getInt("world-settings.default.mob-spawn-range") * 16;
         nearbyPlayerRange = ConfigHandler.getServerConfig("config.yml").getInt("General.Nearby-Players-Range");
@@ -88,6 +92,13 @@ public class ConfigPath {
         setSpawner();
     }
 
+    public static LocationUtils getLocationUtils() {
+        return locationUtils;
+    }
+
+    public static BlocksUtils getBlocksUtils() {
+        return blocksUtils;
+    }
 
     public LivingEntityMap getLivingEntityMap() {
         return livingEntityMap;
@@ -99,7 +110,7 @@ public class ConfigPath {
     private void setSpawnEntity() {
         spawn = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Enable");
         if (spawn) {
-            spawnerResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Settings.Features.Bypass.Residence-Flag");
+            spawnResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Settings.Features.Bypass.Residence-Flag");
             spawnMythicMobs = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Settings.Features.MythicMobs");
             ConfigurationSection groupsConfig = ConfigHandler.getConfig("entities.yml").getConfigurationSection("Entities");
             if (groupsConfig != null) {
@@ -110,8 +121,9 @@ public class ConfigPath {
                 EntityMap entityMap;
                 List<BlocksMap> blocksMaps;
                 List<LocationMap> locMaps;
-                String limitGroup;
+                String limit;
                 Map<String, DropMap> dropMap;
+                boolean mythicMobsEnabled = ConfigHandler.getDepends().MythicMobsEnabled();
                 for (String group : groupsConfig.getKeys(false)) {
                     groupEnable = ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Enable");
                     if (groupEnable == null || groupEnable.equals("true")) {
@@ -120,17 +132,34 @@ public class ConfigPath {
                         entityMap.setGroupName(group);
                         for (String entityType : ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Types")) {
                             try {
+                                // Add creature.
                                 entityList.add(EntityType.valueOf(entityType).name());
                             } catch (Exception e) {
                                 customList = ConfigHandler.getConfig("groups.yml").getStringList("Entities." + entityType);
-                                // Add MythicMobs.
                                 if (customList.isEmpty()) {
-                                    entityList.add(entityType);
+                                    // Add MythicMobs.
+                                    if (mythicMobsEnabled) {
+                                        entityList.add(entityType);
+                                    } else {
+                                        ServerHandler.sendConsoleMessage("&cCan not find entity in \"entities.yml ➜ Entities - " + group + "\".");
+                                        ServerHandler.sendConsoleMessage("&eType: " + entityType);
+                                    }
                                     continue;
                                 }
                                 // Add Custom Group.
                                 for (String customType : customList) {
-                                    entityList.add(EntityType.valueOf(customType).name());
+                                    try {
+                                        // Add creature.
+                                        entityList.add(EntityType.valueOf(customType).name());
+                                    } catch (Exception ex) {
+                                        // Add MythicMobs.
+                                        if (mythicMobsEnabled) {
+                                            entityList.add(entityType);
+                                        } else {
+                                            ServerHandler.sendConsoleMessage("&cCan not find entity in \"groups.yml ➜ Entities - " + entityType + "\".");
+                                            ServerHandler.sendConsoleMessage("&eType: " + customType);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -149,20 +178,23 @@ public class ConfigPath {
                         entityMap.setLiquid(ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Liquid"));
                         entityMap.setDay(ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Day"));
                         // Blocks settings.
-                        blocksMaps = BlocksUtils.getBlocksMaps("Entities." + group + ".Blocks");
+                        blocksMaps = blocksUtils.getSpeBlocksMaps("Entities." + group + ".Blocks");
                         if (!blocksMaps.isEmpty()) {
                             entityMap.setBlocksMaps(blocksMaps);
                         }
                         // Location settings
-                        locMaps = LocationUtils.getLocationMaps("Entities." + group + ".Location");
+                        locMaps = locationUtils.getSpeLocMaps("Entities." + group + ".Location");
                         if (!locMaps.isEmpty()) {
                             entityMap.setLocMaps(locMaps);
                         }
                         // Limits settings
-                        limitGroup = ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Limit");
-                        if (limitGroup != null) {
-                            if (limitProp.containsKey(limitGroup)) {
-                                entityMap.setLimitPair(new Pair<>(limitGroup, limitProp.get(limitGroup)));
+                        limit = ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Limit");
+                        if (limit != null) {
+                            if (limitProp.containsKey(limit)) {
+                                entityMap.setLimitPair(limitProp.get(limit));
+                            } else {
+                                ServerHandler.sendConsoleMessage("&cCan not find limit group in \"entities.yml ➜ Entities - " + group + "\".");
+                                ServerHandler.sendConsoleMessage("&eLimit: " + limit);
                             }
                         }
                         // Drop settings
@@ -257,9 +289,10 @@ public class ConfigPath {
                         dropMap = new DropMap();
                         dropMap.setGroupName(group);
                         dropMap.setPriority(ConfigHandler.getConfig("config.yml").getLong("Entities.Drop.Groups." + group + ".Priority"));
-                        dropMap.setMoney(ConfigHandler.getConfig("config.yml").getLong("Entities.Drop.Groups." + group + ".Money"));
                         dropMap.setExp(ConfigHandler.getConfig("config.yml").getLong("Entities.Drop.Groups." + group + ".Exp"));
                         dropMap.setItems(ConfigHandler.getConfig("config.yml").getLong("Entities.Drop.Groups." + group + ".Items"));
+                        dropMap.setMoney(ConfigHandler.getConfig("config.yml").getLong("Entities.Drop.Groups." + group + ".MythicMobs.Money"));
+                        dropMap.setMmItems(ConfigHandler.getConfig("config.yml").getLong("Entities.Drop.Groups." + group + ".MythicMobs.Item"));
                         dropProp.put(group, dropMap);
                     }
                 }
@@ -299,11 +332,11 @@ public class ConfigPath {
                             }
                         }
                         spawnerMap.setChangeMap(changeMap);
-                        blocksMaps = BlocksUtils.getBlocksMaps("Spawner.Groups." + group + ".Blocks");
+                        blocksMaps = blocksUtils.getSpeBlocksMaps("Spawner.Groups." + group + ".Blocks");
                         if (!blocksMaps.isEmpty()) {
                             spawnerMap.setBlocksMaps(blocksMaps);
                         }
-                        locMaps = LocationUtils.getLocationMaps("Spawner.Groups." + group + ".Location");
+                        locMaps = locationUtils.getSpeLocMaps("Spawner.Groups." + group + ".Location");
                         if (!locMaps.isEmpty()) {
                             spawnerMap.setLocMaps(locMaps);
                         }

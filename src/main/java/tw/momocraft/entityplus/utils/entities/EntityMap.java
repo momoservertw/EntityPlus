@@ -23,7 +23,7 @@ public class EntityMap {
     private String day;
     private List<LocationMap> locMaps = new ArrayList<>();
     private List<BlocksMap> blocksMaps = new ArrayList<>();
-    private Pair<String, LimitMap> limitPair = null;
+    private LimitMap limit = null;
     private Map<String, DropMap> dropMap = new HashMap<>();
 
     public String getGroupName() {
@@ -74,8 +74,8 @@ public class EntityMap {
         return blocksMaps;
     }
 
-    public Pair<String, LimitMap> getLimitPair() {
-        return limitPair;
+    public LimitMap getLimit() {
+        return limit;
     }
 
     public Map<String, DropMap> getDropMap() {
@@ -130,8 +130,8 @@ public class EntityMap {
         this.locMaps = locationMaps;
     }
 
-    public void setLimitPair(Pair<String, LimitMap> limitPair) {
-        this.limitPair = limitPair;
+    public void setLimitPair(LimitMap limit) {
+        this.limit = limit;
     }
 
     public void setDropMap(Map<String, DropMap> dropMap) {

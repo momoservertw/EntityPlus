@@ -1,63 +1,98 @@
 package tw.momocraft.entityplus.utils.blocksutils;
 
-import com.bekvon.bukkit.residence.Residence;
-import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.ServerHandler;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class BlocksUtils {
 
-    public static Map<String, BlocksMap> getBlocksMaps(String path) {
-        Map<String, BlocksMap> blocksMaps = new HashMap<>();
-        BlocksMap blocksMap;
-        int x;
-        int z;
-        int y;
-        String r;
-        String s;
-        String v;
-        for (String group : ConfigHandler.getConfig("config.yml").getStringList(path)) {
-            if (ConfigHandler.getConfig("config.yml").getConfigurationSection("General.Blocks." + group) != null) {
-                blocksMap = new BlocksMap();
-                blocksMap.setBlockTypes(ConfigHandler.getConfig("config.yml").getStringList("General.Blocks." + group + ".Types"));
-                if (ConfigHandler.getConfig("config.yml").getConfigurationSection("General.Blocks." + group + "." + ".Ignore") != null) {
-                    blocksMap.setIgnoreMaps(getBlocksMaps("General.Blocks." + group + "." + ".Ignore"));
-                }
-                x = ConfigHandler.getConfig("config.yml").getInt("General.Blocks." + group + ".Search.X");
-                z = ConfigHandler.getConfig("config.yml").getInt("General.Blocks." + group + ".Search.Z");
-                y = ConfigHandler.getConfig("config.yml").getInt("General.Blocks." + group + ".Search.Y");
-                r = ConfigHandler.getConfig("config.yml").getString("General.Blocks." + group + ".Search.R");
-                s = ConfigHandler.getConfig("config.yml").getString("General.Blocks." + group + ".Search.S");
-                v = ConfigHandler.getConfig("config.yml").getString("General.Blocks." + group + ".Search.V");
-                if (r != null) {
-                    blocksMap.setRound(true);
-                    blocksMap.setX(Integer.parseInt(r));
-                    blocksMap.setZ(Integer.parseInt(r));
-                } else if (s != null) {
-                    blocksMap.setX(Integer.parseInt(s));
-                    blocksMap.setZ(Integer.parseInt(s));
+    private Map<String, BlocksMap> blocksMaps;
+
+    public BlocksUtils() {
+        setUp();
+    }
+
+    /**
+     * Setup LocMaps.
+     */
+    private void setUp() {
+        blocksMaps = new HashMap<>();
+        ConfigurationSection locConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("General.Blocks");
+        if (locConfig != null) {
+            ConfigurationSection groupConfig;
+            for (String group : locConfig.getKeys(false)) {
+                groupConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("General.Blocks." + group);
+                if (groupConfig != null) {
+                    blocksMaps.put(group, getBlocksMap(group));
                 } else {
-                    blocksMap.setX(x);
-                    blocksMap.setZ(z);
+                    ServerHandler.sendConsoleMessage("&cThere is an error occurred. Please check your configuration.");
+                    ServerHandler.sendConsoleMessage("&eBlocks: " + group + " not found.");
                 }
-                if (v != null) {
-                    blocksMap.setVertical(true);
-                    blocksMap.setY(Integer.parseInt(v));
-                } else {
-                    blocksMap.setY(y);
-                }
-                blocksMaps.put(group, blocksMap);
-            } else {
-                ServerHandler.sendConsoleMessage("&cThere is an error occurred. Please check your groups.yml.");
-                ServerHandler.sendConsoleMessage("&eBlocks: " + group + " not found.");
             }
         }
+    }
+
+    private BlocksMap getBlocksMap(String group) {
+        BlocksMap blocksMap = new BlocksMap();
+        List<BlocksMap> ignoreList = new ArrayList<>();
+        blocksMap.setBlockTypes(ConfigHandler.getConfig("config.yml").getStringList("General.Blocks." + group + ".Types"));
+        // Setting the value of X and Z, and defining the type of horizontal.
+        String r = ConfigHandler.getConfig("config.yml").getString("General.Blocks." + group + ".Search.R");
+        String s = ConfigHandler.getConfig("config.yml").getString("General.Blocks." + group + ".Search.S");
+        if (r != null) {
+            blocksMap.setRound(true);
+            blocksMap.setX(Integer.parseInt(r));
+            blocksMap.setZ(Integer.parseInt(r));
+        } else if (s != null) {
+            blocksMap.setX(Integer.parseInt(s));
+            blocksMap.setZ(Integer.parseInt(s));
+        } else {
+            int x = ConfigHandler.getConfig("config.yml").getInt("General.Blocks." + group + ".Search.X");
+            int z = ConfigHandler.getConfig("config.yml").getInt("General.Blocks." + group + ".Search.Z");
+            blocksMap.setX(x);
+            blocksMap.setZ(z);
+        }
+        // Setting the value of Y, and defining the type of vertical.
+        String v = ConfigHandler.getConfig("config.yml").getString("General.Blocks." + group + ".Search.V");
+        if (v != null) {
+            blocksMap.setVertical(true);
+            blocksMap.setY(Integer.parseInt(v));
+        } else {
+            int y = ConfigHandler.getConfig("config.yml").getInt("General.Blocks." + group + ".Search.Y");
+            blocksMap.setY(y);
+        }
+        // Setting the ignore block maps.
+        for (String ignoreGroup : ConfigHandler.getConfig("config.yml").getStringList("General.Blocks." + group + "." + ".Ignore")) {
+            ignoreList.add(getBlocksMap("General.Blocks." + group + "." + ".Ignore." + ignoreGroup));
+        }
+        blocksMap.setIgnoreMaps(ignoreList);
+        return blocksMap;
+    }
+
+    public Map<String, BlocksMap> getBlocksMaps() {
         return blocksMaps;
+    }
+
+    /**
+     * @param path the specific path.
+     * @return the specific maps from BlocksMaps.
+     */
+    public List<BlocksMap> getSpeBlocksMaps(String path) {
+        List<BlocksMap> blocksMapList = new ArrayList<>();
+        BlocksMap blocksMap;
+        for (String group : ConfigHandler.getConfig("config.yml").getStringList(path)) {
+            blocksMap = blocksMaps.get(group);
+            if (blocksMap != null) {
+                blocksMapList.add(blocksMap);
+            }
+        }
+        return blocksMapList;
     }
 
     /**
@@ -65,25 +100,15 @@ public class BlocksUtils {
      * @param blocksMaps the Blocks settings.
      * @return if there are certain blocks nearby the location.
      */
-    public static boolean checkBlocks(Location loc, Map<String, BlocksMap> blocksMaps, String resBypassFlag) {
+    public boolean checkBlocks(Location loc, List<BlocksMap> blocksMaps) {
         if (blocksMaps == null) {
             return true;
         }
-        if (!resBypassFlag.equals("")) {
-            if (ConfigHandler.getDepends().ResidenceEnabled()) {
-                ClaimedResidence res = Residence.getInstance().getResidenceManager().getByLoc(loc);
-                if (res != null) {
-                    if (res.getPermissions().has(resBypassFlag, false)) {
-                        return false;
-                    }
-                }
-            }
-        }
-        Map<String, BlocksMap> ignoreMaps;
-        for (BlocksMap blocksMap : blocksMaps.values()) {
+        List<BlocksMap> ignoreMaps;
+        for (BlocksMap blocksMap : blocksMaps) {
             ignoreMaps = blocksMap.getIgnoreMaps();
             if (ignoreMaps != null) {
-                for (BlocksMap ignoreMap : ignoreMaps.values()) {
+                for (BlocksMap ignoreMap : ignoreMaps) {
                     if (getSearchBlocks(loc, ignoreMap)) {
                         return false;
                     }
@@ -100,7 +125,7 @@ public class BlocksUtils {
      * @param loc the checking location.
      * @return Check if there are matching materials nearby.
      */
-    private static boolean getSearchBlocks(Location loc, BlocksMap blocksMap) {
+    private boolean getSearchBlocks(Location loc, BlocksMap blocksMap) {
         List<String> blockTypes = blocksMap.getBlockTypes();
         int rangeX = blocksMap.getX();
         int rangeY = blocksMap.getY();

@@ -1,14 +1,10 @@
 package tw.momocraft.entityplus.utils.entities;
 
 import com.Zrips.CMI.CMI;
-import com.bekvon.bukkit.residence.Residence;
-import com.bekvon.bukkit.residence.protection.ClaimedResidence;
-import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.PermissionsHandler;
-import tw.momocraft.entityplus.handlers.ServerHandler;
 
 import java.util.Iterator;
 import java.util.List;
@@ -17,26 +13,15 @@ import java.util.Random;
 public class EntityUtils {
     /**
      * @param entity   the checking entity.
-     * @param loc      the location of this entity.
      * @param limitMap the limit map of this type of entity.
      * @return if spawn location reach the maximum entity amount.
      */
-    public static boolean checkLimit(Entity entity, Location loc, LimitMap limitMap) {
+    public static boolean checkLimit(Entity entity, LimitMap limitMap) {
         if (!ConfigHandler.getConfigPath().isLimit()) {
             return true;
         }
         if (limitMap == null) {
             return true;
-        }
-        if (ConfigHandler.getDepends().ResidenceEnabled()) {
-            if (ConfigHandler.getConfigPath().isSpawnResFlag()) {
-                ClaimedResidence res = Residence.getInstance().getResidenceManager().getByLoc(loc);
-                if (res != null) {
-                    if (res.getPermissions().has("spawnlimitbypass", false)) {
-                        return true;
-                    }
-                }
-            }
         }
         List<Entity> nearbyEntities = entity.getNearbyEntities(limitMap.getSearchX(), limitMap.getSearchY(), limitMap.getSearchZ());
         Iterator<Entity> iterator = nearbyEntities.iterator();
@@ -75,14 +60,14 @@ public class EntityUtils {
         if (nearbyEntities.size() < amount) {
             return true;
         }
-        return !isRandomChance(chance);
+        return !isRandChance(chance);
     }
 
     /**
      * @param value the checking value
      * @return if the chance will succeed or not.
      */
-    public static boolean isRandomChance(double value) {
+    public static boolean isRandChance(double value) {
         return value < new Random().nextDouble();
     }
 

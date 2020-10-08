@@ -16,9 +16,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.SpawnerSpawnEvent;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.ServerHandler;
+import tw.momocraft.entityplus.utils.ConfigPath;
 import tw.momocraft.entityplus.utils.CustomCommands;
 import tw.momocraft.entityplus.utils.blocksutils.BlocksUtils;
-import tw.momocraft.entityplus.utils.locationutils.LocationAPI;
 import tw.momocraft.entityplus.utils.entities.SpawnerMap;
 
 import java.util.*;
@@ -36,10 +36,10 @@ public class SpawnerSpawn implements Listener {
             if (spawnerProp.containsKey(entityType)) {
                 for (SpawnerMap spawnerMap : spawnerProp.get(entityType)) {
                     Location loc = e.getLocation();
-                    if (!LocationAPI.checkLocation(loc, spawnerMap.getLocMaps(), "spawnerbypass")) {
+                    if (!ConfigPath.getLocationUtils().checkLocation(loc, spawnerMap.getLocMaps())) {
                         return;
                     }
-                    if (!BlocksUtils.checkBlocks(loc, spawnerMap.getBlocksMaps(), "spawnerbypass")) {
+                    if (!ConfigPath.getBlocksUtils().checkBlocks(loc, spawnerMap.getBlocksMaps())) {
                         return;
                     }
                     if (ConfigHandler.getConfigPath().isSpawnerResFlag()) {
