@@ -1,62 +1,100 @@
 # --{ =-=-=-=-=-=-=-=-=-= EntityPlus's Configuration Settings, by Momocraft =-=-=-=-=-=-=-=-=-= }--
+# Wiki: https://github.com/momoservertw/EntityPlus/wiki
 Config-Version: 10
 Check-Updates: true
 Debugging: false
 
 General:
-  # The searching players range from a location.
-  Nearby-Players-Range: 32
+  Settings:
+    # The searching players range from a location.
+    Nearby-Players-Range: 32
+  # Specifying the spawn locations.
+  # More information: https://github.com/momoservertw/EntityPlus/wiki/Location
+  Location:
+    NormalWorlds:
+      Worlds:
+        - world
+    NetherWorlds:
+      Worlds:
+        - world_nether
+    EndWorlds:
+      Worlds:
+        - world_the_end
+    NormalBorder:
+      Worlds:
+        - world
+      Area:
+        S: 10000
+  # Check if there are certain blocks nearby.
+  # More information: https://github.com/momoservertw/EntityPlus/wiki/Blocks
+  Blocks:
+    # When creatures spawn in wither_rose.
+    InWitherRose:
+      Types:
+        - WITHER_ROSE
+      Search:
+        Y: 1
+    NearbyMonument:
+      Types:
+        - PRISMARINE
+        - DARK_PRISMARINE
+        - PRISMARINE_BRICKS
+      Search:
+        S: 5
+        Y: 5
 
+# Controlling entities spawn conditions, rewards, and damage.
 Entities:
+  Settings:
+    Features:
+      # Control MythicMobs spawning and conditions.
+      # The "CUSTOM" reason does not work for MythicMobs.
+      MythicMobs: true
+  # Controlling entities spawn conditions.
+  # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn
   Spawn:
     Enable: false
     Settings:
       Features:
-        # Control MythicMobs spawn and conditions.
-        # The "CUSTOM" reason does not work if you have MythicMobs.
-        # MythicMobs: https://www.spigotmc.org/resources/%E2%9A%94-mythicmobs-free-version-%E2%96%BAthe-1-custom-mob-creator%E2%97%84.5702/
-        MythicMobs: true
         Bypass:
+          # Custom Residence flag "spawnbypass" to bypass the features.
           Residence-Flag: false
-  # If there are too many creatures over the spawn location, it will prevent spawning creatures.
-  # More information: https://github.com/momoservertw/EntityPlus/wiki/Limit
-  Limit:
-    Enable: false
-    Settings:
-      Features:
-        AFK: true
-        Bypass:
-          Residence-Flag: false
-    Groups:
-      NormalMobs:
-        Enable: true
-        Chance: 0
-        Amount: 10
-        AFK:
-          Enable: false
-          Amount: 5
+    # Prevent spawning new creatures if there are too many creatures nearby the location.
+    Limit:
+      Enable: false
+      Settings:
+        Features:
+          AFK: true
+      Groups:
+        NormalMobs:
+          Enable: true
           Chance: 0
-        Search:
-          X: 8
-          Z: 8
-          Y: 5
-      BreedableMobs:
-        Enable: false
-        Chance: 0
-        Amount: 20
-        Search:
-          X: 16
-          Z: 16
-          Y: 10
-      WaterMobs:
-        Enable: false
-        Chance: 0
-        Amount: 10
-        Search:
-          X: 16
-          Z: 16
-          Y: 10
-  # Change the reward for killing creatures.
+          Amount: 10
+          AFK:
+            Enable: false
+            Amount: 5
+            Chance: 0
+          Search:
+            X: 8
+            Z: 8
+            Y: 5
+        BreedableMobs:
+          Enable: false
+          Chance: 0
+          Amount: 20
+          Search:
+            X: 16
+            Z: 16
+            Y: 10
+        WaterMobs:
+          Enable: false
+          Chance: 0
+          Amount: 10
+          Search:
+            X: 16
+            Z: 16
+            Y: 10
+  # Changing the reward for killing creatures.
   # More information: https://github.com/momoservertw/EntityPlus/wiki/Drop
   Drop:
     Enable: false
@@ -78,19 +116,21 @@ Entities:
     Groups:
       lucky1:
         Enable: true
-        # The highest priority of group will be selected.
         Priority: 1
-        # Give 150% money to player. Need: MythicMobs.
-        Money: 1.5
         Exp: 1.5
         Items: 1.5
+        MythicMobs:
+          Money: 1.5
+          Items: 1.5
       lucky2:
         Enable: true
         Priority: 2
-        Money: 2
         Exp: 2
         Items: 2
-  # Control creatures damage and modify it.
+        MythicMobs:
+          Money: 2
+          Items: 2
+  # Controlling creatures damage.
   # More information: https://github.com/momoservertw/EntityPlus/wiki/Damage
   Damage:
     Enable: false
@@ -128,30 +168,17 @@ Entities:
           - WITHER
         Blocks:
           - WitherRose
-      # It will prevent creature from dying if the creature is nearby the block end_portal.
-      End-Portal-Duplicate:
-        Enable: true
-        Action:
-          Damage: 0
-        Blocks:
-          END_PORTAL:
-            Range:
-              X: 3
-              Y: 5
-              Z: 3
-        Location:
-          - world
-          - world_nether
-        List:
-          - ChestedHorse
 
-# Skip the damage duration and then damage the creature immediately.
+# Skipping the damage duration and damaging the creature immediately.
 # More information: https://github.com/momoservertw/EntityPlus/wiki/Damage-Skip-Duration
 Damage-Skip-Duration:
   Enable: false
   Settings:
-    # If the creature is close to the player, it will not kill creature or skip the duration of damage.
+    # It will not affected to the creatures near the player.
     No-Player-Range: 10
+    Features:
+      Bypass:
+        Residence-Flag: false
   Groups:
     Fire:
       Enable: true
@@ -171,7 +198,7 @@ Damage-Skip-Duration:
   MythicMobs-List: []
   MythicMobs-Ignore-List: []
 
-# Control entities amount and save CPU performance.
+# Controlling entities amount and save CPU performance.
 # More information: https://github.com/momoservertw/EntityPlus/wiki/Purge
 Purge:
   Enable: false
