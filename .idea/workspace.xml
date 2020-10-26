@@ -104,10 +104,10 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="263" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1601616320689">
+    <state x="263" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1603732388837">
       <screen x="0" y="0" width="1707" height="920" />
     </state>
-    <state x="263" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1601616320689" />
+    <state x="263" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1603732388837" />
     <state x="584" y="207" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1601410797275">
       <screen x="0" y="0" width="1707" height="920" />
     </state>
@@ -116,15 +116,30 @@
       <screen x="0" y="0" width="1707" height="920" />
     </state>
     <state x="634" y="216" key="FileChooserDialogImpl/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1602741355207" />
-    <state x="326" y="169" key="com.intellij.ide.util.TipDialog" timestamp="1594367612540">
-      <screen x="0" y="0" width="1280" height="689" />
+    <state width="1663" height="241" key="GridCell.Tab.0.bottom" timestamp="1603733224186">
+      <screen x="0" y="0" width="1707" height="920" />
     </state>
-    <state x="326" y="169" key="com.intellij.ide.util.TipDialog/0.0.1280.689@0.0.1280.689" timestamp="1594367612540" />
+    <state width="1663" height="241" key="GridCell.Tab.0.bottom/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1603733224186" />
+    <state width="1663" height="241" key="GridCell.Tab.0.center" timestamp="1603733224185">
+      <screen x="0" y="0" width="1707" height="920" />
+    </state>
+    <state width="1663" height="241" key="GridCell.Tab.0.center/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1603733224185" />
+    <state width="1663" height="241" key="GridCell.Tab.0.left" timestamp="1603733224185">
+      <screen x="0" y="0" width="1707" height="920" />
+    </state>
+    <state width="1663" height="241" key="GridCell.Tab.0.left/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1603733224185" />
+    <state width="1663" height="241" key="GridCell.Tab.0.right" timestamp="1603733224185">
+      <screen x="0" y="0" width="1707" height="920" />
+    </state>
+    <state width="1663" height="241" key="GridCell.Tab.0.right/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1603733224185" />
     <state x="341" y="29" width="1026" height="891" key="find.popup" timestamp="1601611519456">
       <screen x="0" y="0" width="1707" height="920" />
     </state>
-    <state x="256" y="45" width="769" height="600" key="find.popup/0.0.1280.689@0.0.1280.689" timestamp="1594367764926" />
     <state x="341" y="29" width="1026" height="891" key="find.popup/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1601611519456" />
+    <state x="510" y="211" key="run.anything.popup" timestamp="1603732834433">
+      <screen x="0" y="0" width="1707" height="920" />
+    </state>
+    <state x="510" y="211" key="run.anything.popup/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1603732834433" />
   </component>
   <component name="antWorkspaceConfiguration">
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />

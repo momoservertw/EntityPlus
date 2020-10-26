@@ -19,112 +19,100 @@ public class MythicMobsLootDrop implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onMythicMobLootDrop(MythicMobLootDropEvent e) {
-        if (!ConfigHandler.getConfigPath().isDropMmItem()) {
-            return;
-        }
-        Player player;
-        try {
-            player = (Player) e.getKiller();
-        } catch (Exception ex) {
-            return;
-        }
-
         Entity entity = e.getEntity();
         UUID entityUUID = entity.getUniqueId();
+        // Checking the EntityPlus creature tag.
         Pair<String, String> mobsPair = ConfigHandler.getConfigPath().getLivingEntityMap().getMobsMap().get(entityUUID);
         if (mobsPair == null) {
             return;
         }
-
-        Map<String, DropMap> dropMap = ConfigHandler.getConfigPath().getEntityProp().get(mobsPair.getKey()).get(mobsPair.getValue()).getDropMap();
-        if (dropMap == null) {
-            return;
-        }
-
-        List<String> permsList = new ArrayList<>();
-        for (String key : dropMap.keySet()) {
-            if (PermissionsHandler.hasPermission(player, "entityplus.drop.multiplier." + key)) {
-                permsList.add(key);
+        // Removing the EntityPlus creature tag.
+        ConfigHandler.getConfigPath().getLivingEntityMap().removeMap(entityUUID);
+        // Checking the Drop feature.
+        if (ConfigHandler.getConfigPath().isDrop()) {
+            Player player;
+            try {
+                player = (Player) e.getKiller();
+            } catch (Exception ex) {
+                return;
             }
-        }
-        if (permsList.isEmpty()) {
-            return;
-        }
-
-        double totalExp = 1;
-        double totalItems = 1;
-        double totalMoney = 1;
-        double totalMmItems = 1;
-        double money;
-        double exp;
-        double items;
-        double mmItems;
-        if (ConfigHandler.getConfigPath().isDropBonus()) {
-            String combinedMethod = ConfigHandler.getConfigPath().getDropBonusMode();
+            // Getting entity properties.
+            Map<String, DropMap> dropMap = ConfigHandler.getConfigPath().getEntityProp().get(mobsPair.getKey()).get(mobsPair.getValue()).getDropMap();
+            if (dropMap == null) {
+                return;
+            }
+            // Checking player reward permissions.
+            List<String> permsList = new ArrayList<>();
             for (String key : dropMap.keySet()) {
                 if (PermissionsHandler.hasPermission(player, "entityplus.drop.multiplier." + key)) {
-                    exp = dropMap.get(key).getExp();
-                    items = dropMap.get(key).getItems();
-                    money = dropMap.get(key).getMoney();
-                    mmItems = dropMap.get(key).getMmItems();
-                    if (combinedMethod.equals("plus")) {
-                        exp--;
-                        items--;
-                        money--;
-                        mmItems--;
-                        totalExp += exp;
-                        totalItems += items;
-                        totalMoney += money;
-                        totalMmItems += mmItems;
-                    } else if (combinedMethod.equals("multiply")) {
-                        totalExp *= exp;
-                        totalItems *= items;
-                        totalMoney *= money;
-                        totalMmItems *= mmItems;
-                    } else {
-                        exp--;
-                        items--;
-                        money--;
-                        mmItems--;
-                        totalExp += exp;
-                        totalItems += items;
-                        totalMoney += money;
-                        totalMmItems += mmItems;
-                    }
+                    permsList.add(key);
                 }
             }
-        } else {
-            String maxMulti = Collections.max(permsList);
-            totalExp = dropMap.get(maxMulti).getExp();
-            totalItems = dropMap.get(maxMulti).getItems();
-            totalMoney = dropMap.get(maxMulti).getMoney();
-            totalMmItems = dropMap.get(maxMulti).getMmItems();
-        }
-
-        if (ConfigHandler.getConfigPath().isDropExp()) {
-            int dropExp = e.getExp();
-            dropExp *= totalExp;
-            e.setExp(dropExp);
-        }
-
-        if (ConfigHandler.getConfigPath().isDropMmItem()) {
-            Collection<Drop> dropItem = e.getPhysicalDrops();
-            for (Drop drop : dropItem) {
-                drop.setAmount(drop.getAmount() * totalItems);
-                ServerHandler.sendConsoleMessage(String.valueOf(drop.getAmount() * totalItems));
+            if (permsList.isEmpty()) {
+                return;
             }
-        }
-
-        if (ConfigHandler.getConfigPath().isDropMoney()) {
-            int dropMoney = e.getMoney();
-            dropMoney *= totalMoney;
-            e.setMoney(dropMoney);
-        }
-
-        if (ConfigHandler.getConfigPath().isDropMmItem()) {
-            int dropMmItems = ();
-            dropMmItems *= totalMmItems;
-            e.setMoney(dropMmItems);
+            double totalExp = 1;
+            double totalItem = 1;
+            double totalMoney = 1;
+            double exp;
+            double item;
+            double money;
+            // Checking the bonus mode.
+            if (ConfigHandler.getConfigPath().isDropBonus()) {
+                String combinedMethod = ConfigHandler.getConfigPath().getDropBonusMode();
+                for (String key : permsList) {
+                    if (dropMap.get(key) != null) {
+                        exp = dropMap.get(key).getExp();
+                        item = dropMap.get(key).getMmItems();
+                        money = dropMap.get(key).getMoney();
+                        if (combinedMethod.equals("plus")) {
+                            exp--;
+                            item--;
+                            money--;
+                            totalExp += exp;
+                            totalItem += item;
+                            totalMoney += money;
+                        } else if (combinedMethod.equals("multiply")) {
+                            totalExp *= exp;
+                            totalItem *= item;
+                            totalMoney *= money;
+                        } else {
+                            exp--;
+                            item--;
+                            money--;
+                            totalExp += exp;
+                            totalItem += item;
+                            totalMoney += money;
+                        }
+                    }
+                }
+            } else {
+                // Choosing the max level of drop.
+                String maxMulti = Collections.max(permsList);
+                totalExp = dropMap.get(maxMulti).getExp();
+                totalItem = dropMap.get(maxMulti).getMmItems();
+                totalMoney = dropMap.get(maxMulti).getMoney();
+            }
+            // Setting the higher exp.
+            if (ConfigHandler.getConfigPath().isDropExp()) {
+                int dropExp = e.getExp();
+                dropExp *= totalExp;
+                e.setExp(dropExp);
+            }
+            // Giving more MythicMobs items.
+            if (ConfigHandler.getConfigPath().isDropMmItem()) {
+                for (Drop drop : e.getPhysicalDrops()) {
+                    drop.setAmount(drop.getAmount() * totalItem - 1);
+                    // entity.getWorld().dropItem(entity.getLocation(), new ItemStack(itemStack));
+                    ServerHandler.sendConsoleMessage(drop.getAmount() + " " + totalItem);
+                }
+            }
+            // Setting the higher money.
+            if (ConfigHandler.getConfigPath().isDropMoney()) {
+                int dropMoney = e.getMoney();
+                dropMoney *= totalMoney;
+                e.setMoney(dropMoney);
+            }
         }
     }
 }

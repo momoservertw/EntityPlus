@@ -13,8 +13,17 @@ public class LivingEntityMap {
         mobsMap = new HashMap<>();
     }
 
+    /**
+     *
+     * @param uuid the uuid of the entity.
+     * @param entityType EntityType, GroupName
+     */
     public void addMap(UUID uuid, Pair<String, String> entityType) {
         mobsMap.put(uuid, entityType);
+    }
+
+    public void removeMap(UUID uuid) {
+        mobsMap.remove(uuid);
     }
 
     public Map<UUID, Pair<String, String>> getMobsMap() {

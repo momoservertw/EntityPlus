@@ -72,7 +72,7 @@ public class ConfigPath {
     private boolean spawner;
     private boolean spawnerResFlag;
 
-    private Map<String, TreeMap<String, SpawnerMap>> spawnerProp = new HashMap<>();
+    private Map<String, List<SpawnerMap>> spawnerProp = new HashMap<>();
 
     //  ============================================== //
     //         Setup all configuration.                //
@@ -312,6 +312,7 @@ public class ConfigPath {
                 List<BlocksMap> blocksMaps;
                 List<LocationMap> locMaps;
                 HashMap<String, Long> changeMap;
+                List<String> changeList;
                 for (String group : spawnerConfig.getKeys(false)) {
                     groupEnable = ConfigHandler.getConfig("config.yml").getString("Spawner.Groups." + group + ".Enable");
                     if (groupEnable == null || groupEnable.equals("true")) {
@@ -327,15 +328,22 @@ public class ConfigPath {
                                 changeMap.put(changeType, ConfigHandler.getConfig("config.yml").getLong("Spawner.Groups." + group + ".Change-Types." + changeType));
                             }
                         } else {
-                            for (String changeType : ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Change-Types")) {
+                            changeList = ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Change-Types");
+                            if (changeList.isEmpty()) {
+                                ServerHandler.sendConsoleMessage("&cThere is an error occurred. The change type of \"" + group + "\" is empty.");
+                                continue;
+                            }
+                            for (String changeType : changeList) {
                                 changeMap.put(changeType, 1L);
                             }
                         }
+                        // To specify the Blocks.
                         spawnerMap.setChangeMap(changeMap);
                         blocksMaps = blocksUtils.getSpeBlocksMaps("Spawner.Groups." + group + ".Blocks");
                         if (!blocksMaps.isEmpty()) {
                             spawnerMap.setBlocksMaps(blocksMaps);
                         }
+                        // To specify the Location.
                         locMaps = locationUtils.getSpeLocMaps("Spawner.Groups." + group + ".Location");
                         if (!locMaps.isEmpty()) {
                             spawnerMap.setLocMaps(locMaps);
@@ -343,28 +351,23 @@ public class ConfigPath {
                         // Add properties to all entities.
                         for (String entityType : spawnerMap.getTypes()) {
                             try {
-                                spawnerProp.get(entityType).put(group, spawnerMap);
+                                spawnerProp.get(entityType).add(spawnerMap);
                             } catch (Exception ex) {
-                                spawnerProp.put(entityType, new TreeMap<>());
-                                spawnerProp.get(entityType).put(group, spawnerMap);
+                                spawnerProp.put(entityType, new ArrayList<>());
+                                spawnerProp.get(entityType).add(spawnerMap);
                             }
                         }
                     }
                 }
-                Map<String, Long> sortMap;
-                TreeMap<String, SpawnerMap> newMap;
+                Map<SpawnerMap, Long> sortMap;
                 for (String entityType : spawnerProp.keySet()) {
                     sortMap = new HashMap<>();
-                    newMap = new TreeMap<>();
-                    for (String group : spawnerProp.get(entityType).keySet()) {
-                        sortMap.put(group, spawnerProp.get(entityType).get(group).getPriority());
+                    for (SpawnerMap group : spawnerProp.get(entityType)) {
+                        sortMap.put(group, group.getPriority());
                     }
                     sortMap = Utils.sortByValue(sortMap);
-                    for (String group : sortMap.keySet()) {
-                        newMap.put(group, spawnerProp.get(entityType).get(group));
-                    }
                     spawnerProp.remove(entityType);
-                    spawnerProp.put(entityType, newMap);
+                    spawnerProp.put(entityType, new ArrayList<>(sortMap.keySet()));
                 }
             }
         }
@@ -451,7 +454,7 @@ public class ConfigPath {
         return spawner;
     }
 
-    public Map<String, TreeMap<String, SpawnerMap>> getSpawnerProp() {
+    public Map<String, List<SpawnerMap>> getSpawnerProp() {
         return spawnerProp;
     }
 
