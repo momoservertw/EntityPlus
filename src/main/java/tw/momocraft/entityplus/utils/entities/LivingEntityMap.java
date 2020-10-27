@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class LivingEntityMap {
-    private Map<UUID, Pair<String, String>> mobsMap;
+    private final Map<UUID, Pair<String, String>> mobsMap;
 
     public LivingEntityMap() {
         mobsMap = new HashMap<>();
