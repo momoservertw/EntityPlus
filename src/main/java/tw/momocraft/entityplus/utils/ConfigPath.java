@@ -83,7 +83,7 @@ public class ConfigPath {
 
         livingEntityMap = new LivingEntityMap();
         mobSpawnRange = ConfigHandler.getServerConfig("spigot.yml").getInt("world-settings.default.mob-spawn-range") * 16;
-        nearbyPlayerRange = ConfigHandler.getServerConfig("config.yml").getInt("General.Nearby-Players-Range");
+        nearbyPlayerRange = ConfigHandler.getConfig("config.yml").getInt("General.Nearby-Players-Range");
 
         setDropProp();
         setLimitProp();

@@ -53,7 +53,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.15.2-R0.1-SNAPSHOT</version>
+            <version>1.16.3-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!--CraftBukkit API-->
@@ -76,7 +76,7 @@
             <groupId>io.lumine.xikage</groupId>
             <artifactId>MythicMobs</artifactId>
             <scope>system</scope>
-            <systemPath>${pom.basedir}/src/main/java/tw/momocraft/entityplus/extra/MythicMobs-4.9.1.jar</systemPath>
+            <systemPath>${pom.basedir}/src/main/java/tw/momocraft/entityplus/extra/MythicMobs-4.10.1.jar</systemPath>
             <version>LEGACY</version>
         </dependency>
         <!--CMI API-->
@@ -92,7 +92,7 @@
             <groupId>me.Residence</groupId>
             <artifactId>Residence</artifactId>
             <scope>system</scope>
-            <systemPath>${pom.basedir}/src/main/java/tw/momocraft/entityplus/extra/Residence4.8.8.2.jar</systemPath>
+            <systemPath>${pom.basedir}/src/main/java/tw/momocraft/entityplus/extra/Residence4.9.0.5.jar</systemPath>
             <version>LEGACY</version>
         </dependency>
         <!--PlaceholderAPI API-->

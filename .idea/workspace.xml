@@ -5,28 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="db9de2ae-2a97-4e0b-968d-c3ef6fdf69c0" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/CustomCommands.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/ResidenceUtils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/handlers/ConfigHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/handlers/ConfigHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/handlers/ServerHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/handlers/ServerHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/extra/MythicMobs-4.9.1.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/extra/Residence4.8.8.2.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/handlers/UpdateHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/handlers/UpdateHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/CreatureSpawn.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/CreatureSpawn.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/EntityDeath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/EntityDeath.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/MythicMobsLootDrop.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/MythicMobsLootDrop.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/MythicMobsSpawn.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/MythicMobsSpawn.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/SpawnerSpawn.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/SpawnerSpawn.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/ConfigPath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/ConfigPath.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/blocksapi/BlocksAPI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/blocksutils/BlocksUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/blocksapi/BlocksMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/blocksutils/BlocksMap.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/EntityMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/EntityMap.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/SpawnerMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/SpawnerMap.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/locationapi/LocationAPI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/locationutils/LocationUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/locationapi/LocationMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/locationutils/LocationMap.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/entities.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/entities.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/future.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/groups.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/groups.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/config.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/config2.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/future.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/groups.yml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/groups.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/utils/ConfigPath.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/utils/ConfigPath.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/utils/entities/LivingEntityMap.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/utils/entities/LivingEntityMap.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,8 +39,13 @@
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
-        <option name="mavenHome" value="C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2020.2.1\plugins\maven\lib\maven3" />
+        <option name="mavenHome" value="$APPLICATION_HOME_DIR$/plugins/maven/lib/maven3" />
       </MavenGeneralSettings>
+    </option>
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="vmOptionsForImporter" value="-Xmx768m" />
+      </MavenImportingSettings>
     </option>
   </component>
   <component name="ProjectId" id="1b6UFVZVPsaZKNbyEvCTRVcJgh0" />
@@ -61,12 +56,12 @@
   </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Exercise201015" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
-    <property name="settings.editor.selected.configurable" value="preferences.editor" />
+    <property name="settings.editor.selected.configurable" value="MavenSettings" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -89,7 +84,7 @@
       <recent name="C:\Users\sayuri\IdeaProjects\EntityPlus" />
     </key>
   </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="SpellCheckerSettings" BundledDictionaries="0" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" Dictionaries="0" CorrectionsLimit="5" DefaultDictionary="application-level" UseSingleDictionary="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -116,22 +111,34 @@
       <screen x="0" y="0" width="1707" height="920" />
     </state>
     <state x="634" y="216" key="FileChooserDialogImpl/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1602741355207" />
-    <state width="1663" height="241" key="GridCell.Tab.0.bottom" timestamp="1603812472537">
-      <screen x="0" y="0" width="1707" height="920" />
+    <state width="1237" height="211" key="GridCell.Tab.0.bottom" timestamp="1603853641804">
+      <screen x="0" y="0" width="1280" height="689" />
     </state>
+    <state width="1237" height="211" key="GridCell.Tab.0.bottom/0.0.1280.689@0.0.1280.689" timestamp="1603853641804" />
     <state width="1663" height="241" key="GridCell.Tab.0.bottom/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1603812472537" />
-    <state width="1663" height="241" key="GridCell.Tab.0.center" timestamp="1603812472537">
-      <screen x="0" y="0" width="1707" height="920" />
+    <state width="1237" height="211" key="GridCell.Tab.0.center" timestamp="1603853641804">
+      <screen x="0" y="0" width="1280" height="689" />
     </state>
+    <state width="1237" height="211" key="GridCell.Tab.0.center/0.0.1280.689@0.0.1280.689" timestamp="1603853641804" />
     <state width="1663" height="241" key="GridCell.Tab.0.center/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1603812472537" />
-    <state width="1663" height="241" key="GridCell.Tab.0.left" timestamp="1603812472537">
-      <screen x="0" y="0" width="1707" height="920" />
+    <state width="1237" height="211" key="GridCell.Tab.0.left" timestamp="1603853641804">
+      <screen x="0" y="0" width="1280" height="689" />
     </state>
+    <state width="1237" height="211" key="GridCell.Tab.0.left/0.0.1280.689@0.0.1280.689" timestamp="1603853641804" />
     <state width="1663" height="241" key="GridCell.Tab.0.left/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1603812472537" />
-    <state width="1663" height="241" key="GridCell.Tab.0.right" timestamp="1603812472537">
-      <screen x="0" y="0" width="1707" height="920" />
+    <state width="1237" height="211" key="GridCell.Tab.0.right" timestamp="1603853641804">
+      <screen x="0" y="0" width="1280" height="689" />
     </state>
+    <state width="1237" height="211" key="GridCell.Tab.0.right/0.0.1280.689@0.0.1280.689" timestamp="1603853641804" />
     <state width="1663" height="241" key="GridCell.Tab.0.right/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1603812472537" />
+    <state x="142" y="0" key="SettingsEditor" timestamp="1603853040127">
+      <screen x="0" y="0" width="1280" height="689" />
+    </state>
+    <state x="142" y="0" key="SettingsEditor/0.0.1280.689@0.0.1280.689" timestamp="1603853040127" />
+    <state x="326" y="169" key="com.intellij.ide.util.TipDialog" timestamp="1603852864974">
+      <screen x="0" y="0" width="1280" height="689" />
+    </state>
+    <state x="326" y="169" key="com.intellij.ide.util.TipDialog/0.0.1280.689@0.0.1280.689" timestamp="1603852864974" />
     <state x="341" y="29" width="1026" height="891" key="find.popup" timestamp="1601611519456">
       <screen x="0" y="0" width="1707" height="920" />
     </state>

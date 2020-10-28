@@ -27,13 +27,13 @@ public class CreatureSpawn implements Listener {
         Entity entity = e.getEntity();
         String entityType = entity.getType().name();
         String reason = e.getSpawnReason().name();
-        // Stop checking MythicMobs.
+        // To skip MythicMobs.
         if (ConfigHandler.getDepends().MythicMobsEnabled() && ConfigHandler.getConfigPath().isSpawnMythicMobs()) {
             if (reason.equals("CUSTOM")) {
                 return;
             }
         }
-        // Get entity properties.
+        // To get entity properties.
         TreeMap<String, EntityMap> entityTypeProp = ConfigHandler.getConfigPath().getEntityProp().get(entityType);
         // Checking if the properties contains this type of entity.
         if (entityTypeProp != null) {
