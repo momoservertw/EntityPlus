@@ -21,6 +21,10 @@ public class LocationMap {
         this.worlds = worlds;
     }
 
+    public void addWorld(String world) {
+        this.worlds.add(world);
+    }
+
     public void addCord(String type, String value) {
         if (isCordFormat(type, value)){
             cord.put(type, value);
@@ -30,7 +34,7 @@ public class LocationMap {
         }
     }
 
-    List<String> getWorlds() {
+    public List<String> getWorlds() {
         return worlds;
     }
 

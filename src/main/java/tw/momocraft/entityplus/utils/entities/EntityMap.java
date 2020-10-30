@@ -1,6 +1,5 @@
 package tw.momocraft.entityplus.utils.entities;
 
-import javafx.util.Pair;
 import tw.momocraft.entityplus.utils.blocksutils.BlocksMap;
 import tw.momocraft.entityplus.utils.locationutils.LocationMap;
 

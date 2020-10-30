@@ -54,7 +54,7 @@ public class Commands implements CommandExecutor {
         } else if (args[0].equalsIgnoreCase("version")) {
             if (PermissionsHandler.hasPermission(sender, "entityplus.command.version")) {
                 Language.dispatchMessage(sender, "&d&lEntityPlus &e&lv" + EntityPlus.getInstance().getDescription().getVersion() + "&8 - &fby Momocraft");
-                ConfigHandler.getUpdater().checkUpdates(sender, false);
+                ConfigHandler.getUpdater().checkUpdates(sender);
             } else {
                 Language.sendLangMessage("Message.noPermission", sender);
             }

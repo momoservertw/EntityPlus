@@ -46,7 +46,6 @@ public class LocationUtils {
     }
 
     /**
-     *
      * @return get LocMaps.
      */
     public Map<String, LocationMap> getLocMaps() {
@@ -54,18 +53,24 @@ public class LocationUtils {
     }
 
     /**
-     *
      * @param path the specific path.
      * @return the specific maps from LocMaps.
      */
     public List<LocationMap> getSpeLocMaps(String path) {
         List<LocationMap> locMapList = new ArrayList<>();
         LocationMap locMap;
-        for (String group : ConfigHandler.getConfig("config.yml").getStringList(path)) {
+        LocationMap locWorldMap = new LocationMap();
+        for (String group : ConfigHandler.getConfig("entities.yml").getStringList(path)) {
             locMap = locMaps.get(group);
             if (locMap != null) {
                 locMapList.add(locMap);
+            } else {
+                ServerHandler.sendConsoleMessage("addWorld: " + group);
+                locWorldMap.addWorld(group);
             }
+        }
+        if (!locWorldMap.getWorlds().isEmpty()) {
+            locMapList.add(locWorldMap);
         }
         return locMapList;
     }
@@ -76,24 +81,15 @@ public class LocationUtils {
      * @return if the location is one of locMaps.
      */
     public boolean checkLocation(Location loc, List<LocationMap> locMaps) {
-        if (locMaps == null) {
+        if (locMaps.isEmpty()) {
             return true;
         }
         String worldName = loc.getWorld().getName();
         Map<String, String> cord;
         back:
         for (LocationMap locMap : locMaps) {
-            if (locMap.getWorlds().contains("global")) {
-                cord = locMap.getCord();
-                if (cord != null) {
-                    for (String key : cord.keySet()) {
-                        if (!isCord(loc, key, cord.get(key))) {
-                            return false;
-                        }
-                    }
-                }
-                return true;
-            } else if (locMap.getWorlds().contains(worldName)) {
+            ServerHandler.sendConsoleMessage("&eWorlds: " + locMap.getWorlds());
+            if (locMap.getWorlds().contains("global") || locMap.getWorlds().contains(worldName)) {
                 cord = locMap.getCord();
                 if (cord != null) {
                     for (String key : cord.keySet()) {

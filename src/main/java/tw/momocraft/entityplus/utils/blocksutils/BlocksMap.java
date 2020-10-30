@@ -12,7 +12,7 @@ public class BlocksMap {
     private boolean vertical = false;
     private List<BlocksMap> ignoreMaps;
 
-    List<String> getBlockTypes() {
+    public List<String> getBlockTypes() {
         return blockTypes;
     }
 

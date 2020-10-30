@@ -15,7 +15,7 @@ import tw.momocraft.entityplus.utils.ResidenceUtils;
 import tw.momocraft.entityplus.utils.entities.EntityMap;
 import tw.momocraft.entityplus.utils.entities.EntityUtils;
 
-import java.util.TreeMap;
+import java.util.Map;
 
 public class MythicMobsSpawn implements Listener {
 
@@ -29,8 +29,9 @@ public class MythicMobsSpawn implements Listener {
         }
         Entity entity = e.getEntity();
         String entityType = e.getMobType().getInternalName();
-        // Get entity properties.
-        TreeMap<String, EntityMap> entityTypeProp = ConfigHandler.getConfigPath().getEntityProp().get(entityType);
+
+        // To get entity properties.
+        Map<String, EntityMap> entityTypeProp = ConfigHandler.getConfigPath().getEntityProp().get(entityType);
         // Checking if the properties contains this type of entity.
         if (entityTypeProp != null) {
             // Checking every groups of this entity.
@@ -82,14 +83,14 @@ public class MythicMobsSpawn implements Listener {
                     if (entityMap.getLimit() != null) {
                         if (EntityUtils.checkLimit(entity, entityMap.getLimit())) {
                             // Add a tag for this creature.
-                            ConfigHandler.getConfigPath().getLivingEntityMap().addMap(entity.getUniqueId(), new Pair<>(entityType, groupName));
+                            ConfigHandler.getConfigPath().getLivingEntityMap().putMap(entity.getUniqueId(), new Pair<>(entityType, groupName));
                             ServerHandler.sendFeatureMessage("Spawn", entityType, "Limit", "return", groupName,
                                     new Throwable().getStackTrace()[0]);
                             return;
                         }
                     } else {
                         // Add a tag for this creature.
-                        ConfigHandler.getConfigPath().getLivingEntityMap().addMap(entity.getUniqueId(), new Pair<>(entityType, groupName));
+                        ConfigHandler.getConfigPath().getLivingEntityMap().putMap(entity.getUniqueId(), new Pair<>(entityType, groupName));
                         ServerHandler.sendFeatureMessage("Spawn", entityType, "!Chance", "return", groupName,
                                 new Throwable().getStackTrace()[0]);
                         return;

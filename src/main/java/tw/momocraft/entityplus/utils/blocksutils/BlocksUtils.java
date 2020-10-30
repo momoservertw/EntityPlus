@@ -68,15 +68,11 @@ public class BlocksUtils {
             blocksMap.setY(y);
         }
         // Setting the ignore block maps.
-        for (String ignoreGroup : ConfigHandler.getConfig("config.yml").getStringList("General.Blocks." + group + "." + ".Ignore")) {
-            ignoreList.add(getBlocksMap("General.Blocks." + group + "." + ".Ignore." + ignoreGroup));
+        for (String ignoreGroup : ConfigHandler.getConfig("config.yml").getStringList("General.Blocks." + group + ".Ignore")) {
+            ignoreList.add(getBlocksMap("General.Blocks." + ignoreGroup));
         }
         blocksMap.setIgnoreMaps(ignoreList);
         return blocksMap;
-    }
-
-    public Map<String, BlocksMap> getBlocksMaps() {
-        return blocksMaps;
     }
 
     /**
@@ -86,7 +82,7 @@ public class BlocksUtils {
     public List<BlocksMap> getSpeBlocksMaps(String path) {
         List<BlocksMap> blocksMapList = new ArrayList<>();
         BlocksMap blocksMap;
-        for (String group : ConfigHandler.getConfig("config.yml").getStringList(path)) {
+        for (String group : ConfigHandler.getConfig("entities.yml").getStringList(path)) {
             blocksMap = blocksMaps.get(group);
             if (blocksMap != null) {
                 blocksMapList.add(blocksMap);
@@ -101,7 +97,8 @@ public class BlocksUtils {
      * @return if there are certain blocks nearby the location.
      */
     public boolean checkBlocks(Location loc, List<BlocksMap> blocksMaps) {
-        if (blocksMaps == null) {
+        if (blocksMaps.isEmpty()) {
+            ServerHandler.sendConsoleMessage("&eBlock: isEmpty");
             return true;
         }
         List<BlocksMap> ignoreMaps;

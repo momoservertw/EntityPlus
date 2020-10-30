@@ -109,7 +109,7 @@ public class EntityUtils {
         if (value == null) {
             return true;
         }
-        return value.equals("true") && (time < 12300 || time > 23850) || value.equals("false") && (time >= 12300 || time <= 23850);
+        return value.equals("true") && (time < 12300 || time > 23850) || value.equals("false") && (time >= 12300 && time <= 23850);
     }
 
     /*

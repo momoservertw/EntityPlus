@@ -18,7 +18,7 @@ public class LivingEntityMap {
      * @param uuid the uuid of the entity.
      * @param entityType EntityType, GroupName
      */
-    public void addMap(UUID uuid, Pair<String, String> entityType) {
+    public void putMap(UUID uuid, Pair<String, String> entityType) {
         mobsMap.put(uuid, entityType);
     }
 

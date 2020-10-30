@@ -35,8 +35,8 @@ public class ConfigPath {
     private boolean limit;
     private boolean limitResFlag;
 
-    private Map<String, TreeMap<String, EntityMap>> entityProp = new HashMap<>();
-    private Map<String, LimitMap> limitProp;
+    private Map<String, Map<String, EntityMap>> entityProp = new LinkedHashMap<>();
+    private Map<String, LimitMap> limitProp = new HashMap<>();
     private LivingEntityMap livingEntityMap;
 
     //  ============================================== //
@@ -72,7 +72,7 @@ public class ConfigPath {
     private boolean spawner;
     private boolean spawnerResFlag;
 
-    private Map<String, List<SpawnerMap>> spawnerProp = new HashMap<>();
+    private Map<String, Map<String, SpawnerMap>> spawnerProp = new LinkedHashMap<>();
 
     //  ============================================== //
     //         Setup all configuration.                //
@@ -154,7 +154,7 @@ public class ConfigPath {
                                     } catch (Exception ex) {
                                         // Add MythicMobs.
                                         if (mythicMobsEnabled) {
-                                            entityList.add(entityType);
+                                            entityList.add(customType);
                                         } else {
                                             ServerHandler.sendConsoleMessage("&cCan not find entity in \"groups.yml ➜ Entities - " + entityType + "\".");
                                             ServerHandler.sendConsoleMessage("&eType: " + customType);
@@ -164,8 +164,8 @@ public class ConfigPath {
                             }
                         }
                         entityMap.setTypes(entityList);
-                        entityMap.setPriority(ConfigHandler.getConfig("config.yml").getLong("Entities." + group + ".Priority"));
-                        chance = ConfigHandler.getConfig("config.yml").getString("Entities." + group + ".Chance");
+                        entityMap.setPriority(ConfigHandler.getConfig("entities.yml").getLong("Entities." + group + ".Priority"));
+                        chance = ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Chance");
                         if (chance == null) {
                             entityMap.setChance(1);
                         } else {
@@ -217,10 +217,10 @@ public class ConfigPath {
                     }
                 }
                 Map<String, Long> sortMap;
-                TreeMap<String, EntityMap> newMap;
+                Map<String, EntityMap> newMap;
                 for (String entityType : entityProp.keySet()) {
                     sortMap = new HashMap<>();
-                    newMap = new TreeMap<>();
+                    newMap = new LinkedHashMap<>();
                     for (String group : entityProp.get(entityType).keySet()) {
                         sortMap.put(group, entityProp.get(entityType).get(group).getPriority());
                     }
@@ -351,23 +351,27 @@ public class ConfigPath {
                         // Add properties to all entities.
                         for (String entityType : spawnerMap.getTypes()) {
                             try {
-                                spawnerProp.get(entityType).add(spawnerMap);
+                                spawnerProp.get(entityType).put(group, spawnerMap);
                             } catch (Exception ex) {
-                                spawnerProp.put(entityType, new ArrayList<>());
-                                spawnerProp.get(entityType).add(spawnerMap);
+                                spawnerProp.get(entityType).put(group, spawnerMap);
                             }
                         }
                     }
                 }
-                Map<SpawnerMap, Long> sortMap;
+                Map<String, Long> sortMap;
+                Map<String, SpawnerMap> newMap;
                 for (String entityType : spawnerProp.keySet()) {
                     sortMap = new HashMap<>();
-                    for (SpawnerMap group : spawnerProp.get(entityType)) {
-                        sortMap.put(group, group.getPriority());
+                    newMap = new LinkedHashMap<>();
+                    for (String group : spawnerProp.get(entityType).keySet()) {
+                        sortMap.put(group, spawnerProp.get(entityType).get(group).getPriority());
                     }
                     sortMap = Utils.sortByValue(sortMap);
+                    for (String group : sortMap.keySet()) {
+                        newMap.put(group, spawnerProp.get(entityType).get(group));
+                    }
                     spawnerProp.remove(entityType);
-                    spawnerProp.put(entityType, new ArrayList<>(sortMap.keySet()));
+                    spawnerProp.put(entityType, newMap);
                 }
             }
         }
@@ -403,7 +407,7 @@ public class ConfigPath {
         return spawnResFlag;
     }
 
-    public Map<String, TreeMap<String, EntityMap>> getEntityProp() {
+    public Map<String, Map<String, EntityMap>> getEntityProp() {
         return entityProp;
     }
 
@@ -454,7 +458,7 @@ public class ConfigPath {
         return spawner;
     }
 
-    public Map<String, List<SpawnerMap>> getSpawnerProp() {
+    public Map<String, Map<String, SpawnerMap>> getSpawnerProp() {
         return spawnerProp;
     }
 

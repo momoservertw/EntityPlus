@@ -39,7 +39,7 @@
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
-        <option name="mavenHome" value="$APPLICATION_HOME_DIR$/plugins/maven/lib/maven3" />
+        <option name="mavenHome" value="C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2020.2.1\plugins\maven\lib\maven3" />
       </MavenGeneralSettings>
     </option>
     <option name="importingSettings">
@@ -56,7 +56,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../ItemJoin" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -84,7 +84,7 @@
       <recent name="C:\Users\sayuri\IdeaProjects\EntityPlus" />
     </key>
   </component>
-  <component name="SpellCheckerSettings" BundledDictionaries="0" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" Dictionaries="0" CorrectionsLimit="5" DefaultDictionary="application-level" UseSingleDictionary="true" />
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -107,30 +107,34 @@
       <screen x="0" y="0" width="1707" height="920" />
     </state>
     <state x="584" y="207" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1601410797275" />
-    <state x="634" y="216" key="FileChooserDialogImpl" timestamp="1602741355207">
+    <state x="634" y="216" key="FileChooserDialogImpl" timestamp="1604071310247">
       <screen x="0" y="0" width="1707" height="920" />
     </state>
-    <state x="634" y="216" key="FileChooserDialogImpl/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1602741355207" />
-    <state width="1237" height="211" key="GridCell.Tab.0.bottom" timestamp="1603853641804">
-      <screen x="0" y="0" width="1280" height="689" />
+    <state x="634" y="216" key="FileChooserDialogImpl/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1604071310247" />
+    <state width="1663" height="192" key="GridCell.Tab.0.bottom" timestamp="1604075945465">
+      <screen x="0" y="0" width="1707" height="920" />
     </state>
     <state width="1237" height="211" key="GridCell.Tab.0.bottom/0.0.1280.689@0.0.1280.689" timestamp="1603853641804" />
-    <state width="1663" height="241" key="GridCell.Tab.0.bottom/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1603812472537" />
-    <state width="1237" height="211" key="GridCell.Tab.0.center" timestamp="1603853641804">
-      <screen x="0" y="0" width="1280" height="689" />
+    <state width="1663" height="192" key="GridCell.Tab.0.bottom/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1604075945465" />
+    <state width="1663" height="171" key="GridCell.Tab.0.bottom/2560.10.1707.920/0.0.1707.920@2560.10.1707.920" timestamp="1603977915809" />
+    <state width="1663" height="192" key="GridCell.Tab.0.center" timestamp="1604075945464">
+      <screen x="0" y="0" width="1707" height="920" />
     </state>
     <state width="1237" height="211" key="GridCell.Tab.0.center/0.0.1280.689@0.0.1280.689" timestamp="1603853641804" />
-    <state width="1663" height="241" key="GridCell.Tab.0.center/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1603812472537" />
-    <state width="1237" height="211" key="GridCell.Tab.0.left" timestamp="1603853641804">
-      <screen x="0" y="0" width="1280" height="689" />
+    <state width="1663" height="192" key="GridCell.Tab.0.center/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1604075945464" />
+    <state width="1663" height="171" key="GridCell.Tab.0.center/2560.10.1707.920/0.0.1707.920@2560.10.1707.920" timestamp="1603977915809" />
+    <state width="1663" height="192" key="GridCell.Tab.0.left" timestamp="1604075945464">
+      <screen x="0" y="0" width="1707" height="920" />
     </state>
     <state width="1237" height="211" key="GridCell.Tab.0.left/0.0.1280.689@0.0.1280.689" timestamp="1603853641804" />
-    <state width="1663" height="241" key="GridCell.Tab.0.left/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1603812472537" />
-    <state width="1237" height="211" key="GridCell.Tab.0.right" timestamp="1603853641804">
-      <screen x="0" y="0" width="1280" height="689" />
+    <state width="1663" height="192" key="GridCell.Tab.0.left/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1604075945464" />
+    <state width="1663" height="171" key="GridCell.Tab.0.left/2560.10.1707.920/0.0.1707.920@2560.10.1707.920" timestamp="1603977915809" />
+    <state width="1663" height="192" key="GridCell.Tab.0.right" timestamp="1604075945464">
+      <screen x="0" y="0" width="1707" height="920" />
     </state>
     <state width="1237" height="211" key="GridCell.Tab.0.right/0.0.1280.689@0.0.1280.689" timestamp="1603853641804" />
-    <state width="1663" height="241" key="GridCell.Tab.0.right/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1603812472537" />
+    <state width="1663" height="192" key="GridCell.Tab.0.right/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1604075945464" />
+    <state width="1663" height="171" key="GridCell.Tab.0.right/2560.10.1707.920/0.0.1707.920@2560.10.1707.920" timestamp="1603977915809" />
     <state x="142" y="0" key="SettingsEditor" timestamp="1603853040127">
       <screen x="0" y="0" width="1280" height="689" />
     </state>
@@ -143,6 +147,10 @@
       <screen x="0" y="0" width="1707" height="920" />
     </state>
     <state x="341" y="29" width="1026" height="891" key="find.popup/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1601611519456" />
+    <state x="551" y="206" key="refactoring.ChangeSignatureDialog" timestamp="1604062531792">
+      <screen x="0" y="0" width="1707" height="920" />
+    </state>
+    <state x="551" y="206" key="refactoring.ChangeSignatureDialog/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1604062531792" />
     <state x="510" y="211" key="run.anything.popup" timestamp="1603732834433">
       <screen x="0" y="0" width="1707" height="920" />
     </state>

@@ -16,6 +16,7 @@ import tw.momocraft.entityplus.handlers.ServerHandler;
 import tw.momocraft.entityplus.utils.ConfigPath;
 import tw.momocraft.entityplus.utils.CustomCommands;
 import tw.momocraft.entityplus.utils.ResidenceUtils;
+import tw.momocraft.entityplus.utils.entities.EntityMap;
 import tw.momocraft.entityplus.utils.entities.SpawnerMap;
 
 import java.util.*;
@@ -28,63 +29,69 @@ public class SpawnerSpawn implements Listener {
             return;
         }
         String entityType = e.getSpawner().getSpawnedType().name();
-        Map<String, List<SpawnerMap>> spawnerProp = ConfigHandler.getConfigPath().getSpawnerProp();
+        Map<String, SpawnerMap> spawnerProp = ConfigHandler.getConfigPath().getSpawnerProp().get(entityType);
         if (spawnerProp != null) {
-            if (spawnerProp.containsKey(entityType)) {
-                for (SpawnerMap spawnerList : spawnerProp.get(entityType)) {
-                    Location loc = e.getLocation();
-                    // Checking the spawn "location".
-                    if (!ConfigPath.getLocationUtils().checkLocation(loc, spawnerList.getLocMaps())) {
-                        return;
+            boolean resFlag = ConfigHandler.getConfigPath().isSpawnerResFlag();
+            SpawnerMap spawnerMap;
+            for (String groupName : spawnerProp.keySet()) {
+                spawnerMap = spawnerProp.get(groupName);
+                Location loc = e.getLocation();
+                // Checking the spawn "location".
+                if (!ConfigPath.getLocationUtils().checkLocation(loc, spawnerMap.getLocMaps())) {
+                    ServerHandler.sendFeatureMessage("Spawn", entityType, "!Location", "continue", groupName,
+                            new Throwable().getStackTrace()[0]);
+                    continue;
+                }
+                // Checking the "blocks" nearby the spawn location.
+                if (!ConfigPath.getBlocksUtils().checkBlocks(loc, spawnerMap.getBlocksMaps())) {
+                    ServerHandler.sendFeatureMessage("Spawn", entityType, "!Blocks", "continue", groupName,
+                            new Throwable().getStackTrace()[0]);
+                    continue;
+                }
+                // Checking the spawn "Residence-Flag".
+                if (!ResidenceUtils.checkResFlag(loc, resFlag, "spawnbypass")) {
+                    ServerHandler.sendFeatureMessage("Spawn", entityType, "!Residence-Flag", "continue", groupName,
+                            new Throwable().getStackTrace()[0]);
+                    continue;
+                }
+
+                // Removing the spawner.
+                if (spawnerMap.isRemove()) {
+                    e.getSpawner().getBlock().setType(Material.AIR);
+                    executeCommands(e, entityType, "AIR", spawnerMap.getCommands());
+                    ServerHandler.sendFeatureMessage("Spawner", entityType, "Remove", "remove",
+                            new Throwable().getStackTrace()[0]);
+                    e.setCancelled(true);
+                    return;
+                }
+                // Changing the type of spawner.
+                HashMap<String, Long> changeMap = spawnerMap.getChangeMap();
+                if (changeMap != null) {
+                    long totalChance = 0;
+                    long chance;
+                    for (String changeType : changeMap.keySet()) {
+                        chance = changeMap.get(changeType);
+                        totalChance += chance;
                     }
-                    // Checking the "blocks" nearby the spawn location.
-                    if (!ConfigPath.getBlocksUtils().checkBlocks(loc, spawnerList.getBlocksMaps())) {
-                        return;
-                    }
-                    // Checking the pass residence.
-                    if (ResidenceUtils.checkResFlag(loc, ConfigHandler.getConfigPath().isSpawnerResFlag(), "spawnerbypass")) {
-                        ServerHandler.sendFeatureMessage("Spawner", entityType, "Residence flag", "bypass", "residence has flag \"spawnerbypass\"",
-                                new Throwable().getStackTrace()[0]);
-                        return;
-                    }
-                    // Removing the spawner.
-                    if (spawnerList.isRemove()) {
-                        e.getSpawner().getBlock().setType(Material.AIR);
-                        executeCommands(e, entityType, "AIR", spawnerList.getCommands());
-                        ServerHandler.sendFeatureMessage("Spawner", entityType, "Remove", "remove",
-                                new Throwable().getStackTrace()[0]);
-                        e.setCancelled(true);
-                        return;
-                    }
-                    // Changing the type of spawner.
-                    HashMap<String, Long> changeMap = spawnerList.getChangeMap();
-                    if (changeMap != null) {
-                        long totalChance = 0;
-                        long chance;
-                        for (String changeType : changeMap.keySet()) {
-                            chance = changeMap.get(changeType);
-                            totalChance += chance;
+                    double randTotalChange = Math.random() * totalChance;
+                    for (String changeType : changeMap.keySet()) {
+                        chance = changeMap.get(changeType);
+                        if (chance >= randTotalChange) {
+                            e.getSpawner().setSpawnedType(EntityType.valueOf(changeType));
+                            e.getSpawner().update();
+                            executeCommands(e, entityType, changeType, spawnerMap.getCommands());
+                            ServerHandler.sendFeatureMessage("Spawner", entityType, changeType, "change",
+                                    new Throwable().getStackTrace()[0]);
+                            e.setCancelled(true);
+                            return;
                         }
-                        double randTotalChange = Math.random() * totalChance;
-                        for (String changeType : changeMap.keySet()) {
-                            chance = changeMap.get(changeType);
-                            if (chance >= randTotalChange) {
-                                e.getSpawner().setSpawnedType(EntityType.valueOf(changeType));
-                                e.getSpawner().update();
-                                executeCommands(e, entityType, changeType, spawnerList.getCommands());
-                                ServerHandler.sendFeatureMessage("Spawner", entityType, changeType, "change",
-                                        new Throwable().getStackTrace()[0]);
-                                e.setCancelled(true);
-                                return;
-                            }
-                            randTotalChange -= chance;
-                        }
+                        randTotalChange -= chance;
                     }
                 }
+                ServerHandler.sendFeatureMessage("Spawner", entityType, "Final", "return",
+                        new Throwable().getStackTrace()[0]);
             }
         }
-        ServerHandler.sendFeatureMessage("Spawner", entityType, "Final", "return",
-                new Throwable().getStackTrace()[0]);
     }
 
     /**

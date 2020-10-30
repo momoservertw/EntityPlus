@@ -33,7 +33,7 @@ General:
       Types:
         - WITHER_ROSE
       Search:
-        Y: 1
+        V: 1
     NearbyMonument:
       Types:
         - PRISMARINE

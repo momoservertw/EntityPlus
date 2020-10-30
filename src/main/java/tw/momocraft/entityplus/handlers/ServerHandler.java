@@ -1,11 +1,14 @@
 package tw.momocraft.entityplus.handlers;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tw.momocraft.entityplus.EntityPlus;
 
+
 public class ServerHandler {
+
     public static void sendConsoleMessage(String message) {
         String prefix = "&7[&dEntityPlus&7] ";
         message = prefix + message;
