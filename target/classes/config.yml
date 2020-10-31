@@ -8,6 +8,11 @@ General:
   Settings:
     # The searching players range from a location.
     Nearby-Players-Range: 32
+    Settings:
+      Features:
+        # Control MythicMobs spawning and conditions.
+        # The "CUSTOM" reason does not work for MythicMobs.
+        MythicMobs: true
   # Specifying the spawn locations.
   # More information: https://github.com/momoservertw/EntityPlus/wiki/Location
   Location:
@@ -45,11 +50,6 @@ General:
 
 # Controlling entities spawn conditions, rewards, and damage.
 Entities:
-  Settings:
-    Features:
-      # Control MythicMobs spawning and conditions.
-      # The "CUSTOM" reason does not work for MythicMobs.
-      MythicMobs: true
   # Controlling entities spawn conditions.
   # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn
   Spawn:
@@ -232,7 +232,7 @@ Spawner:
   Enable: false
   Settings:
     Bypass:
-      Residence-Flag: true
+      Residence-Flag: false
   Groups:
     Normal:
       Enable: true
@@ -251,8 +251,8 @@ Spawner:
         SPIDER: 1
         CAVE_SPIDER: 1
       Commands:
-        - "log: &e%spawner_type% spawner &cat %spawner_world%(%spawner_loc_x%, %spawner_loc_y%, %spawner_loc_z%) has been changed to &e%spawner_newspawner%&c, nearby players: &e%spawner_nearbyplayers%"
-        - "all-message: &e%spawner_type% spawner &cat %spawner_world%(%spawner_loc_x%, %spawner_loc_y%, %spawner_loc_z%) has been changed to &e%spawner_newspawner%&c."
+        - "log: &e%spawner% spawner &cat %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to &e%new_spawner%&c, nearby players: &e%nearbyplayers%"
+        - "all-message: &e%spawner% spawner &cat %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to &e%newspawner%&c."
     Nether:
       Enable: true
       Location:
@@ -262,16 +262,16 @@ Spawner:
       Change-Types:
         - BLAZE
       Commands:
-        - "log: &e%spawner_type% spawner &cat %spawner_world%(%spawner_loc_x%, %spawner_loc_y%, %spawner_loc_z%) has been changed to &e%spawner_newspawner%&c, nearby players: &e%spawner_nearbyplayers%"
-        - "all-message: &e%spawner_type% spawner &cat %spawner_world%(%spawner_loc_x%, %spawner_loc_y%, %spawner_loc_z%) has been changed to &e%spawner_newspawner%&c."
+        - "log: &e%spawner% spawner &cat %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to &e%new_spawner%&c, nearby players: &e%nearbyplayers%"
+        - "all-message: &e%spawner% spawner &cat %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to &e%newspawner%&c."
     Remove:
       Enable: true
       Remove: true
       Location:
         - world_the_end
       Commands:
-        - "log: &e%spawner_type% spawner &cat %spawner_world%(%spawner_loc_x%, %spawner_loc_y%, %spawner_loc_z%) has been removed&c, nearby players: &e%spawner_nearbyplayers%"
-        - "all-message: &e%spawner_type% spawner &cat %spawner_world%(%spawner_loc_x%, %spawner_loc_y%, %spawner_loc_z%) has been removed."
+        - "log: &e%spawner% spawner &cat %world%(%loc_x%, %loc_y%, %loc_z%) has been removed, nearby players: &e%nearbyplayers%"
+        - "all-message: &e%spawner% spawner &cat %world%(%loc_x%, %loc_y%, %loc_z%) has been removed."
 
 Message:
   prefix: '&7[&dEntityPlus&7]&r '

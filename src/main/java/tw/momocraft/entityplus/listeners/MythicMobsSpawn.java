@@ -16,6 +16,7 @@ import tw.momocraft.entityplus.utils.entities.EntityMap;
 import tw.momocraft.entityplus.utils.entities.EntityUtils;
 
 import java.util.Map;
+import java.util.UUID;
 
 public class MythicMobsSpawn implements Listener {
 
@@ -24,12 +25,8 @@ public class MythicMobsSpawn implements Listener {
         if (!ConfigHandler.getConfigPath().isSpawn()) {
             return;
         }
-        if (!ConfigHandler.getConfigPath().isSpawnMythicMobs()) {
-            return;
-        }
         Entity entity = e.getEntity();
         String entityType = e.getMobType().getInternalName();
-
         // To get entity properties.
         Map<String, EntityMap> entityTypeProp = ConfigHandler.getConfigPath().getEntityProp().get(entityType);
         // Checking if the properties contains this type of entity.
@@ -82,6 +79,7 @@ public class MythicMobsSpawn implements Listener {
                     // If the creature spawn location has reach the maximum creature amount, it will cancel the spawn event.
                     if (entityMap.getLimit() != null) {
                         if (EntityUtils.checkLimit(entity, entityMap.getLimit())) {
+                            ServerHandler.sendConsoleMessage(groupName + " " + entityType + " " + entity.getUniqueId());
                             // Add a tag for this creature.
                             ConfigHandler.getConfigPath().getLivingEntityMap().putMap(entity.getUniqueId(), new Pair<>(entityType, groupName));
                             ServerHandler.sendFeatureMessage("Spawn", entityType, "Limit", "return", groupName,
@@ -89,6 +87,7 @@ public class MythicMobsSpawn implements Listener {
                             return;
                         }
                     } else {
+                        ServerHandler.sendConsoleMessage(groupName + " " + entityType + " " + entity.getUniqueId());
                         // Add a tag for this creature.
                         ConfigHandler.getConfigPath().getLivingEntityMap().putMap(entity.getUniqueId(), new Pair<>(entityType, groupName));
                         ServerHandler.sendFeatureMessage("Spawn", entityType, "!Chance", "return", groupName,

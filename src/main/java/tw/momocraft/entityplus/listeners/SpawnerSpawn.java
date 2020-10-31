@@ -16,7 +16,6 @@ import tw.momocraft.entityplus.handlers.ServerHandler;
 import tw.momocraft.entityplus.utils.ConfigPath;
 import tw.momocraft.entityplus.utils.CustomCommands;
 import tw.momocraft.entityplus.utils.ResidenceUtils;
-import tw.momocraft.entityplus.utils.entities.EntityMap;
 import tw.momocraft.entityplus.utils.entities.SpawnerMap;
 
 import java.util.*;
@@ -28,14 +27,27 @@ public class SpawnerSpawn implements Listener {
         if (!ConfigHandler.getConfigPath().isSpawner()) {
             return;
         }
-        String entityType = e.getSpawner().getSpawnedType().name();
-        Map<String, SpawnerMap> spawnerProp = ConfigHandler.getConfigPath().getSpawnerProp().get(entityType);
+        CreatureSpawner spawner = e.getSpawner();
+        String entityType;
+        try {
+            entityType = spawner.getSpawnedType().name();
+        } catch (Exception ex) {
+            e.setCancelled(true);
+            return;
+        }
+        Location loc = e.getLocation();
+        String worldName = loc.getWorld().getName();
+        // Checking the enable worlds.
+        Map<String, SpawnerMap> spawnerProp = ConfigHandler.getConfigPath().getSpawnerProp().get(worldName);
         if (spawnerProp != null) {
             boolean resFlag = ConfigHandler.getConfigPath().isSpawnerResFlag();
             SpawnerMap spawnerMap;
             for (String groupName : spawnerProp.keySet()) {
                 spawnerMap = spawnerProp.get(groupName);
-                Location loc = e.getLocation();
+                // Checking the allow entities.
+                if (spawnerMap.getAllowList().contains(entityType)) {
+                    continue;
+                }
                 // Checking the spawn "location".
                 if (!ConfigPath.getLocationUtils().checkLocation(loc, spawnerMap.getLocMaps())) {
                     ServerHandler.sendFeatureMessage("Spawn", entityType, "!Location", "continue", groupName,
@@ -54,18 +66,17 @@ public class SpawnerSpawn implements Listener {
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
-
                 // Removing the spawner.
                 if (spawnerMap.isRemove()) {
-                    e.getSpawner().getBlock().setType(Material.AIR);
+                    e.setCancelled(true);
+                    spawner.getBlock().setType(Material.AIR);
                     executeCommands(e, entityType, "AIR", spawnerMap.getCommands());
                     ServerHandler.sendFeatureMessage("Spawner", entityType, "Remove", "remove",
                             new Throwable().getStackTrace()[0]);
-                    e.setCancelled(true);
                     return;
                 }
                 // Changing the type of spawner.
-                HashMap<String, Long> changeMap = spawnerMap.getChangeMap();
+                Map<String, Long> changeMap = spawnerMap.getChangeMap();
                 if (changeMap != null) {
                     long totalChance = 0;
                     long chance;
@@ -77,8 +88,8 @@ public class SpawnerSpawn implements Listener {
                     for (String changeType : changeMap.keySet()) {
                         chance = changeMap.get(changeType);
                         if (chance >= randTotalChange) {
-                            e.getSpawner().setSpawnedType(EntityType.valueOf(changeType));
-                            e.getSpawner().update();
+                            spawner.setSpawnedType(EntityType.valueOf(changeType));
+                            spawner.update();
                             executeCommands(e, entityType, changeType, spawnerMap.getCommands());
                             ServerHandler.sendFeatureMessage("Spawner", entityType, changeType, "change",
                                     new Throwable().getStackTrace()[0]);

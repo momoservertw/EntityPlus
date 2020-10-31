@@ -28,7 +28,7 @@ public class CreatureSpawn implements Listener {
         String entityType = entity.getType().name();
         String reason = e.getSpawnReason().name();
         // To skip MythicMobs.
-        if (ConfigHandler.getDepends().MythicMobsEnabled() && ConfigHandler.getConfigPath().isSpawnMythicMobs()) {
+        if (ConfigHandler.getDepends().MythicMobsEnabled()) {
             if (reason.equals("CUSTOM")) {
                 return;
             }
@@ -91,6 +91,7 @@ public class CreatureSpawn implements Listener {
                     // If the creature spawn location has reach the maximum creature amount, it will cancel the spawn event.
                     if (entityMap.getLimit() != null) {
                         if (EntityUtils.checkLimit(entity, entityMap.getLimit())) {
+                            ServerHandler.sendConsoleMessage(groupName + " " + entityType +" " + entity.getUniqueId());
                             // Add a tag for this creature.
                             ConfigHandler.getConfigPath().getLivingEntityMap().putMap(entity.getUniqueId(), new Pair<>(entityType, groupName));
                             ServerHandler.sendFeatureMessage("Spawn", entityType, "Limit", "return", groupName,
@@ -98,6 +99,7 @@ public class CreatureSpawn implements Listener {
                             return;
                         }
                     } else {
+                        ServerHandler.sendConsoleMessage(groupName + " " + entityType +" " + entity.getUniqueId());
                         // Add a tag for this creature.
                         ConfigHandler.getConfigPath().getLivingEntityMap().putMap(entity.getUniqueId(), new Pair<>(entityType, groupName));
                         ServerHandler.sendFeatureMessage("Spawn", entityType, "!Chance", "return", groupName,

@@ -4,10 +4,10 @@ public class DropMap {
 
     private String groupName;
     private long priority;
-    private long exp;
-    private long items;
-    private long money;
-    private long mmItems;
+    private double exp;
+    private double items;
+    private double money;
+    private double mmItems;
 
 
     public String getGroupName() {
@@ -18,19 +18,19 @@ public class DropMap {
         return priority;
     }
 
-    public long getExp() {
+    public double getExp() {
         return exp;
     }
 
-    public long getItems() {
+    public double getItems() {
         return items;
     }
 
-    public long getMoney() {
+    public double getMoney() {
         return money;
     }
 
-    public long getMmItems() {
+    public double getMmItems() {
         return mmItems;
     }
 
@@ -42,19 +42,19 @@ public class DropMap {
         this.priority = priority;
     }
 
-    public void setExp(long exp) {
+    public void setExp(double exp) {
         this.exp = exp;
     }
 
-    public void setItems(long items) {
+    public void setItems(double items) {
         this.items = items;
     }
 
-    public void setMoney(long money) {
+    public void setMoney(double money) {
         this.money = money;
     }
 
-    public void setMmItems(long mmItems) {
+    public void setMmItems(double mmItems) {
         this.mmItems = mmItems;
     }
 }

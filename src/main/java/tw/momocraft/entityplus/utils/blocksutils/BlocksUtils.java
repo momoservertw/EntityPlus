@@ -98,7 +98,6 @@ public class BlocksUtils {
      */
     public boolean checkBlocks(Location loc, List<BlocksMap> blocksMaps) {
         if (blocksMaps.isEmpty()) {
-            ServerHandler.sendConsoleMessage("&eBlock: isEmpty");
             return true;
         }
         List<BlocksMap> ignoreMaps;

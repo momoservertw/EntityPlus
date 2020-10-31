@@ -46,6 +46,7 @@ public class ConfigHandler {
 
         EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new CreatureSpawn(), EntityPlus.getInstance());
         EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new SpawnerSpawn(), EntityPlus.getInstance());
+        EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new EntityDeath(), EntityPlus.getInstance());
         //EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new EntityDamage(), EntityPlus.getInstance());
 
         if (ConfigHandler.getDepends().MythicMobsEnabled()) {
@@ -62,7 +63,7 @@ public class ConfigHandler {
             if (ConfigHandler.getConfigPath().isSpawnerResFlag()) {
                 FlagPermissions.addFlag("spawnerbypass");
             }
-            FlagPermissions.addFlag("fastdamagebypass");
+            //FlagPermissions.addFlag("fastdamagebypass");
         }
     }
 

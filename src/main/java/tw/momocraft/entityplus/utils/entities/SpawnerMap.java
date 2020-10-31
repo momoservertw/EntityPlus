@@ -6,11 +6,11 @@ import tw.momocraft.entityplus.utils.locationutils.LocationMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SpawnerMap {
 
     private String groupName = null;
-    private List<String> types;
     private long priority;
     private boolean remove = false;
     private LocationMap location = null;
@@ -18,14 +18,10 @@ public class SpawnerMap {
     private List<String> commands = null;
     private List<LocationMap> locMaps = new ArrayList<>();
     private List<BlocksMap> blocksMaps = new ArrayList<>();
-    private HashMap changeMap = new HashMap();
+    private Map<String, Long> changeMap = new HashMap();
 
     public String getGroupName() {
         return groupName;
-    }
-
-    public List<String> getTypes() {
-        return types;
     }
 
     public long getPriority() {
@@ -54,17 +50,13 @@ public class SpawnerMap {
 
     public List<BlocksMap> getBlocksMaps() { return blocksMaps; }
 
-    public HashMap<String, Long> getChangeMap() {
+    public Map<String, Long> getChangeMap() {
         return changeMap;
     }
 
 
     public void setGroupName(String groupName) {
         this.groupName = groupName;
-    }
-
-    public void setTypes(List<String> types) {
-        this.types = types;
     }
 
     public void setPriority(long priority) {
@@ -91,7 +83,7 @@ public class SpawnerMap {
         this.blocksMaps = blocksMaps;
     }
 
-    public void setChangeMap(HashMap changeMap) {
+    public void setChangeMap(Map<String, Long> changeMap) {
         this.changeMap = changeMap;
     }
 }

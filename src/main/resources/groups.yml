@@ -1,4 +1,6 @@
+# --{ =-=-=-=-=-=-=-=-=-= EntityPlus's Custom Groups Settings, by Momocraft =-=-=-=-=-=-=-=-=-= }--
 # More information: https://github.com/momoservertw/EntityPlus/wiki/groups.yml
+Config-Version: 1
 Materials:
   Machines:
     - PISTON

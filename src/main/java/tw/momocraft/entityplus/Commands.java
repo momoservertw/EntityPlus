@@ -5,9 +5,12 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.PermissionsHandler;
+import tw.momocraft.entityplus.handlers.ServerHandler;
 import tw.momocraft.entityplus.utils.EntitiesFile;
 import tw.momocraft.entityplus.utils.Language;
 import tw.momocraft.entityplus.utils.customgroups.GroupsGenerator;
+
+import java.util.UUID;
 
 
 public class Commands implements CommandExecutor {
@@ -61,7 +64,12 @@ public class Commands implements CommandExecutor {
             return true;
         } else if (args.length == 2 && args[0].equalsIgnoreCase("test")) {
             if (PermissionsHandler.hasPermission(sender, "entityplus.test")) {
-                GroupsGenerator.groupsManager(sender, args[1]);
+                for (UUID uuid : ConfigHandler.getConfigPath().getLivingEntityMap().getMobsMap().keySet()) {
+                    ServerHandler.sendConsoleMessage(uuid.toString() + " " +
+                            ConfigHandler.getConfigPath().getLivingEntityMap().getMobsMap().get(uuid).getKey() + " " +
+                            ConfigHandler.getConfigPath().getLivingEntityMap().getMobsMap().get(uuid).getValue());
+                }
+                //GroupsGenerator.groupsManager(sender, args[1]);
             } else {
                 Language.sendLangMessage("Message.noPermission", sender);
             }

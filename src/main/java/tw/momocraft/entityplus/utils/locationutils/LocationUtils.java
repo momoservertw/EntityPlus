@@ -56,16 +56,15 @@ public class LocationUtils {
      * @param path the specific path.
      * @return the specific maps from LocMaps.
      */
-    public List<LocationMap> getSpeLocMaps(String path) {
+    public List<LocationMap> getSpeLocMaps(String file, String path) {
         List<LocationMap> locMapList = new ArrayList<>();
         LocationMap locMap;
         LocationMap locWorldMap = new LocationMap();
-        for (String group : ConfigHandler.getConfig("entities.yml").getStringList(path)) {
+        for (String group : ConfigHandler.getConfig(file).getStringList(path)) {
             locMap = locMaps.get(group);
             if (locMap != null) {
                 locMapList.add(locMap);
             } else {
-                ServerHandler.sendConsoleMessage("addWorld: " + group);
                 locWorldMap.addWorld(group);
             }
         }
@@ -88,7 +87,6 @@ public class LocationUtils {
         Map<String, String> cord;
         back:
         for (LocationMap locMap : locMaps) {
-            ServerHandler.sendConsoleMessage("&eWorlds: " + locMap.getWorlds());
             if (locMap.getWorlds().contains("global") || locMap.getWorlds().contains(worldName)) {
                 cord = locMap.getCord();
                 if (cord != null) {

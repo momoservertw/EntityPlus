@@ -1,7 +1,6 @@
 package tw.momocraft.entityplus.listeners;
 
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobLootDropEvent;
-import io.lumine.xikage.mythicmobs.drops.Drop;
 import javafx.util.Pair;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -87,11 +86,13 @@ public class MythicMobsLootDrop implements Listener {
                     }
                 }
             } else {
-                // Choosing the max level of drop.
-                String maxMulti = Collections.max(permsList);
-                totalExp = dropMap.get(maxMulti).getExp();
-                totalItem = dropMap.get(maxMulti).getMmItems();
-                totalMoney = dropMap.get(maxMulti).getMoney();
+                // Choosing the first drop (The highest priority).
+                exp = dropMap.get(permsList.get(0)).getExp();
+                item = dropMap.get(permsList.get(0)).getItems();
+                money = dropMap.get(permsList.get(0)).getMoney();
+                totalExp *= exp;
+                totalItem *= item;
+                totalMoney *= money;
             }
             // Setting the higher exp.
             if (ConfigHandler.getConfigPath().isDropExp()) {
@@ -99,14 +100,25 @@ public class MythicMobsLootDrop implements Listener {
                 dropExp *= totalExp;
                 e.setExp(dropExp);
             }
+
             // Giving more MythicMobs items.
+            /*
+                double dropNumber;
+                double dropDecimal;
             if (ConfigHandler.getConfigPath().isDropMmItem()) {
                 for (Drop drop : e.getPhysicalDrops()) {
+                    dropNumber = itemStack.getAmount() * totalItem;
+                    dropDecimal = dropNumber % 1;
+                    if (dropDecimal != 0 && dropDecimal < new Random().nextDouble()) {
+                        dropNumber++;
+                    }
                     drop.setAmount(drop.getAmount() * totalItem - 1);
                     // entity.getWorld().dropItem(entity.getLocation(), new ItemStack(itemStack));
                     ServerHandler.sendConsoleMessage(drop.getAmount() + " " + totalItem);
                 }
             }
+            */
+
             // Setting the higher money.
             if (ConfigHandler.getConfigPath().isDropMoney()) {
                 int dropMoney = e.getMoney();

@@ -1,6 +1,7 @@
 package tw.momocraft.entityplus.utils;
 
 import org.bukkit.Bukkit;
+import tw.momocraft.entityplus.handlers.ConfigHandler;
 
 public class DependAPI {
     private boolean MythicMobs = false;
@@ -10,7 +11,9 @@ public class DependAPI {
     private VaultAPI vault;
 
     public DependAPI() {
-        this.setMythicMobsStatus(Bukkit.getServer().getPluginManager().getPlugin("MythicMobs") != null);
+        if (ConfigHandler.getConfig("config.yml").getBoolean("General.Settings.Features.MythicMobs")) {
+            this.setMythicMobsStatus(Bukkit.getServer().getPluginManager().getPlugin("MythicMobs") != null);
+        }
         this.setCMIStatus(Bukkit.getServer().getPluginManager().getPlugin("CMI") != null);
         this.setResidenceStatus(Bukkit.getServer().getPluginManager().getPlugin("Residence") != null);
         this.setPlaceHolderStatus(Bukkit.getServer().getPluginManager().getPlugin("PlaceHolderAPI") != null);
