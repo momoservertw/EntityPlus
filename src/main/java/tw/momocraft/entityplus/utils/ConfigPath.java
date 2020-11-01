@@ -83,12 +83,6 @@ public class ConfigPath {
         livingEntityMap = new LivingEntityMap();
         mobSpawnRange = ConfigHandler.getServerConfig("spigot.yml").getInt("world-settings.default.mob-spawn-range") * 16;
         nearbyPlayerRange = ConfigHandler.getConfig("config.yml").getInt("General.Nearby-Players-Range");
-
-        setDropProp();
-        setLimitProp();
-        setSpawnEntity();
-        setPurge();
-        setSpawner();
     }
 
     public static LocationUtils getLocationUtils() {
@@ -291,7 +285,6 @@ public class ConfigPath {
             dropExp = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Features.Exp");
             dropItem = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Features.Items");
             dropMoney = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Features.MythicMobs.Money");
-            dropMmItem = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Features.MythicMobs.Items");
             ConfigurationSection groupsConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Entities.Drop.Groups");
             if (groupsConfig != null) {
                 DropMap dropMap;
@@ -305,7 +298,6 @@ public class ConfigPath {
                         dropMap.setExp(ConfigHandler.getConfig("config.yml").getDouble("Entities.Drop.Groups." + group + ".Exp"));
                         dropMap.setItems(ConfigHandler.getConfig("config.yml").getDouble("Entities.Drop.Groups." + group + ".Items"));
                         dropMap.setMoney(ConfigHandler.getConfig("config.yml").getDouble("Entities.Drop.Groups." + group + ".MythicMobs.Money"));
-                        dropMap.setMmItems(ConfigHandler.getConfig("config.yml").getDouble("Entities.Drop.Groups." + group + ".MythicMobs.Item"));
                         dropProp.put(group, dropMap);
                     }
                 }

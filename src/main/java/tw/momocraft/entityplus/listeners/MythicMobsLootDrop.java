@@ -1,6 +1,7 @@
 package tw.momocraft.entityplus.listeners;
 
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobLootDropEvent;
+import io.lumine.xikage.mythicmobs.drops.Drop;
 import javafx.util.Pair;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -9,7 +10,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.PermissionsHandler;
-import tw.momocraft.entityplus.handlers.ServerHandler;
 import tw.momocraft.entityplus.utils.entities.DropMap;
 
 import java.util.*;
@@ -43,7 +43,7 @@ public class MythicMobsLootDrop implements Listener {
             // Checking player reward permissions.
             List<String> permsList = new ArrayList<>();
             for (String key : dropMap.keySet()) {
-                if (PermissionsHandler.hasPermission(player, "entityplus.drop.multiplier." + key)) {
+                if (PermissionsHandler.hasPermission(player, "entityplus.drop." + key)) {
                     permsList.add(key);
                 }
             }
@@ -62,7 +62,7 @@ public class MythicMobsLootDrop implements Listener {
                 for (String key : permsList) {
                     if (dropMap.get(key) != null) {
                         exp = dropMap.get(key).getExp();
-                        item = dropMap.get(key).getMmItems();
+                        item = dropMap.get(key).getItems();
                         money = dropMap.get(key).getMoney();
                         if (combinedMethod.equals("plus")) {
                             exp--;
@@ -96,34 +96,27 @@ public class MythicMobsLootDrop implements Listener {
             }
             // Setting the higher exp.
             if (ConfigHandler.getConfigPath().isDropExp()) {
-                int dropExp = e.getExp();
-                dropExp *= totalExp;
-                e.setExp(dropExp);
+                totalExp *= e.getExp();
+                e.setExp((int) totalExp);
             }
-
-            // Giving more MythicMobs items.
-            /*
-                double dropNumber;
-                double dropDecimal;
-            if (ConfigHandler.getConfigPath().isDropMmItem()) {
-                for (Drop drop : e.getPhysicalDrops()) {
-                    dropNumber = itemStack.getAmount() * totalItem;
-                    dropDecimal = dropNumber % 1;
-                    if (dropDecimal != 0 && dropDecimal < new Random().nextDouble()) {
-                        dropNumber++;
-                    }
-                    drop.setAmount(drop.getAmount() * totalItem - 1);
-                    // entity.getWorld().dropItem(entity.getLocation(), new ItemStack(itemStack));
-                    ServerHandler.sendConsoleMessage(drop.getAmount() + " " + totalItem);
-                }
-            }
-            */
-
             // Setting the higher money.
             if (ConfigHandler.getConfigPath().isDropMoney()) {
-                int dropMoney = e.getMoney();
-                dropMoney *= totalMoney;
-                e.setMoney(dropMoney);
+                totalMoney *= e.getMoney();
+                e.setMoney((int) totalMoney);
+            }
+            // Giving more items.
+            if (ConfigHandler.getConfigPath().isDropItem()) {
+                Collection<Drop> dropItem = e.getPhysicalDrops();
+                double dropDecimal;
+                for (Drop itemStack : dropItem) {
+                    totalItem *= itemStack.getAmount();
+                    dropDecimal = totalItem % 1;
+                    totalItem -= dropDecimal;
+                    if (dropDecimal > 0 && dropDecimal < new Random().nextDouble()) {
+                        totalItem++;
+                    }
+                    itemStack.setAmount((int) (totalItem));
+                }
             }
         }
     }

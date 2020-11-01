@@ -1,5 +1,6 @@
 package tw.momocraft.entityplus.listeners;
 
+import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
 import javafx.util.Pair;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;

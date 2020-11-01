@@ -1,7 +1,6 @@
 package tw.momocraft.entityplus.listeners;
 
 import io.lumine.xikage.mythicmobs.MythicMobs;
-import io.lumine.xikage.mythicmobs.mobs.MythicMob;
 import javafx.util.Pair;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -12,7 +11,6 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.PermissionsHandler;
-import tw.momocraft.entityplus.handlers.ServerHandler;
 import tw.momocraft.entityplus.utils.entities.DropMap;
 
 import java.util.*;
@@ -23,6 +21,7 @@ public class EntityDeath implements Listener {
     public void onEntityDeath(EntityDeathEvent e) {
         Entity entity = e.getEntity();
         UUID entityUUID = entity.getUniqueId();
+        // To stop checking the MythicMobs.
         if (MythicMobs.inst().getAPIHelper().isMythicMob(entityUUID)) {
             return;
         }
@@ -47,7 +46,7 @@ public class EntityDeath implements Listener {
             // Checking player reward permissions.
             List<String> permsList = new ArrayList<>();
             for (String key : dropMap.keySet()) {
-                if (PermissionsHandler.hasPermission(player, "entityplus.drop.multiplier." + key)) {
+                if (PermissionsHandler.hasPermission(player, "entityplus.drop." + key)) {
                     permsList.add(key);
                 }
             }
@@ -97,17 +96,15 @@ public class EntityDeath implements Listener {
             // Giving more items.
             if (ConfigHandler.getConfigPath().isDropItem()) {
                 List<ItemStack> dropItem = e.getDrops();
-                double dropNumber;
                 double dropDecimal;
                 for (ItemStack itemStack : dropItem) {
-                    dropNumber = itemStack.getAmount() * totalItem;
-                    dropDecimal = dropNumber % 1;
-                    if (dropDecimal != 0 && dropDecimal < new Random().nextDouble()) {
-                        dropNumber++;
+                    totalItem *= itemStack.getAmount();
+                    dropDecimal = totalItem % 1;
+                    totalItem -= dropDecimal;
+                    if (dropDecimal > 0 && dropDecimal < new Random().nextDouble()) {
+                        totalItem++;
                     }
-                    itemStack.setAmount((int) (dropNumber - 1));
-                    entity.getWorld().dropItem(entity.getLocation(), new ItemStack(itemStack));
-                    ServerHandler.sendConsoleMessage(String.valueOf(itemStack.getAmount()));
+                    itemStack.setAmount((int) (totalItem));
                 }
             }
         }

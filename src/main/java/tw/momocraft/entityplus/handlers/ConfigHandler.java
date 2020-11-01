@@ -2,6 +2,7 @@ package tw.momocraft.entityplus.handlers;
 
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
 import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -48,6 +49,9 @@ public class ConfigHandler {
         EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new SpawnerSpawn(), EntityPlus.getInstance());
         EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new EntityDeath(), EntityPlus.getInstance());
         //EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new EntityDamage(), EntityPlus.getInstance());
+        if (Bukkit.getServer().getVersion().contains("Paper")) {
+            EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new EntityRemoveFromWorld(), EntityPlus.getInstance());
+        }
 
         if (ConfigHandler.getDepends().MythicMobsEnabled()) {
             EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new MythicMobsSpawn(), EntityPlus.getInstance());
