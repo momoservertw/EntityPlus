@@ -4,13 +4,10 @@ import tw.momocraft.entityplus.utils.blocksutils.BlocksMap;
 import tw.momocraft.entityplus.utils.locationutils.LocationMap;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class EntityMap {
 
-    private String groupName;
     private List<String> types;
     private long priority;
     private double chance;
@@ -23,11 +20,7 @@ public class EntityMap {
     private List<LocationMap> locMaps = new ArrayList<>();
     private List<BlocksMap> blocksMaps = new ArrayList<>();
     private LimitMap limit = null;
-    private Map<String, DropMap> dropMap = new HashMap<>();
 
-    public String getGroupName() {
-        return groupName;
-    }
 
     public List<String> getTypes() {
         return types;
@@ -77,14 +70,6 @@ public class EntityMap {
         return limit;
     }
 
-    public Map<String, DropMap> getDropMap() {
-        return dropMap;
-    }
-
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
-    }
-
     public void setTypes(List<String> types) {
         this.types = types;
     }
@@ -131,9 +116,5 @@ public class EntityMap {
 
     public void setLimitPair(LimitMap limit) {
         this.limit = limit;
-    }
-
-    public void setDropMap(Map<String, DropMap> dropMap) {
-        this.dropMap = dropMap;
     }
 }

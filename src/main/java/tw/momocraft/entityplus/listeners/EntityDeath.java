@@ -1,7 +1,6 @@
 package tw.momocraft.entityplus.listeners;
 
 import io.lumine.xikage.mythicmobs.MythicMobs;
-import javafx.util.Pair;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,86 +24,80 @@ public class EntityDeath implements Listener {
         if (MythicMobs.inst().getAPIHelper().isMythicMob(entityUUID)) {
             return;
         }
-        // Checking the EntityPlus creature tag.
-        Pair<String, String> mobsPair = ConfigHandler.getConfigPath().getLivingEntityMap().getMobsMap().get(entityUUID);
-        if (mobsPair == null) {
-            return;
-        }
-        // Removing the EntityPlus creature tag.
-        ConfigHandler.getConfigPath().getLivingEntityMap().removeMap(entityUUID);
         // Checking the Drop feature.
         if (ConfigHandler.getConfigPath().isDrop()) {
             Player player = e.getEntity().getKiller();
             if (player == null) {
                 return;
             }
-            // Getting entity properties.
-            Map<String, DropMap> dropMap = ConfigHandler.getConfigPath().getEntityProp().get(mobsPair.getKey()).get(mobsPair.getValue()).getDropMap();
-            if (dropMap == null) {
-                return;
-            }
-            // Checking player reward permissions.
-            List<String> permsList = new ArrayList<>();
-            for (String key : dropMap.keySet()) {
-                if (PermissionsHandler.hasPermission(player, "entityplus.drop." + key)) {
-                    permsList.add(key);
+            String entityType = entity.getType().name();
+            // To get drop properties.
+            Map<String, DropMap> dropProp = ConfigHandler.getConfigPath().getDropProp().get(entityType);
+            // Checking if the properties contains this type of entity.
+            if (dropProp != null) {
+                // Checking player reward permissions.
+                List<String> permsList = new ArrayList<>();
+                for (String key : dropProp.keySet()) {
+                    if (PermissionsHandler.hasPermission(player, "entityplus.drop." + key)) {
+                        permsList.add(key);
+                    }
                 }
-            }
-            if (permsList.isEmpty()) {
-                return;
-            }
-            double totalExp = 1;
-            double totalItem = 1;
-            double exp;
-            double item;
-            // Checking the bonus mode.
-            if (ConfigHandler.getConfigPath().isDropBonus()) {
-                String combinedMethod = ConfigHandler.getConfigPath().getDropBonusMode();
-                for (String key : permsList) {
-                    if (dropMap.get(key) != null) {
-                        exp = dropMap.get(key).getExp();
-                        item = dropMap.get(key).getItems();
-                        if (combinedMethod.equals("plus")) {
-                            exp--;
-                            item--;
-                            totalExp += exp;
-                            totalItem += item;
-                        } else if (combinedMethod.equals("multiply")) {
-                            totalExp *= exp;
-                            totalItem *= item;
-                        } else {
-                            exp--;
-                            item--;
-                            totalExp += exp;
-                            totalItem += item;
+                if (permsList.isEmpty()) {
+                    return;
+                }
+                double totalExp = 1;
+                double totalItem = 1;
+                double exp;
+                double item;
+                // Checking the bonus mode.
+                if (ConfigHandler.getConfigPath().isDropBonus()) {
+                    String combinedMethod = ConfigHandler.getConfigPath().getDropBonusMode();
+                    for (String key : permsList) {
+                        if (dropProp.get(key) != null) {
+                            exp = dropProp.get(key).getExp();
+                            item = dropProp.get(key).getItems();
+                            if (combinedMethod.equals("plus")) {
+                                exp--;
+                                item--;
+                                totalExp += exp;
+                                totalItem += item;
+                            } else if (combinedMethod.equals("multiply")) {
+                                totalExp *= exp;
+                                totalItem *= item;
+                            } else {
+                                exp--;
+                                item--;
+                                totalExp += exp;
+                                totalItem += item;
+                            }
                         }
                     }
+                } else {
+                    // Choosing the first drop (The highest priority).
+                    exp = dropProp.get(permsList.get(0)).getExp();
+                    item = dropProp.get(permsList.get(0)).getItems();
+                    totalExp *= exp;
+                    totalItem *= item;
                 }
-            } else {
-                // Choosing the first drop (The highest priority).
-                exp = dropMap.get(permsList.get(0)).getExp();
-                item = dropMap.get(permsList.get(0)).getItems();
-                totalExp *= exp;
-                totalItem *= item;
-            }
-            // Setting the higher exp.
-            if (ConfigHandler.getConfigPath().isDropExp()) {
-                int dropExp = e.getDroppedExp();
-                dropExp *= totalExp;
-                e.setDroppedExp(dropExp);
-            }
-            // Giving more items.
-            if (ConfigHandler.getConfigPath().isDropItem()) {
-                List<ItemStack> dropItem = e.getDrops();
-                double dropDecimal;
-                for (ItemStack itemStack : dropItem) {
-                    totalItem *= itemStack.getAmount();
-                    dropDecimal = totalItem % 1;
-                    totalItem -= dropDecimal;
-                    if (dropDecimal > 0 && dropDecimal < new Random().nextDouble()) {
-                        totalItem++;
+                // Setting the higher exp.
+                if (ConfigHandler.getConfigPath().isDropExp()) {
+                    int dropExp = e.getDroppedExp();
+                    dropExp *= totalExp;
+                    e.setDroppedExp(dropExp);
+                }
+                // Giving more items.
+                if (ConfigHandler.getConfigPath().isDropItem()) {
+                    List<ItemStack> dropItem = e.getDrops();
+                    double dropDecimal;
+                    for (ItemStack itemStack : dropItem) {
+                        totalItem *= itemStack.getAmount();
+                        dropDecimal = totalItem % 1;
+                        totalItem -= dropDecimal;
+                        if (dropDecimal > 0 && dropDecimal < new Random().nextDouble()) {
+                            totalItem++;
+                        }
+                        itemStack.setAmount((int) (totalItem));
                     }
-                    itemStack.setAmount((int) (totalItem));
                 }
             }
         }

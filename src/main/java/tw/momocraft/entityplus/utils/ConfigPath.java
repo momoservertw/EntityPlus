@@ -33,7 +33,6 @@ public class ConfigPath {
     private boolean spawnResFlag;
 
     private boolean limit;
-    private boolean limitResFlag;
 
     private Map<String, Map<String, EntityMap>> entityProp = new HashMap<>();
     private Map<String, LimitMap> limitProp = new HashMap<>();
@@ -80,6 +79,11 @@ public class ConfigPath {
 
         mobSpawnRange = ConfigHandler.getServerConfig("spigot.yml").getInt("world-settings.default.mob-spawn-range") * 16;
         nearbyPlayerRange = ConfigHandler.getConfig("config.yml").getInt("General.Nearby-Players-Range");
+
+        setSpawn();
+        setLimitProp();
+        setDrop();
+        setSpawner();
     }
 
     public static LocationUtils getLocationUtils() {
@@ -93,7 +97,7 @@ public class ConfigPath {
     /**
      * Setup the Spawn-Conditions.
      */
-    private void setSpawnEntity() {
+    private void setSpawn() {
         spawn = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Enable");
         if (spawn) {
             spawnResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Settings.Features.Bypass.Residence-Flag");
@@ -106,15 +110,10 @@ public class ConfigPath {
                 List<BlocksMap> blocksMaps;
                 List<LocationMap> locMaps;
                 String limit;
-                Map<String, DropMap> dropMap;
-                Map<String, Long> sortMap;
-                Map<String, EntityMap> newEnMap;
-                Map<String, DropMap> newDrMap;
                 for (String group : groupsConfig.getKeys(false)) {
                     groupEnable = ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Enable");
                     if (groupEnable == null || groupEnable.equals("true")) {
                         entityMap = new EntityMap();
-                        entityMap.setGroupName(group);
                         entityMap.setTypes(getTypeList("entities.yml", "Entities." + group + ".Types", "entity"));
                         entityMap.setPriority(ConfigHandler.getConfig("entities.yml").getLong("Entities." + group + ".Priority"));
                         chance = ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Chance");
@@ -149,13 +148,6 @@ public class ConfigPath {
                                 ServerHandler.sendConsoleMessage("&eLimit: " + limit);
                             }
                         }
-                        // Drop settings
-                        dropMap = new HashMap<>();
-                        for (String dropGroup : ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Drop")) {
-                            if (dropProp.containsKey(dropGroup)) {
-                                dropMap.put(dropGroup, dropProp.get(dropGroup));
-                            }
-                        }
                         // Add properties to all entities.
                         for (String entityType : entityMap.getTypes()) {
                             try {
@@ -168,6 +160,8 @@ public class ConfigPath {
                     }
                 }
                 Iterator<String> i = entityProp.keySet().iterator();
+                Map<String, Long> sortMap;
+                Map<String, EntityMap> newEnMap;
                 String entityType;
                 while (i.hasNext()) {
                     entityType = i.next();
@@ -191,7 +185,6 @@ public class ConfigPath {
         if (!limit) {
             return;
         }
-        limitResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Limit.Settings.Features.Bypass.Residence-Flag");
         limitProp = new HashMap<>();
         ConfigurationSection groupsConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Entities.Limit.Groups");
         if (groupsConfig != null) {
@@ -202,7 +195,6 @@ public class ConfigPath {
                 groupEnable = ConfigHandler.getConfig("config.yml").getString("Entities.Limit." + group + ".Enable");
                 if (groupEnable == null || groupEnable.equals("true")) {
                     limitMap = new LimitMap();
-                    limitMap.setGroupName(group);
                     limitMap.setChance(ConfigHandler.getConfig("config.yml").getLong("Entities.Limit.Groups." + group + ".Chance"));
                     limitMap.setAmount(ConfigHandler.getConfig("config.yml").getInt("Entities.Limit.Groups." + group + ".Amount"));
                     afkEnable = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Limits.Groups." + group + ".AFK.Enable");
@@ -237,43 +229,38 @@ public class ConfigPath {
                     groupEnable = ConfigHandler.getConfig("config.yml").getString("Entities.Drop." + group + ".Enable");
                     if (groupEnable == null || groupEnable.equals("true")) {
                         dropMap = new DropMap();
-                        dropMap.setGroupName(group);
                         dropMap.setPriority(ConfigHandler.getConfig("config.yml").getLong("Entities.Drop.Groups." + group + ".Priority"));
                         dropMap.setExp(ConfigHandler.getConfig("config.yml").getDouble("Entities.Drop.Groups." + group + ".Exp"));
                         dropMap.setItems(ConfigHandler.getConfig("config.yml").getDouble("Entities.Drop.Groups." + group + ".Items"));
                         dropMap.setMoney(ConfigHandler.getConfig("config.yml").getDouble("Entities.Drop.Groups." + group + ".MythicMobs.Money"));
-                        dropMap.setTypes(getTypeList("config.yml", "Entities.Drop.Groups." + group + ".Types", "entity"));
-                        dropProp.put(group, dropMap);
+
+                        // Add properties to all entities.
+                        for (String entityType : getTypeList("config.yml", "Entities.Drop.Groups." + group + ".Types", "entity")) {
+                            try {
+                                dropProp.get(entityType).put(group, dropMap);
+                            } catch (Exception ex) {
+                                dropProp.put(entityType, new HashMap<>());
+                                dropProp.get(entityType).put(group, dropMap);
+                            }
+                        }
                     }
                 }
-            }
-
-            // Drop settings
-            dropMap = new HashMap<>();
-            for (String dropGroup : ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Drop")) {
-                if (dropProp.containsKey(dropGroup)) {
-                    dropMap.put(dropGroup, dropProp.get(dropGroup));
-                }
-            }
-            // Sort the drop map.
-            sortMap = new HashMap<>();
-            newDrMap = new LinkedHashMap<>();
-            for (String s : dropProp.keySet()) {
-                sortMap.put(s, dropProp.get(s).getPriority());
-            }
-            sortMap = Utils.sortByValue(sortMap);
-            for (String s : sortMap.keySet()) {
-                newDrMap.put(s, dropProp.get(s));
-            }
-            entityMap.setDropMap(newDrMap);
-
-            // Add properties to all entities.
-            for (String entityType : entityMap.getTypes()) {
-                try {
-                    entityProp.get(entityType).put(group, entityMap);
-                } catch (Exception ex) {
-                    entityProp.put(entityType, new HashMap<>());
-                    entityProp.get(entityType).put(group, entityMap);
+                Iterator<String> i = dropProp.keySet().iterator();
+                Map<String, Long> sortMap;
+                Map<String, DropMap> newEnMap;
+                String entityType;
+                while (i.hasNext()) {
+                    entityType = i.next();
+                    sortMap = new HashMap<>();
+                    newEnMap = new LinkedHashMap<>();
+                    for (String group : dropProp.get(entityType).keySet()) {
+                        sortMap.put(group, dropProp.get(entityType).get(group).getPriority());
+                    }
+                    sortMap = Utils.sortByValue(sortMap);
+                    for (String group : sortMap.keySet()) {
+                        newEnMap.put(group, dropProp.get(entityType).get(group));
+                    }
+                    dropProp.replace(entityType, newEnMap);
                 }
             }
         }
@@ -297,7 +284,6 @@ public class ConfigPath {
                     if (groupEnable == null || groupEnable.equals("true")) {
                         spawnerMap = new SpawnerMap();
                         changeMap = new HashMap<>();
-                        spawnerMap.setGroupName(group);
                         spawnerMap.setRemove(ConfigHandler.getConfig("config.yml").getBoolean("Spawner.Groups." + group + ".Remove"));
                         spawnerMap.setCommands(ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Commands"));
                         spawnerMap.setAllowList(ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Allow-Types"));
@@ -341,7 +327,6 @@ public class ConfigPath {
                         }
                     }
                 }
-
                 Map<String, Long> sortMap;
                 Map<String, SpawnerMap> newMap;
                 Iterator<String> i = spawnerProp.keySet().iterator();
@@ -426,18 +411,13 @@ public class ConfigPath {
         return entityProp;
     }
 
-    public Map<String, DropMap> getDropProp() {
+    public Map<String, Map<String, DropMap>> getDropProp() {
         return dropProp;
     }
 
     public boolean isLimit() {
         return limit;
     }
-
-    public boolean isLimitResFlag() {
-        return limitResFlag;
-    }
-
 
     public boolean isDrop() {
         return drop;
@@ -473,42 +453,5 @@ public class ConfigPath {
 
     public boolean isSpawnerResFlag() {
         return spawnerResFlag;
-    }
-
-
-    public boolean isPurgeSchedule() {
-        return purgeSchedule;
-    }
-
-    public int getPurgeScheduleInt() {
-        return purgeScheduleInt;
-    }
-
-    public boolean isPurgeBaby() {
-        return purgeBaby;
-    }
-
-    public boolean isPurgeEquipped() {
-        return purgeEquipped;
-    }
-
-    public boolean isPurgeNamed() {
-        return purgeNamed;
-    }
-
-    public boolean isPurgePickup() {
-        return purgePickup;
-    }
-
-    public boolean isPurgeSaddle() {
-        return purgeSaddle;
-    }
-
-    public boolean isPurgeTamed() {
-        return purgeTamed;
-    }
-
-    public boolean isPurge() {
-        return purge;
     }
 }

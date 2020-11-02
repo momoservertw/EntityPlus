@@ -4,13 +4,11 @@ import tw.momocraft.entityplus.utils.blocksutils.BlocksMap;
 import tw.momocraft.entityplus.utils.locationutils.LocationMap;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class SpawnerMap {
 
-    private String groupName = null;
     private long priority;
     private boolean remove = false;
     private LocationMap location = null;
@@ -18,11 +16,7 @@ public class SpawnerMap {
     private List<String> commands = null;
     private List<LocationMap> locMaps = new ArrayList<>();
     private List<BlocksMap> blocksMaps = new ArrayList<>();
-    private Map<String, Long> changeMap = new HashMap();
-
-    public String getGroupName() {
-        return groupName;
-    }
+    private Map<String, Long> changeMap;
 
     public long getPriority() {
         return priority;
@@ -54,10 +48,6 @@ public class SpawnerMap {
         return changeMap;
     }
 
-
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
-    }
 
     public void setPriority(long priority) {
         this.priority = priority;

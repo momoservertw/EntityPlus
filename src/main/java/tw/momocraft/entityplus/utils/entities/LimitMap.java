@@ -2,7 +2,6 @@ package tw.momocraft.entityplus.utils.entities;
 
 public class LimitMap {
 
-    private String groupName;
     private double chance;
     private int amount;
     private boolean AFK;
@@ -12,9 +11,6 @@ public class LimitMap {
     private long searchY;
     private long searchZ;
 
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
-    }
 
     public void setChance(double chance) {
         this.chance = chance;
@@ -48,10 +44,6 @@ public class LimitMap {
         this.searchZ = searchZ;
     }
 
-
-    public String getGroupName() {
-        return groupName;
-    }
 
     public double getChance() {
         return chance;

@@ -6,17 +6,24 @@
   <component name="ChangeListManager">
     <list default="true" id="db9de2ae-2a97-4e0b-968d-c3ef6fdf69c0" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/extra/MythicMobs-4.9.1.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/extra/Residence4.8.8.2.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/handlers/UpdateHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/handlers/UpdateHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/CreatureSpawn.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/CreatureSpawn.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/EntityDeath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/EntityDeath.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/MythicMobsLootDrop.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/MythicMobsLootDrop.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/ConfigPath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/ConfigPath.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/config2.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/future.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/groups.yml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/groups.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/DropMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/DropMap.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/EntityMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/EntityMap.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/LimitMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/LimitMap.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/LivingEntityMap.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/SpawnerMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/entities/SpawnerMap.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/EntityPlus-1.2.0.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/EntityPlus-1.2.0.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/handlers/ConfigHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/handlers/ConfigHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/listeners/CreatureSpawn.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/listeners/CreatureSpawn.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/listeners/EntityDeath.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/listeners/EntityDeath.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/listeners/EntityRemoveFromWorld.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/listeners/MythicMobsLootDrop.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/listeners/MythicMobsLootDrop.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/listeners/MythicMobsSpawn.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/listeners/MythicMobsSpawn.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/utils/ConfigPath.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/utils/ConfigPath.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/utils/entities/LivingEntityMap.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/utils/entities/LivingEntityMap.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/utils/entities/DropMap.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/tw/momocraft/entityplus/utils/entities/DropMap.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,7 +91,7 @@
       <recent name="C:\Users\sayuri\IdeaProjects\EntityPlus" />
     </key>
   </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="SpellCheckerSettings" BundledDictionaries="0" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" Dictionaries="0" CorrectionsLimit="5" DefaultDictionary="application-level" UseSingleDictionary="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -111,28 +118,28 @@
       <screen x="0" y="0" width="1707" height="920" />
     </state>
     <state x="634" y="216" key="FileChooserDialogImpl/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1604079557692" />
-    <state width="1663" height="169" key="GridCell.Tab.0.bottom" timestamp="1604239268997">
-      <screen x="0" y="0" width="1707" height="920" />
+    <state width="1237" height="211" key="GridCell.Tab.0.bottom" timestamp="1604284799083">
+      <screen x="0" y="0" width="1280" height="689" />
     </state>
-    <state width="1237" height="211" key="GridCell.Tab.0.bottom/0.0.1280.689@0.0.1280.689" timestamp="1603853641804" />
+    <state width="1237" height="211" key="GridCell.Tab.0.bottom/0.0.1280.689@0.0.1280.689" timestamp="1604284799083" />
     <state width="1663" height="169" key="GridCell.Tab.0.bottom/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1604239268997" />
     <state width="809" height="201" key="GridCell.Tab.0.bottom/2560.10.1707.920/0.0.1707.920@2560.10.1707.920" timestamp="1604207795517" />
-    <state width="1663" height="169" key="GridCell.Tab.0.center" timestamp="1604239268996">
-      <screen x="0" y="0" width="1707" height="920" />
+    <state width="1237" height="211" key="GridCell.Tab.0.center" timestamp="1604284799083">
+      <screen x="0" y="0" width="1280" height="689" />
     </state>
-    <state width="1237" height="211" key="GridCell.Tab.0.center/0.0.1280.689@0.0.1280.689" timestamp="1603853641804" />
+    <state width="1237" height="211" key="GridCell.Tab.0.center/0.0.1280.689@0.0.1280.689" timestamp="1604284799083" />
     <state width="1663" height="169" key="GridCell.Tab.0.center/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1604239268996" />
     <state width="809" height="201" key="GridCell.Tab.0.center/2560.10.1707.920/0.0.1707.920@2560.10.1707.920" timestamp="1604207795517" />
-    <state width="1663" height="169" key="GridCell.Tab.0.left" timestamp="1604239268996">
-      <screen x="0" y="0" width="1707" height="920" />
+    <state width="1237" height="211" key="GridCell.Tab.0.left" timestamp="1604284799083">
+      <screen x="0" y="0" width="1280" height="689" />
     </state>
-    <state width="1237" height="211" key="GridCell.Tab.0.left/0.0.1280.689@0.0.1280.689" timestamp="1603853641804" />
+    <state width="1237" height="211" key="GridCell.Tab.0.left/0.0.1280.689@0.0.1280.689" timestamp="1604284799083" />
     <state width="1663" height="169" key="GridCell.Tab.0.left/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1604239268996" />
     <state width="809" height="201" key="GridCell.Tab.0.left/2560.10.1707.920/0.0.1707.920@2560.10.1707.920" timestamp="1604207795517" />
-    <state width="1663" height="169" key="GridCell.Tab.0.right" timestamp="1604239268997">
-      <screen x="0" y="0" width="1707" height="920" />
+    <state width="1237" height="211" key="GridCell.Tab.0.right" timestamp="1604284799083">
+      <screen x="0" y="0" width="1280" height="689" />
     </state>
-    <state width="1237" height="211" key="GridCell.Tab.0.right/0.0.1280.689@0.0.1280.689" timestamp="1603853641804" />
+    <state width="1237" height="211" key="GridCell.Tab.0.right/0.0.1280.689@0.0.1280.689" timestamp="1604284799083" />
     <state width="1663" height="169" key="GridCell.Tab.0.right/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1604239268997" />
     <state width="809" height="201" key="GridCell.Tab.0.right/2560.10.1707.920/0.0.1707.920@2560.10.1707.920" timestamp="1604207795517" />
     <state x="142" y="0" key="SettingsEditor" timestamp="1603853040127">

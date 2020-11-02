@@ -4,7 +4,6 @@ tw\momocraft\entityplus\listeners\PlayerLogin.class
 tw\momocraft\entityplus\utils\entities\EntityMap.class
 tw\momocraft\entityplus\utils\Utils.class
 tw\momocraft\entityplus\utils\blocksutils\BlocksUtils.class
-tw\momocraft\entityplus\listeners\EntityRemoveFromWorld.class
 tw\momocraft\entityplus\listeners\SpawnerSpawn.class
 tw\momocraft\entityplus\utils\Language.class
 tw\momocraft\entityplus\utils\TabComplete.class
