@@ -120,7 +120,9 @@ Entities:
         Items: 1.5
         MythicMobs:
           Money: 1.5
-          Items: 1.5
+        # Available type: Vanilla, Custom Group, MythicMobs
+        List:
+          - NormalMobs
       lucky2:
         Enable: true
         Priority: 2
@@ -128,7 +130,8 @@ Entities:
         Items: 2
         MythicMobs:
           Money: 2
-          Items: 2
+        List:
+          - NormalMobs
   # Controlling creatures damage.
   # More information: https://github.com/momoservertw/EntityPlus/wiki/Damage
   Damage:

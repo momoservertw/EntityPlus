@@ -79,14 +79,14 @@ public class MythicMobsSpawn implements Listener {
                     if (entityMap.getLimit() != null) {
                         if (EntityUtils.checkLimit(entity, entityMap.getLimit())) {
                             // Add a tag for this creature.
-                            ConfigHandler.getConfigPath().getLivingEntityMap().putMap(entity.getUniqueId(), new Pair<>(entityType, groupName));
+                            //ConfigHandler.getConfigPath().getLivingEntityMap().putMap(entity.getUniqueId(), new Pair<>(entityType, groupName));
                             ServerHandler.sendFeatureMessage("Spawn", entityType, "Limit", "return", groupName,
                                     new Throwable().getStackTrace()[0]);
                             return;
                         }
                     } else {
                         // Add a tag for this creature.
-                        ConfigHandler.getConfigPath().getLivingEntityMap().putMap(entity.getUniqueId(), new Pair<>(entityType, groupName));
+                        //ConfigHandler.getConfigPath().getLivingEntityMap().putMap(entity.getUniqueId(), new Pair<>(entityType, groupName));
                         ServerHandler.sendFeatureMessage("Spawn", entityType, "!Chance", "return", groupName,
                                 new Throwable().getStackTrace()[0]);
                         return;

@@ -1,5 +1,6 @@
 package tw.momocraft.entityplus.utils;
 
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
@@ -36,7 +37,6 @@ public class ConfigPath {
 
     private Map<String, Map<String, EntityMap>> entityProp = new HashMap<>();
     private Map<String, LimitMap> limitProp = new HashMap<>();
-    private LivingEntityMap livingEntityMap;
 
     //  ============================================== //
     //         Drop Settings                           //
@@ -47,10 +47,8 @@ public class ConfigPath {
     private boolean dropExp;
     private boolean dropItem;
     private boolean dropMoney;
-    private boolean dropMmItem;
-    private boolean dropResFlag;
 
-    private Map<String, DropMap> dropProp;
+    private Map<String, Map<String, DropMap>> dropProp = new HashMap<>();
 
     //  ============================================== //
     //         Purge Settings                          //
@@ -80,7 +78,6 @@ public class ConfigPath {
         locationUtils = new LocationUtils();
         blocksUtils = new BlocksUtils();
 
-        livingEntityMap = new LivingEntityMap();
         mobSpawnRange = ConfigHandler.getServerConfig("spigot.yml").getInt("world-settings.default.mob-spawn-range") * 16;
         nearbyPlayerRange = ConfigHandler.getConfig("config.yml").getInt("General.Nearby-Players-Range");
     }
@@ -91,10 +88,6 @@ public class ConfigPath {
 
     public static BlocksUtils getBlocksUtils() {
         return blocksUtils;
-    }
-
-    public LivingEntityMap getLivingEntityMap() {
-        return livingEntityMap;
     }
 
     /**
@@ -109,8 +102,6 @@ public class ConfigPath {
             if (groupsConfig != null) {
                 String groupEnable;
                 String chance;
-                List<String> entityList;
-                List<String> customList;
                 EntityMap entityMap;
                 List<BlocksMap> blocksMaps;
                 List<LocationMap> locMaps;
@@ -119,47 +110,12 @@ public class ConfigPath {
                 Map<String, Long> sortMap;
                 Map<String, EntityMap> newEnMap;
                 Map<String, DropMap> newDrMap;
-                boolean mythicMobsEnabled = ConfigHandler.getDepends().MythicMobsEnabled();
                 for (String group : groupsConfig.getKeys(false)) {
                     groupEnable = ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Enable");
                     if (groupEnable == null || groupEnable.equals("true")) {
                         entityMap = new EntityMap();
-                        entityList = new ArrayList<>();
                         entityMap.setGroupName(group);
-                        for (String entityType : ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Types")) {
-                            try {
-                                // Add creature.
-                                entityList.add(EntityType.valueOf(entityType).name());
-                            } catch (Exception e) {
-                                customList = ConfigHandler.getConfig("groups.yml").getStringList("Entities." + entityType);
-                                if (customList.isEmpty()) {
-                                    // Add MythicMobs.
-                                    if (mythicMobsEnabled) {
-                                        entityList.add(entityType);
-                                    } else {
-                                        ServerHandler.sendConsoleMessage("&cCan not find entity in \"entities.yml ➜ Entities - " + group + "\".");
-                                        ServerHandler.sendConsoleMessage("&cType: " + entityType);
-                                    }
-                                    continue;
-                                }
-                                // Add Custom Group.
-                                for (String customType : customList) {
-                                    try {
-                                        // Add creature.
-                                        entityList.add(EntityType.valueOf(customType).name());
-                                    } catch (Exception ex) {
-                                        // Add MythicMobs.
-                                        if (mythicMobsEnabled) {
-                                            entityList.add(customType);
-                                        } else {
-                                            ServerHandler.sendConsoleMessage("&cCan not find entity in \"groups.yml ➜ Entities - " + entityType + "\".");
-                                            ServerHandler.sendConsoleMessage("&cType: " + customType);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        entityMap.setTypes(entityList);
+                        entityMap.setTypes(getTypeList("entities.yml", "Entities." + group + ".Types", "entity"));
                         entityMap.setPriority(ConfigHandler.getConfig("entities.yml").getLong("Entities." + group + ".Priority"));
                         chance = ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Chance");
                         if (chance == null) {
@@ -200,18 +156,6 @@ public class ConfigPath {
                                 dropMap.put(dropGroup, dropProp.get(dropGroup));
                             }
                         }
-                        // Sort the drop map.
-                        sortMap = new HashMap<>();
-                        newDrMap = new LinkedHashMap<>();
-                        for (String s : dropProp.keySet()) {
-                            sortMap.put(s, dropProp.get(s).getPriority());
-                        }
-                        sortMap = Utils.sortByValue(sortMap);
-                        for (String s : sortMap.keySet()) {
-                            newDrMap.put(s, dropProp.get(s));
-                        }
-                        entityMap.setDropMap(newDrMap);
-
                         // Add properties to all entities.
                         for (String entityType : entityMap.getTypes()) {
                             try {
@@ -276,7 +220,7 @@ public class ConfigPath {
         }
     }
 
-    private void setDropProp() {
+    private void setDrop() {
         dropProp = new HashMap<>();
         drop = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Enable");
         if (drop) {
@@ -298,8 +242,38 @@ public class ConfigPath {
                         dropMap.setExp(ConfigHandler.getConfig("config.yml").getDouble("Entities.Drop.Groups." + group + ".Exp"));
                         dropMap.setItems(ConfigHandler.getConfig("config.yml").getDouble("Entities.Drop.Groups." + group + ".Items"));
                         dropMap.setMoney(ConfigHandler.getConfig("config.yml").getDouble("Entities.Drop.Groups." + group + ".MythicMobs.Money"));
+                        dropMap.setTypes(getTypeList("config.yml", "Entities.Drop.Groups." + group + ".Types", "entity"));
                         dropProp.put(group, dropMap);
                     }
+                }
+            }
+
+            // Drop settings
+            dropMap = new HashMap<>();
+            for (String dropGroup : ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Drop")) {
+                if (dropProp.containsKey(dropGroup)) {
+                    dropMap.put(dropGroup, dropProp.get(dropGroup));
+                }
+            }
+            // Sort the drop map.
+            sortMap = new HashMap<>();
+            newDrMap = new LinkedHashMap<>();
+            for (String s : dropProp.keySet()) {
+                sortMap.put(s, dropProp.get(s).getPriority());
+            }
+            sortMap = Utils.sortByValue(sortMap);
+            for (String s : sortMap.keySet()) {
+                newDrMap.put(s, dropProp.get(s));
+            }
+            entityMap.setDropMap(newDrMap);
+
+            // Add properties to all entities.
+            for (String entityType : entityMap.getTypes()) {
+                try {
+                    entityProp.get(entityType).put(group, entityMap);
+                } catch (Exception ex) {
+                    entityProp.put(entityType, new HashMap<>());
+                    entityProp.get(entityType).put(group, entityMap);
                 }
             }
         }
@@ -389,18 +363,47 @@ public class ConfigPath {
         }
     }
 
-    private void setPurge() {
-        purge = ConfigHandler.getConfig("config.yml").getBoolean("Purge.Enable");
-        if (purge) {
-            purgeSchedule = ConfigHandler.getConfig("config.yml").getBoolean("Purge.Check.Schedule.Enable");
-            purgeScheduleInt = ConfigHandler.getConfig("config.yml").getInt("Purge.Check.Schedule.Interval") * 1200;
-            purgeNamed = ConfigHandler.getConfig("config.yml").getBoolean("Purge.Ignore.Named");
-            purgeTamed = ConfigHandler.getConfig("config.yml").getBoolean("Purge.Ignore.Tamed");
-            purgeSaddle = ConfigHandler.getConfig("config.yml").getBoolean("Purge.Ignore.With-Saddle");
-            purgeBaby = ConfigHandler.getConfig("config.yml").getBoolean("Purge.Ignore.Baby-Animals");
-            purgeEquipped = ConfigHandler.getConfig("config.yml").getBoolean("Purge.Ignore.Equipped");
-            purgePickup = ConfigHandler.getConfig("config.yml").getBoolean("Purge.Ignore.Pickup-Equipped");
+    private List<String> getTypeList(String file, String path, String listType) {
+        List<String> list = new ArrayList<>();
+        List<String> customList;
+        boolean mythicMobsEnabled = ConfigHandler.getDepends().MythicMobsEnabled();
+        for (String type : ConfigHandler.getConfig(file).getStringList(path)) {
+            try {
+                if (listType.equals("entity")) {
+                    list.add(EntityType.valueOf(type).name());
+                } else if (listType.equals("material")) {
+                    list.add(Material.valueOf(type).name());
+                }
+            } catch (Exception e) {
+                if (listType.equals("entity") && mythicMobsEnabled) {
+                    list.add(type);
+                } else {
+                    ServerHandler.sendConsoleMessage("&cCan not find " + listType + " in \"" + file + " ➜ " + listType + " - " + type + "\".");
+                }
+                customList = ConfigHandler.getConfig("groups.yml").getStringList(listType + "." + type);
+                if (customList.isEmpty()) {
+                    continue;
+                }
+                // Add Custom Group.
+                for (String customType : customList) {
+                    try {
+                        if (listType.equals("entity")) {
+                            list.add(EntityType.valueOf(type).name());
+                        } else if (listType.equals("material")) {
+                            list.add(Material.valueOf(type).name());
+                        }
+                    } catch (Exception ex) {
+                        // Add MythicMobs.
+                        if (listType.equals("entity") && mythicMobsEnabled) {
+                            list.add(type);
+                        } else {
+                            ServerHandler.sendConsoleMessage("&cCan not find " + listType + " in \"group.yml\" ➜ " + listType + " - " + customType + "\".");
+                        }
+                    }
+                }
+            }
         }
+        return list;
     }
 
     public int getMobSpawnRange() {
@@ -423,6 +426,9 @@ public class ConfigPath {
         return entityProp;
     }
 
+    public Map<String, DropMap> getDropProp() {
+        return dropProp;
+    }
 
     public boolean isLimit() {
         return limit;
@@ -456,11 +462,6 @@ public class ConfigPath {
     public boolean isDropItem() {
         return dropItem;
     }
-
-    public boolean isDropMmItem() {
-        return dropMmItem;
-    }
-
 
     public boolean isSpawner() {
         return spawner;

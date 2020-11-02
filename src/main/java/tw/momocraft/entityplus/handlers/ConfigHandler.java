@@ -49,9 +49,6 @@ public class ConfigHandler {
         EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new SpawnerSpawn(), EntityPlus.getInstance());
         EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new EntityDeath(), EntityPlus.getInstance());
         //EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new EntityDamage(), EntityPlus.getInstance());
-        if (Bukkit.getServer().getVersion().contains("Paper")) {
-            EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new EntityRemoveFromWorld(), EntityPlus.getInstance());
-        }
 
         if (ConfigHandler.getDepends().MythicMobsEnabled()) {
             EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new MythicMobsSpawn(), EntityPlus.getInstance());

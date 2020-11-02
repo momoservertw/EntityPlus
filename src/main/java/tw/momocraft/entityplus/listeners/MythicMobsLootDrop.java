@@ -19,14 +19,6 @@ public class MythicMobsLootDrop implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onMythicMobLootDrop(MythicMobLootDropEvent e) {
         Entity entity = e.getEntity();
-        UUID entityUUID = entity.getUniqueId();
-        // Checking the EntityPlus creature tag.
-        Pair<String, String> mobsPair = ConfigHandler.getConfigPath().getLivingEntityMap().getMobsMap().get(entityUUID);
-        if (mobsPair == null) {
-            return;
-        }
-        // Removing the EntityPlus creature tag.
-        ConfigHandler.getConfigPath().getLivingEntityMap().removeMap(entityUUID);
         // Checking the Drop feature.
         if (ConfigHandler.getConfigPath().isDrop()) {
             Player player;
@@ -36,7 +28,7 @@ public class MythicMobsLootDrop implements Listener {
                 return;
             }
             // Getting entity properties.
-            Map<String, DropMap> dropMap = ConfigHandler.getConfigPath().getEntityProp().get(mobsPair.getKey()).get(mobsPair.getValue()).getDropMap();
+            Map<String, DropMap> dropMap = ConfigHandler.getConfigPath().getDropProp().get(mobsPair.getKey()).get(mobsPair.getValue()).getDropMap();
             if (dropMap == null) {
                 return;
             }

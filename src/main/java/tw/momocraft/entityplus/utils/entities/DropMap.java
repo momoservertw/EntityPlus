@@ -1,5 +1,7 @@
 package tw.momocraft.entityplus.utils.entities;
 
+import java.util.List;
+
 public class DropMap {
 
     private String groupName;
@@ -7,6 +9,7 @@ public class DropMap {
     private double exp;
     private double items;
     private double money;
+    private List<String> types;
 
 
     public String getGroupName() {
@@ -29,6 +32,10 @@ public class DropMap {
         return money;
     }
 
+    public List<String> getTypes() {
+        return types;
+    }
+
     public void setGroupName(String groupName) {
         this.groupName = groupName;
     }
@@ -47,5 +54,9 @@ public class DropMap {
 
     public void setMoney(double money) {
         this.money = money;
+    }
+
+    public void setTypes(List<String> types) {
+        this.types = types;
     }
 }

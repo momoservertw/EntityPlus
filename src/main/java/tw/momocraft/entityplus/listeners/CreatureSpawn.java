@@ -92,17 +92,15 @@ public class CreatureSpawn implements Listener {
                     // If the creature spawn location has reach the maximum creature amount, it will cancel the spawn event.
                     if (entityMap.getLimit() != null) {
                         if (EntityUtils.checkLimit(entity, entityMap.getLimit())) {
-                            ServerHandler.sendConsoleMessage(groupName + " " + entityType +" " + entity.getUniqueId());
                             // Add a tag for this creature.
-                            ConfigHandler.getConfigPath().getLivingEntityMap().putMap(entity.getUniqueId(), new Pair<>(entityType, groupName));
+                            //ConfigHandler.getConfigPath().getLivingEntityMap().putMap(entity.getUniqueId(), new Pair<>(entityType, groupName));
                             ServerHandler.sendFeatureMessage("Spawn", entityType, "Limit", "return", groupName,
                                     new Throwable().getStackTrace()[0]);
                             return;
                         }
                     } else {
-                        ServerHandler.sendConsoleMessage(groupName + " " + entityType +" " + entity.getUniqueId());
                         // Add a tag for this creature.
-                        ConfigHandler.getConfigPath().getLivingEntityMap().putMap(entity.getUniqueId(), new Pair<>(entityType, groupName));
+                        //ConfigHandler.getConfigPath().getLivingEntityMap().putMap(entity.getUniqueId(), new Pair<>(entityType, groupName));
                         ServerHandler.sendFeatureMessage("Spawn", entityType, "!Chance", "return", groupName,
                                 new Throwable().getStackTrace()[0]);
                         return;
