@@ -224,7 +224,7 @@ public class LocationUtils {
     }
 
     /**
-     * @param number the location of event.
+     * @param number the checking number.
      * @param r1     the first side of range.
      * @param r2     another side of range.
      * @return if the check number is inside the range.

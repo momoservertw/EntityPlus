@@ -7,10 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EntityMap {
-
     private List<String> types;
     private long priority;
-    private double chance;
     private List<String> reasons;
     private List<String> ignoreReasons;
     private List<String> boimes;
@@ -19,6 +17,8 @@ public class EntityMap {
     private String day;
     private List<LocationMap> locMaps = new ArrayList<>();
     private List<BlocksMap> blocksMaps = new ArrayList<>();
+
+    private double chance;
     private LimitMap limit = null;
 
 
@@ -28,10 +28,6 @@ public class EntityMap {
 
     public long getPriority() {
         return priority;
-    }
-
-    public double getChance() {
-        return chance;
     }
 
     public String getDay() {
@@ -66,6 +62,10 @@ public class EntityMap {
         return blocksMaps;
     }
 
+    public double getChance() {
+        return chance;
+    }
+
     public LimitMap getLimit() {
         return limit;
     }
@@ -76,10 +76,6 @@ public class EntityMap {
 
     public void setPriority(long priority) {
         this.priority = priority;
-    }
-
-    public void setChance(double chance) {
-        this.chance = chance;
     }
 
     public void setReasons(List<String> reasons) {
@@ -112,6 +108,10 @@ public class EntityMap {
 
     public void setLocMaps(List<LocationMap> locationMaps) {
         this.locMaps = locationMaps;
+    }
+
+    public void setChance(double chance) {
+        this.chance = chance;
     }
 
     public void setLimitPair(LimitMap limit) {

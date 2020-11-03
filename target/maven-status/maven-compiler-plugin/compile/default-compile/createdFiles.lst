@@ -26,10 +26,10 @@ tw\momocraft\entityplus\utils\ConfigPath.class
 tw\momocraft\entityplus\utils\entities\SpawnerMap.class
 tw\momocraft\entityplus\listeners\PlayerTeleport.class
 tw\momocraft\entityplus\utils\locationutils\LocationUtils.class
+tw\momocraft\entityplus\utils\entities\DamageMap.class
 tw\momocraft\entityplus\utils\DependAPI.class
 tw\momocraft\entityplus\utils\customgroups\GroupsGenerator.class
 tw\momocraft\entityplus\utils\entities\EntityUtils.class
-tw\momocraft\entityplus\utils\entities\LivingEntityMap.class
 tw\momocraft\entityplus\Commands.class
 tw\momocraft\entityplus\EntityPlus.class
 tw\momocraft\entityplus\utils\VaultAPI.class

@@ -105,13 +105,14 @@ Entities:
         MythicMobs:
           Money: true
         Bypass:
+          # Custom Residence flag "dropbypass" to bypass the features.
           Residence-Flag: false
       # If players has multiple groups, they will get all extra rewards.
       # Mode: "plus" or "multiply"
       Bonus:
         Enable: true
         Mode: "plus"
-    # Permission: "entityplus.drop.multiplier.GROUP"
+    # Permission: "entityplus.drop.GROUP"
     Groups:
       lucky1:
         Enable: true
@@ -132,101 +133,55 @@ Entities:
           Money: 2
         List:
           - NormalMobs
-  # Controlling creatures damage.
+
+  # Skipping the damage duration and damaging the creature immediately.
   # More information: https://github.com/momoservertw/EntityPlus/wiki/Damage
   Damage:
-    Enable: false
+    Settings:
+      Features:
+        Bypass:
+          # Custom Residence flag "damagebypass" to bypass the features.
+          Residence-Flag: false
     Groups:
-      # Kill dying creatures directly and save CPU performance.
-      Fast-Kill:
-        Enable: true
-        No-Player-Range: 10
+      Skip-Duration:
+        Enable: false
+        Priority: 2
+        Types:
+          - NormalMobs
+        Reasons:
+          - Fire
+          - Wither
+          - Poison
         Action:
-          Kill: true
+          Skip-Duration: true
+        Ignore:
+          Player-Nearby-Range: 10
+          Sunburn: true
+      Fast-Kill:
+        Enable: false
+        Priority: 2
+        Types:
+          - NormalMobs
         Reasons:
           - CRAMMING
           - DRYOUT
-      Fast-Kill-HatFloor:
-        Enable: true
-        No-Player-Range: 10
         Action:
           Kill: true
-        Reasons:
-          - HOT_FLOOR
-        Blocks:
-          MAGMA_BLOCK:
-            Offset: -1
-            Ignore:
-              Machines:
-                Offset: 0
-                List:
-                  - Item-Machines
+        Ignore:
+          Player-Nearby-Range: 10
       Fast-Kill-WitherRose:
-        Enable: true
-        No-Player-Range: 10
-        Action:
-          Kill: true
+        Enable: false
+        Priority: 2
+        Types:
+          - NormalMobs
         Reasons:
           - WITHER
         Blocks:
-          - WitherRose
-
-# Skipping the damage duration and damaging the creature immediately.
-# More information: https://github.com/momoservertw/EntityPlus/wiki/Damage-Skip-Duration
-Damage-Skip-Duration:
-  Enable: false
-  Settings:
-    # It will not affected to the creatures near the player.
-    No-Player-Range: 10
-    Features:
-      Bypass:
-        Residence-Flag: false
-  Groups:
-    Fire:
-      Enable: true
-      Ignore-Sunburn: true
-    Wither:
-      Enable: true
-    Poison:
-      Enable: true
-  Location:
-    - world
-    - world_nether
-    - world_the_end
-  # The list of creature type. If you set this option to "[]", it will affect to every creatures.
-  # You can set the creature type from groups.yml. More information: https://github.com/momoservertw/EntityPlus/wiki/Custom-Groups
-  List: []
-  Ignore-List: []
-  MythicMobs-List: []
-  MythicMobs-Ignore-List: []
-
-# Controlling entities amount and save CPU performance.
-# More information: https://github.com/momoservertw/EntityPlus/wiki/Purge
-Purge:
-  Enable: false
-  Settings:
-    # The checking range of chunks.
-    Range: 2
-    Check:
-      Load: true
-      Schedule:
-        Enable: false
-        Interval: 60
-    Ignore:
-      Named: true
-      Tamed: true
-      With-Saddle: true
-      Baby-Animals: false
-      Equipped: false
-      Pickup-Equipped: true
-      Reasons:
-        - SPAWNER_EGG
-  Groups:
-    NormalMobs:
-      Enable: true
-      List:
-        - NormalMobs
-      Amount: 10
+          - InWitherRose
+        Action:
+          Kill: true
+        Ignore:
+          Player-Nearby-Range: 10
 
 # Change the illegal spawner and randomly select a new type for it, and then execute the custom command.
 # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawner

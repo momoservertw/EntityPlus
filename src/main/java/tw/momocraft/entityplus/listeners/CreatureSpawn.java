@@ -35,16 +35,16 @@ public class CreatureSpawn implements Listener {
             }
         }
         // To get entity properties.
-        Map<String, EntityMap> entityTypeProp = ConfigHandler.getConfigPath().getEntityProp().get(entityType);
+        Map<String, EntityMap> entityProp = ConfigHandler.getConfigPath().getEntityProp().get(entityType);
         // Checking if the properties contains this type of entity.
-        if (entityTypeProp != null) {
+        if (entityProp != null) {
             // Checking every groups of this entity.
             Location loc = entity.getLocation();
             Block block = loc.getBlock();
             EntityMap entityMap;
             boolean resFlag = ConfigHandler.getConfigPath().isSpawnResFlag();
-            for (String groupName : entityTypeProp.keySet()) {
-                entityMap = entityTypeProp.get(groupName);
+            for (String groupName : entityProp.keySet()) {
+                entityMap = entityProp.get(groupName);
                 // Checking the spawn "reasons".
                 if (!EntityUtils.containValue(reason, entityMap.getReasons(), entityMap.getIgnoreReasons())) {
                     ServerHandler.sendFeatureMessage("Spawn", entityType, "!Reason", "continue", groupName,

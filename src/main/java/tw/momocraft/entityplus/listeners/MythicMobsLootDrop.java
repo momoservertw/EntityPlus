@@ -10,6 +10,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.PermissionsHandler;
+import tw.momocraft.entityplus.handlers.ServerHandler;
+import tw.momocraft.entityplus.utils.ResidenceUtils;
 import tw.momocraft.entityplus.utils.entities.DropMap;
 
 import java.util.*;
@@ -32,6 +34,12 @@ public class MythicMobsLootDrop implements Listener {
             Map<String, DropMap> dropProp = ConfigHandler.getConfigPath().getDropProp().get(entityType);
             // Checking if the properties contains this type of entity.
             if (dropProp != null) {
+                // Checking the bypass "Residence-Flag".
+                if (!ResidenceUtils.checkResFlag(e.getEntity().getLocation(),  ConfigHandler.getConfigPath().isDropResFlag(), "dropbypass")) {
+                    ServerHandler.sendFeatureMessage("Drop", entityType, "!Residence-Flag", "return",
+                            new Throwable().getStackTrace()[0]);
+                    return;
+                }
                 // Checking player reward permissions.
                 List<String> permsList = new ArrayList<>();
                 for (String key : dropProp.keySet()) {

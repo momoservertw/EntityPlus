@@ -41,6 +41,7 @@ public class ConfigPath {
     //         Drop Settings                           //
     //  ============================================== //
     private boolean drop;
+    private boolean dropResFlag;
     private boolean dropBonus;
     private String dropBonusMode;
     private boolean dropExp;
@@ -50,17 +51,12 @@ public class ConfigPath {
     private Map<String, Map<String, DropMap>> dropProp = new HashMap<>();
 
     //  ============================================== //
-    //         Purge Settings                          //
+    //         Damage Settings                          //
     //  ============================================== //
-    private boolean purge;
-    private boolean purgeSchedule;
-    private int purgeScheduleInt;
-    private boolean purgeNamed;
-    private boolean purgeTamed;
-    private boolean purgeSaddle;
-    private boolean purgeBaby;
-    private boolean purgeEquipped;
-    private boolean purgePickup;
+    private boolean damage;
+    private boolean damageResFlag;
+
+    private Map<String, Map<String, DamageMap>> damageProp = new HashMap<>();
 
     //  ============================================== //
     //         Spawner Settings                        //
@@ -80,9 +76,10 @@ public class ConfigPath {
         mobSpawnRange = ConfigHandler.getServerConfig("spigot.yml").getInt("world-settings.default.mob-spawn-range") * 16;
         nearbyPlayerRange = ConfigHandler.getConfig("config.yml").getInt("General.Nearby-Players-Range");
 
-        setSpawn();
         setLimitProp();
         setDrop();
+        setDamage();
+        setSpawn();
         setSpawner();
     }
 
@@ -216,6 +213,7 @@ public class ConfigPath {
         dropProp = new HashMap<>();
         drop = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Enable");
         if (drop) {
+            dropResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Features.Bypass.Residence-Flag");
             dropBonus = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Bonus.Enable");
             dropBonusMode = ConfigHandler.getConfig("config.yml").getString("Entities.Drop.Settings.Bonus.Mode");
             dropExp = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Features.Exp");
@@ -348,6 +346,82 @@ public class ConfigPath {
         }
     }
 
+    private void setDamage() {
+        damage = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Damage.Enable");
+        if (damage) {
+            damageResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Damage.Settings.Features.Bypass.Residence-Flag");
+            ConfigurationSection groupsConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Entities.Damage.Groups");
+            if (groupsConfig != null) {
+                String groupEnable;
+                DamageMap damageMap;
+                List<BlocksMap> blocksMaps;
+                List<LocationMap> locMaps;
+                ConfigurationSection actionConfig;
+                String actionKey;
+                for (String group : groupsConfig.getKeys(false)) {
+                    groupEnable = ConfigHandler.getConfig("config.yml").getString("Entities.Damage.Groups." + group + ".Enable");
+                    if (groupEnable == null || groupEnable.equals("true")) {
+                        damageMap = new DamageMap();
+                        damageMap.setTypes(getTypeList("config.yml", "Entities.Damage.Groups." + group + ".Types", "entity"));
+                        damageMap.setPriority(ConfigHandler.getConfig("config.yml").getLong("Entities.Damage.Groups." + group + ".Priority"));
+                        damageMap.setReasons(ConfigHandler.getConfig("config.yml").getStringList("Entities.Damage.Groups." + group + ".Reasons"));
+                        damageMap.setIgnoreReasons(ConfigHandler.getConfig("config.yml").getStringList("Entities.Damage.Groups." + group + ".Ignore-Reasons"));
+                        damageMap.setBoimes(ConfigHandler.getConfig("config.yml").getStringList("Entities.Damage.Groups." + group + ".Biomes"));
+                        damageMap.setIgnoreBoimes(ConfigHandler.getConfig("config.yml").getStringList("Entities.Damage.Groups." + group + ".Ignore-Biomes"));
+                        damageMap.setLiquid(ConfigHandler.getConfig("config.yml").getString("Entities.Damage.Groups." + group + ".Liquid"));
+                        damageMap.setDay(ConfigHandler.getConfig("config.yml").getString("Entities.Damage.Groups." + group + ".Day"));
+                        damageMap.setDamage(ConfigHandler.getConfig("config.yml").getString("Entities.Damage.Groups." + group + ".Damage"));
+                        actionConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Entities.Damage.Groups." + group + ".Action");
+                        if (actionConfig != null) {
+                            actionKey = actionConfig.getKeys(false).iterator().next();
+                            damageMap.setAction(actionKey);
+                            damageMap.setActionValue(ConfigHandler.getConfig("config.yml").getString("Entities.Damage.Groups." + group + ".Action." + actionKey));
+                        }
+                        damageMap.setPlayerNear(ConfigHandler.getConfig("config.yml").getInt("Entities.Damage.Groups." + group + ".Ignore.Player-Nearby-Range"));
+                        damageMap.setSunburn(ConfigHandler.getConfig("config.yml").getBoolean("Entities.Damage.Groups." + group + ".Ignore.Sunburn"));
+
+                        // Blocks settings.
+                        blocksMaps = blocksUtils.getSpeBlocksMaps("Entities." + group + ".Blocks");
+                        if (!blocksMaps.isEmpty()) {
+                            damageMap.setBlocksMaps(blocksMaps);
+                        }
+                        // Location settings
+                        locMaps = locationUtils.getSpeLocMaps("entities.yml", "Entities." + group + ".Location");
+                        if (!locMaps.isEmpty()) {
+                            damageMap.setLocMaps(locMaps);
+                        }
+                        // Add properties to all entities.
+                        for (String entityType : damageMap.getTypes()) {
+                            try {
+                                damageProp.get(entityType).put(group, damageMap);
+                            } catch (Exception ex) {
+                                damageProp.put(entityType, new HashMap<>());
+                                damageProp.get(entityType).put(group, damageMap);
+                            }
+                        }
+                    }
+                }
+                Iterator<String> i = damageProp.keySet().iterator();
+                Map<String, Long> sortMap;
+                Map<String, DamageMap> newEnMap;
+                String entityType;
+                while (i.hasNext()) {
+                    entityType = i.next();
+                    sortMap = new HashMap<>();
+                    newEnMap = new LinkedHashMap<>();
+                    for (String group : damageProp.get(entityType).keySet()) {
+                        sortMap.put(group, damageProp.get(entityType).get(group).getPriority());
+                    }
+                    sortMap = Utils.sortByValue(sortMap);
+                    for (String group : sortMap.keySet()) {
+                        newEnMap.put(group, damageProp.get(entityType).get(group));
+                    }
+                    damageProp.replace(entityType, newEnMap);
+                }
+            }
+        }
+    }
+
     private List<String> getTypeList(String file, String path, String listType) {
         List<String> list = new ArrayList<>();
         List<String> customList;
@@ -423,6 +497,10 @@ public class ConfigPath {
         return drop;
     }
 
+    public boolean isDropResFlag() {
+        return dropResFlag;
+    }
+
     public boolean isDropBonus() {
         return dropBonus;
     }
@@ -441,6 +519,18 @@ public class ConfigPath {
 
     public boolean isDropItem() {
         return dropItem;
+    }
+
+    public boolean isDamage() {
+        return damage;
+    }
+
+    public boolean isDamageResFlag() {
+        return damageResFlag;
+    }
+
+    public Map<String, Map<String, DamageMap>> getDamageProp() {
+        return damageProp;
     }
 
     public boolean isSpawner() {

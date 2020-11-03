@@ -27,16 +27,16 @@ public class MythicMobsSpawn implements Listener {
         Entity entity = e.getEntity();
         String entityType = e.getMobType().getInternalName();
         // To get entity properties.
-        Map<String, EntityMap> entityTypeProp = ConfigHandler.getConfigPath().getEntityProp().get(entityType);
+        Map<String, EntityMap> entityProp = ConfigHandler.getConfigPath().getEntityProp().get(entityType);
         // Checking if the properties contains this type of entity.
-        if (entityTypeProp != null) {
+        if (entityProp != null) {
             // Checking every groups of this entity.
             Location loc = entity.getLocation();
             Block block = loc.getBlock();
             EntityMap entityMap;
             boolean resFlag = ConfigHandler.getConfigPath().isSpawnResFlag();
-            for (String groupName : entityTypeProp.keySet()) {
-                entityMap = entityTypeProp.get(groupName);
+            for (String groupName : entityProp.keySet()) {
+                entityMap = entityProp.get(groupName);
                 // Checking the spawn "biome".
                 if (!EntityUtils.containValue(block.getBiome().name(), entityMap.getBoimes(), entityMap.getIgnoreBoimes())) {
                     ServerHandler.sendFeatureMessage("Spawn", entityType, "!Biome", "continue", groupName,

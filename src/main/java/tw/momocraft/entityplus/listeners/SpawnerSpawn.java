@@ -61,7 +61,7 @@ public class SpawnerSpawn implements Listener {
                     continue;
                 }
                 // Checking the spawn "Residence-Flag".
-                if (!ResidenceUtils.checkResFlag(loc, resFlag, "spawnbypass")) {
+                if (!ResidenceUtils.checkResFlag(loc, resFlag, "spawnerbypass")) {
                     ServerHandler.sendFeatureMessage("Spawn", entityType, "!Residence-Flag", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;

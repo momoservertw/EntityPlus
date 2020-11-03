@@ -14,9 +14,6 @@ Entities:
       - world_nether
       - world_the_end
     Limit: NormalMobs
-    Drop:
-      - lucky1
-      - lucky2
   BreedableMobs:
     Enable: false
     Priority: 2

@@ -24,7 +24,7 @@ public class EntityUtils {
             return true;
         }
         List<Entity> nearbyEntities = entity.getNearbyEntities(limitMap.getSearchX(), limitMap.getSearchY(), limitMap.getSearchZ());
-        Iterator<Entity> iterator = nearbyEntities.iterator();
+        Iterator<Entity> it = nearbyEntities.iterator();
         Entity en;
         Player player;
         int amount = limitMap.getAmount();
@@ -32,29 +32,29 @@ public class EntityUtils {
         boolean AFK = limitMap.isAFK();
         int afkAmount = limitMap.getAFKAmount();
         double afkChance = limitMap.getAFKChance();
-        while (iterator.hasNext()) {
-            en = iterator.next();
+        while (it.hasNext()) {
+            en = it.next();
             if (!(en instanceof LivingEntity)) {
-                iterator.remove();
+                it.remove();
                 continue;
             }
-            if (AFK) {
-                if (en instanceof Player) {
+            if (en instanceof Player) {
+                if (AFK) {
                     if (ConfigHandler.getDepends().CMIEnabled()) {
                         player = (Player) en;
                         if (CMI.getInstance().getPlayerManager().getUser(player).isAfk()) {
                             if (!PermissionsHandler.hasPermission(player, "entityplus.bypass.spawnlimit.afk")) {
                                 amount = afkAmount;
                                 chance = afkChance;
-                                iterator.remove();
+                                it.remove();
                                 continue;
                             }
                             amount = limitMap.getAmount();
                             chance = limitMap.getChance();
                         }
                     }
-                    iterator.remove();
                 }
+                it.remove();
             }
         }
         if (nearbyEntities.size() < amount) {
@@ -111,6 +111,43 @@ public class EntityUtils {
         }
         return value.equals("true") && (time < 12300 || time > 23850) || value.equals("false") && (time >= 12300 && time <= 23850);
     }
+
+
+    /**
+     * @param operator the comparison operator to compare two numbers.
+     * @param number1  first number.
+     * @param number2  second number.
+     */
+    public static boolean getCompare(String operator, double number1, double number2) {
+        switch (operator) {
+            case ">":
+                return number1 > number2;
+            case "<":
+                return number1 < number2;
+            case ">=":
+            case "=>":
+                return number1 >= number2;
+            case "<=":
+            case "=<":
+                return number1 <= number2;
+            case "==":
+            case "=":
+                return number1 == number2;
+        }
+        return false;
+    }
+
+    /**
+     * @param number the checking number
+     * @param r1     the first side of range.
+     * @param r2     another side of range.
+     * @return if the check number is inside the range.
+     * It will return false if the two side of range numbers are equal.
+     */
+    public static boolean getRange(double number, double r1, double r2) {
+        return r1 <= number && number <= r2 || r2 <= number && number <= r1;
+    }
+
 
     /*
     public static boolean checkPurge(Entity entity) {
