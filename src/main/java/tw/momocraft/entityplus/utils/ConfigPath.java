@@ -111,7 +111,7 @@ public class ConfigPath {
                     groupEnable = ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Enable");
                     if (groupEnable == null || groupEnable.equals("true")) {
                         entityMap = new EntityMap();
-                        entityMap.setTypes(getTypeList("entities.yml", "Entities." + group + ".Types", "entity"));
+                        entityMap.setTypes(getTypeList("entities.yml", "Entities." + group + ".Types", "Entities"));
                         entityMap.setPriority(ConfigHandler.getConfig("entities.yml").getLong("Entities." + group + ".Priority"));
                         chance = ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Chance");
                         if (chance == null) {
@@ -169,6 +169,8 @@ public class ConfigPath {
                     }
                     sortMap = Utils.sortByValue(sortMap);
                     for (String group : sortMap.keySet()) {
+                        ServerHandler.sendFeatureMessage("Spawn", entityType, "Setup", "continue", group,
+                                new Throwable().getStackTrace()[0]);
                         newEnMap.put(group, entityProp.get(entityType).get(group));
                     }
                     entityProp.replace(entityType, newEnMap);
@@ -233,7 +235,7 @@ public class ConfigPath {
                         dropMap.setMoney(ConfigHandler.getConfig("config.yml").getDouble("Entities.Drop.Groups." + group + ".MythicMobs.Money"));
 
                         // Add properties to all entities.
-                        for (String entityType : getTypeList("config.yml", "Entities.Drop.Groups." + group + ".Types", "entity")) {
+                        for (String entityType : getTypeList("config.yml", "Entities.Drop.Groups." + group + ".Types", "Entities")) {
                             try {
                                 dropProp.get(entityType).put(group, dropMap);
                             } catch (Exception ex) {
@@ -256,6 +258,8 @@ public class ConfigPath {
                     }
                     sortMap = Utils.sortByValue(sortMap);
                     for (String group : sortMap.keySet()) {
+                        ServerHandler.sendFeatureMessage("Drop", entityType, "setup", "continue", group,
+                                new Throwable().getStackTrace()[0]);
                         newEnMap.put(group, dropProp.get(entityType).get(group));
                     }
                     dropProp.replace(entityType, newEnMap);
@@ -338,6 +342,8 @@ public class ConfigPath {
                     }
                     sortMap = Utils.sortByValue(sortMap);
                     for (String group : sortMap.keySet()) {
+                        ServerHandler.sendFeatureMessage("Spawner", worldName, "setup", "continue", group,
+                                new Throwable().getStackTrace()[0]);
                         newMap.put(group, spawnerProp.get(worldName).get(group));
                     }
                     spawnerProp.replace(worldName, newMap);
@@ -362,7 +368,7 @@ public class ConfigPath {
                     groupEnable = ConfigHandler.getConfig("config.yml").getString("Entities.Damage.Groups." + group + ".Enable");
                     if (groupEnable == null || groupEnable.equals("true")) {
                         damageMap = new DamageMap();
-                        damageMap.setTypes(getTypeList("config.yml", "Entities.Damage.Groups." + group + ".Types", "entity"));
+                        damageMap.setTypes(getTypeList("config.yml", "Entities.Damage.Groups." + group + ".Types", "Entities"));
                         damageMap.setPriority(ConfigHandler.getConfig("config.yml").getLong("Entities.Damage.Groups." + group + ".Priority"));
                         damageMap.setReasons(ConfigHandler.getConfig("config.yml").getStringList("Entities.Damage.Groups." + group + ".Reasons"));
                         damageMap.setIgnoreReasons(ConfigHandler.getConfig("config.yml").getStringList("Entities.Damage.Groups." + group + ".Ignore-Reasons"));
@@ -414,6 +420,8 @@ public class ConfigPath {
                     }
                     sortMap = Utils.sortByValue(sortMap);
                     for (String group : sortMap.keySet()) {
+                        ServerHandler.sendFeatureMessage("Damage", entityType, "setup", "continue", group,
+                                new Throwable().getStackTrace()[0]);
                         newEnMap.put(group, damageProp.get(entityType).get(group));
                     }
                     damageProp.replace(entityType, newEnMap);
@@ -428,13 +436,13 @@ public class ConfigPath {
         boolean mythicMobsEnabled = ConfigHandler.getDepends().MythicMobsEnabled();
         for (String type : ConfigHandler.getConfig(file).getStringList(path)) {
             try {
-                if (listType.equals("entity")) {
+                if (listType.equals("Entities")) {
                     list.add(EntityType.valueOf(type).name());
-                } else if (listType.equals("material")) {
+                } else if (listType.equals("Materials")) {
                     list.add(Material.valueOf(type).name());
                 }
             } catch (Exception e) {
-                if (listType.equals("entity") && mythicMobsEnabled) {
+                if (listType.equals("Entities") && mythicMobsEnabled) {
                     list.add(type);
                 } else {
                     ServerHandler.sendConsoleMessage("&cCan not find " + listType + " in \"" + file + " ➜ " + listType + " - " + type + "\".");
@@ -446,14 +454,14 @@ public class ConfigPath {
                 // Add Custom Group.
                 for (String customType : customList) {
                     try {
-                        if (listType.equals("entity")) {
+                        if (listType.equals("Entities")) {
                             list.add(EntityType.valueOf(type).name());
-                        } else if (listType.equals("material")) {
+                        } else if (listType.equals("Materials")) {
                             list.add(Material.valueOf(type).name());
                         }
                     } catch (Exception ex) {
                         // Add MythicMobs.
-                        if (listType.equals("entity") && mythicMobsEnabled) {
+                        if (listType.equals("Entities") && mythicMobsEnabled) {
                             list.add(type);
                         } else {
                             ServerHandler.sendConsoleMessage("&cCan not find " + listType + " in \"group.yml\" ➜ " + listType + " - " + customType + "\".");

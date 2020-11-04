@@ -20,12 +20,14 @@ public class MythicMobsLootDrop implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onMythicMobLootDrop(MythicMobLootDropEvent e) {
-        Entity entity = e.getEntity();
         // Checking the Drop feature.
         if (ConfigHandler.getConfigPath().isDrop()) {
             Player player;
             try {
                 player = (Player) e.getKiller();
+                if (player == null) {
+                    return;
+                }
             } catch (Exception ex) {
                 return;
             }

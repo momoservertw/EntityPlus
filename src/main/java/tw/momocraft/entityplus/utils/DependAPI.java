@@ -2,6 +2,7 @@ package tw.momocraft.entityplus.utils;
 
 import org.bukkit.Bukkit;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
+import tw.momocraft.entityplus.handlers.ServerHandler;
 
 public class DependAPI {
     private boolean MythicMobs = false;

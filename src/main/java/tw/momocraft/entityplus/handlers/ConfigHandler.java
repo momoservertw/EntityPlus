@@ -190,11 +190,11 @@ public class ConfigHandler {
         getConfigData("entities.yml");
         File itemsFile = new File(EntityPlus.getInstance().getDataFolder(), "entities.yml");
         if (itemsFile.exists() && getConfig("entities.yml").getInt("Config-Version") != 1) {
-            if (EntityPlus.getInstance().getResource("groups.yml") != null) {
+            if (EntityPlus.getInstance().getResource("entities.yml") != null) {
                 LocalDateTime currentDate = LocalDateTime.now();
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm-ss");
                 String currentTime = currentDate.format(formatter);
-                String newGen = "groups " + currentTime + ".yml";
+                String newGen = "entities " + currentTime + ".yml";
                 File newFile = new File(EntityPlus.getInstance().getDataFolder(), newGen);
                 if (!newFile.exists()) {
                     itemsFile.renameTo(newFile);

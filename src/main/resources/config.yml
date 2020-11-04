@@ -8,11 +8,10 @@ General:
   Settings:
     # The searching players range from a location.
     Nearby-Players-Range: 32
-    Settings:
-      Features:
-        # Control MythicMobs spawning and conditions.
-        # The "CUSTOM" reason does not work for MythicMobs.
-        MythicMobs: true
+    Features:
+     # Control MythicMobs spawning and conditions.
+     # The "CUSTOM" reason does not work for MythicMobs.
+     MythicMobs: true
   # Specifying the spawn locations.
   # More information: https://github.com/momoservertw/EntityPlus/wiki/Location
   Location:
@@ -122,7 +121,7 @@ Entities:
         MythicMobs:
           Money: 1.5
         # Available type: Vanilla, Custom Group, MythicMobs
-        List:
+        Types:
           - NormalMobs
       lucky2:
         Enable: true
@@ -131,12 +130,12 @@ Entities:
         Items: 2
         MythicMobs:
           Money: 2
-        List:
+        Types:
           - NormalMobs
-
   # Skipping the damage duration and damaging the creature immediately.
   # More information: https://github.com/momoservertw/EntityPlus/wiki/Damage
   Damage:
+    Enable: false
     Settings:
       Features:
         Bypass:
@@ -149,9 +148,9 @@ Entities:
         Types:
           - NormalMobs
         Reasons:
-          - Fire
-          - Wither
-          - Poison
+          - FIRE_TICK
+          - WITHER
+          - POISON
         Action:
           Skip-Duration: true
         Ignore:

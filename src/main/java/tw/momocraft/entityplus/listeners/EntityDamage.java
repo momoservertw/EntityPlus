@@ -46,6 +46,7 @@ public class EntityDamage implements Listener {
             DamageMap damageMap;
             boolean resFlag = ConfigHandler.getConfigPath().isDamageResFlag();
             // Checking every groups of this entity.
+            back:
             for (String groupName : damageProp.keySet()) {
                 damageMap = damageProp.get(groupName);
                 // Checking the spawn "biome".
@@ -86,12 +87,14 @@ public class EntityDamage implements Listener {
                 }
                 // Checking the nearby players.
                 int playerNear = damageMap.getPlayerNear();
-                List<Entity> nearbyEntities = en.getNearbyEntities(playerNear, playerNear, playerNear);
-                for (Entity nearEntity : nearbyEntities) {
-                    if (nearEntity instanceof Player) {
-                        ServerHandler.sendFeatureMessage("Damage", entityType, "PlayerNear", "return", groupName,
-                                new Throwable().getStackTrace()[0]);
-                        return;
+                if (playerNear > 0) {
+                    List<Entity> nearbyEntities = en.getNearbyEntities(playerNear, playerNear, playerNear);
+                    for (Entity nearEntity : nearbyEntities) {
+                        if (nearEntity instanceof Player) {
+                            ServerHandler.sendFeatureMessage("Damage", entityType, "PlayerNear", "return", groupName,
+                                    new Throwable().getStackTrace()[0]);
+                            continue back;
+                        }
                     }
                 }
                 // Checking the damage.
@@ -106,14 +109,14 @@ public class EntityDamage implements Listener {
                             if (!EntityUtils.getCompare(values[0], damage, Integer.parseInt(values[1]))) {
                                 ServerHandler.sendFeatureMessage("Damage", entityType, "Damage", "return", groupName,
                                         new Throwable().getStackTrace()[0]);
-                                return;
+                                continue;
                             }
                         } else if (length == 3) {
                             // Damage: "1 ~ 3"
                             if (!EntityUtils.getRange(damage, Integer.parseInt(values[0]), Integer.parseInt(values[1]))) {
                                 ServerHandler.sendFeatureMessage("Damage", entityType, "Damage", "return", groupName,
                                         new Throwable().getStackTrace()[0]);
-                                return;
+                                continue;
                             }
                         }
                     } catch (Exception ex) {
@@ -121,63 +124,80 @@ public class EntityDamage implements Listener {
                         ServerHandler.sendConsoleMessage("&eDamage - " + groupName + ", Damage: " + compareDamage);
                     }
                 }
-
                 Damageable damageEn = (Damageable) en;
                 LivingEntity livingEn = (LivingEntity) en;
                 // Executing action.
                 switch (damageMap.getAction().toLowerCase()) {
                     case "skip-duration":
-                        if (damageMap.getReasons().contains("FIRE") && reason.equals("FIRE_TICK")) {
-                            if (entityType.equals("ZOMBIE") || entityType.equals("ZOMBIE_VILLAGER") || entityType.equals("DROWNED") ||
-                                    entityType.equals("SKELETON") || entityType.equals("STRAY")) {
-                                if (damageMap.getSunburn()) {
-                                    // Checking if there any blocks on the top of the creature.
-                                    if (block.getRelative(BlockFace.UP).getType() != Material.AIR) {
-                                        ServerHandler.sendFeatureMessage("Damage", entityType, "Skip-Duration: Sunburn-Top", "return", groupName,
-                                                new Throwable().getStackTrace()[0]);
-                                        return;
-                                    }
-                                    double time = loc.getWorld().getTime();
-                                    // Checking if the time.
-                                    if (time >= 12300 && time <= 23850) {
-                                        ServerHandler.sendFeatureMessage("Damage", entityType, "Skip-Duration: Sunburn-Time", "return", groupName,
-                                                new Throwable().getStackTrace()[0]);
-                                        return;
+                        double effectTick;
+                        double effectDamage;
+                        if (damageMap.getReasons().contains("FIRE_TICK") && reason.equals("FIRE_TICK")) {
+                            effectTick = livingEn.getFireTicks();
+                            if (effectTick > 0) {
+                                if (entityType.equals("ZOMBIE") || entityType.equals("ZOMBIE_VILLAGER") || entityType.equals("DROWNED") ||
+                                        entityType.equals("SKELETON") || entityType.equals("STRAY")) {
+                                    if (damageMap.getSunburn()) {
+                                        // Checking if there any blocks on the top of the creature.
+                                        if (block.getRelative(BlockFace.UP).getType() != Material.AIR) {
+                                            ServerHandler.sendFeatureMessage("Damage", entityType, "Skip-Duration: Sunburn-Top", "return", groupName,
+                                                    new Throwable().getStackTrace()[0]);
+                                            continue back;
+                                        }
+                                        double time = loc.getWorld().getTime();
+                                        // Checking if the time.
+                                        if (time >= 12300 && time <= 23850) {
+                                            ServerHandler.sendFeatureMessage("Damage", entityType, "Skip-Duration: Sunburn-Time", "return", groupName,
+                                                    new Throwable().getStackTrace()[0]);
+                                            continue back;
+                                        }
                                     }
                                 }
-                            }
-                            double fireTick = livingEn.getFireTicks();
-                            if (fireTick != 0) {
-                                damage = fireTick / 20;
-                                damageEn.setHealth(Math.max(0, damageEn.getHeight() - damage));
+                                effectDamage = effectTick / 20;
+                                effectDamage *= damage;
+                                damage += effectDamage;
+                                damageEn.setHealth(Math.max(0, damageEn.getHealth() - damage));
                                 livingEn.setFireTicks(0);
                                 ServerHandler.sendFeatureMessage("Damage", entityType, "Skip-Duration: fire", "return", groupName,
                                         new Throwable().getStackTrace()[0]);
-                                return;
+                                if (damageEn.getHealth() == 0) {
+                                    return;
+                                }
                             }
+                            continue back;
                         } else if (damageMap.getReasons().contains("WITHER") && reason.equals("WITHER")) {
-                            double effectDamage;
-                            effectDamage = livingEn.getPotionEffect(PotionEffectType.WITHER).getDuration();
-                            effectDamage /= 5; // 20(tick)/4(heart)
-                            damage += effectDamage;
-                            damageEn.setHealth(Math.max(0, damageEn.getHeight() - damage));
-                            livingEn.removePotionEffect(PotionEffectType.WITHER);
-                            ServerHandler.sendFeatureMessage("Damage", entityType, "Skip-Duration: wither", "return", groupName,
-                                    new Throwable().getStackTrace()[0]);
-                            return;
-                        } else if (damageMap.getReasons().contains("POISON") && reason.equals("Poison")) {
-                            double effectDamage;
-                            effectDamage = livingEn.getPotionEffect(PotionEffectType.POISON).getDuration();
-                            effectDamage /= 5; // 20(tick)/4(heart)
-                            damage += effectDamage;
-                            damageEn.setHealth(Math.max(0, damageEn.getHeight() - damage));
-                            livingEn.removePotionEffect(PotionEffectType.POISON);
-                            ServerHandler.sendFeatureMessage("Damage", entityType, "Skip-Duration: poison", "return", groupName,
-                                    new Throwable().getStackTrace()[0]);
-                            return;
+                            effectTick = livingEn.getPotionEffect(PotionEffectType.WITHER).getDuration();
+                            if (effectTick > 0) {
+                                effectDamage = effectTick / 20;
+                                effectDamage *= damage;
+                                damage += effectDamage;
+                                damageEn.setHealth(Math.max(0, damageEn.getHealth() - damage));
+                                livingEn.removePotionEffect(PotionEffectType.WITHER);
+                                ServerHandler.sendFeatureMessage("Damage", entityType, "Skip-Duration: wither", "return", groupName,
+                                        new Throwable().getStackTrace()[0]);
+                                if (damageEn.getHealth() == 0) {
+                                    return;
+                                }
+                            }
+                            continue back;
+                        } else if (damageMap.getReasons().contains("POISON") && reason.equals("POISON")) {
+                            effectTick = livingEn.getPotionEffect(PotionEffectType.POISON).getDuration();
+                            if (effectTick > 0) {
+                                effectDamage = effectTick / 20;
+                                effectDamage *= damage;
+                                damage += effectDamage;
+                                damageEn.setHealth(Math.max(0, damageEn.getHealth() - damage));
+                                livingEn.removePotionEffect(PotionEffectType.POISON);
+                                ServerHandler.sendFeatureMessage("Damage", entityType, "Skip-Duration: poison", "return", groupName,
+                                        new Throwable().getStackTrace()[0]);
+                                if (damageEn.getHealth() == 0) {
+                                    return;
+                                }
+                            }
+                            continue back;
                         }
+                        return;
                     case "kill":
-                        damageEn.setHealth(Double.parseDouble(damageMap.getActionValue()));
+                        damageEn.setHealth(0);
                         ServerHandler.sendFeatureMessage("Damage", entityType, "Kill", "return", groupName,
                                 new Throwable().getStackTrace()[0]);
                         return;
@@ -191,20 +211,29 @@ public class EntityDamage implements Listener {
                         e.setDamage(damage);
                         ServerHandler.sendFeatureMessage("Damage", entityType, "Damage", "return", groupName,
                                 new Throwable().getStackTrace()[0]);
-                        return;
+                        if (damageEn.getHealth() <= damage) {
+                            return;
+                        }
+                        continue back;
                     case "damage-rate":
                         damage *= Integer.parseInt(damageMap.getActionValue());
                         e.setDamage(damage);
                         ServerHandler.sendFeatureMessage("Damage", entityType, "Damage-rate", "return", groupName,
                                 new Throwable().getStackTrace()[0]);
-                        return;
+                        if (damageEn.getHealth() <= damage) {
+                            return;
+                        }
+                        continue back;
                     case "health":
                         damageEn.setHealth(Double.parseDouble(damageMap.getActionValue()));
                         ServerHandler.sendFeatureMessage("Damage", entityType, "Health", "return", groupName,
                                 new Throwable().getStackTrace()[0]);
+                        if (damageEn.getHealth() == 0) {
+                            return;
+                        }
+                        continue back;
                     default:
-                        return;
-
+                        continue back;
                 }
             }
         }
