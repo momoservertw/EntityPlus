@@ -50,19 +50,19 @@ public class SpawnerSpawn implements Listener {
                 }
                 // Checking the spawn "location".
                 if (!ConfigPath.getLocationUtils().checkLocation(loc, spawnerMap.getLocMaps())) {
-                    ServerHandler.sendFeatureMessage("Spawn", entityType, "!Location", "continue", groupName,
+                    ServerHandler.sendFeatureMessage("Spawner", entityType, "Location", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the "blocks" nearby the spawn location.
                 if (!ConfigPath.getBlocksUtils().checkBlocks(loc, spawnerMap.getBlocksMaps())) {
-                    ServerHandler.sendFeatureMessage("Spawn", entityType, "!Blocks", "continue", groupName,
+                    ServerHandler.sendFeatureMessage("Spawner", entityType, "Blocks", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the spawn "Residence-Flag".
                 if (!ResidenceUtils.checkResFlag(loc, resFlag, "spawnerbypass")) {
-                    ServerHandler.sendFeatureMessage("Spawn", entityType, "!Residence-Flag", "continue", groupName,
+                    ServerHandler.sendFeatureMessage("Spawner", entityType, "Residence-Flag", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }

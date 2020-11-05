@@ -1,7 +1,6 @@
 package tw.momocraft.entityplus.listeners;
 
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobSpawnEvent;
-import javafx.util.Pair;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.Location;
@@ -39,37 +38,37 @@ public class MythicMobsSpawn implements Listener {
                 entityMap = entityProp.get(groupName);
                 // Checking the spawn "biome".
                 if (!EntityUtils.containValue(block.getBiome().name(), entityMap.getBoimes(), entityMap.getIgnoreBoimes())) {
-                    ServerHandler.sendFeatureMessage("Spawn", entityType, "!Biome", "continue", groupName,
+                    ServerHandler.sendFeatureMessage("Spawn", entityType, "Biome", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the spawn location is "liquid" or not.
                 if (!EntityUtils.isLiquid(block, entityMap.getLiquid())) {
-                    ServerHandler.sendFeatureMessage("Spawn", entityType, "!Liquid", "continue", groupName,
+                    ServerHandler.sendFeatureMessage("Spawn", entityType, "Liquid", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the spawn time is "Day" or not.
                 if (!EntityUtils.isDay(loc.getWorld().getTime(), entityMap.getDay())) {
-                    ServerHandler.sendFeatureMessage("Spawn", entityType, "!Day", "continue", groupName,
+                    ServerHandler.sendFeatureMessage("Spawn", entityType, "Day", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the spawn "location".
                 if (!ConfigPath.getLocationUtils().checkLocation(loc, entityMap.getLocMaps())) {
-                    ServerHandler.sendFeatureMessage("Spawn", entityType, "!Location", "continue", groupName,
+                    ServerHandler.sendFeatureMessage("Spawn", entityType, "Location", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the "blocks" nearby the spawn location.
                 if (!ConfigPath.getBlocksUtils().checkBlocks(loc, entityMap.getBlocksMaps())) {
-                    ServerHandler.sendFeatureMessage("Spawn", entityType, "!Blocks", "continue", groupName,
+                    ServerHandler.sendFeatureMessage("Spawn", entityType, "Blocks", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the spawn "Residence-Flag".
                 if (!ResidenceUtils.checkResFlag(loc, resFlag, "spawnbypass")) {
-                    ServerHandler.sendFeatureMessage("Spawn", entityType, "!Residence-Flag", "continue", groupName,
+                    ServerHandler.sendFeatureMessage("Spawn", entityType, "Residence-Flag", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
@@ -87,7 +86,7 @@ public class MythicMobsSpawn implements Listener {
                     } else {
                         // Add a tag for this creature.
                         //ConfigHandler.getConfigPath().getLivingEntityMap().putMap(entity.getUniqueId(), new Pair<>(entityType, groupName));
-                        ServerHandler.sendFeatureMessage("Spawn", entityType, "!Chance", "return", groupName,
+                        ServerHandler.sendFeatureMessage("Spawn", entityType, "Chance", "return", groupName,
                                 new Throwable().getStackTrace()[0]);
                         return;
                     }

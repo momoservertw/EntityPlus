@@ -3,7 +3,7 @@ main: tw.momocraft.entityplus.EntityPlus
 author: Momocraft
 api-version: 1.13
 version: 1.2.0
-description: Control creatures spawn and spawner. And add more features for MythicMobs and CMI.
+description: Control entities.
 softdepend: [Vault, MythicMobs, CMI, Residence, PlaceHolderAPI]
 
 commands:
@@ -36,34 +36,25 @@ permissions:
     description: Allows use of /entityplus command reload.
     default: op
   entityplus.command.version:
-    description: Allows use of command /barrierplus version.
+    description: Allows use of command /entityplus version.
     default: op
   entityplus.bypass.*:
-    description: Bypass the spawn amount limit when player is afk.
+    description: Bypass all limits.
     default: op
     children:
       entityplus.bypass.spawnlimit.afk: true
-      entityplus.bypass.purge.afk: true
   entityplus.bypass.spawnlimit.afk:
-    description: Bypass the spawn amount limit when player is afk.
-    default: op
-  entityplus.bypass.purge.afk:
-    description: Bypass the purge event when player is afk.
+    description: Bypass the spawn amount limit when player is AFK.
     default: op
   entityplus.drop.*:
-    description: Get multiple "money" and "exp" after player killing a mob.
+    description: Change the reward for killing creatures.
     default: op
     children:
-      entityplus.drop.multiplier.*: true
-  entityplus.drop.multiplier.*:
-    description: Get multiple "money" and "exp" after player killing a mob.
+      entityplus.drop.lucky1: true
+      entityplus.drop.lucky2: true
+  entityplus.drop.lucky1:
+    description: Change the reward for killing creatures.
     default: op
-    children:
-      entityplus.drop.multiplier.1: true
-      entityplus.drop.multiplier.2: true
-  entityplus.drop.multiplier.1:
-    description: Get multiple "money" and "exp" after player killing a mob.
-    default: op
-  entityplus.drop.multiplier.2:
-    description: Get multiple "money" and "exp" after player killing a mob.
+  entityplus.drop.multiplier.lucky2:
+    description: Change the reward for killing creatures.
     default: op

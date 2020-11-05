@@ -1,6 +1,8 @@
 package tw.momocraft.entityplus.utils.entities;
 
 import com.Zrips.CMI.CMI;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
@@ -23,30 +25,21 @@ public class EntityUtils {
         if (limitMap == null) {
             return true;
         }
-        List<Entity> nearbyEntities = entity.getNearbyEntities(limitMap.getSearchX(), limitMap.getSearchY(), limitMap.getSearchZ());
-        Iterator<Entity> it = nearbyEntities.iterator();
-        Entity en;
-        Player player;
         int amount = limitMap.getAmount();
         double chance = limitMap.getChance();
         boolean AFK = limitMap.isAFK();
         int afkAmount = limitMap.getAFKAmount();
         double afkChance = limitMap.getAFKChance();
-        while (it.hasNext()) {
-            en = it.next();
-            if (!(en instanceof LivingEntity)) {
-                it.remove();
-                continue;
-            }
-            if (en instanceof Player) {
-                if (AFK) {
-                    if (ConfigHandler.getDepends().CMIEnabled()) {
-                        player = (Player) en;
+        if (AFK) {
+            if (ConfigHandler.getDepends().CMIEnabled()) {
+                Location location = entity.getLocation();
+                int playerRange = ConfigHandler.getConfigPath().getNearbyPlayerRange();
+                for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+                    if (inTheRange(player.getLocation(), location, playerRange)) {
                         if (CMI.getInstance().getPlayerManager().getUser(player).isAfk()) {
                             if (!PermissionsHandler.hasPermission(player, "entityplus.bypass.spawnlimit.afk")) {
                                 amount = afkAmount;
                                 chance = afkChance;
-                                it.remove();
                                 continue;
                             }
                             amount = limitMap.getAmount();
@@ -54,6 +47,15 @@ public class EntityUtils {
                         }
                     }
                 }
+            }
+        }
+
+        List<Entity> nearbyEntities = entity.getNearbyEntities(limitMap.getSearchX(), limitMap.getSearchY(), limitMap.getSearchZ());
+        Iterator<Entity> it = nearbyEntities.iterator();
+        Entity en;
+        while (it.hasNext()) {
+            en = it.next();
+            if (!(en instanceof LivingEntity) || en instanceof Player) {
                 it.remove();
             }
         }
@@ -148,6 +150,18 @@ public class EntityUtils {
         return r1 <= number && number <= r2 || r2 <= number && number <= r1;
     }
 
+    /**
+     * @param loc      location.
+     * @param loc2     location2.
+     * @param distance The checking value.
+     * @return if two locations is in the distance.
+     */
+    public static boolean inTheRange(Location loc, Location loc2, int distance) {
+        if (loc.getWorld() == loc2.getWorld()) {
+            return loc.distanceSquared(loc2) <= distance;
+        }
+        return false;
+    }
 
     /*
     public static boolean checkPurge(Entity entity) {
@@ -211,6 +225,5 @@ public class EntityUtils {
             }
         }.runTaskTimer(EntityPlus.getInstance(), purgeAFKTime, purgeAFKTime);
     }
-
      */
 }

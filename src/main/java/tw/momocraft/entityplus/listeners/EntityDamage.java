@@ -49,39 +49,45 @@ public class EntityDamage implements Listener {
             back:
             for (String groupName : damageProp.keySet()) {
                 damageMap = damageProp.get(groupName);
+                // Checking the spawn "reasons".
+                if (!EntityUtils.containValue(reason, damageMap.getReasons(), damageMap.getIgnoreReasons())) {
+                    ServerHandler.sendFeatureMessage("Damage", entityType, "Reason", "continue", groupName,
+                            new Throwable().getStackTrace()[0]);
+                    continue;
+                }
                 // Checking the spawn "biome".
                 if (!EntityUtils.containValue(block.getBiome().name(), damageMap.getBoimes(), damageMap.getIgnoreBoimes())) {
-                    ServerHandler.sendFeatureMessage("Spawn", entityType, "Biome", "continue", groupName,
+                    ServerHandler.sendFeatureMessage("Damage", entityType, "Biome", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the spawn location is "liquid" or not.
                 if (!EntityUtils.isLiquid(block, damageMap.getLiquid())) {
-                    ServerHandler.sendFeatureMessage("Spawn", entityType, "Liquid", "continue", groupName,
+                    ServerHandler.sendFeatureMessage("Damage", entityType, "Liquid", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the spawn time is "Day" or not.
                 if (!EntityUtils.isDay(loc.getWorld().getTime(), damageMap.getDay())) {
-                    ServerHandler.sendFeatureMessage("Spawn", entityType, "Day", "continue", groupName,
+                    ServerHandler.sendFeatureMessage("Damage", entityType, "Day", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the spawn "location".
                 if (!ConfigPath.getLocationUtils().checkLocation(loc, damageMap.getLocMaps())) {
-                    ServerHandler.sendFeatureMessage("Spawn", entityType, "Location", "continue", groupName,
+                    ServerHandler.sendFeatureMessage("Damage", entityType, "Location", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the "blocks" nearby the spawn location.
                 if (!ConfigPath.getBlocksUtils().checkBlocks(loc, damageMap.getBlocksMaps())) {
-                    ServerHandler.sendFeatureMessage("Spawn", entityType, "Blocks", "continue", groupName,
+                    ServerHandler.sendFeatureMessage("Damage", entityType, "Blocks", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the spawn "Residence-Flag".
                 if (!ResidenceUtils.checkResFlag(loc, resFlag, "damagebypass")) {
-                    ServerHandler.sendFeatureMessage("Spawn", entityType, "Residence-Flag", "continue", groupName,
+                    ServerHandler.sendFeatureMessage("Damage", entityType, "Residence-Flag", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
@@ -121,7 +127,7 @@ public class EntityDamage implements Listener {
                         }
                     } catch (Exception ex) {
                         ServerHandler.sendConsoleMessage("&cThere is an error occurred. Please check the \"Damage\" format.");
-                        ServerHandler.sendConsoleMessage("&eDamage - " + groupName + ", Damage: " + compareDamage);
+                        ServerHandler.sendConsoleMessage("&cDamage - " + groupName + ", Damage: " + compareDamage);
                     }
                 }
                 Damageable damageEn = (Damageable) en;

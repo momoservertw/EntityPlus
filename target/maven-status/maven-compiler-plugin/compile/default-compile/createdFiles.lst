@@ -1,6 +1,5 @@
 tw\momocraft\entityplus\utils\Logger.class
 tw\momocraft\entityplus\listeners\MythicMobsSpawn.class
-tw\momocraft\entityplus\listeners\PlayerLogin.class
 tw\momocraft\entityplus\utils\entities\EntityMap.class
 tw\momocraft\entityplus\utils\Utils.class
 tw\momocraft\entityplus\utils\blocksutils\BlocksUtils.class
@@ -10,7 +9,6 @@ tw\momocraft\entityplus\utils\TabComplete.class
 tw\momocraft\entityplus\listeners\MythicMobsLootDrop.class
 tw\momocraft\entityplus\utils\entities\LimitMap.class
 tw\momocraft\entityplus\utils\Language$Lang.class
-tw\momocraft\entityplus\utils\EntitiesFile.class
 tw\momocraft\entityplus\listeners\EntityDeath.class
 tw\momocraft\entityplus\handlers\PermissionsHandler.class
 tw\momocraft\entityplus\utils\CustomCommands.class
@@ -24,11 +22,9 @@ tw\momocraft\entityplus\utils\blocksutils\BlocksMap.class
 tw\momocraft\entityplus\handlers\UpdateHandler.class
 tw\momocraft\entityplus\utils\ConfigPath.class
 tw\momocraft\entityplus\utils\entities\SpawnerMap.class
-tw\momocraft\entityplus\listeners\PlayerTeleport.class
 tw\momocraft\entityplus\utils\locationutils\LocationUtils.class
 tw\momocraft\entityplus\utils\entities\DamageMap.class
 tw\momocraft\entityplus\utils\DependAPI.class
-tw\momocraft\entityplus\utils\customgroups\GroupsGenerator.class
 tw\momocraft\entityplus\utils\entities\EntityUtils.class
 tw\momocraft\entityplus\Commands.class
 tw\momocraft\entityplus\EntityPlus.class

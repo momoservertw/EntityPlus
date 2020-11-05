@@ -27,10 +27,8 @@ public class CreatureSpawn implements Listener {
         String entityType = entity.getType().name();
         String reason = e.getSpawnReason().name();
         // To skip MythicMobs.
-        if (ConfigHandler.getDepends().MythicMobsEnabled()) {
-            if (reason.equals("CUSTOM")) {
-                return;
-            }
+        if (reason.equals("CUSTOM") && ConfigHandler.getDepends().MythicMobsEnabled()) {
+            return;
         }
         // To get entity properties.
         Map<String, EntityMap> entityProp = ConfigHandler.getConfigPath().getEntityProp().get(entityType);
@@ -45,43 +43,43 @@ public class CreatureSpawn implements Listener {
                 entityMap = entityProp.get(groupName);
                 // Checking the spawn "reasons".
                 if (!EntityUtils.containValue(reason, entityMap.getReasons(), entityMap.getIgnoreReasons())) {
-                    ServerHandler.sendFeatureMessage("Spawn", entityType, "!Reason", "continue", groupName,
+                    ServerHandler.sendFeatureMessage("Spawn", entityType, "Reason", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the spawn "biome".
                 if (!EntityUtils.containValue(block.getBiome().name(), entityMap.getBoimes(), entityMap.getIgnoreBoimes())) {
-                    ServerHandler.sendFeatureMessage("Spawn", entityType, "!Biome", "continue", groupName,
+                    ServerHandler.sendFeatureMessage("Spawn", entityType, "Biome", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the spawn location is "liquid" or not.
                 if (!EntityUtils.isLiquid(block, entityMap.getLiquid())) {
-                    ServerHandler.sendFeatureMessage("Spawn", entityType, "!Liquid", "continue", groupName,
+                    ServerHandler.sendFeatureMessage("Spawn", entityType, "Liquid", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the spawn time is "Day" or not.
                 if (!EntityUtils.isDay(loc.getWorld().getTime(), entityMap.getDay())) {
-                    ServerHandler.sendFeatureMessage("Spawn", entityType, "!Day", "continue", groupName,
+                    ServerHandler.sendFeatureMessage("Spawn", entityType, "Day", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the spawn "location".
                 if (!ConfigPath.getLocationUtils().checkLocation(loc, entityMap.getLocMaps())) {
-                    ServerHandler.sendFeatureMessage("Spawn", entityType, "!Location", "continue", groupName,
+                    ServerHandler.sendFeatureMessage("Spawn", entityType, "Location", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the "blocks" nearby the spawn location.
                 if (!ConfigPath.getBlocksUtils().checkBlocks(loc, entityMap.getBlocksMaps())) {
-                    ServerHandler.sendFeatureMessage("Spawn", entityType, "!Blocks", "continue", groupName,
+                    ServerHandler.sendFeatureMessage("Spawn", entityType, "Blocks", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the spawn "Residence-Flag".
                 if (!ResidenceUtils.checkResFlag(loc, resFlag, "spawnbypass")) {
-                    ServerHandler.sendFeatureMessage("Spawn", entityType, "!Residence-Flag", "continue", groupName,
+                    ServerHandler.sendFeatureMessage("Spawn", entityType, "Residence-Flag", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
@@ -99,7 +97,7 @@ public class CreatureSpawn implements Listener {
                     } else {
                         // Add a tag for this creature.
                         //ConfigHandler.getConfigPath().getLivingEntityMap().putMap(entity.getUniqueId(), new Pair<>(entityType, groupName));
-                        ServerHandler.sendFeatureMessage("Spawn", entityType, "!Chance", "return", groupName,
+                        ServerHandler.sendFeatureMessage("Spawn", entityType, "Chance", "return", groupName,
                                 new Throwable().getStackTrace()[0]);
                         return;
                     }

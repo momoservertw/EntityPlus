@@ -66,7 +66,7 @@ Entities:
           AFK: true
       Groups:
         NormalMobs:
-          Enable: true
+          Enable: false
           Chance: 0
           Amount: 10
           AFK:
@@ -114,7 +114,7 @@ Entities:
     # Permission: "entityplus.drop.GROUP"
     Groups:
       lucky1:
-        Enable: true
+        Enable: false
         Priority: 1
         Exp: 1.5
         Items: 1.5
@@ -124,7 +124,7 @@ Entities:
         Types:
           - NormalMobs
       lucky2:
-        Enable: true
+        Enable: false
         Priority: 2
         Exp: 2
         Items: 2
@@ -188,6 +188,7 @@ Spawner:
   Enable: false
   Settings:
     Bypass:
+      # Custom Residence flag "spawnerbypass" to bypass the features.
       Residence-Flag: false
   Groups:
     Normal:

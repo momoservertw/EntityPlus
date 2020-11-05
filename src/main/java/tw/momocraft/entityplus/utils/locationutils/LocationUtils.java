@@ -194,7 +194,7 @@ public class LocationUtils {
             }
         } catch (Exception e) {
             ServerHandler.sendConsoleMessage("&cThere is an error occurred. Please check the \"Location\" format.");
-            ServerHandler.sendConsoleMessage("&e" + type + ": " + value);
+            ServerHandler.sendConsoleMessage("&c" + type + ": " + value);
         }
         return false;
     }

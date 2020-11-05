@@ -26,11 +26,11 @@ public class LocationMap {
     }
 
     public void addCord(String type, String value) {
-        if (isCordFormat(type, value)){
+        if (isCordFormat(type, value)) {
             cord.put(type, value);
         } else {
             ServerHandler.sendConsoleMessage("&cThere is an error occurred. Please check the \"Location\" format.");
-            ServerHandler.sendConsoleMessage("&e" + type + ": " + value);
+            ServerHandler.sendConsoleMessage("&c" + type + ": " + value);
         }
     }
 
@@ -43,7 +43,7 @@ public class LocationMap {
     }
 
     /**
-     * @param type   the location value. Like x, y, z, !x...
+     * @param type  the location value. Like x, y, z, !x...
      * @param value the value of the type.
      * @return check if the coordinate format is correct.
      */

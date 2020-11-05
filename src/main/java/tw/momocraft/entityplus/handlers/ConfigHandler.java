@@ -2,7 +2,6 @@ package tw.momocraft.entityplus.handlers;
 
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
 import org.bukkit.Bukkit;
-import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;

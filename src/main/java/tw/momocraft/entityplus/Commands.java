@@ -1,19 +1,11 @@
 package tw.momocraft.entityplus;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.PermissionsHandler;
-import tw.momocraft.entityplus.handlers.ServerHandler;
-import tw.momocraft.entityplus.utils.EntitiesFile;
 import tw.momocraft.entityplus.utils.Language;
-import tw.momocraft.entityplus.utils.customgroups.GroupsGenerator;
-
-import java.util.UUID;
 
 
 public class Commands implements CommandExecutor {
@@ -61,21 +53,6 @@ public class Commands implements CommandExecutor {
             if (PermissionsHandler.hasPermission(sender, "entityplus.command.version")) {
                 Language.dispatchMessage(sender, "&d&lEntityPlus &e&lv" + EntityPlus.getInstance().getDescription().getVersion() + "&8 - &fby Momocraft");
                 ConfigHandler.getUpdater().checkUpdates(sender);
-            } else {
-                Language.sendLangMessage("Message.noPermission", sender);
-            }
-            return true;
-        } else if (args[0].equalsIgnoreCase("test")) {
-            if (PermissionsHandler.hasPermission(sender, "entityplus.test")) {
-                ServerHandler.sendConsoleMessage(Bukkit.getServer().getVersion());
-                //GroupsGenerator.groupsManager(sender, args[1]);
-            } else {
-                Language.sendLangMessage("Message.noPermission", sender);
-            }
-            return true;
-        } else if (args.length == 2 && args[0].equalsIgnoreCase("file")) {
-            if (PermissionsHandler.hasPermission(sender, "entityplus.file")) {
-                EntitiesFile.createEntities(sender);
             } else {
                 Language.sendLangMessage("Message.noPermission", sender);
             }
