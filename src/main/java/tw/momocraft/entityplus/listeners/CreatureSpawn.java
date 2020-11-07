@@ -30,11 +30,10 @@ public class CreatureSpawn implements Listener {
         if (reason.equals("CUSTOM") && ConfigHandler.getDepends().MythicMobsEnabled()) {
             return;
         }
-        // To get entity properties.
+        // To get properties.
         Map<String, EntityMap> entityProp = ConfigHandler.getConfigPath().getEntityProp().get(entityType);
-        // Checking if the properties contains this type of entity.
         if (entityProp != null) {
-            // Checking every groups of this entity.
+            // Checking every groups.
             Location loc = entity.getLocation();
             Block block = loc.getBlock();
             EntityMap entityMap;

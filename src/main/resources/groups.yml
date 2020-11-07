@@ -108,7 +108,7 @@ Entities:
     - ILLUSIONER
     - MAGMA_CUBE
     - PHANTOM
-    - PIG_ZOMBIE
+    - ZOMBIFIED_PIGLIN
     - PILLAGER
     - RAVAGER
     - SILVERFISH
@@ -132,7 +132,7 @@ Entities:
     - HUSK
     - MAGMA_CUBE
     - PHANTOM
-    - PIG_ZOMBIE
+    - ZOMBIFIED_PIGLIN
     - PILLAGER
     - SILVERFISH
     - SLIME

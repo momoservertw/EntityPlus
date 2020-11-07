@@ -67,11 +67,11 @@ Entities:
     Chance: 0.3
     Reasons:
       - VILLAGE_DEFENSE
-  Pig_Zombie:
+  ZOMBIFIED_PIGLIN:
     Enable: false
     Priority: 3
     Types:
-      - PIG_ZOMBIE
+      - ZOMBIFIED_PIGLIN
     Chance: 0.5
     Reasons:
       - NETHER_PORTAL
