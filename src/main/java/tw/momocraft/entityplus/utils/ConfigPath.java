@@ -129,7 +129,7 @@ public class ConfigPath {
                     entityMap.setLiquid(ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Liquid"));
                     entityMap.setDay(ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Day"));
                     // Blocks settings.
-                    blocksMaps = blocksUtils.getSpeBlocksMaps("Entities." + group + ".Blocks");
+                    blocksMaps = blocksUtils.getSpeBlocksMaps("entities.yml", "Entities." + group + ".Blocks");
                     if (!blocksMaps.isEmpty()) {
                         entityMap.setBlocksMaps(blocksMaps);
                     }
@@ -317,7 +317,7 @@ public class ConfigPath {
                     }
                     // To specify the Blocks.
                     spawnerMap.setChangeMap(changeMap);
-                    blocksMaps = blocksUtils.getSpeBlocksMaps("Spawner.Groups." + group + ".Blocks");
+                    blocksMaps = blocksUtils.getSpeBlocksMaps("config.yml", "Spawner.Groups." + group + ".Blocks");
                     if (!blocksMaps.isEmpty()) {
                         spawnerMap.setBlocksMaps(blocksMaps);
                     }
@@ -397,12 +397,12 @@ public class ConfigPath {
                         damageMap.setSunburn(ConfigHandler.getConfig("config.yml").getBoolean("Entities.Damage.Groups." + group + ".Ignore.Sunburn"));
 
                         // Blocks settings.
-                        blocksMaps = blocksUtils.getSpeBlocksMaps("Entities." + group + ".Blocks");
+                        blocksMaps = blocksUtils.getSpeBlocksMaps("config.yml", "Entities.Damage.Groups." + group + ".Blocks");
                         if (!blocksMaps.isEmpty()) {
                             damageMap.setBlocksMaps(blocksMaps);
                         }
                         // Location settings
-                        locMaps = locationUtils.getSpeLocMaps("entities.yml", "Entities." + group + ".Location");
+                        locMaps = locationUtils.getSpeLocMaps("config.yml", "Entities.Damage.Groups." + group + ".Location");
                         if (!locMaps.isEmpty()) {
                             damageMap.setLocMaps(locMaps);
                         }

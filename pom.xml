@@ -6,7 +6,7 @@
 
     <groupId>momocraft.tw</groupId>
     <artifactId>EntityPlus</artifactId>
-    <version>1.2.2</version>
+    <version>1.2.3</version>
     <build>
         <plugins>
             <plugin>
@@ -42,6 +42,11 @@
             <id>placeholderapi</id>
             <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
+        <!--VaultAPI Repo-->
+            <repository>
+                <id>jitpack.io</id>
+                <url>https://jitpack.io</url>
+            </repository>
     </repositories>
     <dependencies>
         <!--Google API-->
@@ -66,11 +71,10 @@
         </dependency>
         <!--Vault API-->
         <dependency>
-            <groupId>net.milkbowl.vault</groupId>
-            <artifactId>Vault</artifactId>
-            <scope>system</scope>
-            <systemPath>${pom.basedir}/src/main/java/tw/momocraft/entityplus/extra/VaultAPI.jar</systemPath>
-            <version>LATEST</version>
+            <groupId>com.github.MilkBowl</groupId>
+            <artifactId>VaultAPI</artifactId>
+            <version>1.7</version>
+            <scope>provided</scope>
         </dependency>
         <!--MythicMobs API-->
         <dependency>
@@ -92,7 +96,7 @@
             <groupId>me.Residence</groupId>
             <artifactId>Residence</artifactId>
             <scope>system</scope>
-            <systemPath>${pom.basedir}/src/main/java/tw/momocraft/entityplus/extra/Residence4.9.0.5.jar</systemPath>
+            <systemPath>${pom.basedir}/src/main/java/tw/momocraft/entityplus/extra/Residence4.9.2.0.jar</systemPath>
             <version>LEGACY</version>
         </dependency>
         <!--PlaceholderAPI API-->

@@ -80,10 +80,10 @@ public class BlocksUtils {
      * @param path the specific path.
      * @return the specific maps from BlocksMaps.
      */
-    public List<BlocksMap> getSpeBlocksMaps(String path) {
+    public List<BlocksMap> getSpeBlocksMaps(String file, String path) {
         List<BlocksMap> blocksMapList = new ArrayList<>();
         BlocksMap blocksMap;
-        for (String group : ConfigHandler.getConfig("entities.yml").getStringList(path)) {
+        for (String group : ConfigHandler.getConfig(file).getStringList(path)) {
             blocksMap = blocksMaps.get(group);
             if (blocksMap != null) {
                 blocksMapList.add(blocksMap);
