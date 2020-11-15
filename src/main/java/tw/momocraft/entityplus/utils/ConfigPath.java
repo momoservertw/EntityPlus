@@ -74,7 +74,7 @@ public class ConfigPath {
         locationUtils = new LocationUtils();
         blocksUtils = new BlocksUtils();
 
-        mobSpawnRange = ConfigHandler.getServerConfig("spigot.yml").getInt("world-settings.default.mob-spawn-range") * 16;
+        mobSpawnRange = ConfigHandler.getConfig("spigot.yml").getInt("world-settings.default.mob-spawn-range") * 16;
         nearbyPlayerRange = ConfigHandler.getConfig("config.yml").getInt("General.Nearby-Players-Range");
 
         setLimitProp();

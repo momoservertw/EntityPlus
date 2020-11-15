@@ -30,9 +30,9 @@ public class ConfigHandler {
     private static Logger logger;
 
     public static void generateData() {
-        configFile();
-        groupsFile();
-        entitiesFile();
+        genConfigFile("config.yml");
+        genConfigFile("groups.yml");
+        genConfigFile("entities.yml");
         setDepends(new DependAPI());
         sendUtilityDepends();
         setConfigPath(new ConfigPath());
@@ -64,153 +64,100 @@ public class ConfigHandler {
         }
     }
 
-    public static FileConfiguration getConfig(String path) {
-        File file = new File(EntityPlus.getInstance().getDataFolder(), path);
-        if (configYAML == null) {
-            getConfigData(path);
+    public static FileConfiguration getConfig(String fileName) {
+        File filePath = EntityPlus.getInstance().getDataFolder();
+        File file;
+        switch (fileName) {
+            case "config.yml":
+                filePath = Bukkit.getWorldContainer();
+                if (configYAML == null) {
+                    getConfigData(filePath, fileName);
+                }
+                break;
+            case "spigot.yml":
+                filePath = Bukkit.getServer().getWorldContainer();
+                if (spigotYAML == null) {
+                    getConfigData(filePath, fileName);
+                }
+                break;
+            default:
+                break;
         }
-        return getPath(path, file, false);
+        file = new File(filePath, fileName);
+        return getPath(fileName, file, false);
     }
 
-    private static FileConfiguration getConfigData(String path) {
-        File file = new File(EntityPlus.getInstance().getDataFolder(), path);
+    private static FileConfiguration getConfigData(File filePath, String fileName) {
+        File file = new File(filePath, fileName);
         if (!(file).exists()) {
             try {
-                EntityPlus.getInstance().saveResource(path, false);
+                EntityPlus.getInstance().saveResource(fileName, false);
             } catch (Exception e) {
-                EntityPlus.getInstance().getLogger().warning("Cannot save " + path + " to disk!");
+                ServerHandler.sendErrorMessage("&cCannot save " + fileName + " to disk!");
                 return null;
             }
         }
-        return getPath(path, file, true);
+        return getPath(fileName, file, true);
     }
 
-    private static YamlConfiguration getPath(String path, File file, boolean saveData) {
-        if (path.contains("config.yml")) {
-            if (saveData) {
-                configYAML = YamlConfiguration.loadConfiguration(file);
-            }
-            return configYAML;
-        } else if (path.contains("groups.yml")) {
-            if (saveData) {
-                groupsYAML = YamlConfiguration.loadConfiguration(file);
-            }
-            return groupsYAML;
-        } else if (path.contains("entities.yml")) {
-            if (saveData) {
-                entitiesYAML = YamlConfiguration.loadConfiguration(file);
-            }
-            return entitiesYAML;
+    private static YamlConfiguration getPath(String fileName, File file, boolean saveData) {
+        switch (fileName) {
+            case "config.yml":
+                if (saveData) {
+                    configYAML = YamlConfiguration.loadConfiguration(file);
+                }
+                return configYAML;
+            case "spigot.yml":
+                if (saveData) {
+                    spigotYAML = YamlConfiguration.loadConfiguration(file);
+                }
+                return spigotYAML;
+            case "groups.yml":
+                if (saveData) {
+                    groupsYAML = YamlConfiguration.loadConfiguration(file);
+                }
+                return groupsYAML;
+            case "entities.yml":
+                if (saveData) {
+                    entitiesYAML = YamlConfiguration.loadConfiguration(file);
+                }
+                return entitiesYAML;
         }
         return null;
     }
 
-    private static void configFile() {
-        getConfigData("config.yml");
-        File File = new File(EntityPlus.getInstance().getDataFolder(), "config.yml");
-        if (File.exists() && getConfig("config.yml").getInt("Config-Version") != 10) {
-            if (EntityPlus.getInstance().getResource("config.yml") != null) {
+    private static void genConfigFile(String fileName) {
+        String[] fileNameSlit = fileName.split("\\.(?=[^\\.]+$)");
+        int configVersion = 0;
+        File filePath = EntityPlus.getInstance().getDataFolder();
+        switch (fileName) {
+            case "config.yml":
+                configVersion = 10;
+                break;
+            case "groups.yml":
+            case "entities.yml":
+                configVersion = 1;
+                break;
+        }
+        getConfigData(filePath, fileName);
+        File File = new File(filePath, fileName);
+        if (File.exists() && getConfig(fileName).getInt("Config-Version") != configVersion) {
+            if (EntityPlus.getInstance().getResource(fileName) != null) {
                 LocalDateTime currentDate = LocalDateTime.now();
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm-ss");
                 String currentTime = currentDate.format(formatter);
-                String newGen = "config " + currentTime + ".yml";
-                File newFile = new File(EntityPlus.getInstance().getDataFolder(), newGen);
+                String newGen = fileNameSlit[0] + " " + currentTime + "." + fileNameSlit[0];
+                File newFile = new File(filePath, newGen);
                 if (!newFile.exists()) {
                     File.renameTo(newFile);
-                    File configFile = new File(EntityPlus.getInstance().getDataFolder(), "config.yml");
+                    File configFile = new File(filePath, fileName);
                     configFile.delete();
-                    getConfigData("config.yml");
-                    ServerHandler.sendConsoleMessage("&e*            *            *");
-                    ServerHandler.sendConsoleMessage("&e *            *            *");
-                    ServerHandler.sendConsoleMessage("&e  *            *            *");
-                    ServerHandler.sendConsoleMessage("&cYour config.yml is out of date, generating a new one!");
-                    ServerHandler.sendConsoleMessage("&e    *            *            *");
-                    ServerHandler.sendConsoleMessage("&e     *            *            *");
-                    ServerHandler.sendConsoleMessage("&e      *            *            *");
+                    getConfigData(filePath, fileName);
+                    ServerHandler.sendConsoleMessage("&4The file \"" + fileName + "\" is out of date, generating a new one!");
                 }
             }
         }
-        getConfig("config.yml").options().copyDefaults(false);
-    }
-
-    public static FileConfiguration getServerConfig(String path) {
-        File file = new File(Bukkit.getWorldContainer(), path);
-        if (spigotYAML == null) {
-            getServerConfigData(path);
-        }
-        return getServerPath(path, file, false);
-    }
-
-    private static FileConfiguration getServerConfigData(String path) {
-        File file = new File(Bukkit.getWorldContainer(), path);
-        return getServerPath(path, file, true);
-    }
-
-    private static YamlConfiguration getServerPath(String path, File file, boolean saveData) {
-        if (path.contains("spigot.yml")) {
-            if (saveData) {
-                spigotYAML = YamlConfiguration.loadConfiguration(file);
-            }
-            return spigotYAML;
-        }
-        return null;
-    }
-
-
-    private static void groupsFile() {
-        getConfigData("groups.yml");
-        File itemsFile = new File(EntityPlus.getInstance().getDataFolder(), "groups.yml");
-        if (itemsFile.exists() && getConfig("groups.yml").getInt("Config-Version") != 1) {
-            if (EntityPlus.getInstance().getResource("groups.yml") != null) {
-                LocalDateTime currentDate = LocalDateTime.now();
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm-ss");
-                String currentTime = currentDate.format(formatter);
-                String newGen = "groups " + currentTime + ".yml";
-                File newFile = new File(EntityPlus.getInstance().getDataFolder(), newGen);
-                if (!newFile.exists()) {
-                    itemsFile.renameTo(newFile);
-                    File configFile = new File(EntityPlus.getInstance().getDataFolder(), "groups.yml");
-                    configFile.delete();
-                    getConfigData("groups.yml");
-                    ServerHandler.sendConsoleMessage("&e*            *            *");
-                    ServerHandler.sendConsoleMessage("&e *            *            *");
-                    ServerHandler.sendConsoleMessage("&e  *            *            *");
-                    ServerHandler.sendConsoleMessage("&cYour groups.yml is out of date, generating a new one!");
-                    ServerHandler.sendConsoleMessage("&e    *            *            *");
-                    ServerHandler.sendConsoleMessage("&e     *            *            *");
-                    ServerHandler.sendConsoleMessage("&e      *            *            *");
-                }
-            }
-        }
-        getConfig("groups.yml").options().copyDefaults(false);
-    }
-
-    private static void entitiesFile() {
-        getConfigData("entities.yml");
-        File itemsFile = new File(EntityPlus.getInstance().getDataFolder(), "entities.yml");
-        if (itemsFile.exists() && getConfig("entities.yml").getInt("Config-Version") != 1) {
-            if (EntityPlus.getInstance().getResource("entities.yml") != null) {
-                LocalDateTime currentDate = LocalDateTime.now();
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm-ss");
-                String currentTime = currentDate.format(formatter);
-                String newGen = "entities " + currentTime + ".yml";
-                File newFile = new File(EntityPlus.getInstance().getDataFolder(), newGen);
-                if (!newFile.exists()) {
-                    itemsFile.renameTo(newFile);
-                    File configFile = new File(EntityPlus.getInstance().getDataFolder(), "entities.yml");
-                    configFile.delete();
-                    getConfigData("entities.yml");
-                    ServerHandler.sendConsoleMessage("&e*            *            *");
-                    ServerHandler.sendConsoleMessage("&e *            *            *");
-                    ServerHandler.sendConsoleMessage("&e  *            *            *");
-                    ServerHandler.sendConsoleMessage("&cYour entities.yml is out of date, generating a new one!");
-                    ServerHandler.sendConsoleMessage("&e    *            *            *");
-                    ServerHandler.sendConsoleMessage("&e     *            *            *");
-                    ServerHandler.sendConsoleMessage("&e      *            *            *");
-                }
-            }
-        }
-        getConfig("entities.yml").options().copyDefaults(false);
+        getConfig(fileName).options().copyDefaults(false);
     }
 
     private static void sendUtilityDepends() {
