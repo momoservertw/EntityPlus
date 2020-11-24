@@ -7,11 +7,20 @@ import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.ServerHandler;
 import tw.momocraft.entityplus.utils.blocksutils.BlocksMap;
 import tw.momocraft.entityplus.utils.blocksutils.BlocksUtils;
-import tw.momocraft.entityplus.utils.entities.*;
+import tw.momocraft.entityplus.utils.entities.DamageMap;
+import tw.momocraft.entityplus.utils.entities.DropMap;
+import tw.momocraft.entityplus.utils.entities.EntityMap;
+import tw.momocraft.entityplus.utils.entities.LimitMap;
+import tw.momocraft.entityplus.utils.entities.SpawnerMap;
 import tw.momocraft.entityplus.utils.locationutils.LocationMap;
 import tw.momocraft.entityplus.utils.locationutils.LocationUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ConfigPath {
     public ConfigPath() {
@@ -35,7 +44,7 @@ public class ConfigPath {
     private boolean limit;
     private boolean limitAFK;
 
-    private Map<String, Map<String, EntityMap>> entityProp = new HashMap<>();
+    private final Map<String, Map<String, EntityMap>> entityProp = new HashMap<>();
     private Map<String, LimitMap> limitProp = new HashMap<>();
 
     //  ============================================== //
@@ -57,7 +66,7 @@ public class ConfigPath {
     private boolean damage;
     private boolean damageResFlag;
 
-    private Map<String, Map<String, DamageMap>> damageProp = new HashMap<>();
+    private final Map<String, Map<String, DamageMap>> damageProp = new HashMap<>();
 
     //  ============================================== //
     //         Spawner Settings                        //
@@ -65,7 +74,7 @@ public class ConfigPath {
     private boolean spawner;
     private boolean spawnerResFlag;
 
-    private Map<String, Map<String, SpawnerMap>> spawnerProp = new HashMap<>();
+    private final Map<String, Map<String, SpawnerMap>> spawnerProp = new HashMap<>();
 
     //  ============================================== //
     //         Setup all configuration.                //

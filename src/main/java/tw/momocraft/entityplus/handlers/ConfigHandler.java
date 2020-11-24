@@ -2,15 +2,20 @@ package tw.momocraft.entityplus.handlers;
 
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import tw.momocraft.entityplus.Commands;
 import tw.momocraft.entityplus.EntityPlus;
-import tw.momocraft.entityplus.listeners.*;
+import tw.momocraft.entityplus.listeners.CreatureSpawn;
+import tw.momocraft.entityplus.listeners.EntityDamage;
+import tw.momocraft.entityplus.listeners.EntityDeath;
+import tw.momocraft.entityplus.listeners.MythicMobsLootDrop;
+import tw.momocraft.entityplus.listeners.MythicMobsSpawn;
+import tw.momocraft.entityplus.listeners.SpawnerSpawn;
 import tw.momocraft.entityplus.utils.ConfigPath;
 import tw.momocraft.entityplus.utils.DependAPI;
-import org.bukkit.Location;
 import tw.momocraft.entityplus.utils.Logger;
 import tw.momocraft.entityplus.utils.TabComplete;
 
@@ -218,7 +223,7 @@ public class ConfigHandler {
      * @return Location
      */
     static public Location getLocationString(final String s) {
-        if (s == null || s.trim() == "") {
+        if (s == null || s.trim().equals("")) {
             return null;
         }
         final String[] parts = s.split(":");
