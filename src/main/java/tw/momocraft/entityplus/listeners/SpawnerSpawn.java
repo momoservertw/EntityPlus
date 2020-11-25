@@ -127,8 +127,8 @@ public class SpawnerSpawn implements Listener {
                         .replace("%nearbyplayers%", getNearbyPlayersString(nearbyPlayers));
                 if (command.startsWith("all-")) {
                     command = command.replace("all-", "");
-                    for (Player p : nearbyPlayers) {
-                        CustomCommands.executeMultipleCmds(p, command, true);
+                    for (Player player : nearbyPlayers) {
+                        CustomCommands.executeMultipleCmds(player, command, true);
                     }
                     continue;
                 }

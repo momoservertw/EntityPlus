@@ -11,12 +11,9 @@ import org.bukkit.entity.Player;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.ServerHandler;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class Utils {
 
@@ -137,6 +134,12 @@ public class Utils {
             } catch (Exception e) {
                 ServerHandler.sendDebugTrace(e);
             }
+        }
+        // %localtime_time% =>
+        try {
+            input = input.replace("%localtime_time%", new SimpleDateFormat("YYYY/MM/dd HH:mm:ss").format(new Date()));
+        } catch (Exception e) {
+            ServerHandler.sendDebugTrace(e);
         }
         // %random_number%500%
         if (input.contains("%random_number%")) {

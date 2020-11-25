@@ -43,7 +43,6 @@ public class ConfigPath {
     private boolean spawnResFlag;
 
     private boolean limit;
-    private boolean limitAFK;
 
     private final Map<String, Map<String, EntityMap>> entityProp = new HashMap<>();
     private Map<String, LimitMap> limitProp = new HashMap<>();
@@ -62,7 +61,7 @@ public class ConfigPath {
     private Map<String, Map<String, DropMap>> dropProp = new HashMap<>();
 
     //  ============================================== //
-    //         Damage Settings                          //
+    //         Damage Settings                         //
     //  ============================================== //
     private boolean damage;
     private boolean damageResFlag;
@@ -206,7 +205,7 @@ public class ConfigPath {
         if (!limit) {
             return;
         }
-        limitAFK = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Limit.Settings.Features.AFK");
+        boolean limitAFK = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Limit.Settings.Features.AFK");
         limitProp = new HashMap<>();
         ConfigurationSection groupsConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Entities.Spawn.Limit.Groups");
         if (groupsConfig != null) {

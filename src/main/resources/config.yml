@@ -12,7 +12,8 @@ General:
      # Control MythicMobs spawning and conditions.
      # The "CUSTOM" reason does not work for MythicMobs.
      MythicMobs: true
-  # - "custom: cgl, Lottery ticket, Jackpot, $10,000"
+  # To send frequently used commands with placeholders.
+  # More information: https://github.com/momoservertw/EntityPlus/wiki/Custom-Command
   Custom-Commands:
    reward: "message: &6&lReward&c✤ &f%cmd_arg1%"
    awards: "message: &d✧ &f%cmd_arg1% &d✧"

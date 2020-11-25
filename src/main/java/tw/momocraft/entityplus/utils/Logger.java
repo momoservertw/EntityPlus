@@ -1,7 +1,7 @@
 package tw.momocraft.entityplus.utils;
 
+
 import tw.momocraft.entityplus.EntityPlus;
-import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.ServerHandler;
 
 import java.io.BufferedWriter;
@@ -13,40 +13,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Logger {
-    private String fileName;
-    private String folderName;
-    private String path;
+    private static File defaultFile = new File(EntityPlus.getInstance().getDataFolder().getPath() + "\\Logs\\latest.yml");
     private static File file;
-    private static File folder;
 
-    /**
-     * Logger:
-     *   Enable: true
-     *   Folder: "Log"
-     *   FileName: "latest"
-     *   Path: "C:\Server"
-     */
-    public Logger() {
-        if (ConfigHandler.getConfig("config.yml").getBoolean("Logger.Enable")) {
-            folderName = ConfigHandler.getConfig("config.yml").getString("Logger.Folder");
-            if (folderName == null) {
-                folderName = "Logs";
-            }
-            fileName = ConfigHandler.getConfig("config.yml").getString("Logger.FileName");
-            if (fileName == null) {
-                fileName = EntityPlus.getInstance().getDataFolder().getPath() + "\\" + "";
-            }
-            path = ConfigHandler.getConfig("config.yml").getString("Logger.Path");
-            if (path == null) {
-                path = EntityPlus.getInstance().getDataFolder().getPath();
-            }
-            folder = new File(path + "\\" + folderName);
-            file = new File(path + "\\" + folderName + "\\" + fileName);
-            createLog();
-        }
-    }
-
-    private void createLog() {
+    public void createDefaultLog() {
+        File folder = new File(EntityPlus.getInstance().getDataFolder().getPath());
+        // Check log folder.
         if (!folder.exists()) {
             try {
                 if (!folder.mkdir()) {
@@ -56,6 +28,61 @@ public class Logger {
                 ServerHandler.sendDebugTrace(e);
             }
         }
+        // Check log file.
+        if (!defaultFile.exists()) {
+            try {
+                if (!defaultFile.createNewFile()) {
+                    ServerHandler.sendConsoleMessage("&6Log: &fcreate log &8\"&e" + defaultFile.getName() + ".log&8\"  &c✘");
+                }
+            } catch (Exception e) {
+                ServerHandler.sendDebugTrace(e);
+            }
+        } else {
+            Date modifiedDate = new Date(defaultFile.lastModified());
+            Date currentDate = new Date();
+            // Exist old log.
+            if (modifiedDate.equals(currentDate)) {
+                // Rename old log file to "2020-11-10".
+                String logPath = defaultFile.getParentFile().getPath() + "\\" + new SimpleDateFormat("yyyy-MM-dd").format(modifiedDate);
+                File renameFile = new File(logPath + ".log");
+                String logName;
+                int number = 1;
+                while (renameFile.exists()) {
+                    logName = logPath + "-" + number;
+                    renameFile = new File(logName + ".log");
+                    number++;
+                }
+                try {
+                    if (!defaultFile.renameTo(renameFile)) {
+                        ServerHandler.sendConsoleMessage("&6Log: &frename old log &8\"&e" + renameFile.getName() + "&8\"  &c✘");
+                    }
+                } catch (Exception e) {
+                    ServerHandler.sendDebugTrace(e);
+                }
+                try {
+                    if (!defaultFile.createNewFile()) {
+                        ServerHandler.sendConsoleMessage("&6Log: &fcreate new latest log &8\"&e" + defaultFile.getName() + ".log&8\"  &c✘");
+                    }
+                } catch (Exception e) {
+                    ServerHandler.sendDebugTrace(e);
+                }
+            }
+        }
+    }
+
+    public void createLog(String path) {
+        File folder = new File(path);
+        // Check log folder.
+        if (!folder.exists()) {
+            try {
+                if (!folder.mkdir()) {
+                    ServerHandler.sendConsoleMessage("&6Log: &fcreate folder &8\"&e" + folder.getName() + "&8\"  &c✘");
+                }
+            } catch (Exception e) {
+                ServerHandler.sendDebugTrace(e);
+            }
+        }
+        // Check log file.
         if (!file.exists()) {
             try {
                 if (!file.createNewFile()) {
@@ -65,9 +92,8 @@ public class Logger {
                 ServerHandler.sendDebugTrace(e);
             }
         } else {
-            Date lastModified = new Date(file.lastModified());
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            String logPath = file.getParentFile().getPath() + "\\" + format.format(lastModified);
+            // Rename old log file.
+            String logPath = file.getParentFile().getPath() + "\\" + new SimpleDateFormat("yyyy-MM-dd").format(new Date(file.lastModified()));
             File renameFile = new File(logPath + ".log");
             String logName;
             int number = 1;
@@ -93,9 +119,21 @@ public class Logger {
         }
     }
 
-    private static void addLog(String message) {
+    /**
+     * Add log to "Logs/latest.log".
+     */
+    public void addDefaultLog(String message, boolean time) {
+        message = message + "\n";
+        if (time) {
+            DateFormat dateFormat = new SimpleDateFormat("YYYY/MM/dd HH:mm:ss");
+            String date = dateFormat.format(new Date());
+            message = "[" + date + "]: " + message;
+        }
+        if (!defaultFile.exists()) {
+            createDefaultLog();
+        }
         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(file, true));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(defaultFile, true));
             bw.append(message);
             bw.close();
         } catch (IOException e) {
@@ -103,42 +141,26 @@ public class Logger {
         }
     }
 
-
-    public void sendLog(String message, String formatType) {
-        switch (formatType) {
-            case "Time":
-                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                String date = dateFormat.format(new Date());
-                message = "[" + date + "]: " + message + "\n";
-                break;
-            case "List":
-                message = " - " + message + "\n";
-                break;
-            case "Array":
-                message = message + ", ";
-                break;
+    /**
+     * Add log to "PATH/NAME.log".
+     */
+    public void addLog(String path, String name, String message, boolean time) {
+        message = message + "\n";
+        if (time) {
+            DateFormat dateFormat = new SimpleDateFormat("YYYY/MM/dd HH:mm:ss");
+            String date = dateFormat.format(new Date());
+            message = "[" + date + "]: " + message;
         }
-        addLog(message);
-    }
-
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public String getFolderName() {
-        return folderName;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public static File getFile() {
-        return file;
-    }
-
-    public static File getFolder() {
-        return folder;
+        file = new File(path + "\\" + name);
+        if (!file.exists()) {
+            createLog(path);
+        }
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(file, true));
+            bw.append(message);
+            bw.close();
+        } catch (IOException e) {
+            ServerHandler.sendDebugTrace(e);
+        }
     }
 }

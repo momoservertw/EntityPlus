@@ -6,9 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="db9de2ae-2a97-4e0b-968d-c3ef6fdf69c0" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/CreatureSpawn.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/CreatureSpawn.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/SpawnerSpawn.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/listeners/SpawnerSpawn.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/ConfigPath.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/ConfigPath.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/CustomCommands.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/CustomCommands.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/Logger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/Logger.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/tw/momocraft/entityplus/utils/Utils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config.yml" afterDir="false" />
     </list>
@@ -97,9 +99,10 @@
       <screen x="0" y="0" width="1707" height="920" />
     </state>
     <state x="480" y="139" key="#Inspections/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1604472271612" />
-    <state x="263" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1603732388837">
-      <screen x="0" y="0" width="1707" height="920" />
+    <state x="158" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1606281507707">
+      <screen x="0" y="0" width="1280" height="689" />
     </state>
+    <state x="158" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1280.689@0.0.1280.689" timestamp="1606281507707" />
     <state x="263" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1603732388837" />
     <state x="584" y="207" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1604239353564">
       <screen x="0" y="0" width="1707" height="920" />
@@ -142,9 +145,10 @@
       <screen x="0" y="0" width="1280" height="689" />
     </state>
     <state x="326" y="169" key="com.intellij.ide.util.TipDialog/0.0.1280.689@0.0.1280.689" timestamp="1603852864974" />
-    <state x="341" y="29" width="1026" height="891" key="find.popup" timestamp="1605350221434">
-      <screen x="0" y="0" width="1707" height="920" />
+    <state x="256" y="21" width="770" height="668" key="find.popup" timestamp="1606281864559">
+      <screen x="0" y="0" width="1280" height="689" />
     </state>
+    <state x="256" y="21" width="770" height="668" key="find.popup/0.0.1280.689@0.0.1280.689" timestamp="1606281864559" />
     <state x="341" y="29" width="1026" height="891" key="find.popup/2560.10.1707.920/0.0.1707.920@0.0.1707.920" timestamp="1605350221434" />
     <state x="2901" y="39" width="1026" height="891" key="find.popup/2560.10.1707.920/0.0.1707.920@2560.10.1707.920" timestamp="1604480748431" />
     <state x="551" y="206" key="refactoring.ChangeSignatureDialog" timestamp="1604062531792">

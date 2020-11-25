@@ -32,9 +32,13 @@ public class CustomCommands {
                 input = input.replace("custom: ", "");
                 dispatchCustomCommand(player, input);
                 return;
+            } else if (input.startsWith("print:")) {
+                input = input.replace("print: ", "");
+                ServerHandler.sendConsoleMessage(input);
+                return;
             } else if (input.startsWith("log:")) {
                 input = input.replace("log: ", "");
-                ServerHandler.sendConsoleMessage(input);
+                ConfigHandler.getLogger().addDefaultLog(input, true);
                 return;
             } else if (input.startsWith("broadcast:")) {
                 input = input.replace("broadcast: ", "");
@@ -74,9 +78,13 @@ public class CustomCommands {
             input = input.replace("custom: ", "");
             dispatchCustomCommand(null, input);
             return;
+        } else if (input.startsWith("print:")) {
+            input = input.replace("print: ", "");
+            ServerHandler.sendConsoleMessage(input);
+            return;
         } else if (input.startsWith("log:")) {
             input = input.replace("log: ", "");
-            ServerHandler.sendConsoleMessage(input);
+            ConfigHandler.getLogger().addDefaultLog(input, true);
             return;
         } else if (input.startsWith("broadcast:")) {
             input = input.replace("broadcast: ", "");
