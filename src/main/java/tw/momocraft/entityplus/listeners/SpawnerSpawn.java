@@ -32,7 +32,8 @@ public class SpawnerSpawn implements Listener {
         try {
             entityType = spawner.getSpawnedType().name();
         } catch (Exception ex) {
-            e.setCancelled(true);
+            ServerHandler.sendFeatureMessage("Spawner", "UNKNOWN", "Location", "return",
+                    new Throwable().getStackTrace()[0]);
             return;
         }
         Location loc = e.getLocation();
@@ -70,7 +71,7 @@ public class SpawnerSpawn implements Listener {
                 if (spawnerMap.isRemove()) {
                     e.setCancelled(true);
                     spawner.getBlock().setType(Material.AIR);
-                    executeCommands(e, entityType, "AIR", spawnerMap.getCommands());
+                    executeSpawnerCmds(e, "AIR", spawnerMap.getCommands());
                     ServerHandler.sendFeatureMessage("Spawner", entityType, "Remove", "remove",
                             new Throwable().getStackTrace()[0]);
                     return;
@@ -90,7 +91,7 @@ public class SpawnerSpawn implements Listener {
                         if (chance >= randTotalChange) {
                             spawner.setSpawnedType(EntityType.valueOf(changeType));
                             spawner.update();
-                            executeCommands(e, entityType, changeType, spawnerMap.getCommands());
+                            executeSpawnerCmds(e, changeType, spawnerMap.getCommands());
                             ServerHandler.sendFeatureMessage("Spawner", entityType, changeType, "change",
                                     new Throwable().getStackTrace()[0]);
                             e.setCancelled(true);
@@ -107,14 +108,14 @@ public class SpawnerSpawn implements Listener {
 
     /**
      * @param e          SpawnerSpawnEven
-     * @param group      the world group.
      * @param changeType the type of spawner which will change.
+     * @param commands   the execute command list.
      */
-    private void executeCommands(SpawnerSpawnEvent e, String group, String changeType, List<String> commands) {
+    private void executeSpawnerCmds(SpawnerSpawnEvent e, String changeType, List<String> commands) {
         if (!commands.isEmpty()) {
             CreatureSpawner spawner = e.getSpawner();
             Location loc = spawner.getLocation();
-            List<Player> nearbyPlayers = getNearbyPlayers(e.getSpawner().getBlock());
+            List<Player> nearbyPlayers = getNearbyPlayers(e.getSpawner().getLocation(), ConfigHandler.getConfigPath().getNearbyPlayerRange());
             for (String command : commands) {
                 command = command.replace("%spawner%", spawner.getSpawnedType().name())
                         .replace("%new_spawner%", changeType)
@@ -124,10 +125,10 @@ public class SpawnerSpawn implements Listener {
                         .replace("%loc_y%", String.valueOf(loc.getBlockY()))
                         .replace("%loc_z%", String.valueOf(loc.getBlockZ()))
                         .replace("%nearbyplayers%", getNearbyPlayersString(nearbyPlayers));
-                if (command.startsWith("nearby-")) {
-                    command = command.replace("nearby-", "");
+                if (command.startsWith("all-")) {
+                    command = command.replace("all-", "");
                     for (Player p : nearbyPlayers) {
-                        CustomCommands.executeCommands(p, command);
+                        CustomCommands.executeMultipleCmds(p, command, true);
                     }
                     continue;
                 }
@@ -137,18 +138,21 @@ public class SpawnerSpawn implements Listener {
     }
 
     /**
-     * @param block the center block.
-     * @return list the players near the block.
+     * @param loc   the checking location.
+     * @param range the checking range.
+     * @return list the players near the location.
      */
-    private List<Player> getNearbyPlayers(Block block) {
+    private List<Player> getNearbyPlayers(Location loc, int range) {
         List<Player> nearbyPlayers = new ArrayList<>();
-        if (block != null) {
-            int range = ConfigHandler.getConfigPath().getNearbyPlayerRange();
-            Collection<Entity> nearbyEntities = block.getWorld().getNearbyEntities(block.getLocation(), range, range, range);
-            for (Entity en : nearbyEntities) {
-                if (en instanceof Player) {
-                    nearbyPlayers.add(((Player) en).getPlayer());
+        if (loc != null) {
+            try {
+                Collection<Entity> nearbyEntities = loc.getWorld().getNearbyEntities(loc, range, range, range);
+                for (Entity en : nearbyEntities) {
+                    if (en instanceof Player) {
+                        nearbyPlayers.add(((Player) en).getPlayer());
+                    }
                 }
+            } catch (Exception ignored) {
             }
         }
         return nearbyPlayers;

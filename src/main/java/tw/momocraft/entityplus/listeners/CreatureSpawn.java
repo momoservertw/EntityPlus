@@ -59,11 +59,13 @@ public class CreatureSpawn implements Listener {
                     continue;
                 }
                 // Checking the spawn time is "Day" or not.
-                if (!EntityUtils.isDay(loc.getWorld().getTime(), entityMap.getDay())) {
-                    ServerHandler.sendFeatureMessage("Spawn", entityType, "Day", "continue", groupName,
-                            new Throwable().getStackTrace()[0]);
-                    continue;
-                }
+                try {
+                    if (!EntityUtils.isDay(loc.getWorld().getTime(), entityMap.getDay())) {
+                        ServerHandler.sendFeatureMessage("Spawn", entityType, "Day", "continue", groupName,
+                                new Throwable().getStackTrace()[0]);
+                        continue;
+                    }
+                } catch (Exception ignored) {}
                 // Checking the spawn "location".
                 if (!ConfigPath.getLocationUtils().checkLocation(loc, entityMap.getLocMaps())) {
                     ServerHandler.sendFeatureMessage("Spawn", entityType, "Location", "continue", groupName,

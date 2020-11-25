@@ -1,9 +1,9 @@
 package tw.momocraft.entityplus.utils;
 
 import me.clip.placeholderapi.PlaceholderAPI;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Statistic;
 import org.bukkit.block.Block;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Entity;
@@ -36,6 +36,10 @@ public class Utils {
     public static int getRandom(int lower, int upper) {
         Random random = new Random();
         return random.nextInt((upper - lower) + 1) + lower;
+    }
+
+    public static String getRandomString(List<String> list) {
+        return list.get(new Random().nextInt(list.size()));
     }
 
     public static Integer returnInteger(String text) {
@@ -88,76 +92,91 @@ public class Utils {
         }
     }
 
-    public static String translateLayout(String name, Player player) {
-        String playerName = "EXEMPT";
-
-        if (player != null) {
-            playerName = player.getName();
-        }
-
+    public static String translateLayout(String input, Player player) {
         if (player != null && !(player instanceof ConsoleCommandSender)) {
+            String playerName = player.getName();
+            // %player%
             try {
-                name = name.replace("%player%", playerName);
+                input = input.replace("%player%", playerName);
             } catch (Exception e) {
                 ServerHandler.sendDebugTrace(e);
             }
+            // %server_name%
             try {
-                name = name.replace("%mob_kills%", String.valueOf(player.getStatistic(Statistic.MOB_KILLS)));
+                input = input.replace("%server_name%", Bukkit.getServer().getName());
             } catch (Exception e) {
                 ServerHandler.sendDebugTrace(e);
             }
-            try {
-                name = name.replace("%player_kills%", String.valueOf(player.getStatistic(Statistic.PLAYER_KILLS)));
-            } catch (Exception e) {
-                ServerHandler.sendDebugTrace(e);
+            // %player_world%, %player_location%, %player_location%, %player_loc%, %player_loc_x%, %player_loc_y%, %player_loc_z%,
+            if (input.contains("%player_world%") || input.contains("%player_loc%") || input.contains("%player_loc_x%")
+                    || input.contains("%player_loc_y%") || input.contains("%player_loc_z%")) {
+                try {
+                    Location loc = player.getLocation();
+                    input = input.replace("%player_world%", loc.getWorld().getName())
+                            .replace("%player_loc%", loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ())
+                            .replace("%player_loc_x%", String.valueOf(loc.getBlockX()))
+                            .replace("%player_loc_y%", String.valueOf(loc.getBlockY()))
+                            .replace("%player_loc_z%", String.valueOf(loc.getBlockZ()));
+                } catch (Exception e) {
+                    ServerHandler.sendDebugTrace(e);
+                }
             }
-            try {
-                name = name.replace("%player_deaths%", String.valueOf(player.getStatistic(Statistic.DEATHS)));
-            } catch (Exception e) {
-                ServerHandler.sendDebugTrace(e);
-            }
-            try {
-                name = name.replace("%player_food%", String.valueOf(player.getFoodLevel()));
-            } catch (Exception e) {
-                ServerHandler.sendDebugTrace(e);
-            }
-            try {
-                name = name.replace("%player_health%", String.valueOf(player.getHealth()));
-            } catch (Exception e) {
-                ServerHandler.sendDebugTrace(e);
-            }
-            try {
-                name = name.replace("%player_location%", player.getLocation().getBlockX() + ", " + player.getLocation().getBlockY() + ", " + player.getLocation().getBlockZ() + "");
-            } catch (Exception e) {
-                ServerHandler.sendDebugTrace(e);
-            }
-            try {
-                name = name.replace("%player_interact%", getNearbyPlayer(player, 3));
-            } catch (Exception e) {
-                ServerHandler.sendDebugTrace(e);
+            // %player_interact%
+            if (input.contains("%player_interact%")) {
+                try {
+                    input = input.replace("%player_interact%", getNearbyPlayer(player, 3));
+                } catch (Exception e) {
+                    ServerHandler.sendDebugTrace(e);
+                }
             }
         }
+        // %player% => CONSOLE
         if (player == null) {
             try {
-                name = name.replace("%player%", "CONSOLE");
+                input = input.replace("%player%", "CONSOLE");
             } catch (Exception e) {
                 ServerHandler.sendDebugTrace(e);
             }
         }
-
-        name = ChatColor.translateAlternateColorCodes('&', name);
-        if (ConfigHandler.getDepends().PlaceHolderAPIEnabled()) {
+        // %random_number%500%
+        if (input.contains("%random_number%")) {
             try {
-                try {
-                    return PlaceholderAPI.setPlaceholders(player, name);
-                } catch (NoSuchFieldError e) {
-                    ServerHandler.sendDebugMessage("Error has occured when setting the PlaceHolder " + e.getMessage() + ", if this issue persits contact the developer of PlaceholderAPI.");
-                    return name;
+                String[] arr = input.split("%");
+                List<Integer> list = new ArrayList<>();
+                for (int i = 0; i < arr.length; i++) {
+                    if (arr[i].equals("random_number")) {
+                        list.add(Integer.parseInt(arr[i + 1]));
+                    }
                 }
-            } catch (Exception ignored) {
+                for (int max : list) {
+                    input = input.replace("%random_number%" + max + "%", String.valueOf(new Random().nextInt(max)));
+                }
+            } catch (Exception e) {
+                ServerHandler.sendDebugTrace(e);
             }
         }
-        return name;
+        // %random_player%
+        if (input.contains("%random_player%")) {
+            try {
+                List<Player> playerList = new ArrayList(Bukkit.getOnlinePlayers());
+                String randomPlayer = playerList.get(new Random().nextInt(playerList.size())).getName();
+                input = input.replace("%random_player%", randomPlayer);
+            } catch (Exception e) {
+                ServerHandler.sendDebugTrace(e);
+            }
+        }
+        // Translate color codes.
+        input = ChatColor.translateAlternateColorCodes('&', input);
+        // Translate PlaceHolderAPI's placeholders.
+        if (ConfigHandler.getDepends().PlaceHolderAPIEnabled()) {
+            try {
+                return PlaceholderAPI.setPlaceholders(player, input);
+            } catch (NoSuchFieldError e) {
+                ServerHandler.sendDebugMessage("Error has occurred when setting the PlaceHolder " + e.getMessage() + ", if this issue persist contact the developer of PlaceholderAPI.");
+                return input;
+            }
+        }
+        return input;
     }
 
     /**
@@ -165,8 +184,8 @@ public class Utils {
      * High -> Low
      *
      * @param map the input map.
-     * @param <K>
-     * @param <V>
+     * @param <K> key
+     * @param <V> value
      * @return the sorted map.
      */
     public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map) {
@@ -185,8 +204,8 @@ public class Utils {
      * Low -> High
      *
      * @param map the input map.
-     * @param <K>
-     * @param <V>
+     * @param <K> key
+     * @param <V> value
      * @return the sorted map.
      */
     public static <K, V extends Comparable<? super V>> Map<K, V> sortByValueLow(Map<K, V> map) {

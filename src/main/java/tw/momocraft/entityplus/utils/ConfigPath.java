@@ -30,6 +30,7 @@ public class ConfigPath {
     //  ============================================== //
     //         General Settings                        //
     //  ============================================== //
+    private Map<String, String> customCmdProp;
     private static LocationUtils locationUtils;
     private static BlocksUtils blocksUtils;
     private int mobSpawnRange;
@@ -80,17 +81,27 @@ public class ConfigPath {
     //         Setup all configuration.                //
     //  ============================================== //
     private void setUp() {
-        locationUtils = new LocationUtils();
-        blocksUtils = new BlocksUtils();
-
-        mobSpawnRange = ConfigHandler.getConfig("spigot.yml").getInt("world-settings.default.mob-spawn-range") * 16;
-        nearbyPlayerRange = ConfigHandler.getConfig("config.yml").getInt("General.Nearby-Players-Range");
-
+        setupGeneral();
         setLimitProp();
         setDrop();
         setDamage();
         setSpawn();
         setSpawner();
+    }
+
+    private void setupGeneral() {
+        locationUtils = new LocationUtils();
+        blocksUtils = new BlocksUtils();
+        mobSpawnRange = ConfigHandler.getConfig("spigot.yml").getInt("world-settings.default.mob-spawn-range") * 16;
+        nearbyPlayerRange = ConfigHandler.getConfig("config.yml").getInt("General.Nearby-Players-Range");
+
+        ConfigurationSection cmdConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("General.Custom-Commands");
+        if (cmdConfig != null) {
+            customCmdProp = new HashMap<>();
+            for (String group : cmdConfig.getKeys(false)) {
+                customCmdProp.put(group, ConfigHandler.getConfig("config.yml").getString("General.Custom-Commands." + group));
+            }
+        }
     }
 
     public static LocationUtils getLocationUtils() {
@@ -485,6 +496,10 @@ public class ConfigPath {
             }
         }
         return list;
+    }
+
+    public Map<String, String> getCustomCmdProp() {
+        return customCmdProp;
     }
 
     public int getMobSpawnRange() {
