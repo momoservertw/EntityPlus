@@ -107,7 +107,7 @@ public class Logger {
     public void sendLog(String message, String formatType) {
         switch (formatType) {
             case "Time":
-                DateFormat dateFormat = new SimpleDateFormat("YYYY/MM/dd HH:mm:ss");
+                DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                 String date = dateFormat.format(new Date());
                 message = "[" + date + "]: " + message + "\n";
                 break;

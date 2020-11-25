@@ -16,12 +16,11 @@ public class UpdateHandler {
 
     private final int PROJECTID = 70592;
 
-    private final String HOST = "https://api.spigotmc.org/legacy/update.php?resource=" + this.PROJECTID;
-    private String versionExact = EntityPlus.getInstance().getDescription().getVersion();
-    private String localeVersion = this.versionExact.split("-")[0];
+    private final String versionExact = EntityPlus.getInstance().getDescription().getVersion();
+    private final String localeVersion = this.versionExact.split("-")[0];
     private String latestVersion;
 
-    private boolean updatesAllowed = ConfigHandler.getConfig("config.yml").getBoolean("Check-Updates");
+    private final boolean updatesAllowed = ConfigHandler.getConfig("config.yml").getBoolean("Check-Updates");
 
     /**
      * Initializes the UpdateHandler and Checks for Updates upon initialization.
@@ -54,7 +53,8 @@ public class UpdateHandler {
         if (this.updatesAllowed) {
             ServerHandler.sendMessage(sender, "&fChecking for updates...");
             try {
-                URLConnection connection = new URL(this.HOST + "?_=" + System.currentTimeMillis()).openConnection();
+                String HOST = "https://api.spigotmc.org/legacy/update.php?resource=" + this.PROJECTID;
+                URLConnection connection = new URL(HOST + "?_=" + System.currentTimeMillis()).openConnection();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 String version = reader.readLine();
                 reader.close();

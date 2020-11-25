@@ -1,5 +1,6 @@
 package tw.momocraft.entityplus.listeners;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -11,7 +12,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.Location;
 import org.bukkit.potion.PotionEffectType;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.ServerHandler;
@@ -239,7 +239,6 @@ public class EntityDamage implements Listener {
                         }
                         continue back;
                     default:
-                        continue back;
                 }
             }
         }
