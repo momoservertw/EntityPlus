@@ -45,7 +45,7 @@ public class Commands implements CommandExecutor {
                 } else if (args[0].equalsIgnoreCase("reload")) {
                     if (PermissionsHandler.hasPermission(sender, "entityplus.command.reload")) {
                         // working: close purge.Auto-Clean schedule
-                        ConfigHandler.generateData();
+                        ConfigHandler.generateData(true);
                         Language.sendLangMessage("Message.configReload", sender);
                     } else {
                         Language.sendLangMessage("Message.noPermission", sender);
@@ -59,11 +59,10 @@ public class Commands implements CommandExecutor {
                         Language.sendLangMessage("Message.noPermission", sender);
                     }
                     return true;
-                } else {
-                    Language.sendLangMessage("Message.unknownCommand", sender);
-                    return true;
                 }
+            default:
+                Language.sendLangMessage("Message.unknownCommand", sender);
+                return true;
         }
-        return true;
     }
 }

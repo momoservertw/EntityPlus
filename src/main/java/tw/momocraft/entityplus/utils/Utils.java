@@ -1,9 +1,7 @@
 package tw.momocraft.entityplus.utils;
 
 import me.clip.placeholderapi.PlaceholderAPI;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Entity;
@@ -11,12 +9,10 @@ import org.bukkit.entity.Player;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.ServerHandler;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Utils {
-
     public static boolean containsIgnoreCase(String string1, String string2) {
         return string1 != null && string2 != null && string1.toLowerCase().contains(string2.toLowerCase());
     }
@@ -62,6 +58,27 @@ public class Utils {
             }
             return value;
         }
+    }
+
+    /**
+     * Converts a serialized location to a Location. Returns null if string is empty
+     *
+     * @param s - serialized location in format "world:x:y:z"
+     * @return Location
+     */
+    public static Location getLocationString(final String s) {
+        if (s == null || s.trim().equals("")) {
+            return null;
+        }
+        final String[] parts = s.split(":");
+        if (parts.length == 4) {
+            final World w = Bukkit.getServer().getWorld(parts[0]);
+            final int x = Integer.parseInt(parts[1]);
+            final int y = Integer.parseInt(parts[2]);
+            final int z = Integer.parseInt(parts[3]);
+            return new Location(w, x, y, z);
+        }
+        return null;
     }
 
     private static String getNearbyPlayer(Player player, int range) {
@@ -220,5 +237,9 @@ public class Utils {
             result.put(entry.getKey(), entry.getValue());
         }
         return result;
+    }
+
+    public static String translateColorCode(String input) {
+        return ChatColor.translateAlternateColorCodes('&', input);
     }
 }

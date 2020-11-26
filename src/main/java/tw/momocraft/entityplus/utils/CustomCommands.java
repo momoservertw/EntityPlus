@@ -1,7 +1,6 @@
 package tw.momocraft.entityplus.utils;
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
@@ -9,28 +8,27 @@ import tw.momocraft.entityplus.handlers.ServerHandler;
 
 
 public class CustomCommands {
-    public static void executeMultipleCmds(CommandSender sender, String input, boolean placeholder) {
-        if (placeholder) {
-            input = Utils.translateLayout(input, (Player) sender);
-        }
+    public static void executeMultipleCmds(Player player, String input, boolean placeholder) {
         if (input.contains(";")) {
             String[] cmds = input.split(";");
             for (String cmd : cmds) {
-                executeCommands(sender, cmd);
+                executeCommands(player, cmd, placeholder);
             }
         } else {
-            executeCommands(sender, input);
+            executeCommands(player, input, placeholder);
         }
     }
 
-    public static void executeCommands(CommandSender sender, String input) {
-        if (sender == null || sender instanceof ConsoleCommandSender) {
-            executeCommands(input);
+    public static void executeCommands(Player player, String input, boolean placeholder) {
+        if (placeholder) {
+            input = Utils.translateLayout(input, player);
+        }
+        if (player == null || player instanceof ConsoleCommandSender) {
+            executeCommands(input, placeholder);
         } else {
-            Player player = (Player) sender;
             if (input.startsWith("custom:")) {
                 input = input.replace("custom: ", "");
-                dispatchCustomCommand(player, input);
+                dispatchCustomCommand(player, input, placeholder);
                 return;
             } else if (input.startsWith("print:")) {
                 input = input.replace("print: ", "");
@@ -39,6 +37,10 @@ public class CustomCommands {
             } else if (input.startsWith("log:")) {
                 input = input.replace("log: ", "");
                 ConfigHandler.getLogger().addDefaultLog(input, true);
+                return;
+            } else if (input.startsWith("log-custom:")) {
+                input = input.replace("log-custom: ", "");
+                ConfigHandler.getLogger().addCustomLog(input, true);
                 return;
             } else if (input.startsWith("broadcast:")) {
                 input = input.replace("broadcast: ", "");
@@ -73,10 +75,13 @@ public class CustomCommands {
         }
     }
 
-    public static void executeCommands(String input) {
+    public static void executeCommands(String input, boolean placeholder) {
+        if (placeholder) {
+            input = Utils.translateLayout(input, null);
+        }
         if (input.startsWith("custom:")) {
             input = input.replace("custom: ", "");
-            dispatchCustomCommand(null, input);
+            dispatchCustomCommand(null, input, placeholder);
             return;
         } else if (input.startsWith("print:")) {
             input = input.replace("print: ", "");
@@ -85,6 +90,10 @@ public class CustomCommands {
         } else if (input.startsWith("log:")) {
             input = input.replace("log: ", "");
             ConfigHandler.getLogger().addDefaultLog(input, true);
+            return;
+        } else if (input.startsWith("log-custom:")) {
+            input = input.replace("log-custom: ", "");
+            ConfigHandler.getLogger().addCustomLog(input, true);
             return;
         } else if (input.startsWith("broadcast:")) {
             input = input.replace("broadcast: ", "");
@@ -97,6 +106,7 @@ public class CustomCommands {
         } else if (input.startsWith("bungee:")) {
             dispatchBungeeCordCommand(null, input);
             return;
+            // No target.
         } else if (input.startsWith("op:")) {
             ServerHandler.sendErrorMessage("&cThere is an error while execute command \"&eop: " + input + "&c\" &8- &cCan not find the execute target.");
             return;
@@ -116,7 +126,7 @@ public class CustomCommands {
      * custom: group, arg1
      * group: "console: say %cmd_arg1%"
      */
-    private static void dispatchCustomCommand(CommandSender sender, String input) {
+    private static void dispatchCustomCommand(Player player, String input, boolean placeholder) {
         String[] placeHolderArr = input.split(", ");
         String newCmd = ConfigHandler.getConfigPath().getCustomCmdProp().get(placeHolderArr[0]);
         if (newCmd == null) {
@@ -126,7 +136,7 @@ public class CustomCommands {
         for (int i = 1; i < +placeHolderArr.length; i++) {
             newCmd = newCmd.replace("%cmd_arg" + i + "%", placeHolderArr[i]);
         }
-        executeCommands(sender, newCmd);
+        executeCommands(player, newCmd, placeholder);
     }
 
     /**

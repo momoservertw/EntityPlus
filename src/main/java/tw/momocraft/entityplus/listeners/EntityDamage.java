@@ -74,19 +74,19 @@ public class EntityDamage implements Listener {
                     continue;
                 }
                 // Checking the spawn "location".
-                if (!ConfigPath.getLocationUtils().checkLocation(loc, damageMap.getLocMaps())) {
+                if (!ConfigHandler.getConfigPath().getLocationUtils().checkLocation(loc, damageMap.getLocMaps())) {
                     ServerHandler.sendFeatureMessage("Damage", entityType, "Location", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the "blocks" nearby the spawn location.
-                if (!ConfigPath.getBlocksUtils().checkBlocks(loc, damageMap.getBlocksMaps())) {
+                if (!ConfigHandler.getConfigPath().getBlocksUtils().checkBlocks(loc, damageMap.getBlocksMaps())) {
                     ServerHandler.sendFeatureMessage("Damage", entityType, "Blocks", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the spawn "Residence-Flag".
-                if (!ResidenceUtils.checkResFlag(loc, resFlag, "damagebypass")) {
+                if (!ResidenceUtils.checkResFlag(null, loc, resFlag, "damagebypass")) {
                     ServerHandler.sendFeatureMessage("Damage", entityType, "Residence-Flag", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;

@@ -8,6 +8,7 @@ import tw.momocraft.entityplus.EntityPlus;
 
 public class ServerHandler {
 
+
     public static void sendConsoleMessage(String message) {
         String prefix = "&7[&dEntityPlus&7] ";
         message = prefix + message;
@@ -16,7 +17,7 @@ public class ServerHandler {
     }
 
     public static void sendDebugMessage(String message) {
-        if (ConfigHandler.getDebugging()) {
+        if (ConfigHandler.isDebugging()) {
             String prefix = "&7[&dEntityPlus_Debug&7] ";
             message = prefix + message;
             message = ChatColor.translateAlternateColorCodes('&', message);
@@ -26,7 +27,7 @@ public class ServerHandler {
 
     public static void sendDebugMessage(String message, boolean check) {
         if (!check) {
-            if (!ConfigHandler.getDebugging()) {
+            if (!ConfigHandler.isDebugging()) {
                 return;
             }
         }
@@ -61,13 +62,13 @@ public class ServerHandler {
     }
 
     public static void sendDebugTrace(Exception e) {
-        if (ConfigHandler.getDebugging()) {
+        if (ConfigHandler.isDebugging()) {
             e.printStackTrace();
         }
     }
 
     public static void sendFeatureMessage(String feature, String target, String check, String action, String detail, StackTraceElement ste) {
-        if (!ConfigHandler.getDebugging()) {
+        if (!ConfigHandler.isDebugging()) {
             return;
         }
         switch (action) {
@@ -93,7 +94,7 @@ public class ServerHandler {
     }
 
     public static void sendFeatureMessage(String feature, String target, String check, String action, StackTraceElement ste) {
-        if (!ConfigHandler.getDebugging()) {
+        if (!ConfigHandler.isDebugging()) {
             return;
         }
         switch (action) {

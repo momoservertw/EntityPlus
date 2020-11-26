@@ -31,8 +31,15 @@ public class ConfigPath {
     //         General Settings                        //
     //  ============================================== //
     private Map<String, String> customCmdProp;
-    private static LocationUtils locationUtils;
-    private static BlocksUtils blocksUtils;
+    private boolean logDefaultNew;
+    private boolean logDefaultZip;
+    private boolean logCustomNew;
+    private boolean logCustomZip;
+    private String logCustomPath;
+    private String logCustomName;
+
+    private LocationUtils locationUtils;
+    private BlocksUtils blocksUtils;
     private int mobSpawnRange;
     private int nearbyPlayerRange;
 
@@ -89,25 +96,32 @@ public class ConfigPath {
     }
 
     private void setupGeneral() {
+        logDefaultZip = ConfigHandler.getConfig("config.yml").getBoolean("General.Custom-Commands.Settings.Log.Default.To-Zip");
+        logDefaultNew = ConfigHandler.getConfig("config.yml").getBoolean("General.Custom-Commands.Settings.Log.Default.New-File");
+        logCustomNew = ConfigHandler.getConfig("config.yml").getBoolean("General.Custom-Commands.Settings.Log.Custom.New-File");
+        logCustomZip = ConfigHandler.getConfig("config.yml").getBoolean("General.Custom-Commands.Settings.Log.Custom.To-Zip");
+        logCustomPath = ConfigHandler.getConfig("config.yml").getString("General.Custom-Commands.Settings.Log.Custom.Path");
+        logCustomName = ConfigHandler.getConfig("config.yml").getString("General.Custom-Commands.Settings.Log.Custom.Name");
+        ConfigurationSection cmdConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("General.Custom-Commands.Groups");
+        if (cmdConfig != null) {
+            customCmdProp = new HashMap<>();
+            for (String group : cmdConfig.getKeys(false)) {
+                customCmdProp.put(group, ConfigHandler.getConfig("config.yml").getString("General.Custom-Commands.Groups." + group));
+            }
+        }
+
         locationUtils = new LocationUtils();
         blocksUtils = new BlocksUtils();
         mobSpawnRange = ConfigHandler.getConfig("spigot.yml").getInt("world-settings.default.mob-spawn-range") * 16;
         nearbyPlayerRange = ConfigHandler.getConfig("config.yml").getInt("General.Nearby-Players-Range");
 
-        ConfigurationSection cmdConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("General.Custom-Commands");
-        if (cmdConfig != null) {
-            customCmdProp = new HashMap<>();
-            for (String group : cmdConfig.getKeys(false)) {
-                customCmdProp.put(group, ConfigHandler.getConfig("config.yml").getString("General.Custom-Commands." + group));
-            }
-        }
     }
 
-    public static LocationUtils getLocationUtils() {
+    public LocationUtils getLocationUtils() {
         return locationUtils;
     }
 
-    public static BlocksUtils getBlocksUtils() {
+    public BlocksUtils getBlocksUtils() {
         return blocksUtils;
     }
 
@@ -497,9 +511,37 @@ public class ConfigPath {
         return list;
     }
 
+    //  ============================================== //
+    //         General Settings                        //
+    //  ============================================== //
     public Map<String, String> getCustomCmdProp() {
         return customCmdProp;
     }
+
+    public boolean isLogDefaultNew() {
+        return logDefaultNew;
+    }
+
+    public boolean isLogDefaultZip() {
+        return logDefaultZip;
+    }
+
+    public boolean isLogCustomNew() {
+        return logCustomNew;
+    }
+
+    public boolean isLogCustomZip() {
+        return logCustomZip;
+    }
+
+    public String getLogCustomName() {
+        return logCustomName;
+    }
+
+    public String getLogCustomPath() {
+        return logCustomPath;
+    }
+
 
     public int getMobSpawnRange() {
         return mobSpawnRange;
@@ -509,6 +551,9 @@ public class ConfigPath {
         return nearbyPlayerRange;
     }
 
+    //  ============================================== //
+    //         Spawn Settings                          //
+    //  ============================================== //
     public boolean isSpawn() {
         return spawn;
     }
@@ -529,6 +574,9 @@ public class ConfigPath {
         return limit;
     }
 
+    //  ============================================== //
+    //         Drop Settings                          //
+    //  ============================================== //
     public boolean isDrop() {
         return drop;
     }
@@ -557,6 +605,9 @@ public class ConfigPath {
         return dropItem;
     }
 
+    //  ============================================== //
+    //         Damage Settings                         //
+    //  ============================================== //
     public boolean isDamage() {
         return damage;
     }
@@ -569,6 +620,9 @@ public class ConfigPath {
         return damageProp;
     }
 
+    //  ============================================== //
+    //         Spawner Settings                        //
+    //  ============================================== //
     public boolean isSpawner() {
         return spawner;
     }

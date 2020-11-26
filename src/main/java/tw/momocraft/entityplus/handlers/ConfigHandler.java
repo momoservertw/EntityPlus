@@ -2,22 +2,12 @@ package tw.momocraft.entityplus.handlers;
 
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import tw.momocraft.entityplus.Commands;
 import tw.momocraft.entityplus.EntityPlus;
-import tw.momocraft.entityplus.listeners.CreatureSpawn;
-import tw.momocraft.entityplus.listeners.EntityDamage;
-import tw.momocraft.entityplus.listeners.EntityDeath;
-import tw.momocraft.entityplus.listeners.MythicMobsLootDrop;
-import tw.momocraft.entityplus.listeners.MythicMobsSpawn;
-import tw.momocraft.entityplus.listeners.SpawnerSpawn;
-import tw.momocraft.entityplus.utils.ConfigPath;
-import tw.momocraft.entityplus.utils.DependAPI;
-import tw.momocraft.entityplus.utils.Logger;
-import tw.momocraft.entityplus.utils.TabComplete;
+import tw.momocraft.entityplus.listeners.*;
+import tw.momocraft.entityplus.utils.*;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -33,16 +23,20 @@ public class ConfigHandler {
     private static ConfigPath configPath;
     private static UpdateHandler updater;
     private static Logger logger;
+    private static Zip ziper;
 
-    public static void generateData() {
+    public static void generateData(boolean reload) {
         genConfigFile("config.yml");
         genConfigFile("groups.yml");
         genConfigFile("entities.yml");
         setDepends(new DependAPI());
         sendUtilityDepends();
         setConfigPath(new ConfigPath());
-        setUpdater(new UpdateHandler());
+        if (!reload) {
+            setUpdater(new UpdateHandler());
+        }
         setLogger(new Logger());
+        setZip(new Zip());
     }
 
     public static void registerEvents() {
@@ -65,7 +59,6 @@ public class ConfigHandler {
             if (ConfigHandler.getConfigPath().isSpawnerResFlag()) {
                 FlagPermissions.addFlag("spawnerbypass");
             }
-            //FlagPermissions.addFlag("fastdamagebypass");
         }
     }
 
@@ -92,17 +85,17 @@ public class ConfigHandler {
         return getPath(fileName, file, false);
     }
 
-    private static FileConfiguration getConfigData(File filePath, String fileName) {
+    private static void getConfigData(File filePath, String fileName) {
         File file = new File(filePath, fileName);
         if (!(file).exists()) {
             try {
                 EntityPlus.getInstance().saveResource(fileName, false);
             } catch (Exception e) {
                 ServerHandler.sendErrorMessage("&cCannot save " + fileName + " to disk!");
-                return null;
+                return;
             }
         }
-        return getPath(fileName, file, true);
+        getPath(fileName, file, true);
     }
 
     private static YamlConfiguration getPath(String fileName, File file, boolean saveData) {
@@ -137,7 +130,7 @@ public class ConfigHandler {
         File filePath = EntityPlus.getInstance().getDataFolder();
         switch (fileName) {
             case "config.yml":
-                configVersion = 10;
+                configVersion = 11;
                 break;
             case "groups.yml":
             case "entities.yml":
@@ -145,8 +138,8 @@ public class ConfigHandler {
                 break;
         }
         getConfigData(filePath, fileName);
-        File File = new File(filePath, fileName);
-        if (File.exists() && getConfig(fileName).getInt("Config-Version") != configVersion) {
+        File file = new File(filePath, fileName);
+        if (file.exists() && getConfig(fileName).getInt("Config-Version") != configVersion) {
             if (EntityPlus.getInstance().getResource(fileName) != null) {
                 LocalDateTime currentDate = LocalDateTime.now();
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm-ss");
@@ -154,7 +147,7 @@ public class ConfigHandler {
                 String newGen = fileNameSlit[0] + " " + currentTime + "." + fileNameSlit[0];
                 File newFile = new File(filePath, newGen);
                 if (!newFile.exists()) {
-                    File.renameTo(newFile);
+                    file.renameTo(newFile);
                     File configFile = new File(filePath, fileName);
                     configFile.delete();
                     getConfigData(filePath, fileName);
@@ -183,7 +176,6 @@ public class ConfigHandler {
         depends = depend;
     }
 
-
     private static void setConfigPath(ConfigPath configPath) {
         ConfigHandler.configPath = configPath;
     }
@@ -192,12 +184,8 @@ public class ConfigHandler {
         return configPath;
     }
 
-    public static boolean getDebugging() {
+    public static boolean isDebugging() {
         return ConfigHandler.getConfig("config.yml").getBoolean("Debugging");
-    }
-
-    public static boolean getLoggable() {
-        return ConfigHandler.getConfig("config.yml").getBoolean("Log-Commands");
     }
 
     public static UpdateHandler getUpdater() {
@@ -216,24 +204,11 @@ public class ConfigHandler {
         return logger;
     }
 
-    /**
-     * Converts a serialized location to a Location. Returns null if string is empty
-     *
-     * @param s - serialized location in format "world:x:y:z"
-     * @return Location
-     */
-    static public Location getLocationString(final String s) {
-        if (s == null || s.trim().equals("")) {
-            return null;
-        }
-        final String[] parts = s.split(":");
-        if (parts.length == 4) {
-            final World w = Bukkit.getServer().getWorld(parts[0]);
-            final int x = Integer.parseInt(parts[1]);
-            final int y = Integer.parseInt(parts[2]);
-            final int z = Integer.parseInt(parts[3]);
-            return new Location(w, x, y, z);
-        }
-        return null;
+    private static void setZip(Zip zip) {
+        ziper = zip;
+    }
+
+    public static Zip getZip() {
+        return ziper;
     }
 }

@@ -50,19 +50,19 @@ public class SpawnerSpawn implements Listener {
                     continue;
                 }
                 // Checking the spawn "location".
-                if (!ConfigPath.getLocationUtils().checkLocation(loc, spawnerMap.getLocMaps())) {
+                if (!ConfigHandler.getConfigPath().getLocationUtils().checkLocation(loc, spawnerMap.getLocMaps())) {
                     ServerHandler.sendFeatureMessage("Spawner", entityType, "Location", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the "blocks" nearby the spawn location.
-                if (!ConfigPath.getBlocksUtils().checkBlocks(loc, spawnerMap.getBlocksMaps())) {
+                if (!ConfigHandler.getConfigPath().getBlocksUtils().checkBlocks(loc, spawnerMap.getBlocksMaps())) {
                     ServerHandler.sendFeatureMessage("Spawner", entityType, "Blocks", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the spawn "Residence-Flag".
-                if (!ResidenceUtils.checkResFlag(loc, resFlag, "spawnerbypass")) {
+                if (!ResidenceUtils.checkResFlag(null, loc, resFlag, "spawnerbypass")) {
                     ServerHandler.sendFeatureMessage("Spawner", entityType, "Residence-Flag", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
@@ -132,7 +132,7 @@ public class SpawnerSpawn implements Listener {
                     }
                     continue;
                 }
-                CustomCommands.executeCommands(command);
+                CustomCommands.executeCommands(command, true);
             }
         }
     }

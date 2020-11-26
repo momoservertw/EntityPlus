@@ -55,6 +55,6 @@ permissions:
   entityplus.drop.lucky1:
     description: Change the reward for killing creatures.
     default: op
-  entityplus.drop.multiplier.lucky2:
+  entityplus.drop.lucky2:
     description: Change the reward for killing creatures.
     default: op

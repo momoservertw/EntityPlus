@@ -1,6 +1,6 @@
 # --{ =-=-=-=-=-=-=-=-=-= EntityPlus's Configuration Settings, by Momocraft =-=-=-=-=-=-=-=-=-= }--
 # Wiki: https://github.com/momoservertw/EntityPlus/wiki
-Config-Version: 10
+Config-Version: 11
 Check-Updates: true
 Debugging: false
 
@@ -12,6 +12,26 @@ General:
      # Control MythicMobs spawning and conditions.
      # The "CUSTOM" reason does not work for MythicMobs.
      MythicMobs: true
+  # The settings for custom commands.
+  # More information: https://github.com/momoservertw/LotteryPlus/wiki/Custom-Command
+  Custom-Commands:
+   Settings:
+     Log:
+       Default:
+         # Creating new file if the modified date is difference.
+         New-File: true
+         To-Zip: true
+       Custom:
+         New-File: false
+         To-Zip: true
+         Path: "plugin//CustomLogs"
+         Name: "latest"
+   # To send frequently used commands with placeholders.
+   Groups:
+     reward: "message: &6&lReward&c✤ &f%cmd_arg1%"
+     awards: "message: &d✧ &f%cmd_arg1% &d✧"
+     cgl: "broadcast: &6Congratulate &e%player% &6use &f%cmd_arg1% &8- &6Get the %cmd_arg2% &7<&f%cmd_arg3%&7>"
+     money: "console: money give %player% %cmd_arg1%"
   # Specifying the spawn locations.
   # More information: https://github.com/momoservertw/EntityPlus/wiki/Location
   Location:
