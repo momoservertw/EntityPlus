@@ -15,7 +15,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffectType;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.ServerHandler;
-import tw.momocraft.entityplus.utils.ConfigPath;
 import tw.momocraft.entityplus.utils.ResidenceUtils;
 import tw.momocraft.entityplus.utils.entities.DamageMap;
 import tw.momocraft.entityplus.utils.entities.EntityUtils;
@@ -86,7 +85,7 @@ public class EntityDamage implements Listener {
                     continue;
                 }
                 // Checking the spawn "Residence-Flag".
-                if (!ResidenceUtils.checkResFlag(null, loc, resFlag, "damagebypass")) {
+                if (!ResidenceUtils.checkFlag(null, loc, resFlag, "damagebypass")) {
                     ServerHandler.sendFeatureMessage("Damage", entityType, "Residence-Flag", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;

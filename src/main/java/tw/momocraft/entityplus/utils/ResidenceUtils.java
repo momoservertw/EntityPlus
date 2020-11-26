@@ -10,7 +10,7 @@ import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.PermissionsHandler;
 
 public class ResidenceUtils {
-    public static boolean checkResFlag(Player player, Location loc, boolean check, String flag) {
+    public static boolean checkFlag(Player player, Location loc, boolean check, String flag) {
         if (!ConfigHandler.getDepends().ResidenceEnabled()) {
             return false;
         }

@@ -87,7 +87,7 @@ public class ConfigPath {
     //         Setup all configuration.                //
     //  ============================================== //
     private void setUp() {
-        setupGeneral();
+        setGeneral();
         setLimitProp();
         setDrop();
         setDamage();
@@ -95,7 +95,7 @@ public class ConfigPath {
         setSpawner();
     }
 
-    private void setupGeneral() {
+    private void setGeneral() {
         logDefaultZip = ConfigHandler.getConfig("config.yml").getBoolean("General.Custom-Commands.Settings.Log.Default.To-Zip");
         logDefaultNew = ConfigHandler.getConfig("config.yml").getBoolean("General.Custom-Commands.Settings.Log.Default.New-File");
         logCustomNew = ConfigHandler.getConfig("config.yml").getBoolean("General.Custom-Commands.Settings.Log.Custom.New-File");

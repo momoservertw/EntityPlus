@@ -138,7 +138,7 @@ public class Language {
 
 
     private enum Lang {
-        DEFAULT("config.yml", 0), ENGLISH("config.yml", 1);
+        ENGLISH("config.yml", 1);
 
         Lang(final String nodeLocation, final int i) {
             this.nodeLocation = nodeLocation;

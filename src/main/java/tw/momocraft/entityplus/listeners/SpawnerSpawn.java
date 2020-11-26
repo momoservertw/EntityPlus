@@ -1,7 +1,6 @@
 package tw.momocraft.entityplus.listeners;
 
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -13,7 +12,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.SpawnerSpawnEvent;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.handlers.ServerHandler;
-import tw.momocraft.entityplus.utils.ConfigPath;
 import tw.momocraft.entityplus.utils.CustomCommands;
 import tw.momocraft.entityplus.utils.ResidenceUtils;
 import tw.momocraft.entityplus.utils.entities.SpawnerMap;
@@ -62,7 +60,7 @@ public class SpawnerSpawn implements Listener {
                     continue;
                 }
                 // Checking the spawn "Residence-Flag".
-                if (!ResidenceUtils.checkResFlag(null, loc, resFlag, "spawnerbypass")) {
+                if (!ResidenceUtils.checkFlag(null, loc, resFlag, "spawnerbypass")) {
                     ServerHandler.sendFeatureMessage("Spawner", entityType, "Residence-Flag", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
