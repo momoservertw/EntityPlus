@@ -11,13 +11,21 @@ public class DependAPI {
     private VaultAPI vault;
 
     public DependAPI() {
-        if (ConfigHandler.getConfig("config.yml").getBoolean("General.Settings.Features.MythicMobs")) {
+        if (ConfigHandler.getConfig("config.yml").getBoolean("General.Settings.Features.Hook.Vault")) {
+            this.setVault();
+        }
+        if (ConfigHandler.getConfig("config.yml").getBoolean("General.Settings.Features.Hook.PlaceHolderAPI")) {
+            this.setPlaceHolderStatus(Bukkit.getServer().getPluginManager().getPlugin("PlaceHolderAPI") != null);
+        }
+        if (ConfigHandler.getConfig("config.yml").getBoolean("General.Settings.Features.Hook.Residence")) {
+            this.setResidenceStatus(Bukkit.getServer().getPluginManager().getPlugin("Residence") != null);
+        }
+        if (ConfigHandler.getConfig("config.yml").getBoolean("General.Settings.Features.Hook.MythicMobs")) {
             this.setMythicMobsStatus(Bukkit.getServer().getPluginManager().getPlugin("MythicMobs") != null);
         }
-        this.setCMIStatus(Bukkit.getServer().getPluginManager().getPlugin("CMI") != null);
-        this.setResidenceStatus(Bukkit.getServer().getPluginManager().getPlugin("Residence") != null);
-        this.setPlaceHolderStatus(Bukkit.getServer().getPluginManager().getPlugin("PlaceHolderAPI") != null);
-        this.setVault();
+        if (ConfigHandler.getConfig("config.yml").getBoolean("General.Settings.Features.Hook.CMI")) {
+            this.setCMIStatus(Bukkit.getServer().getPluginManager().getPlugin("CMI") != null);
+        }
     }
 
     public boolean MythicMobsEnabled() {

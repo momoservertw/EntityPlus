@@ -9,29 +9,33 @@ General:
     # The searching players range from a location.
     Nearby-Players-Range: 32
     Features:
-     # Control MythicMobs spawning and conditions.
-     # The "CUSTOM" reason does not work for MythicMobs.
-     MythicMobs: true
+      # Changed these options need to restart the server.
+      Hook:
+        Vault: true
+        PlaceHolderAPI: true
+        MythicMobs: true
+        CMI: true
+        Residence: true
   # The settings for custom commands.
   # More information: https://github.com/momoservertw/LotteryPlus/wiki/Custom-Command
   Custom-Commands:
-   Settings:
-     Log:
-       Default:
-         # Creating new file if the modified date is difference.
-         New-File: true
-         To-Zip: true
-       Custom:
-         New-File: false
-         To-Zip: true
-         Path: "plugin//CustomLogs"
-         Name: "latest"
+    Settings:
+      Log:
+        Default:
+          # Creating new file if the modified date is difference.
+          New-File: true
+          To-Zip: true
+        Custom:
+          New-File: false
+          To-Zip: true
+          Path: "plugin//CustomLogs"
+          Name: "latest"
    # To send frequently used commands with placeholders.
-   Groups:
-     reward: "message: &6&lReward&c✤ &f%cmd_arg1%"
-     awards: "message: &d✧ &f%cmd_arg1% &d✧"
-     cgl: "broadcast: &6Congratulate &e%player% &6use &f%cmd_arg1% &8- &6Get the %cmd_arg2% &7<&f%cmd_arg3%&7>"
-     money: "console: money give %player% %cmd_arg1%"
+  Groups:
+    reward: "message: &6&lReward&c✤ &f%cmd_arg1%"
+    awards: "message: &d✧ &f%cmd_arg1% &d✧"
+    cgl: "broadcast: &6Congratulate &e%player% &6use &f%cmd_arg1% &8- &6Get the %cmd_arg2% &7<&f%cmd_arg3%&7>"
+    money: "console: money give %player% %cmd_arg1%"
   # Specifying the spawn locations.
   # More information: https://github.com/momoservertw/EntityPlus/wiki/Location
   Location:
@@ -83,10 +87,10 @@ Entities:
       Enable: false
       Settings:
         Features:
-          AFK: true
+          AFK: false
       Groups:
         NormalMobs:
-          Enable: false
+          Enable: true
           Chance: 0
           Amount: 10
           AFK:
@@ -98,7 +102,7 @@ Entities:
             Z: 8
             Y: 5
         BreedableMobs:
-          Enable: false
+          Enable: true
           Chance: 0
           Amount: 20
           Search:
@@ -106,7 +110,7 @@ Entities:
             Z: 16
             Y: 10
         WaterMobs:
-          Enable: false
+          Enable: true
           Chance: 0
           Amount: 10
           Search:
@@ -134,7 +138,7 @@ Entities:
     # Permission: "entityplus.drop.GROUP"
     Groups:
       lucky1:
-        Enable: false
+        Enable: true
         Priority: 1
         Exp: 1.5
         Items: 1.5
@@ -144,7 +148,7 @@ Entities:
         Types:
           - NormalMobs
       lucky2:
-        Enable: false
+        Enable: true
         Priority: 2
         Exp: 2
         Items: 2
@@ -163,7 +167,7 @@ Entities:
           Residence-Flag: false
     Groups:
       Skip-Duration:
-        Enable: false
+        Enable: true
         Priority: 2
         Types:
           - NormalMobs
@@ -177,7 +181,7 @@ Entities:
           Player-Nearby-Range: 10
           Sunburn: true
       Fast-Kill:
-        Enable: false
+        Enable: true
         Priority: 2
         Types:
           - NormalMobs
@@ -189,7 +193,7 @@ Entities:
         Ignore:
           Player-Nearby-Range: 10
       Fast-Kill-WitherRose:
-        Enable: false
+        Enable: true
         Priority: 2
         Types:
           - NormalMobs
