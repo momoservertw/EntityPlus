@@ -35,7 +35,7 @@ public class MythicMobsLootDrop implements Listener {
             // Checking if the properties contains this type of entity.
             if (dropProp != null) {
                 // Checking the bypass "Residence-Flag".
-                if (!ResidenceUtils.checkFlag(null, e.getEntity().getLocation(),  ConfigHandler.getConfigPath().isDropResFlag(), "dropbypass")) {
+                if (!ResidenceUtils.checkFlag(null, e.getEntity().getLocation(), ConfigHandler.getConfigPath().isDropResFlag(), "dropbypass")) {
                     ServerHandler.sendFeatureMessage("Drop", entityType, "!Residence-Flag", "return",
                             new Throwable().getStackTrace()[0]);
                     return;
@@ -43,7 +43,8 @@ public class MythicMobsLootDrop implements Listener {
                 // Checking player reward permissions.
                 List<String> permsList = new ArrayList<>();
                 for (String key : dropProp.keySet()) {
-                    if (PermissionsHandler.hasPermission(player, "entityplus.drop." + key)) {
+                    if (PermissionsHandler.hasPermission(player, "entityplus.drop.*")
+                            || PermissionsHandler.hasPermission(player, "entityplus.drop." + key)) {
                         permsList.add(key);
                     }
                 }

@@ -11,7 +11,6 @@ public class SpawnerMap {
 
     private long priority;
     private boolean remove = false;
-    private LocationMap location = null;
     private List<String> allowList = null;
     private List<String> commands = null;
     private List<LocationMap> locMaps = new ArrayList<>();
@@ -24,10 +23,6 @@ public class SpawnerMap {
 
     public boolean isRemove() {
         return remove;
-    }
-
-    public LocationMap getLocation() {
-        return location;
     }
 
     public List<String> getAllowList() {

@@ -473,7 +473,7 @@ public class ConfigPath {
         }
     }
 
-    public static List<String> getTypeList(String file, String path, String listType) {
+    private List<String> getTypeList(String file, String path, String listType) {
         List<String> list = new ArrayList<>();
         List<String> customList;
         boolean mmEnabled = ConfigHandler.getDepends().MythicMobsEnabled();

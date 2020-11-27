@@ -12,7 +12,7 @@ public class ServerHandler {
     public static void sendConsoleMessage(String message) {
         String prefix = "&7[&dEntityPlus&7] ";
         message = prefix + message;
-        message = ChatColor.translateAlternateColorCodes('&', message).toString();
+        message = ChatColor.translateAlternateColorCodes('&', message);
         EntityPlus.getInstance().getServer().getConsoleSender().sendMessage(message);
     }
 

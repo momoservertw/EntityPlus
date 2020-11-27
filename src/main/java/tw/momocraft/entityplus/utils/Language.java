@@ -3,13 +3,10 @@ package tw.momocraft.entityplus.utils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
-import tw.momocraft.entityplus.handlers.ServerHandler;
 
 import java.util.Arrays;
 
 public class Language {
-    private static final Lang langType = Lang.ENGLISH;
-
     public static void dispatchMessage(CommandSender sender, String langMessage, boolean hasPrefix) {
         if (hasPrefix) {
             Player player = null;
@@ -17,7 +14,7 @@ public class Language {
                 player = (Player) sender;
             }
             langMessage = Utils.translateLayout(langMessage, player);
-            String prefix = Utils.translateLayout(ConfigHandler.getConfig(langType.nodeLocation()).getString("Message.prefix"), player);
+            String prefix = Utils.translateLayout(ConfigHandler.getConfig("config.yml").getString("Message.prefix"), player);
             if (prefix == null) {
                 prefix = "";
             } else {
@@ -49,24 +46,17 @@ public class Language {
         if (sender instanceof Player) {
             player = (Player) sender;
         }
-        String langMessage = ConfigHandler.getConfig(langType.nodeLocation()).getString(nodeLocation);
-        String prefix = Utils.translateLayout(ConfigHandler.getConfig(langType.nodeLocation()).getString("Message.prefix"), player);
+        String langMessage = ConfigHandler.getConfig("config.yml").getString(nodeLocation);
+        String prefix = Utils.translateLayout(ConfigHandler.getConfig("config.yml").getString("Message.prefix"), player);
         if (prefix == null) {
             prefix = "";
-        } else {
-            prefix += "";
         }
         if (langMessage != null && !langMessage.isEmpty()) {
             langMessage = translateLangHolders(langMessage, initializeRows(placeHolder));
             langMessage = Utils.translateLayout(langMessage, player);
             String[] langLines = langMessage.split(" /n ");
             for (String langLine : langLines) {
-                String langStrip = prefix + langLine;
-                if (isConsoleMessage(nodeLocation)) {
-                    ServerHandler.sendConsoleMessage(langLine);
-                } else {
-                    sender.sendMessage(langStrip);
-                }
+                sender.sendMessage(prefix + langLine);
             }
         }
     }
@@ -77,8 +67,8 @@ public class Language {
             if (sender instanceof Player) {
                 player = (Player) sender;
             }
-            String langMessage = ConfigHandler.getConfig(langType.nodeLocation()).getString(nodeLocation);
-            String prefix = Utils.translateLayout(ConfigHandler.getConfig(langType.nodeLocation()).getString("Message.prefix"), player);
+            String langMessage = ConfigHandler.getConfig("config.yml").getString(nodeLocation);
+            String prefix = Utils.translateLayout(ConfigHandler.getConfig("config.yml").getString("Message.prefix"), player);
             if (prefix == null) {
                 prefix = "";
             } else {
@@ -98,7 +88,7 @@ public class Language {
             if (sender instanceof Player) {
                 player = (Player) sender;
             }
-            String langMessage = ConfigHandler.getConfig(langType.nodeLocation()).getString(nodeLocation);
+            String langMessage = ConfigHandler.getConfig("config.yml").getString(nodeLocation);
             if (langMessage != null && !langMessage.isEmpty()) {
                 langMessage = translateLangHolders(langMessage, initializeRows(placeHolder));
                 langMessage = Utils.translateLayout(langMessage, player);
@@ -134,24 +124,5 @@ public class Language {
 
     public static String[] newString() {
         return new String[14];
-    }
-
-
-    private enum Lang {
-        ENGLISH("config.yml", 1);
-
-        Lang(final String nodeLocation, final int i) {
-            this.nodeLocation = nodeLocation;
-        }
-
-        private final String nodeLocation;
-
-        private String nodeLocation() {
-            return nodeLocation;
-        }
-    }
-
-    private static boolean isConsoleMessage(String nodeLocation) {
-        return false;
     }
 }

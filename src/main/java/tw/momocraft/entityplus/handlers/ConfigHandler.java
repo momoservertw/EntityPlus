@@ -125,7 +125,7 @@ public class ConfigHandler {
     }
 
     private static void genConfigFile(String fileName) {
-        String[] fileNameSlit = fileName.split("\\.(?=[^\\.]+$)");
+        String[] fileNameSlit = fileName.split("\\.(?=[^.]+$)");
         int configVersion = 0;
         File filePath = EntityPlus.getInstance().getDataFolder();
         switch (fileName) {
@@ -160,12 +160,20 @@ public class ConfigHandler {
 
     private static void sendUtilityDepends() {
         ServerHandler.sendConsoleMessage("&fHooked [ &e"
-                + (getDepends().getVault().vaultEnabled() ? "Vault, " : "")
+                + (getDepends().VaultEnabled() ? "Vault, " : "")
                 + (getDepends().MythicMobsEnabled() ? "MythicMobs, " : "")
                 + (getDepends().CMIEnabled() ? "CMI, " : "")
                 + (getDepends().ResidenceEnabled() ? "Residence, " : "")
                 + (getDepends().PlaceHolderAPIEnabled() ? "PlaceHolderAPI" : "")
                 + " &f]");
+
+        if (getDepends().ResidenceEnabled()) {
+            ServerHandler.sendConsoleMessage("&fAdd Residence flags [ &e"
+                    + (FlagPermissions.getPosibleAreaFlags().contains("spawnbypass") ? "spawnbypass, " : "")
+                    + (FlagPermissions.getPosibleAreaFlags().contains("spawnerbypass") ? "spawnerbypass, " : "")
+                    + (FlagPermissions.getPosibleAreaFlags().contains("damagebypass") ? "damagebypass, " : "")
+                    + " &f]");
+        }
     }
 
     public static DependAPI getDepends() {

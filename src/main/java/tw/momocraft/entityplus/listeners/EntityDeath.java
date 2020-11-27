@@ -48,7 +48,8 @@ public class EntityDeath implements Listener {
                 // Checking player reward permissions.
                 List<String> permsList = new ArrayList<>();
                 for (String key : dropProp.keySet()) {
-                    if (PermissionsHandler.hasPermission(player, "entityplus.drop." + key)) {
+                    if (PermissionsHandler.hasPermission(player, "entityplus.drop.*")
+                            || PermissionsHandler.hasPermission(player, "entityplus.drop." + key)) {
                         permsList.add(key);
                     }
                 }
