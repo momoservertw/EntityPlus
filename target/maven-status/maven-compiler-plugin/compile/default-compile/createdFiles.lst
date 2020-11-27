@@ -9,7 +9,6 @@ tw\momocraft\entityplus\utils\Language.class
 tw\momocraft\entityplus\utils\TabComplete.class
 tw\momocraft\entityplus\listeners\MythicMobsLootDrop.class
 tw\momocraft\entityplus\utils\entities\LimitMap.class
-tw\momocraft\entityplus\utils\Language$Lang.class
 tw\momocraft\entityplus\listeners\EntityDeath.class
 tw\momocraft\entityplus\handlers\PermissionsHandler.class
 tw\momocraft\entityplus\utils\CustomCommands.class
