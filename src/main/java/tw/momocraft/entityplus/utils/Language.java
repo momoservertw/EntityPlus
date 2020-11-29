@@ -15,11 +15,6 @@ public class Language {
             }
             langMessage = Utils.translateLayout(langMessage, player);
             String prefix = Utils.translateLayout(ConfigHandler.getConfig("config.yml").getString("Message.prefix"), player);
-            if (prefix == null) {
-                prefix = "";
-            } else {
-                prefix += "";
-            }
             langMessage = prefix + langMessage;
             sender.sendMessage(langMessage);
         } else {
