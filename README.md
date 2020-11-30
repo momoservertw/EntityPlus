@@ -9,33 +9,42 @@
 **Author:** [Momocraft](https://github.com/momoservertw)
 
 # Features​
-**1. Set entity spawn chance.**  
-It will cancel the spawn event and save CPU resource consumption which caused by entities activity. You can add any entity you want in config. For example, the Guardian tower spawn mobs really fast, and a large number of jumping Guardians will cause server lag.
+**1. Spawn - Controlling entities spawn conditions.**  
+It will cancel the spawn event and save CPU resource consumption which caused by entities activity. You can add any entity you want in config. For example, the Guardian tower spawn mobs really fast, and a large number of jumping Guardians will cause server lag.  
+Improve MythicMobs "RandomSpawn" and avoid the bug of spawn mobs without limit.  
+  
+**Conditions**  
+- Chance
+- Reasons
+- Biomes
+- Liquid
+- Day
+- Location - Specifying the spawn locations.
+- Blocks - Checking the nearby blocks.
+- Priority - Checking difference group for one entity.
+**2. Damage - Controling entities' damage or kill the dying creatures immediately to save resource.**  
+To omit the time of continuous damage and immediately give damage to kill creatures faster. Or directly kill the creatures that are waiting to die, such as the creatures on the Wither Rose.  
+  
+**Actions**  
+- Kill
+- Remove
+- Damage
+- Damage-Rate
+- Health
+- Skip-Duration
 
-**2. Set entity spawn condition.**  
-* Reason
-* Biome
-* Water or Air
-* World and Location
-* Day or Night
+**3. Drop - Change the reward(magnification) for killing creatures.**  
+To give more reward form some creatures. Also can give more rewards to VIP players by permissions.  
 
-**3. Set creature amount limit.**  
-You can easily control the number and spawn chance of monsters in a specific range. Avoid spawning too many creatures.
+**Rewards**  
+- Exp
+- Items
+- Money (Need: MythicMobs )
+- MythicMobs Items (Need: MythicMobs)  
+**4. Spawner - Change the illegal spawner and randomly select a new type for it, and then execute the custom command.**  
 
-**4. Reduce creature spawn amount when player is AFK.** (Need CMI) 
-Improve other players' gaming experience and increase server TPS.
-
-**5. Purge creatures near the player when the he enters AFK.** (Need CMI)  
-
-**6. Change illegal spawners and randomly choose a new types, then execute custom commands.** (Support PlaceHolderAPI, BungeeCord)
-
-**7. Support MythicMobs.**
-
-**8. Improve MythicMobs "RandomSpawn" and avoid the bug of spawn mobs without limit.**
-
-**9. Money & exp multiplier by permission for MythicMobs.**  
-You can set higher reward for VIP player. If player has multiple multipliers, he will get more rewards than just the highest multiplier. (Calculation method: addition or multiplication)
-
-
-**GNU Lesser General Public License v3.0**
-Permissions of this copyleft license are conditioned on making available complete source code of licensed works and modifications under the same license or the GNU GPLv3. Copyright and license notices must be preserved. Contributors provide an express grant of patent rights. However, a larger work using the licensed work through interfaces provided by the licensed work may be distributed under different terms and without source code for the larger work.
+**Actions**  
+- Change
+- Remove
+- Execute commands
+***
