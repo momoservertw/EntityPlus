@@ -1,4 +1,3 @@
-# EntityPlus
 ##  Minecraft server plugin
 ***Control creatures spawn and spawner. And add more features for MythicMobs and CMI.***
 
@@ -49,7 +48,7 @@ To give more reward form some creatures. Also can give more rewards to VIP playe
 - Execute commands
 ***
 # Related Websites
-**Spigot: https://www.spigotmc.org/resources/entityplus.70592/**
+**Spigot: https://www.spigotmc.org/resources/entityplus.70592/**  
 **MCBBS: https://www.mcbbs.net/thread-1139929-1-1.html**  
 **Source Code: https://github.com/momoservertw/EntityPlus**  
 **Donation Link: https://paypal.me/momocraft**  
