@@ -1,16 +1,17 @@
 package tw.momocraft.entityplus.utils;
 
+import com.bekvon.bukkit.residence.protection.FlagPermissions;
 import org.bukkit.Bukkit;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
+import tw.momocraft.entityplus.handlers.ServerHandler;
 
 public class DependAPI {
+    private VaultAPI vaultApi;
+    private boolean Vault = false;
     private boolean MythicMobs = false;
     private boolean CMI = false;
     private boolean Residence = false;
     private boolean PlaceHolderAPI = false;
-    private boolean Vault = false;
-    private VaultAPI vaultApi;
-
     public DependAPI() {
         if (ConfigHandler.getConfig("config.yml").getBoolean("General.Settings.Features.Hook.Vault")) {
             this.setVaultStatus(Bukkit.getServer().getPluginManager().getPlugin("Vault") != null);
@@ -29,6 +30,26 @@ public class DependAPI {
         }
         if (ConfigHandler.getConfig("config.yml").getBoolean("General.Settings.Features.Hook.CMI")) {
             this.setCMIStatus(Bukkit.getServer().getPluginManager().getPlugin("CMI") != null);
+        }
+
+        sendUtilityDepends();
+    }
+
+    private void sendUtilityDepends() {
+        ServerHandler.sendConsoleMessage("&fHooked [ &e"
+                + (VaultEnabled() ? "Vault, " : "")
+                + (MythicMobsEnabled() ? "MythicMobs, " : "")
+                + (CMIEnabled() ? "CMI, " : "")
+                + (ResidenceEnabled() ? "Residence, " : "")
+                + (PlaceHolderAPIEnabled() ? "PlaceHolderAPI" : "")
+                + " &f]");
+
+        if (ResidenceEnabled()) {
+            ServerHandler.sendConsoleMessage("&fAdd Residence flags [ &e"
+                    + (FlagPermissions.getPosibleAreaFlags().contains("spawnbypass") ? "spawnbypass, " : "")
+                    + (FlagPermissions.getPosibleAreaFlags().contains("spawnerbypass") ? "spawnerbypass, " : "")
+                    + (FlagPermissions.getPosibleAreaFlags().contains("damagebypass") ? "damagebypass, " : "")
+                    + " &f]");
         }
     }
 

@@ -2,6 +2,7 @@ package tw.momocraft.entityplus;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
+import tw.momocraft.entityplus.handlers.RegisterHandler;
 import tw.momocraft.entityplus.handlers.ServerHandler;
 
 public class EntityPlus extends JavaPlugin {
@@ -11,7 +12,7 @@ public class EntityPlus extends JavaPlugin {
     public void onEnable() {
         instance = this;
         ConfigHandler.generateData(false);
-        ConfigHandler.registerEvents();
+        RegisterHandler.registerEvents();
         ServerHandler.sendConsoleMessage("&fhas been Enabled.");
     }
 

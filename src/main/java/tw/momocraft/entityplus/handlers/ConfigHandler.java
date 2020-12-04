@@ -30,36 +30,12 @@ public class ConfigHandler {
         genConfigFile("groups.yml");
         genConfigFile("entities.yml");
         setDepends(new DependAPI());
-        sendUtilityDepends();
         setConfigPath(new ConfigPath());
         if (!reload) {
             setUpdater(new UpdateHandler());
         }
         setLogger(new Logger());
         setZip(new Zip());
-    }
-
-    public static void registerEvents() {
-        EntityPlus.getInstance().getCommand("entityplus").setExecutor(new Commands());
-        EntityPlus.getInstance().getCommand("entityplus").setTabCompleter(new TabComplete());
-
-        EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new CreatureSpawn(), EntityPlus.getInstance());
-        EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new SpawnerSpawn(), EntityPlus.getInstance());
-        EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new EntityDeath(), EntityPlus.getInstance());
-        EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new EntityDamage(), EntityPlus.getInstance());
-
-        if (ConfigHandler.getDepends().MythicMobsEnabled()) {
-            EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new MythicMobsSpawn(), EntityPlus.getInstance());
-            EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new MythicMobsLootDrop(), EntityPlus.getInstance());
-        }
-        if (ConfigHandler.getDepends().ResidenceEnabled()) {
-            if (ConfigHandler.getConfigPath().isSpawnResFlag()) {
-                FlagPermissions.addFlag("spawnbypass");
-            }
-            if (ConfigHandler.getConfigPath().isSpawnerResFlag()) {
-                FlagPermissions.addFlag("spawnerbypass");
-            }
-        }
     }
 
     public static FileConfiguration getConfig(String fileName) {
@@ -156,24 +132,6 @@ public class ConfigHandler {
             }
         }
         getConfig(fileName).options().copyDefaults(false);
-    }
-
-    private static void sendUtilityDepends() {
-        ServerHandler.sendConsoleMessage("&fHooked [ &e"
-                + (getDepends().VaultEnabled() ? "Vault, " : "")
-                + (getDepends().MythicMobsEnabled() ? "MythicMobs, " : "")
-                + (getDepends().CMIEnabled() ? "CMI, " : "")
-                + (getDepends().ResidenceEnabled() ? "Residence, " : "")
-                + (getDepends().PlaceHolderAPIEnabled() ? "PlaceHolderAPI" : "")
-                + " &f]");
-
-        if (getDepends().ResidenceEnabled()) {
-            ServerHandler.sendConsoleMessage("&fAdd Residence flags [ &e"
-                    + (FlagPermissions.getPosibleAreaFlags().contains("spawnbypass") ? "spawnbypass, " : "")
-                    + (FlagPermissions.getPosibleAreaFlags().contains("spawnerbypass") ? "spawnerbypass, " : "")
-                    + (FlagPermissions.getPosibleAreaFlags().contains("damagebypass") ? "damagebypass, " : "")
-                    + " &f]");
-        }
     }
 
     public static DependAPI getDepends() {

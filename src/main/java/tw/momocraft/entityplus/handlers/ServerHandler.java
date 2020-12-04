@@ -76,6 +76,8 @@ public class ServerHandler {
             case "remove":
             case "kill":
             case "damage":
+            case "fail":
+            case "warning":
                 ServerHandler.sendDebugMessage("&f" + feature + "&8 - &f" + target + "&8 : &f" + check + "&8, &c" + action + "&8, &7" + detail
                         + " &8(" + ste.getClassName() + " " + ste.getMethodName() + " " + ste.getLineNumber() + ")", true);
                 break;
@@ -102,6 +104,7 @@ public class ServerHandler {
             case "remove":
             case "kill":
             case "damage":
+            case "warning":
                 ServerHandler.sendDebugMessage("&f" + feature + "&8 - &f" + target + "&8 : &f" + check + "&8, &c" + action
                         + " &8(" + ste.getClassName() + " " + ste.getMethodName() + " " + ste.getLineNumber() + ")", true);
                 break;
