@@ -29,17 +29,22 @@ public class DependAPI {
         String hookMsg = "&fHooked [ &e"
                 + (MythicMobsEnabled() ? "MythicMobs, " : "")
                 + (CMIEnabled() ? "CMI, " : "")
-                + (ResidenceEnabled() ? "Residence, " : "")
-        ;
-        CorePlusAPI.getLangManager().sendConsoleMsg(tw.momocraft.coreplus.handlers.ConfigHandler.getPrefix(), hookMsg.substring(0, hookMsg.lastIndexOf(", ")) + " &f]");
+                + (ResidenceEnabled() ? "Residence, " : "");
+        try {
+            CorePlusAPI.getLangManager().sendConsoleMsg(ConfigHandler.getPrefix(), hookMsg.substring(0, hookMsg.lastIndexOf(", ")) + " &f]");
+        } catch (Exception ignored) {
+        }
 
         if (ResidenceEnabled()) {
             hookMsg = "&fAdd Residence flags [ &e"
                     + (FlagPermissions.getPosibleAreaFlags().contains("spawnbypass") ? "spawnbypass, " : "")
                     + (FlagPermissions.getPosibleAreaFlags().contains("spawnerbypass") ? "spawnerbypass, " : "")
                     + (FlagPermissions.getPosibleAreaFlags().contains("damagebypass") ? "damagebypass, " : "")
-                    ;
-            CorePlusAPI.getLangManager().sendConsoleMsg(tw.momocraft.coreplus.handlers.ConfigHandler.getPrefix(), hookMsg.substring(0, hookMsg.lastIndexOf(", ")) + " &f]");
+            ;
+            try {
+                CorePlusAPI.getLangManager().sendConsoleMsg(ConfigHandler.getPrefix(), hookMsg.substring(0, hookMsg.lastIndexOf(", ")) + " &f]");
+            } catch (Exception ignored) {
+            }
         }
     }
 
