@@ -10,10 +10,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.SpawnerSpawnEvent;
+import tw.momocraft.coreplus.api.CorePlusAPI;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
-import tw.momocraft.entityplus.handlers.ServerHandler;
-import tw.momocraft.entityplus.utils.CustomCommands;
-import tw.momocraft.entityplus.utils.ResidenceUtils;
 import tw.momocraft.entityplus.utils.entities.SpawnerMap;
 
 import java.util.*;
@@ -30,7 +28,7 @@ public class SpawnerSpawn implements Listener {
         try {
             entityType = spawner.getSpawnedType().name();
         } catch (Exception ex) {
-            ServerHandler.sendFeatureMessage("Spawner", "UNKNOWN", "Location", "return",
+            CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPrefix(),"Spawner", "UNKNOWN", "Location", "return",
                     new Throwable().getStackTrace()[0]);
             return;
         }
@@ -48,20 +46,20 @@ public class SpawnerSpawn implements Listener {
                     continue;
                 }
                 // Checking the spawn "location".
-                if (!ConfigHandler.getConfigPath().getLocationUtils().checkLocation(loc, spawnerMap.getLocMaps())) {
-                    ServerHandler.sendFeatureMessage("Spawner", entityType, "Location", "continue", groupName,
+                if (!CorePlusAPI.getLocationManager().checkLocation(loc, spawnerMap.getLocMaps())) {
+                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPrefix(),"Spawner", entityType, "Location", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the "blocks" nearby the spawn location.
-                if (!ConfigHandler.getConfigPath().getBlocksUtils().checkBlocks(loc, spawnerMap.getBlocksMaps())) {
-                    ServerHandler.sendFeatureMessage("Spawner", entityType, "Blocks", "continue", groupName,
+                if (!CorePlusAPI.getBlocksManager().checkBlocks(loc, spawnerMap.getBlocksMaps())) {
+                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPrefix(),"Spawner", entityType, "Blocks", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the spawn "Residence-Flag".
-                if (!ResidenceUtils.checkFlag(null, loc, resFlag, "spawnerbypass")) {
-                    ServerHandler.sendFeatureMessage("Spawner", entityType, "Residence-Flag", "continue", groupName,
+                if (!CorePlusAPI.getResidenceManager().checkFlag(null, loc, resFlag, "spawnerbypass")) {
+                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPrefix(),"Spawner", entityType, "Residence-Flag", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
@@ -70,7 +68,7 @@ public class SpawnerSpawn implements Listener {
                     e.setCancelled(true);
                     spawner.getBlock().setType(Material.AIR);
                     executeSpawnerCmds(e, "AIR", spawnerMap.getCommands());
-                    ServerHandler.sendFeatureMessage("Spawner", entityType, "Remove", "remove",
+                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPrefix(),"Spawner", entityType, "Remove", "remove",
                             new Throwable().getStackTrace()[0]);
                     return;
                 }
@@ -90,7 +88,7 @@ public class SpawnerSpawn implements Listener {
                             spawner.setSpawnedType(EntityType.valueOf(changeType));
                             spawner.update();
                             executeSpawnerCmds(e, changeType, spawnerMap.getCommands());
-                            ServerHandler.sendFeatureMessage("Spawner", entityType, changeType, "change",
+                            CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPrefix(),"Spawner", entityType, changeType, "change",
                                     new Throwable().getStackTrace()[0]);
                             e.setCancelled(true);
                             return;
@@ -98,7 +96,7 @@ public class SpawnerSpawn implements Listener {
                         randTotalChange -= chance;
                     }
                 }
-                ServerHandler.sendFeatureMessage("Spawner", entityType, "Final", "return",
+                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPrefix(),"Spawner", entityType, "Final", "return",
                         new Throwable().getStackTrace()[0]);
             }
         }
@@ -126,11 +124,11 @@ public class SpawnerSpawn implements Listener {
                 if (command.startsWith("all-")) {
                     command = command.replace("all-", "");
                     for (Player player : nearbyPlayers) {
-                        CustomCommands.executeMultipleCmds(player, command, true);
+                        CorePlusAPI.getCommandManager().executeMultipleCmds(ConfigHandler.getPrefix(), player, command, true);
                     }
                     continue;
                 }
-                CustomCommands.executeCommands(command, true);
+                CorePlusAPI.getCommandManager().executeMultipleCmds(ConfigHandler.getPrefix(), null, command, true);
             }
         }
     }

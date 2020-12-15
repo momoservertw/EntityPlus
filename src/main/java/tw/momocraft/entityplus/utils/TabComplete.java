@@ -4,7 +4,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.util.StringUtil;
-import tw.momocraft.entityplus.handlers.PermissionsHandler;
+import tw.momocraft.coreplus.api.CorePlusAPI;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,13 +40,13 @@ public class TabComplete implements TabCompleter {
 
         switch (args.length) {
             case 1:
-                if (PermissionsHandler.hasPermission(sender, "entityplus.use")) {
+                if (CorePlusAPI.getPermManager().hasPermission(sender, "entityplus.use")) {
                     commands.add("help");
                 }
-                if (PermissionsHandler.hasPermission(sender, "entityplus.command.reload")) {
+                if (CorePlusAPI.getPermManager().hasPermission(sender, "entityplus.command.reload")) {
                     commands.add("reload");
                 }
-                if (PermissionsHandler.hasPermission(sender, "entityplus.command.version")) {
+                if (CorePlusAPI.getPermManager().hasPermission(sender, "entityplus.command.version")) {
                     commands.add("version");
                 }
                 break;

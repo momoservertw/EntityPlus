@@ -36,6 +36,31 @@ General:
       awards: "message: &d✧ &f%cmd_arg1% &d✧"
       cgl: "broadcast: &6Congratulate &e%player% &6use &f%cmd_arg1% &8- &6Get the %cmd_arg2% &7<&f%cmd_arg3%&7>"
       money: "console: money give %player% %cmd_arg1%"
+  # The settings for custom sounds.
+  # More information: https://github.com/momoservertw/HotkeyPlus/wiki/Custom-Sounds
+  Sounds:
+    Succeed:
+      Type: ENTITY_PLAYER_LEVELUP
+    Failed:
+      Type: ENTITY_SHULKER_HURT
+    SlimeJump:
+      Type: ENTITY_SLIME_JUMP
+      Loop:
+        Times: 8
+        Interval: 20
+  # The settings for custom particles.
+  # More information: https://github.com/momoservertw/HotkeyPlus/wiki/Custom-Particles
+  Particles:
+    Slime:
+      Type: SLIME
+      Amount: 3
+      Times: 8
+      Interval: 20
+    Flame:
+      Type: FLAME
+      Amount: 3
+      Times: 8
+      Interval: 20
   # Specifying the spawn locations.
   # More information: https://github.com/momoservertw/EntityPlus/wiki/Location
   Location:

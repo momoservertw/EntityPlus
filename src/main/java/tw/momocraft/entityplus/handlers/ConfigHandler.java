@@ -1,12 +1,10 @@
 package tw.momocraft.entityplus.handlers;
 
-import com.bekvon.bukkit.residence.protection.FlagPermissions;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import tw.momocraft.entityplus.Commands;
+import tw.momocraft.coreplus.api.CorePlusAPI;
 import tw.momocraft.entityplus.EntityPlus;
-import tw.momocraft.entityplus.listeners.*;
 import tw.momocraft.entityplus.utils.*;
 
 import java.io.File;
@@ -21,9 +19,6 @@ public class ConfigHandler {
     private static YamlConfiguration entitiesYAML;
     private static DependAPI depends;
     private static ConfigPath configPath;
-    private static UpdateHandler updater;
-    private static Logger logger;
-    private static Zip ziper;
 
     public static void generateData(boolean reload) {
         genConfigFile("config.yml");
@@ -32,10 +27,8 @@ public class ConfigHandler {
         setDepends(new DependAPI());
         setConfigPath(new ConfigPath());
         if (!reload) {
-            setUpdater(new UpdateHandler());
+            CorePlusAPI.getUpdateManager().check(getPrefix(), Bukkit.getConsoleSender(), EntityPlus.getInstance().getDescription().getName(), EntityPlus.getInstance().getDescription().getVersion());
         }
-        setLogger(new Logger());
-        setZip(new Zip());
     }
 
     public static FileConfiguration getConfig(String fileName) {
@@ -67,7 +60,7 @@ public class ConfigHandler {
             try {
                 EntityPlus.getInstance().saveResource(fileName, false);
             } catch (Exception e) {
-                ServerHandler.sendErrorMessage("&cCannot save " + fileName + " to disk!");
+                CorePlusAPI.getLangManager().sendErrorMsg(getPrefix(), "&cCannot save " + fileName + " to disk!");
                 return;
             }
         }
@@ -106,7 +99,7 @@ public class ConfigHandler {
         File filePath = EntityPlus.getInstance().getDataFolder();
         switch (fileName) {
             case "config.yml":
-                configVersion = 11;
+                configVersion = 12;
                 break;
             case "groups.yml":
             case "entities.yml":
@@ -127,7 +120,7 @@ public class ConfigHandler {
                     File configFile = new File(filePath, fileName);
                     configFile.delete();
                     getConfigData(filePath, fileName);
-                    ServerHandler.sendConsoleMessage("&4The file \"" + fileName + "\" is out of date, generating a new one!");
+                    CorePlusAPI.getLangManager().sendConsoleMsg(getPrefix(), "&4The file \"" + fileName + "\" is out of date, generating a new one!");
                 }
             }
         }
@@ -150,31 +143,12 @@ public class ConfigHandler {
         return configPath;
     }
 
+
+    public static String getPrefix() {
+        return getConfig("config.yml").getString("Message.prefix");
+    }
+
     public static boolean isDebugging() {
-        return ConfigHandler.getConfig("config.yml").getBoolean("Debugging");
-    }
-
-    public static UpdateHandler getUpdater() {
-        return updater;
-    }
-
-    private static void setUpdater(UpdateHandler update) {
-        updater = update;
-    }
-
-    private static void setLogger(Logger log) {
-        logger = log;
-    }
-
-    public static Logger getLogger() {
-        return logger;
-    }
-
-    private static void setZip(Zip zip) {
-        ziper = zip;
-    }
-
-    public static Zip getZip() {
-        return ziper;
+        return getConfig("config.yml").getBoolean("Debugging");
     }
 }

@@ -6,7 +6,7 @@
 
     <groupId>momocraft.tw</groupId>
     <artifactId>EntityPlus</artifactId>
-    <version>1.2.4</version>
+    <version>1.2.5</version>
     <build>
         <plugins>
             <plugin>
@@ -37,16 +37,6 @@
             <name>Lumine Releases</name>
             <url>https://mvn.lumine.io/repository/maven-public/</url>
         </repository>
-        <!--PlaceholderAPI Repo-->
-        <repository>
-            <id>placeholderapi</id>
-            <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
-        </repository>
-        <!--VaultAPI Repo-->
-            <repository>
-                <id>jitpack.io</id>
-                <url>https://jitpack.io</url>
-            </repository>
     </repositories>
     <dependencies>
         <!--Google API-->
@@ -69,12 +59,13 @@
             <version>LATEST</version>
             <scope>provided</scope>
         </dependency>
-        <!--Vault API-->
+        <!--CorePlus API-->
         <dependency>
-            <groupId>com.github.MilkBowl</groupId>
-            <artifactId>VaultAPI</artifactId>
-            <version>1.7</version>
-            <scope>provided</scope>
+            <groupId>momocraft.tw</groupId>
+            <artifactId>CorePlus</artifactId>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/src/main/java/tw/momocraft/entityplus/extra/CorePlus-1.0.0.jar</systemPath>
+            <version>LEGACY</version>
         </dependency>
         <!--MythicMobs API-->
         <dependency>
@@ -98,13 +89,6 @@
             <scope>system</scope>
             <systemPath>${pom.basedir}/src/main/java/tw/momocraft/entityplus/extra/Residence4.9.2.1.jar</systemPath>
             <version>LEGACY</version>
-        </dependency>
-        <!--PlaceholderAPI API-->
-        <dependency>
-            <groupId>me.clip</groupId>
-            <artifactId>placeholderapi</artifactId>
-            <version>LATEST</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 

@@ -3,9 +3,8 @@ package tw.momocraft.entityplus;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import tw.momocraft.coreplus.api.CorePlusAPI;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
-import tw.momocraft.entityplus.handlers.PermissionsHandler;
-import tw.momocraft.entityplus.utils.Language;
 
 
 public class Commands implements CommandExecutor {
@@ -13,55 +12,57 @@ public class Commands implements CommandExecutor {
     public boolean onCommand(final CommandSender sender, Command c, String l, String[] args) {
         switch (args.length) {
             case 0:
-                if (PermissionsHandler.hasPermission(sender, "entityplus.use")) {
-                    Language.dispatchMessage(sender, "");
-                    Language.sendLangMessage("Message.EntityPlus.Commands.title", sender, false);
-                    if (PermissionsHandler.hasPermission(sender, "entityplus.command.version")) {
-                        Language.dispatchMessage(sender, "&d&lEntityPlus &e&lv" + EntityPlus.getInstance().getDescription().getVersion() + "&8 - &fby Momocraft");
+                if (CorePlusAPI.getPermManager().hasPermission(sender, "entityplus.use")) {
+                    CorePlusAPI.getLangManager().sendMsg(ConfigHandler.getPrefix(), sender, "");
+                    CorePlusAPI.getLangManager().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getConfigPath().getMsgTitle(), sender);
+                    if (CorePlusAPI.getPermManager().hasPermission(sender, "entityplus.command.version")) {
+                        CorePlusAPI.getLangManager().sendMsg(ConfigHandler.getPrefix(), sender, "&f " + EntityPlus.getInstance().getDescription().getName()
+                                +" &ev" + EntityPlus.getInstance().getDescription().getVersion() + "  &8by Momocraft");
                     }
-                    Language.sendLangMessage("Message.EntityPlus.Commands.help", sender, false);
-                    Language.dispatchMessage(sender, "");
+                    CorePlusAPI.getLangManager().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getConfigPath().getMsgHelp(), sender);
+                    CorePlusAPI.getLangManager().sendMsg(ConfigHandler.getPrefix(), sender, "");
                 } else {
-                    Language.sendLangMessage("Message.noPermission", sender);
+                    CorePlusAPI.getLangManager().sendLangMsg(ConfigHandler.getPrefix(), "Message.noPermission", sender);
                 }
                 return true;
             case 1:
                 if (args[0].equalsIgnoreCase("help")) {
-                    if (PermissionsHandler.hasPermission(sender, "entityplus.use")) {
-                        Language.dispatchMessage(sender, "");
-                        Language.sendLangMessage("Message.EntityPlus.Commands.title", sender, false);
-                        if (PermissionsHandler.hasPermission(sender, "entityplus.command.version")) {
-                            Language.dispatchMessage(sender, "&d&lEntityPlus &e&lv" + EntityPlus.getInstance().getDescription().getVersion() + "&8 - &fby Momocraft");
+                    if (CorePlusAPI.getPermManager().hasPermission(sender, "entityplus.use")) {
+                        CorePlusAPI.getLangManager().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getConfigPath().getMsgTitle(), sender);
+                        if (CorePlusAPI.getPermManager().hasPermission(sender, "entityplus.command.version")) {
+                            CorePlusAPI.getLangManager().sendMsg(ConfigHandler.getPrefix(), sender, "&f " + EntityPlus.getInstance().getDescription().getName()
+                                    +" &ev" + EntityPlus.getInstance().getDescription().getVersion() + "  &8by Momocraft");
                         }
-                        Language.sendLangMessage("Message.EntityPlus.Commands.help", sender, false);
-                        if (PermissionsHandler.hasPermission(sender, "entityplus.command.reload")) {
-                            Language.sendLangMessage("Message.EntityPlus.Commands.reload", sender, false);
+                        CorePlusAPI.getLangManager().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getConfigPath().getMsgHelp(), sender);
+                        if (CorePlusAPI.getPermManager().hasPermission(sender, "entityplus.command.reload")) {
+                            CorePlusAPI.getLangManager().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getConfigPath().getMsgReload(), sender);
+
                         }
-                        Language.dispatchMessage(sender, "");
+                        CorePlusAPI.getLangManager().sendMsg(ConfigHandler.getPrefix(), sender, "");
                     } else {
-                        Language.sendLangMessage("Message.noPermission", sender);
+                        CorePlusAPI.getLangManager().sendLangMsg(ConfigHandler.getPrefix(), "Message.noPermission", sender);
                     }
                     return true;
                 } else if (args[0].equalsIgnoreCase("reload")) {
-                    if (PermissionsHandler.hasPermission(sender, "entityplus.command.reload")) {
-                        // working: close purge.Auto-Clean schedule
+                    if (CorePlusAPI.getPermManager().hasPermission(sender, "entityplus.command.reload")) {
                         ConfigHandler.generateData(true);
-                        Language.sendLangMessage("Message.configReload", sender);
+                        CorePlusAPI.getLangManager().sendLangMsg(ConfigHandler.getPrefix(), "Message.configReload", sender);
                     } else {
-                        Language.sendLangMessage("Message.noPermission", sender);
+                        CorePlusAPI.getLangManager().sendLangMsg(ConfigHandler.getPrefix(), "Message.noPermission", sender);
                     }
                     return true;
                 } else if (args[0].equalsIgnoreCase("version")) {
-                    if (PermissionsHandler.hasPermission(sender, "entityplus.command.version")) {
-                        Language.dispatchMessage(sender, "&d&lEntityPlus &e&lv" + EntityPlus.getInstance().getDescription().getVersion() + "&8 - &fby Momocraft");
-                        ConfigHandler.getUpdater().checkUpdates(sender);
+                    if (CorePlusAPI.getPermManager().hasPermission(sender, "entityplus.command.version")) {
+                        CorePlusAPI.getLangManager().sendMsg(ConfigHandler.getPrefix(), sender, "&f " + EntityPlus.getInstance().getDescription().getName()
+                                +" &ev" + EntityPlus.getInstance().getDescription().getVersion() + "  &8by Momocraft");
+                        CorePlusAPI.getUpdateManager().check(ConfigHandler.getPrefix(), sender, EntityPlus.getInstance().getName(), EntityPlus.getInstance().getDescription().getVersion());
                     } else {
-                        Language.sendLangMessage("Message.noPermission", sender);
+                        CorePlusAPI.getLangManager().sendLangMsg(ConfigHandler.getPrefix(), "Message.noPermission", sender);
                     }
                     return true;
                 }
             default:
-                Language.sendLangMessage("Message.unknownCommand", sender);
+                CorePlusAPI.getLangManager().sendLangMsg(ConfigHandler.getPrefix(), "Message.unknownCommand", sender);
                 return true;
         }
     }

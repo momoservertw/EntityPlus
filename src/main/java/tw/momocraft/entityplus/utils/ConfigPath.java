@@ -3,17 +3,19 @@ package tw.momocraft.entityplus.utils;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
+import tw.momocraft.coreplus.api.CorePlusAPI;
+import tw.momocraft.coreplus.utils.blocksutils.BlocksMap;
+import tw.momocraft.coreplus.utils.blocksutils.BlocksUtils;
+import tw.momocraft.coreplus.utils.customcommands.ParticleMap;
+import tw.momocraft.coreplus.utils.customcommands.SoundMap;
+import tw.momocraft.coreplus.utils.locationutils.LocationMap;
+import tw.momocraft.coreplus.utils.locationutils.LocationUtils;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
-import tw.momocraft.entityplus.handlers.ServerHandler;
-import tw.momocraft.entityplus.utils.blocksutils.BlocksMap;
-import tw.momocraft.entityplus.utils.blocksutils.BlocksUtils;
 import tw.momocraft.entityplus.utils.entities.DamageMap;
 import tw.momocraft.entityplus.utils.entities.DropMap;
 import tw.momocraft.entityplus.utils.entities.EntityMap;
 import tw.momocraft.entityplus.utils.entities.LimitMap;
 import tw.momocraft.entityplus.utils.entities.SpawnerMap;
-import tw.momocraft.entityplus.utils.locationutils.LocationMap;
-import tw.momocraft.entityplus.utils.locationutils.LocationUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,23 +30,21 @@ public class ConfigPath {
     }
 
     //  ============================================== //
-    //         General Settings                        //
+    //         Message Variables                       //
     //  ============================================== //
-    private Map<String, String> customCmdProp;
-    private boolean logDefaultNew;
-    private boolean logDefaultZip;
-    private boolean logCustomNew;
-    private boolean logCustomZip;
-    private String logCustomPath;
-    private String logCustomName;
+    private String msgTitle;
+    private String msgHelp;
+    private String msgReload;
+    private String msgVersion;
 
-    private LocationUtils locationUtils;
-    private BlocksUtils blocksUtils;
+    //  ============================================== //
+    //         General Variables                       //
+    //  ============================================== //
     private int mobSpawnRange;
     private int nearbyPlayerRange;
 
     //  ============================================== //
-    //         Spawn Settings                          //
+    //         Spawn Variables                         //
     //  ============================================== //
     private boolean spawn;
     private boolean spawnResFlag;
@@ -55,7 +55,7 @@ public class ConfigPath {
     private Map<String, LimitMap> limitProp = new HashMap<>();
 
     //  ============================================== //
-    //         Drop Settings                           //
+    //         Drop Variables                          //
     //  ============================================== //
     private boolean drop;
     private boolean dropResFlag;
@@ -68,7 +68,7 @@ public class ConfigPath {
     private Map<String, Map<String, DropMap>> dropProp = new HashMap<>();
 
     //  ============================================== //
-    //         Damage Settings                         //
+    //         Damage Variables                        //
     //  ============================================== //
     private boolean damage;
     private boolean damageResFlag;
@@ -76,7 +76,7 @@ public class ConfigPath {
     private final Map<String, Map<String, DamageMap>> damageProp = new HashMap<>();
 
     //  ============================================== //
-    //         Spawner Settings                        //
+    //         Spawner Variables                       //
     //  ============================================== //
     private boolean spawner;
     private boolean spawnerResFlag;
@@ -84,7 +84,7 @@ public class ConfigPath {
     private final Map<String, Map<String, SpawnerMap>> spawnerProp = new HashMap<>();
 
     //  ============================================== //
-    //         Setup all configuration.                //
+    //         Setup all configuration                 //
     //  ============================================== //
     private void setUp() {
         setGeneral();
@@ -95,39 +95,27 @@ public class ConfigPath {
         setSpawner();
     }
 
-    private void setGeneral() {
-        logDefaultZip = ConfigHandler.getConfig("config.yml").getBoolean("General.Custom-Commands.Settings.Log.Default.To-Zip");
-        logDefaultNew = ConfigHandler.getConfig("config.yml").getBoolean("General.Custom-Commands.Settings.Log.Default.New-File");
-        logCustomNew = ConfigHandler.getConfig("config.yml").getBoolean("General.Custom-Commands.Settings.Log.Custom.New-File");
-        logCustomZip = ConfigHandler.getConfig("config.yml").getBoolean("General.Custom-Commands.Settings.Log.Custom.To-Zip");
-        logCustomPath = ConfigHandler.getConfig("config.yml").getString("General.Custom-Commands.Settings.Log.Custom.Path");
-        logCustomName = ConfigHandler.getConfig("config.yml").getString("General.Custom-Commands.Settings.Log.Custom.Name");
-        ConfigurationSection cmdConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("General.Custom-Commands.Groups");
-        if (cmdConfig != null) {
-            customCmdProp = new HashMap<>();
-            for (String group : cmdConfig.getKeys(false)) {
-                customCmdProp.put(group, ConfigHandler.getConfig("config.yml").getString("General.Custom-Commands.Groups." + group));
-            }
-        }
+    //  ============================================== //
+    //         Message Setter                          //
+    //  ============================================== //
+    private void setupMsg() {
+        msgTitle = ConfigHandler.getConfig("config.yml").getString("Message.Commands.title");
+        msgHelp = ConfigHandler.getConfig("config.yml").getString("Message.Commands.help");
+        msgReload = ConfigHandler.getConfig("config.yml").getString("Message.Commands.reload");
+        msgVersion = ConfigHandler.getConfig("config.yml").getString("Message.Commands.version");
+    }
 
-        locationUtils = new LocationUtils();
-        blocksUtils = new BlocksUtils();
+    //  ============================================== //
+    //         General Setter                          //
+    //  ============================================== //
+    private void setGeneral() {
         mobSpawnRange = ConfigHandler.getConfig("spigot.yml").getInt("world-settings.default.mob-spawn-range") * 16;
         nearbyPlayerRange = ConfigHandler.getConfig("config.yml").getInt("General.Nearby-Players-Range");
-
     }
 
-    public LocationUtils getLocationUtils() {
-        return locationUtils;
-    }
-
-    public BlocksUtils getBlocksUtils() {
-        return blocksUtils;
-    }
-
-    /**
-     * Setup the Spawn-Conditions.
-     */
+    //  ============================================== //
+    //         Spawn Setter                            //
+    //  ============================================== //
     private void setSpawn() {
         spawn = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Enable");
         if (!spawn) {
@@ -162,12 +150,12 @@ public class ConfigPath {
                     entityMap.setLiquid(ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Liquid"));
                     entityMap.setDay(ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Day"));
                     // Blocks settings.
-                    blocksMaps = blocksUtils.getSpeBlocksMaps("entities.yml", "Entities." + group + ".Blocks");
+                    blocksMaps = CorePlusAPI.getBlocksManager().getSpeBlocksMaps("entities.yml", "Entities." + group + ".Blocks");
                     if (!blocksMaps.isEmpty()) {
                         entityMap.setBlocksMaps(blocksMaps);
                     }
                     // Location settings
-                    locMaps = locationUtils.getSpeLocMaps("entities.yml", "Entities." + group + ".Location");
+                    locMaps = CorePlusAPI.getLocationManager().getSpeLocMaps("entities.yml", "Entities." + group + ".Location");
                     if (!locMaps.isEmpty()) {
                         entityMap.setLocMaps(locMaps);
                     }
@@ -177,8 +165,8 @@ public class ConfigPath {
                         if (limitProp.containsKey(limit)) {
                             entityMap.setLimitPair(limitProp.get(limit));
                         } else {
-                            ServerHandler.sendConsoleMessage("&cCan not find limit group in \"entities.yml ➜ Entities - " + group + "\".");
-                            ServerHandler.sendConsoleMessage("&cLimit: " + limit);
+                            CorePlusAPI.getLangManager().sendConsoleMsg(ConfigHandler.getPrefix(), "&cCan not find limit group in \"entities.yml ➜ Entities - " + group + "\".");
+                            CorePlusAPI.getLangManager().sendConsoleMsg(ConfigHandler.getPrefix(), "&cLimit: " + limit);
                         }
                     }
                     // Add properties to all entities.
@@ -203,9 +191,9 @@ public class ConfigPath {
                 for (String group : entityProp.get(entityType).keySet()) {
                     sortMap.put(group, entityProp.get(entityType).get(group).getPriority());
                 }
-                sortMap = Utils.sortByValue(sortMap);
+                sortMap = CorePlusAPI.getUtilsManager().sortByValue(sortMap);
                 for (String group : sortMap.keySet()) {
-                    ServerHandler.sendFeatureMessage("Spawn", entityType, "setup", "continue", group,
+                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPrefix(), "Spawn", entityType, "setup", "continue", group,
                             new Throwable().getStackTrace()[0]);
                     newEnMap.put(group, entityProp.get(entityType).get(group));
                 }
@@ -214,6 +202,9 @@ public class ConfigPath {
         }
     }
 
+    //  ============================================== //
+    //         Spawn limit Setter                      //
+    //  ============================================== //
     private void setLimitProp() {
         limit = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Limit.Enable");
         if (!limit) {
@@ -243,7 +234,7 @@ public class ConfigPath {
                     limitMap.setSearchX(ConfigHandler.getConfig("config.yml").getLong("Entities.Spawn.Limit.Groups." + group + ".Search.X"));
                     limitMap.setSearchY(ConfigHandler.getConfig("config.yml").getLong("Entities.Spawn.Limit.Groups." + group + ".Search.Y"));
                     limitMap.setSearchZ(ConfigHandler.getConfig("config.yml").getLong("Entities.Spawn.Limit.Groups." + group + ".Search.Z"));
-                    ServerHandler.sendFeatureMessage("Spawn-Limit", group, "setup", "continue",
+                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPrefix(), "Spawn-Limit", group, "setup", "continue",
                             new Throwable().getStackTrace()[0]);
                     limitProp.put(group, limitMap);
                 }
@@ -251,6 +242,9 @@ public class ConfigPath {
         }
     }
 
+    //  ============================================== //
+    //         Drop Setter                             //
+    //  ============================================== //
     private void setDrop() {
         dropProp = new HashMap<>();
         drop = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Enable");
@@ -298,9 +292,9 @@ public class ConfigPath {
                 for (String group : dropProp.get(entityType).keySet()) {
                     sortMap.put(group, dropProp.get(entityType).get(group).getPriority());
                 }
-                sortMap = Utils.sortByValue(sortMap);
+                sortMap = CorePlusAPI.getUtilsManager().sortByValue(sortMap);
                 for (String group : sortMap.keySet()) {
-                    ServerHandler.sendFeatureMessage("Drop", entityType, "setup", "continue", group,
+                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPrefix(), "Drop", entityType, "setup", "continue", group,
                             new Throwable().getStackTrace()[0]);
                     newEnMap.put(group, dropProp.get(entityType).get(group));
                 }
@@ -309,6 +303,9 @@ public class ConfigPath {
         }
     }
 
+    //  ============================================== //
+    //         Spawner Setter                          //
+    //  ============================================== //
     private void setSpawner() {
         spawner = ConfigHandler.getConfig("config.yml").getBoolean("Spawner.Enable");
         if (!spawner) {
@@ -341,7 +338,7 @@ public class ConfigPath {
                     } else {
                         changeList = ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Change-Types");
                         if (changeList.isEmpty() && !spawnerMap.isRemove()) {
-                            ServerHandler.sendConsoleMessage("&cThere is an error occurred. The spawner change type of \"" + group + "\" is empty.");
+                            CorePlusAPI.getLangManager().sendConsoleMsg(ConfigHandler.getPrefix(), "&cThere is an error occurred. The spawner change type of \"" + group + "\" is empty.");
                             continue;
                         }
                         for (String changeType : changeList) {
@@ -350,12 +347,12 @@ public class ConfigPath {
                     }
                     // To specify the Blocks.
                     spawnerMap.setChangeMap(changeMap);
-                    blocksMaps = blocksUtils.getSpeBlocksMaps("config.yml", "Spawner.Groups." + group + ".Blocks");
+                    blocksMaps = CorePlusAPI.getBlocksManager().getSpeBlocksMaps("config.yml", "Spawner.Groups." + group + ".Blocks");
                     if (!blocksMaps.isEmpty()) {
                         spawnerMap.setBlocksMaps(blocksMaps);
                     }
                     // To specify the Location.
-                    locMaps = locationUtils.getSpeLocMaps("config.yml", "Spawner.Groups." + group + ".Location");
+                    locMaps = CorePlusAPI.getLocationManager().getSpeLocMaps("config.yml", "Spawner.Groups." + group + ".Location");
                     if (!locMaps.isEmpty()) {
                         spawnerMap.setLocMaps(locMaps);
                     }
@@ -384,9 +381,9 @@ public class ConfigPath {
                 for (String group : spawnerProp.get(worldName).keySet()) {
                     sortMap.put(group, spawnerProp.get(worldName).get(group).getPriority());
                 }
-                sortMap = Utils.sortByValue(sortMap);
+                sortMap = CorePlusAPI.getUtilsManager().sortByValue(sortMap);
                 for (String group : sortMap.keySet()) {
-                    ServerHandler.sendFeatureMessage("Spawner", worldName, "setup", "continue", group,
+                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPrefix(), "Spawner", worldName, "setup", "continue", group,
                             new Throwable().getStackTrace()[0]);
                     newMap.put(group, spawnerProp.get(worldName).get(group));
                 }
@@ -395,6 +392,9 @@ public class ConfigPath {
         }
     }
 
+    //  ============================================== //
+    //         Damage Setter                            //
+    //  ============================================== //
     private void setDamage() {
         damage = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Damage.Enable");
         if (damage) {
@@ -430,12 +430,12 @@ public class ConfigPath {
                         damageMap.setSunburn(ConfigHandler.getConfig("config.yml").getBoolean("Entities.Damage.Groups." + group + ".Ignore.Sunburn"));
 
                         // Blocks settings.
-                        blocksMaps = blocksUtils.getSpeBlocksMaps("config.yml", "Entities.Damage.Groups." + group + ".Blocks");
+                        blocksMaps = CorePlusAPI.getBlocksManager().getSpeBlocksMaps("config.yml", "Entities.Damage.Groups." + group + ".Blocks");
                         if (!blocksMaps.isEmpty()) {
                             damageMap.setBlocksMaps(blocksMaps);
                         }
                         // Location settings
-                        locMaps = locationUtils.getSpeLocMaps("config.yml", "Entities.Damage.Groups." + group + ".Location");
+                        locMaps = CorePlusAPI.getLocationManager().getSpeLocMaps("config.yml", "Entities.Damage.Groups." + group + ".Location");
                         if (!locMaps.isEmpty()) {
                             damageMap.setLocMaps(locMaps);
                         }
@@ -461,9 +461,9 @@ public class ConfigPath {
                     for (String group : damageProp.get(entityType).keySet()) {
                         sortMap.put(group, damageProp.get(entityType).get(group).getPriority());
                     }
-                    sortMap = Utils.sortByValue(sortMap);
+                    sortMap = CorePlusAPI.getUtilsManager().sortByValue(sortMap);
                     for (String group : sortMap.keySet()) {
-                        ServerHandler.sendFeatureMessage("Damage", entityType, "setup", "continue", group,
+                        CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPrefix(), "Damage", entityType, "setup", "continue", group,
                                 new Throwable().getStackTrace()[0]);
                         newEnMap.put(group, damageProp.get(entityType).get(group));
                     }
@@ -473,76 +473,28 @@ public class ConfigPath {
         }
     }
 
-    private List<String> getTypeList(String file, String path, String listType) {
-        List<String> list = new ArrayList<>();
-        List<String> customList;
-        boolean mmEnabled = ConfigHandler.getDepends().MythicMobsEnabled();
-        for (String type : ConfigHandler.getConfig(file).getStringList(path)) {
-            try {
-                if (listType.equals("Entities")) {
-                    list.add(EntityType.valueOf(type).name());
-                } else if (listType.equals("Materials")) {
-                    list.add(Material.valueOf(type).name());
-                }
-            } catch (Exception e) {
-                customList = ConfigHandler.getConfig("groups.yml").getStringList(listType + "." + type);
-                if (customList.isEmpty()) {
-                    continue;
-                }
-                // Add Custom Group.
-                for (String customType : customList) {
-                    try {
-                        if (listType.equals("Entities")) {
-                            list.add(EntityType.valueOf(customType).name());
-                        } else if (listType.equals("Materials")) {
-                            list.add(Material.valueOf(customType).name());
-                        }
-                    } catch (Exception ex) {
-                        // Add MythicMobs.
-                        if (listType.equals("Entities") && mmEnabled) {
-                            list.add(type);
-                        } else {
-                            ServerHandler.sendConsoleMessage("&cCan not find " + listType + " in \"group.yml\" ➜ " + listType + " - " + customType + "\".");
-                        }
-                    }
-                }
-            }
-        }
-        return list;
+    //  ============================================== //
+    //         Message Getter                          //
+    //  ============================================== //
+    public String getMsgTitle() {
+        return msgTitle;
+    }
+
+    public String getMsgHelp() {
+        return msgHelp;
+    }
+
+    public String getMsgReload() {
+        return msgReload;
+    }
+
+    public String getMsgVersion() {
+        return msgVersion;
     }
 
     //  ============================================== //
-    //         General Settings                        //
+    //         General Getter                          //
     //  ============================================== //
-    public Map<String, String> getCustomCmdProp() {
-        return customCmdProp;
-    }
-
-    public boolean isLogDefaultNew() {
-        return logDefaultNew;
-    }
-
-    public boolean isLogDefaultZip() {
-        return logDefaultZip;
-    }
-
-    public boolean isLogCustomNew() {
-        return logCustomNew;
-    }
-
-    public boolean isLogCustomZip() {
-        return logCustomZip;
-    }
-
-    public String getLogCustomName() {
-        return logCustomName;
-    }
-
-    public String getLogCustomPath() {
-        return logCustomPath;
-    }
-
-
     public int getMobSpawnRange() {
         return mobSpawnRange;
     }
@@ -552,7 +504,7 @@ public class ConfigPath {
     }
 
     //  ============================================== //
-    //         Spawn Settings                          //
+    //         Spawn Getter                            //
     //  ============================================== //
     public boolean isSpawn() {
         return spawn;
@@ -575,7 +527,7 @@ public class ConfigPath {
     }
 
     //  ============================================== //
-    //         Drop Settings                          //
+    //         Drop Getter                            //
     //  ============================================== //
     public boolean isDrop() {
         return drop;
@@ -606,7 +558,7 @@ public class ConfigPath {
     }
 
     //  ============================================== //
-    //         Damage Settings                         //
+    //         Damage Getter                           //
     //  ============================================== //
     public boolean isDamage() {
         return damage;
@@ -621,7 +573,7 @@ public class ConfigPath {
     }
 
     //  ============================================== //
-    //         Spawner Settings                        //
+    //         Spawner Getter                          //
     //  ============================================== //
     public boolean isSpawner() {
         return spawner;
@@ -633,5 +585,46 @@ public class ConfigPath {
 
     public boolean isSpawnerResFlag() {
         return spawnerResFlag;
+    }
+
+    //  ============================================== //
+    //         Others                                  //
+    //  ============================================== //
+    private List<String> getTypeList(String file, String path, String listType) {
+        List<String> list = new ArrayList<>();
+        List<String> customList;
+        boolean mmEnabled = ConfigHandler.getDepends().MythicMobsEnabled();
+        for (String type : ConfigHandler.getConfig(file).getStringList(path)) {
+            try {
+                if (listType.equals("Entities")) {
+                    list.add(EntityType.valueOf(type).name());
+                } else if (listType.equals("Materials")) {
+                    list.add(Material.valueOf(type).name());
+                }
+            } catch (Exception e) {
+                customList = ConfigHandler.getConfig("groups.yml").getStringList(listType + "." + type);
+                if (customList.isEmpty()) {
+                    continue;
+                }
+                // Add Custom Group.
+                for (String customType : customList) {
+                    try {
+                        if (listType.equals("Entities")) {
+                            list.add(EntityType.valueOf(customType).name());
+                        } else if (listType.equals("Materials")) {
+                            list.add(Material.valueOf(customType).name());
+                        }
+                    } catch (Exception ex) {
+                        // Add MythicMobs.
+                        if (listType.equals("Entities") && mmEnabled) {
+                            list.add(type);
+                        } else {
+                            CorePlusAPI.getLangManager().sendConsoleMsg(ConfigHandler.getPrefix(), "&cCan not find " + listType + " in \"group.yml\" ➜ " + listType + " - " + customType + "\".");
+                        }
+                    }
+                }
+            }
+        }
+        return list;
     }
 }
