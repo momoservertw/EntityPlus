@@ -87,6 +87,7 @@ public class ConfigPath {
     //         Setup all configuration                 //
     //  ============================================== //
     private void setUp() {
+        setupMsg();
         setGeneral();
         setLimitProp();
         setDrop();
@@ -393,7 +394,7 @@ public class ConfigPath {
     }
 
     //  ============================================== //
-    //         Damage Setter                            //
+    //         Damage Setter                           //
     //  ============================================== //
     private void setDamage() {
         damage = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Damage.Enable");
