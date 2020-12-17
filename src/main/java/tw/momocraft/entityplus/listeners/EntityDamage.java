@@ -72,13 +72,13 @@ public class EntityDamage implements Listener {
                     continue;
                 }
                 // Checking the spawn "location".
-                if (!CorePlusAPI.getLocationManager().checkLocation(loc, damageMap.getLocMaps())) {
+                if (!CorePlusAPI.getLocationManager().checkLocation(loc, damageMap.getLocMaps(), true)) {
                     CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPrefix(), "Damage", entityType, "Location", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the "blocks" nearby the spawn location.
-                if (!CorePlusAPI.getBlocksManager().checkBlocks(loc, damageMap.getBlocksMaps())) {
+                if (!CorePlusAPI.getBlocksManager().checkBlocks(loc, damageMap.getBlocksMaps(), true)) {
                     CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPrefix(), "Damage", entityType, "Blocks", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;

@@ -1,7 +1,14 @@
-# --{ =-=-=-=-=-=-=-=-=-= EntityPlus's Configuration Settings, by Momocraft =-=-=-=-=-=-=-=-=-= }--
-# Wiki: https://github.com/momoservertw/EntityPlus/wiki
+# ░░░░░░░░░░░░░░░   EntityPlus, By Momocraft♥   ░░░░░░░░░░░░░░░
+#  Spigot: https://www.spigotmc.org/resources/entityplus.70592/
+#  Wiki: https://github.com/momoservertw/EntityPlus/wiki
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 Config-Version: 12
 Debugging: false
+
+General:
+  Settings:
+    # The searching players range from a location.
+    Nearby-Players-Range: 32
 
 # Controlling entities spawn conditions, rewards, and damage.
 Entities:
@@ -186,7 +193,7 @@ Spawner:
 Message:
   prefix: '&7[&dEntityPlus&7]&r '
   Commands:
-    title: "&8▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩ &d&lEntityPlus &8▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩▩"
+    title: "&8▩▩▩▩▩▩▩▩▩▩ &d&lEntityPlus &8▩▩▩▩▩▩▩▩▩▩"
     help: "&a/ep help &8- &7This help menu."
     reload: "&a/ep reload &8- &7Reloads config file."
     version: '&f/ep version &8- &7Checks the plugin version and updates.'

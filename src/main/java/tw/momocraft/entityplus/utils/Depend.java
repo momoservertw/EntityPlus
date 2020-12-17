@@ -5,13 +5,13 @@ import org.bukkit.Bukkit;
 import tw.momocraft.coreplus.api.CorePlusAPI;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 
-public class DependAPI {
+public class Depend {
 
     private boolean MythicMobs = false;
     private boolean CMI = false;
     private boolean Residence = false;
 
-    public DependAPI() {
+    public Depend() {
         if (ConfigHandler.getConfig("config.yml").getBoolean("General.Settings.Features.Hook.Residence")) {
             this.setResidenceStatus(Bukkit.getServer().getPluginManager().getPlugin("Residence") != null);
         }

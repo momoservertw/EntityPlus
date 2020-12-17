@@ -53,13 +53,13 @@ public class MythicMobsSpawn implements Listener {
                     continue;
                 }
                 // Checking the spawn "location".
-                if (!CorePlusAPI.getLocationManager().checkLocation(loc, entityMap.getLocMaps())) {
+                if (!CorePlusAPI.getLocationManager().checkLocation(loc, entityMap.getLocMaps(), true)) {
                     CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPrefix(),"Spawn", entityType, "Location", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the "blocks" nearby the spawn location.
-                if (!CorePlusAPI.getBlocksManager().checkBlocks(loc, entityMap.getBlocksMaps())) {
+                if (!CorePlusAPI.getBlocksManager().checkBlocks(loc, entityMap.getBlocksMaps(), true)) {
                     CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPrefix(),"Spawn", entityType, "Blocks", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;

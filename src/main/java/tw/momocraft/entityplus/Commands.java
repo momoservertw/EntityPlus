@@ -15,10 +15,8 @@ public class Commands implements CommandExecutor {
                 if (CorePlusAPI.getPermManager().hasPermission(sender, "entityplus.use")) {
                     CorePlusAPI.getLangManager().sendMsg(ConfigHandler.getPrefix(), sender, "");
                     CorePlusAPI.getLangManager().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getConfigPath().getMsgTitle(), sender);
-                    if (CorePlusAPI.getPermManager().hasPermission(sender, "entityplus.command.version")) {
-                        CorePlusAPI.getLangManager().sendMsg(ConfigHandler.getPrefix(), sender, "&f " + EntityPlus.getInstance().getDescription().getName()
-                                +" &ev" + EntityPlus.getInstance().getDescription().getVersion() + "  &8by Momocraft");
-                    }
+                    CorePlusAPI.getLangManager().sendMsg(ConfigHandler.getPrefix(), sender, "&f " + EntityPlus.getInstance().getDescription().getName()
+                            + " &ev" + EntityPlus.getInstance().getDescription().getVersion() + "  &8by Momocraft");
                     CorePlusAPI.getLangManager().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getConfigPath().getMsgHelp(), sender);
                     CorePlusAPI.getLangManager().sendMsg(ConfigHandler.getPrefix(), sender, "");
                 } else {
@@ -29,14 +27,14 @@ public class Commands implements CommandExecutor {
                 if (args[0].equalsIgnoreCase("help")) {
                     if (CorePlusAPI.getPermManager().hasPermission(sender, "entityplus.use")) {
                         CorePlusAPI.getLangManager().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getConfigPath().getMsgTitle(), sender);
-                        if (CorePlusAPI.getPermManager().hasPermission(sender, "entityplus.command.version")) {
-                            CorePlusAPI.getLangManager().sendMsg(ConfigHandler.getPrefix(), sender, "&f " + EntityPlus.getInstance().getDescription().getName()
-                                    +" &ev" + EntityPlus.getInstance().getDescription().getVersion() + "  &8by Momocraft");
-                        }
+                        CorePlusAPI.getLangManager().sendMsg(ConfigHandler.getPrefix(), sender, "&f " + EntityPlus.getInstance().getDescription().getName()
+                                + " &ev" + EntityPlus.getInstance().getDescription().getVersion() + "  &8by Momocraft");
                         CorePlusAPI.getLangManager().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getConfigPath().getMsgHelp(), sender);
                         if (CorePlusAPI.getPermManager().hasPermission(sender, "entityplus.command.reload")) {
                             CorePlusAPI.getLangManager().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getConfigPath().getMsgReload(), sender);
-
+                        }
+                        if (CorePlusAPI.getPermManager().hasPermission(sender, "entityplus.command.version")) {
+                            CorePlusAPI.getLangManager().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getConfigPath().getMsgVersion(), sender);
                         }
                         CorePlusAPI.getLangManager().sendMsg(ConfigHandler.getPrefix(), sender, "");
                     } else {
@@ -54,7 +52,7 @@ public class Commands implements CommandExecutor {
                 } else if (args[0].equalsIgnoreCase("version")) {
                     if (CorePlusAPI.getPermManager().hasPermission(sender, "entityplus.command.version")) {
                         CorePlusAPI.getLangManager().sendMsg(ConfigHandler.getPrefix(), sender, "&f " + EntityPlus.getInstance().getDescription().getName()
-                                +" &ev" + EntityPlus.getInstance().getDescription().getVersion() + "  &8by Momocraft");
+                                + " &ev" + EntityPlus.getInstance().getDescription().getVersion() + "  &8by Momocraft");
                         CorePlusAPI.getUpdateManager().check(ConfigHandler.getPrefix(), sender, EntityPlus.getInstance().getName(), EntityPlus.getInstance().getDescription().getVersion());
                     } else {
                         CorePlusAPI.getLangManager().sendLangMsg(ConfigHandler.getPrefix(), "Message.noPermission", sender);

@@ -17,17 +17,19 @@ public class ConfigHandler {
     private static YamlConfiguration spigotYAML;
     private static YamlConfiguration groupsYAML;
     private static YamlConfiguration entitiesYAML;
-    private static DependAPI depends;
+    private static Depend depends;
     private static ConfigPath configPath;
 
     public static void generateData(boolean reload) {
         genConfigFile("config.yml");
         genConfigFile("groups.yml");
         genConfigFile("entities.yml");
-        setDepends(new DependAPI());
+        setDepends(new Depend());
         setConfigPath(new ConfigPath());
         if (!reload) {
-            CorePlusAPI.getUpdateManager().check(getPrefix(), Bukkit.getConsoleSender(), EntityPlus.getInstance().getDescription().getName(), EntityPlus.getInstance().getDescription().getVersion());
+            CorePlusAPI.getUpdateManager().check(getPrefix(), Bukkit.getConsoleSender(),
+                    EntityPlus.getInstance().getDescription().getName(),
+                    EntityPlus.getInstance().getDescription().getVersion());
         }
     }
 
@@ -127,11 +129,11 @@ public class ConfigHandler {
         getConfig(fileName).options().copyDefaults(false);
     }
 
-    public static DependAPI getDepends() {
+    public static Depend getDepends() {
         return depends;
     }
 
-    private static void setDepends(DependAPI depend) {
+    private static void setDepends(Depend depend) {
         depends = depend;
     }
 
@@ -143,12 +145,7 @@ public class ConfigHandler {
         return configPath;
     }
 
-
     public static String getPrefix() {
         return getConfig("config.yml").getString("Message.prefix");
-    }
-
-    public static boolean isDebugging() {
-        return getConfig("config.yml").getBoolean("Debugging");
     }
 }
