@@ -14,15 +14,12 @@ import java.time.format.DateTimeFormatter;
 public class ConfigHandler {
 
     private static YamlConfiguration configYAML;
-    private static YamlConfiguration spigotYAML;
-    private static YamlConfiguration groupsYAML;
     private static YamlConfiguration entitiesYAML;
     private static Depend depends;
     private static ConfigPath configPath;
 
     public static void generateData(boolean reload) {
         genConfigFile("config.yml");
-        genConfigFile("groups.yml");
         genConfigFile("entities.yml");
         setDepends(new Depend());
         setConfigPath(new ConfigPath());
@@ -42,14 +39,6 @@ public class ConfigHandler {
                 if (configYAML == null) {
                     getConfigData(filePath, fileName);
                 }
-                break;
-            case "spigot.yml":
-                filePath = Bukkit.getServer().getWorldContainer();
-                if (spigotYAML == null) {
-                    getConfigData(filePath, fileName);
-                }
-                break;
-            default:
                 break;
         }
         file = new File(filePath, fileName);
@@ -76,16 +65,6 @@ public class ConfigHandler {
                     configYAML = YamlConfiguration.loadConfiguration(file);
                 }
                 return configYAML;
-            case "spigot.yml":
-                if (saveData) {
-                    spigotYAML = YamlConfiguration.loadConfiguration(file);
-                }
-                return spigotYAML;
-            case "groups.yml":
-                if (saveData) {
-                    groupsYAML = YamlConfiguration.loadConfiguration(file);
-                }
-                return groupsYAML;
             case "entities.yml":
                 if (saveData) {
                     entitiesYAML = YamlConfiguration.loadConfiguration(file);
@@ -103,7 +82,6 @@ public class ConfigHandler {
             case "config.yml":
                 configVersion = 12;
                 break;
-            case "groups.yml":
             case "entities.yml":
                 configVersion = 1;
                 break;
