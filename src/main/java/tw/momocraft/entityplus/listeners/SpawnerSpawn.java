@@ -121,14 +121,14 @@ public class SpawnerSpawn implements Listener {
                         .replace("%loc_y%", String.valueOf(loc.getBlockY()))
                         .replace("%loc_z%", String.valueOf(loc.getBlockZ()))
                         .replace("%nearbyplayers%", getNearbyPlayersString(nearbyPlayers));
-                if (command.startsWith("all-")) {
-                    command = command.replace("all-", "");
+                if (command.startsWith("near-")) {
+                    command = command.replace("near-", "");
                     for (Player player : nearbyPlayers) {
-                        CorePlusAPI.getCommandManager().executeMultipleCmds(ConfigHandler.getPrefix(), player, command, true);
+                        CorePlusAPI.getCommandManager().executeCmd(ConfigHandler.getPrefix(), player, command, true);
                     }
                     continue;
                 }
-                CorePlusAPI.getCommandManager().executeMultipleCmds(ConfigHandler.getPrefix(), null, command, true);
+                CorePlusAPI.getCommandManager().executeCmd(ConfigHandler.getPrefix(), null, command, true);
             }
         }
     }
