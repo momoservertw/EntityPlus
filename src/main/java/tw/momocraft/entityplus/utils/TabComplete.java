@@ -40,13 +40,13 @@ public class TabComplete implements TabCompleter {
 
         switch (args.length) {
             case 1:
-                if (CorePlusAPI.getPermManager().hasPermission(sender, "entityplus.use")) {
+                if (CorePlusAPI.getPlayerManager().hasPermission(sender, "entityplus.use")) {
                     commands.add("help");
                 }
-                if (CorePlusAPI.getPermManager().hasPermission(sender, "entityplus.command.reload")) {
+                if (CorePlusAPI.getPlayerManager().hasPermission(sender, "entityplus.command.reload")) {
                     commands.add("reload");
                 }
-                if (CorePlusAPI.getPermManager().hasPermission(sender, "entityplus.command.version")) {
+                if (CorePlusAPI.getPlayerManager().hasPermission(sender, "entityplus.command.version")) {
                     commands.add("version");
                 }
                 break;

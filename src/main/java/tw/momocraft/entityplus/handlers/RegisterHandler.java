@@ -14,35 +14,35 @@ public class RegisterHandler {
         EntityPlus.getInstance().getCommand("entityplus").setTabCompleter(new TabComplete());
 
         EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new CreatureSpawn(), EntityPlus.getInstance());
-        CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPrefix(), "Register-Event", "Spawn", "CreatureSpawn", "continue",
+        CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPlugin(), "Register-Event", "Spawn", "CreatureSpawn", "continue",
                 new Throwable().getStackTrace()[0]);
         EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new SpawnerSpawn(), EntityPlus.getInstance());
-        CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPrefix(), "Register-Event", "Spawner", "SpawnerSpawn", "continue",
+        CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPlugin(), "Register-Event", "Spawner", "SpawnerSpawn", "continue",
                 new Throwable().getStackTrace()[0]);
         EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new EntityDeath(), EntityPlus.getInstance());
-        CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPrefix(), "Register-Event", "Drop", "EntityDeath", "continue",
+        CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPlugin(), "Register-Event", "Drop", "EntityDeath", "continue",
                 new Throwable().getStackTrace()[0]);
         EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new EntityDamage(), EntityPlus.getInstance());
-        CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPrefix(), "Register-Event", "Damage", "EntityDamage", "continue",
+        CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPlugin(), "Register-Event", "Damage", "EntityDamage", "continue",
                 new Throwable().getStackTrace()[0]);
 
         if (ConfigHandler.getDepends().MythicMobsEnabled()) {
             EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new MythicMobsSpawn(), EntityPlus.getInstance());
-            CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPrefix(), "Register-Event", "Spawn", "MythicMobsSpawn", "continue",
+            CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPlugin(), "Register-Event", "Spawn", "MythicMobsSpawn", "continue",
                     new Throwable().getStackTrace()[0]);
             EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new MythicMobsLootDrop(), EntityPlus.getInstance());
-            CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPrefix(), "Register-Event", "Drop", "MythicMobsLootDrop", "continue",
+            CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPlugin(), "Register-Event", "Drop", "MythicMobsLootDrop", "continue",
                     new Throwable().getStackTrace()[0]);
         }
         if (ConfigHandler.getDepends().ResidenceEnabled()) {
             if (ConfigHandler.getConfigPath().isSpawnResFlag()) {
                 FlagPermissions.addFlag("spawnbypass");
-                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPrefix(), "Add-Flag", "Spawn", "spawnbypass", "continue",
+                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPlugin(), "Add-Flag", "Spawn", "spawnbypass", "continue",
                         new Throwable().getStackTrace()[0]);
             }
             if (ConfigHandler.getConfigPath().isSpawnerResFlag()) {
                 FlagPermissions.addFlag("spawnerbypass");
-                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPrefix(), "Add-Flag", "Spawner", "spawnerbypass", "continue",
+                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPlugin(), "Add-Flag", "Spawner", "spawnerbypass", "continue",
                         new Throwable().getStackTrace()[0]);
             }
         }

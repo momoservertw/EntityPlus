@@ -1,7 +1,7 @@
 package tw.momocraft.entityplus.utils.entities;
 
-import tw.momocraft.coreplus.utils.blocksutils.BlocksMap;
-import tw.momocraft.coreplus.utils.locationutils.LocationMap;
+import tw.momocraft.coreplus.utils.conditions.BlocksMap;
+import tw.momocraft.coreplus.utils.conditions.LocationMap;
 
 import java.util.ArrayList;
 import java.util.List;

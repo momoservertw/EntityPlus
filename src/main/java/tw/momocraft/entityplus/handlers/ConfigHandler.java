@@ -3,6 +3,7 @@ package tw.momocraft.entityplus.handlers;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import tw.momocraft.coreplus.CorePlus;
 import tw.momocraft.coreplus.api.CorePlusAPI;
 import tw.momocraft.entityplus.EntityPlus;
 import tw.momocraft.entityplus.utils.*;
@@ -24,9 +25,9 @@ public class ConfigHandler {
         setDepends(new Depend());
         setConfigPath(new ConfigPath());
         if (!reload) {
-            CorePlusAPI.getUpdateManager().check(getPrefix(), Bukkit.getConsoleSender(),
+            CorePlusAPI.getUpdateManager().check(getPlugin(), Bukkit.getConsoleSender(),
                     EntityPlus.getInstance().getDescription().getName(),
-                    EntityPlus.getInstance().getDescription().getVersion());
+                    EntityPlus.getInstance().getDescription().getVersion(), true);
         }
     }
 
@@ -51,7 +52,7 @@ public class ConfigHandler {
             try {
                 EntityPlus.getInstance().saveResource(fileName, false);
             } catch (Exception e) {
-                CorePlusAPI.getLangManager().sendErrorMsg(getPrefix(), "&cCannot save " + fileName + " to disk!");
+                CorePlusAPI.getLangManager().sendErrorMsg(getPlugin(), "&cCannot save " + fileName + " to disk!");
                 return;
             }
         }
@@ -123,7 +124,12 @@ public class ConfigHandler {
         return configPath;
     }
 
+    public static String getPlugin() {
+        return "[" + EntityPlus.getInstance().getDescription().getName() + "] ";
+    }
+
     public static String getPrefix() {
         return getConfig("config.yml").getString("Message.prefix");
     }
+
 }

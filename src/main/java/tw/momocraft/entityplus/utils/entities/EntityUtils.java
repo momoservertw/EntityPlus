@@ -35,7 +35,7 @@ public class EntityUtils {
                 for (Player player : Bukkit.getServer().getOnlinePlayers()) {
                     if (CorePlusAPI.getUtilsManager().inTheRange(player.getLocation(), location, playerRange)) {
                         if (CMI.getInstance().getPlayerManager().getUser(player).isAfk()) {
-                            if (!CorePlusAPI.getPermManager().hasPermission(player, "entityplus.bypass.spawnlimit.afk")) {
+                            if (!CorePlusAPI.getPlayerManager().hasPermission(player, "entityplus.bypass.spawnlimit.afk")) {
                                 amount = afkAmount;
                                 chance = afkChance;
                                 continue;
