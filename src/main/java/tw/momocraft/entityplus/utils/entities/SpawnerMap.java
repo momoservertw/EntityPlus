@@ -1,9 +1,5 @@
 package tw.momocraft.entityplus.utils.entities;
 
-import tw.momocraft.coreplus.utils.conditions.BlocksMap;
-import tw.momocraft.coreplus.utils.conditions.LocationMap;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -11,10 +7,10 @@ public class SpawnerMap {
 
     private long priority;
     private boolean remove = false;
-    private List<String> allowList = null;
-    private List<String> commands = null;
-    private List<LocationMap> locMaps = new ArrayList<>();
-    private List<BlocksMap> blocksMaps = new ArrayList<>();
+    private List<String> allowList;
+    private List<String> commands;
+    private List<String> locMaps;
+    private List<String> blocksMaps;
     private Map<String, Long> changeMap;
 
     public long getPriority() {
@@ -33,11 +29,11 @@ public class SpawnerMap {
         return commands;
     }
 
-    public List<LocationMap> getLocMaps() {
+    public List<String> getLocMaps() {
         return locMaps;
     }
 
-    public List<BlocksMap> getBlocksMaps() { return blocksMaps; }
+    public List<String> getBlocksMaps() { return blocksMaps; }
 
     public Map<String, Long> getChangeMap() {
         return changeMap;
@@ -60,11 +56,11 @@ public class SpawnerMap {
         this.commands = commands;
     }
 
-    public void setLocMaps(List<LocationMap> locMaps) {
+    public void setLocMaps(List<String> locMaps) {
         this.locMaps = locMaps;
     }
 
-    public void setBlocksMaps(List<BlocksMap> blocksMaps) {
+    public void setBlocksMaps(List<String> blocksMaps) {
         this.blocksMaps = blocksMaps;
     }
 

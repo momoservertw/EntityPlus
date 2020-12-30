@@ -1,9 +1,5 @@
 package tw.momocraft.entityplus.utils.entities;
 
-import tw.momocraft.coreplus.utils.conditions.BlocksMap;
-import tw.momocraft.coreplus.utils.conditions.LocationMap;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class DamageMap {
@@ -15,8 +11,8 @@ public class DamageMap {
     private List<String> ignoreBoimes;
     private String liquid;
     private String day;
-    private List<LocationMap> locMaps = new ArrayList<>();
-    private List<BlocksMap> blocksMaps = new ArrayList<>();
+    private List<String> locMaps;
+    private List<String> blocksMaps;
 
     // Damage
     private String damage;
@@ -61,11 +57,11 @@ public class DamageMap {
         return ignoreBoimes;
     }
 
-    public List<LocationMap> getLocMaps() {
+    public List<String> getLocMaps() {
         return locMaps;
     }
 
-    public List<BlocksMap> getBlocksMaps() {
+    public List<String> getBlocksMaps() {
         return blocksMaps;
     }
 
@@ -125,11 +121,11 @@ public class DamageMap {
         this.day = day;
     }
 
-    public void setBlocksMaps(List<BlocksMap> blocksMaps) {
+    public void setBlocksMaps(List<String> blocksMaps) {
         this.blocksMaps = blocksMaps;
     }
 
-    public void setLocMaps(List<LocationMap> locationMaps) {
+    public void setLocMaps(List<String> locationMaps) {
         this.locMaps = locationMaps;
     }
 

@@ -1,10 +1,5 @@
 package tw.momocraft.entityplus.utils.entities;
 
-
-import tw.momocraft.coreplus.utils.conditions.BlocksMap;
-import tw.momocraft.coreplus.utils.conditions.LocationMap;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class EntityMap {
@@ -16,8 +11,10 @@ public class EntityMap {
     private List<String> ignoreBoimes;
     private String liquid;
     private String day;
-    private List<LocationMap> locMaps = new ArrayList<>();
-    private List<BlocksMap> blocksMaps = new ArrayList<>();
+    private List<String> sucCmds;
+    private List<String> faiCmds;
+    private List<String> locMaps;
+    private List<String> blocksMaps;
 
     private double chance;
     private LimitMap limit = null;
@@ -55,11 +52,11 @@ public class EntityMap {
         return ignoreBoimes;
     }
 
-    public List<LocationMap> getLocMaps() {
+    public List<String> getLocMaps() {
         return locMaps;
     }
 
-    public List<BlocksMap> getBlocksMaps() {
+    public List<String> getBlocksMaps() {
         return blocksMaps;
     }
 
@@ -69,6 +66,14 @@ public class EntityMap {
 
     public LimitMap getLimit() {
         return limit;
+    }
+
+    public List<String> getSucCmds() {
+        return sucCmds;
+    }
+
+    public List<String> getFaiCmds() {
+        return faiCmds;
     }
 
     public void setTypes(List<String> types) {
@@ -103,11 +108,11 @@ public class EntityMap {
         this.day = day;
     }
 
-    public void setBlocksMaps(List<BlocksMap> blocksMaps) {
+    public void setBlocksMaps(List<String> blocksMaps) {
         this.blocksMaps = blocksMaps;
     }
 
-    public void setLocMaps(List<LocationMap> locationMaps) {
+    public void setLocMaps(List<String> locationMaps) {
         this.locMaps = locationMaps;
     }
 
@@ -115,7 +120,15 @@ public class EntityMap {
         this.chance = chance;
     }
 
-    public void setLimitPair(LimitMap limit) {
+    public void setLimit(LimitMap limit) {
         this.limit = limit;
+    }
+
+    public void setSucCmds(List<String> sucCmds) {
+        this.sucCmds = sucCmds;
+    }
+
+    public void setFaiCmds(List<String> faiCmds) {
+        this.faiCmds = faiCmds;
     }
 }

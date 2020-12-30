@@ -16,7 +16,6 @@ import org.bukkit.potion.PotionEffectType;
 import tw.momocraft.coreplus.api.CorePlusAPI;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.utils.entities.DamageMap;
-import tw.momocraft.entityplus.utils.entities.EntityUtils;
 
 import java.util.List;
 import java.util.Map;

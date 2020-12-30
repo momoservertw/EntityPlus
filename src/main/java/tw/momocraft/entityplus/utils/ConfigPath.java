@@ -140,23 +140,15 @@ public class ConfigPath {
                     entityMap.setIgnoreBoimes(ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Ignore-Biomes"));
                     entityMap.setLiquid(ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Liquid"));
                     entityMap.setDay(ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Day"));
-                    // Blocks settings.
-                    blocksMaps = CorePlusAPI.getConditionManager().getSpeBlocksMaps(
-                            ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Blocks"));
-                    if (!blocksMaps.isEmpty()) {
-                        entityMap.setBlocksMaps(blocksMaps);
-                    }
-                    // Location settings
-                    locMaps = CorePlusAPI.getConditionManager().getSpeLocMaps(
-                            ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Location"));
-                    if (!locMaps.isEmpty()) {
-                        entityMap.setLocMaps(locMaps);
-                    }
+                    entityMap.setSucCmds(ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Commands"));
+                    entityMap.setFaiCmds(ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Failed-Commands"));
+                    entityMap.setBlocksMaps(ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Blocks"));
+                    entityMap.setLocMaps(ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Location"));
                     // Limits settings
                     limit = ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Limit");
                     if (limit != null) {
                         if (limitProp.containsKey(limit)) {
-                            entityMap.setLimitPair(limitProp.get(limit));
+                            entityMap.setLimit(limitProp.get(limit));
                         } else {
                             CorePlusAPI.getLangManager().sendConsoleMsg(ConfigHandler.getPlugin(), "&cCan not find limit group in \"entities.yml ➜ Entities - " + group + "\".");
                             CorePlusAPI.getLangManager().sendConsoleMsg(ConfigHandler.getPlugin(), "&cLimit: " + limit);
@@ -253,6 +245,8 @@ public class ConfigPath {
         ConfigurationSection groupsConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Entities.Drop.Groups");
         if (groupsConfig != null) {
             DropMap dropMap;
+            List<String> blocksMaps;
+            List<String> locMaps;
             String groupEnable;
             for (String group : groupsConfig.getKeys(false)) {
                 groupEnable = ConfigHandler.getConfig("config.yml").getString("Entities.Drop." + group + ".Enable");
@@ -262,7 +256,9 @@ public class ConfigPath {
                     dropMap.setExp(ConfigHandler.getConfig("config.yml").getDouble("Entities.Drop.Groups." + group + ".Exp"));
                     dropMap.setItems(ConfigHandler.getConfig("config.yml").getDouble("Entities.Drop.Groups." + group + ".Items"));
                     dropMap.setMoney(ConfigHandler.getConfig("config.yml").getDouble("Entities.Drop.Groups." + group + ".MythicMobs.Money"));
-
+                    dropMap.setCommands(ConfigHandler.getConfig("config.yml").getStringList("Entities.Drop.Groups." + group + ".Commands"));
+                    dropMap.setBlocksMaps(ConfigHandler.getConfig("config.yml").getStringList("Entities.Drop.Groups." + group + ".Blocks"));
+                    dropMap.setLocMaps(ConfigHandler.getConfig("config.yml").getStringList("Entities.Drop.Groups." + group + ".Location"));
                     // Add properties to all entities.
                     for (String entityType : CorePlusAPI.getConfigManager().getTypeList(ConfigHandler.getPrefix(),
                             ConfigHandler.getConfig("config.yml").getStringList("Entities.Drop.Groups." + group + ".Types"), "Entities")) {
@@ -312,8 +308,6 @@ public class ConfigPath {
             SpawnerMap spawnerMap;
             String groupEnable;
             ConfigurationSection spawnerListConfig;
-            List<BlocksMap> blocksMaps;
-            List<LocationMap> locMaps;
             Map<String, Long> changeMap;
             List<String> changeList;
             for (String group : spawnerConfig.getKeys(false)) {
@@ -324,6 +318,8 @@ public class ConfigPath {
                     spawnerMap.setPriority(ConfigHandler.getConfig("config.yml").getLong("Spawner.Groups." + group + ".Priority"));
                     spawnerMap.setRemove(ConfigHandler.getConfig("config.yml").getBoolean("Spawner.Groups." + group + ".Remove"));
                     spawnerMap.setCommands(ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Commands"));
+                    spawnerMap.setBlocksMaps(ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Blocks"));
+                    spawnerMap.setLocMaps(ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Location"));
                     spawnerMap.setAllowList(ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Allow-Types"));
                     spawnerListConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawner.Groups." + group + ".Change-Types");
                     if (spawnerListConfig != null) {
@@ -340,23 +336,14 @@ public class ConfigPath {
                             changeMap.put(changeType, 1L);
                         }
                     }
-                    // To specify the Blocks.
                     spawnerMap.setChangeMap(changeMap);
-
-                    blocksMaps = CorePlusAPI.getConditionManager().getSpeBlocksMaps(
-                            ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Blocks"));
-                    if (!blocksMaps.isEmpty()) {
-                        spawnerMap.setBlocksMaps(blocksMaps);
-                    }
-                    // To specify the Location.
-                    locMaps = CorePlusAPI.getConditionManager().getSpeLocMaps(
-                            ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Location"));
-                    if (!locMaps.isEmpty()) {
-                        spawnerMap.setLocMaps(locMaps);
-                    }
-
-                    // Add properties to all Worolds.
-                    for (LocationMap locationMap : spawnerMap.getLocMaps()) {
+                    // Add properties to all Worlds.
+                    LocationMap locationMap;
+                    for (String locName : spawnerMap.getLocMaps()) {
+                        locationMap = CorePlusAPI.getConditionManager().getLocProp().get(locName);
+                        if (locationMap == null) {
+                            continue;
+                        }
                         for (String worldName : locationMap.getWorlds()) {
                             try {
                                 spawnerProp.get(worldName).put(group, spawnerMap);
@@ -401,8 +388,6 @@ public class ConfigPath {
             if (groupsConfig != null) {
                 String groupEnable;
                 DamageMap damageMap;
-                List<BlocksMap> blocksMaps;
-                List<LocationMap> locMaps;
                 ConfigurationSection actionConfig;
                 String actionKey;
                 for (String group : groupsConfig.getKeys(false)) {
@@ -427,19 +412,8 @@ public class ConfigPath {
                         }
                         damageMap.setPlayerNear(ConfigHandler.getConfig("config.yml").getInt("Entities.Damage.Groups." + group + ".Ignore.Player-Nearby-Range"));
                         damageMap.setSunburn(ConfigHandler.getConfig("config.yml").getBoolean("Entities.Damage.Groups." + group + ".Ignore.Sunburn"));
-
-                        // Blocks settings.
-                        blocksMaps = CorePlusAPI.getConditionManager().getSpeBlocksMaps(
-                                ConfigHandler.getConfig("config.yml").getStringList("Entities.Damage.Groups." + group + ".Blocks"));
-                        if (!blocksMaps.isEmpty()) {
-                            damageMap.setBlocksMaps(blocksMaps);
-                        }
-                        // Location settings
-                        locMaps = CorePlusAPI.getConditionManager().getSpeLocMaps(
-                                ConfigHandler.getConfig("config.yml").getStringList("Entities.Damage.Groups." + group + ".Location"));
-                        if (!locMaps.isEmpty()) {
-                            damageMap.setLocMaps(locMaps);
-                        }
+                        damageMap.setBlocksMaps(ConfigHandler.getConfig("config.yml").getStringList("Entities.Damage.Groups." + group + ".Blocks"));
+                        damageMap.setLocMaps(ConfigHandler.getConfig("config.yml").getStringList("Entities.Damage.Groups." + group + ".Location"));
                         // Add properties to all entities.
                         for (String entityType : damageMap.getTypes()) {
                             try {
