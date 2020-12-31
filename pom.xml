@@ -61,7 +61,7 @@
         </dependency>
         <!--CorePlus API-->
         <dependency>
-            <groupId>momocraft.tw</groupId>
+            <groupId>tw.momocraft</groupId>
             <artifactId>CorePlus</artifactId>
             <scope>system</scope>
             <systemPath>${pom.basedir}/src/main/java/tw/momocraft/entityplus/extra/CorePlus-1.0.0.jar</systemPath>
