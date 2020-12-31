@@ -52,13 +52,13 @@ public class SpawnerSpawn implements Listener {
                 continue;
             }
             // Checking the spawn "location".
-            if (!CorePlusAPI.getConditionManager().checkLocation(loc, spawnerMap.getLocMaps(), true)) {
+            if (!CorePlusAPI.getConditionManager().checkLocation(loc, spawnerMap.getLocList(), true)) {
                 CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPlugin(), "Spawner", entityType, "Location", "continue", groupName,
                         new Throwable().getStackTrace()[0]);
                 continue;
             }
             // Checking the "blocks" nearby the spawn location.
-            if (!CorePlusAPI.getConditionManager().checkBlocks(loc, spawnerMap.getBlocksMaps(), true)) {
+            if (!CorePlusAPI.getConditionManager().checkBlocks(loc, spawnerMap.getBlocksList(), true)) {
                 CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPlugin(), "Spawner", entityType, "Blocks", "continue", groupName,
                         new Throwable().getStackTrace()[0]);
                 continue;

@@ -257,8 +257,8 @@ public class ConfigPath {
                     dropMap.setItems(ConfigHandler.getConfig("config.yml").getDouble("Entities.Drop.Groups." + group + ".Items"));
                     dropMap.setMoney(ConfigHandler.getConfig("config.yml").getDouble("Entities.Drop.Groups." + group + ".MythicMobs.Money"));
                     dropMap.setCommands(ConfigHandler.getConfig("config.yml").getStringList("Entities.Drop.Groups." + group + ".Commands"));
-                    dropMap.setBlocksMaps(ConfigHandler.getConfig("config.yml").getStringList("Entities.Drop.Groups." + group + ".Blocks"));
-                    dropMap.setLocMaps(ConfigHandler.getConfig("config.yml").getStringList("Entities.Drop.Groups." + group + ".Location"));
+                    dropMap.setBlocksList(ConfigHandler.getConfig("config.yml").getStringList("Entities.Drop.Groups." + group + ".Blocks"));
+                    dropMap.setLocList(ConfigHandler.getConfig("config.yml").getStringList("Entities.Drop.Groups." + group + ".Location"));
                     // Add properties to all entities.
                     for (String entityType : CorePlusAPI.getConfigManager().getTypeList(ConfigHandler.getPrefix(),
                             ConfigHandler.getConfig("config.yml").getStringList("Entities.Drop.Groups." + group + ".Types"), "Entities")) {
@@ -318,8 +318,8 @@ public class ConfigPath {
                     spawnerMap.setPriority(ConfigHandler.getConfig("config.yml").getLong("Spawner.Groups." + group + ".Priority"));
                     spawnerMap.setRemove(ConfigHandler.getConfig("config.yml").getBoolean("Spawner.Groups." + group + ".Remove"));
                     spawnerMap.setCommands(ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Commands"));
-                    spawnerMap.setBlocksMaps(ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Blocks"));
-                    spawnerMap.setLocMaps(ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Location"));
+                    spawnerMap.setBlocksList(ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Blocks"));
+                    spawnerMap.setLocList(ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Location"));
                     spawnerMap.setAllowList(ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Allow-Types"));
                     spawnerListConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawner.Groups." + group + ".Change-Types");
                     if (spawnerListConfig != null) {
@@ -339,7 +339,7 @@ public class ConfigPath {
                     spawnerMap.setChangeMap(changeMap);
                     // Add properties to all Worlds.
                     LocationMap locationMap;
-                    for (String locName : spawnerMap.getLocMaps()) {
+                    for (String locName : spawnerMap.getLocList()) {
                         locationMap = CorePlusAPI.getConditionManager().getLocProp().get(locName);
                         if (locationMap == null) {
                             continue;
@@ -412,8 +412,8 @@ public class ConfigPath {
                         }
                         damageMap.setPlayerNear(ConfigHandler.getConfig("config.yml").getInt("Entities.Damage.Groups." + group + ".Ignore.Player-Nearby-Range"));
                         damageMap.setSunburn(ConfigHandler.getConfig("config.yml").getBoolean("Entities.Damage.Groups." + group + ".Ignore.Sunburn"));
-                        damageMap.setBlocksMaps(ConfigHandler.getConfig("config.yml").getStringList("Entities.Damage.Groups." + group + ".Blocks"));
-                        damageMap.setLocMaps(ConfigHandler.getConfig("config.yml").getStringList("Entities.Damage.Groups." + group + ".Location"));
+                        damageMap.setBlocksList(ConfigHandler.getConfig("config.yml").getStringList("Entities.Damage.Groups." + group + ".Blocks"));
+                        damageMap.setLocList(ConfigHandler.getConfig("config.yml").getStringList("Entities.Damage.Groups." + group + ".Location"));
                         // Add properties to all entities.
                         for (String entityType : damageMap.getTypes()) {
                             try {

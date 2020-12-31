@@ -9,8 +9,8 @@ public class SpawnerMap {
     private boolean remove = false;
     private List<String> allowList;
     private List<String> commands;
-    private List<String> locMaps;
-    private List<String> blocksMaps;
+    private List<String> locList;
+    private List<String> blocksList;
     private Map<String, Long> changeMap;
 
     public long getPriority() {
@@ -29,11 +29,11 @@ public class SpawnerMap {
         return commands;
     }
 
-    public List<String> getLocMaps() {
-        return locMaps;
+    public List<String> getLocList() {
+        return locList;
     }
 
-    public List<String> getBlocksMaps() { return blocksMaps; }
+    public List<String> getBlocksList() { return blocksList; }
 
     public Map<String, Long> getChangeMap() {
         return changeMap;
@@ -56,12 +56,12 @@ public class SpawnerMap {
         this.commands = commands;
     }
 
-    public void setLocMaps(List<String> locMaps) {
-        this.locMaps = locMaps;
+    public void setLocList(List<String> locList) {
+        this.locList = locList;
     }
 
-    public void setBlocksMaps(List<String> blocksMaps) {
-        this.blocksMaps = blocksMaps;
+    public void setBlocksList(List<String> blocksList) {
+        this.blocksList = blocksList;
     }
 
     public void setChangeMap(Map<String, Long> changeMap) {

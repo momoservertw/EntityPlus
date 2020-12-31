@@ -3,7 +3,6 @@ package tw.momocraft.entityplus.handlers;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import tw.momocraft.coreplus.CorePlus;
 import tw.momocraft.coreplus.api.CorePlusAPI;
 import tw.momocraft.entityplus.EntityPlus;
 import tw.momocraft.entityplus.utils.*;
@@ -16,13 +15,13 @@ public class ConfigHandler {
 
     private static YamlConfiguration configYAML;
     private static YamlConfiguration entitiesYAML;
-    private static Depend depends;
+    private static Dependence depends;
     private static ConfigPath configPath;
 
     public static void generateData(boolean reload) {
         genConfigFile("config.yml");
         genConfigFile("entities.yml");
-        setDepends(new Depend());
+        setDepends(new Dependence());
         setConfigPath(new ConfigPath());
         if (!reload) {
             CorePlusAPI.getUpdateManager().check(getPlugin(), Bukkit.getConsoleSender(),
@@ -108,11 +107,11 @@ public class ConfigHandler {
         getConfig(fileName).options().copyDefaults(false);
     }
 
-    public static Depend getDepends() {
+    public static Dependence getDepends() {
         return depends;
     }
 
-    private static void setDepends(Depend depend) {
+    private static void setDepends(Dependence depend) {
         depends = depend;
     }
 

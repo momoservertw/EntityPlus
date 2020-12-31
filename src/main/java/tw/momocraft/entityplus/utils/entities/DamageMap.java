@@ -11,8 +11,8 @@ public class DamageMap {
     private List<String> ignoreBoimes;
     private String liquid;
     private String day;
-    private List<String> locMaps;
-    private List<String> blocksMaps;
+    private List<String> locList;
+    private List<String> blocksList;
 
     // Damage
     private String damage;
@@ -57,12 +57,12 @@ public class DamageMap {
         return ignoreBoimes;
     }
 
-    public List<String> getLocMaps() {
-        return locMaps;
+    public List<String> getLocList() {
+        return locList;
     }
 
-    public List<String> getBlocksMaps() {
-        return blocksMaps;
+    public List<String> getBlocksList() {
+        return blocksList;
     }
 
     // Damage
@@ -121,12 +121,12 @@ public class DamageMap {
         this.day = day;
     }
 
-    public void setBlocksMaps(List<String> blocksMaps) {
-        this.blocksMaps = blocksMaps;
+    public void setBlocksList(List<String> blocksList) {
+        this.blocksList = blocksList;
     }
 
-    public void setLocMaps(List<String> locationMaps) {
-        this.locMaps = locationMaps;
+    public void setLocList(List<String> locationMaps) {
+        this.locList = locationMaps;
     }
 
     // Damage

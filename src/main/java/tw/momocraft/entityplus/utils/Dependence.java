@@ -5,13 +5,13 @@ import org.bukkit.Bukkit;
 import tw.momocraft.coreplus.api.CorePlusAPI;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 
-public class Depend {
+public class Dependence {
 
     private boolean MythicMobs = false;
     private boolean CMI = false;
     private boolean Residence = false;
 
-    public Depend() {
+    public Dependence() {
         if (ConfigHandler.getConfig("config.yml").getBoolean("General.Settings.Features.Hook.Residence")) {
             this.setResidenceStatus(Bukkit.getServer().getPluginManager().getPlugin("Residence") != null);
         }
@@ -26,23 +26,23 @@ public class Depend {
     }
 
     private void sendUtilityDepends() {
-        String hookMsg = "&fHooked [ &e"
+        String hookMsg = "&fHooked: ["
                 + (MythicMobsEnabled() ? "MythicMobs, " : "")
                 + (CMIEnabled() ? "CMI, " : "")
                 + (ResidenceEnabled() ? "Residence, " : "");
         try {
-            CorePlusAPI.getLangManager().sendConsoleMsg(ConfigHandler.getPlugin(), hookMsg.substring(0, hookMsg.lastIndexOf(", ")) + " &f]");
+            CorePlusAPI.getLangManager().sendConsoleMsg(ConfigHandler.getPlugin(), hookMsg.substring(0, hookMsg.lastIndexOf(", ")) + "]");
         } catch (Exception ignored) {
         }
 
         if (ResidenceEnabled()) {
-            hookMsg = "&fAdd Residence flags [ &e"
+            hookMsg = "&fResidence Flags: ["
                     + (FlagPermissions.getPosibleAreaFlags().contains("spawnbypass") ? "spawnbypass, " : "")
                     + (FlagPermissions.getPosibleAreaFlags().contains("spawnerbypass") ? "spawnerbypass, " : "")
                     + (FlagPermissions.getPosibleAreaFlags().contains("damagebypass") ? "damagebypass, " : "")
             ;
             try {
-                CorePlusAPI.getLangManager().sendConsoleMsg(ConfigHandler.getPlugin(), hookMsg.substring(0, hookMsg.lastIndexOf(", ")) + " &f]");
+                CorePlusAPI.getLangManager().sendConsoleMsg(ConfigHandler.getPlugin(), hookMsg.substring(0, hookMsg.lastIndexOf(", ")) + "]");
             } catch (Exception ignored) {
             }
         }

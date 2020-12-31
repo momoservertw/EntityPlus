@@ -9,8 +9,8 @@ public class DropMap {
     private double items;
     private double money;
     private List<String> commands;
-    private List<String> locMaps;
-    private List<String> blocksMaps;
+    private List<String> locList;
+    private List<String> blocksList;
 
     public long getPriority() {
         return priority;
@@ -32,12 +32,12 @@ public class DropMap {
         return commands;
     }
 
-    public List<String> getLocMaps() {
-        return locMaps;
+    public List<String> getLocList() {
+        return locList;
     }
 
-    public List<String> getBlocksMaps() {
-        return blocksMaps;
+    public List<String> getBlocksList() {
+        return blocksList;
     }
 
     public void setPriority(long priority) {
@@ -60,11 +60,11 @@ public class DropMap {
         this.commands = commands;
     }
 
-    public void setLocMaps(List<String> locMaps) {
-        this.locMaps = locMaps;
+    public void setLocList(List<String> locList) {
+        this.locList = locList;
     }
 
-    public void setBlocksMaps(List<String> blocksMaps) {
-        this.blocksMaps = blocksMaps;
+    public void setBlocksList(List<String> blocksList) {
+        this.blocksList = blocksList;
     }
 }
