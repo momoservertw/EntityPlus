@@ -60,9 +60,9 @@ public class Commands implements CommandExecutor {
                     }
                     return true;
                 }
-            default:
-                CorePlusAPI.getLangManager().sendLangMsg(ConfigHandler.getPrefix(), "Message.unknownCommand", sender);
-                return true;
+                break;
         }
+        CorePlusAPI.getLangManager().sendLangMsg(ConfigHandler.getPrefix(), "Message.unknownCommand", sender);
+        return true;
     }
 }

@@ -130,5 +130,4 @@ public class ConfigHandler {
     public static String getPrefix() {
         return getConfig("config.yml").getString("Message.prefix");
     }
-
 }
