@@ -117,10 +117,8 @@ public class ConfigPath {
         spawnResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Settings.Features.Bypass.Residence-Flag");
         ConfigurationSection groupsConfig = ConfigHandler.getConfig("entities.yml").getConfigurationSection("Entities");
         if (groupsConfig != null) {
-            String chance;
+            double chance;
             EntityMap entityMap;
-            List<BlocksMap> blocksMaps;
-            List<LocationMap> locMaps;
             String limit;
             for (String group : groupsConfig.getKeys(false)) {
                 if (ConfigHandler.getConfig("entities.yml").getBoolean("Entities." + group + ".Enable", true)) {
@@ -128,18 +126,14 @@ public class ConfigPath {
                     entityMap.setTypes(CorePlusAPI.getConfigManager().getTypeList(ConfigHandler.getPrefix(),
                             ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Types"), "Entities"));
                     entityMap.setPriority(ConfigHandler.getConfig("entities.yml").getLong("Entities." + group + ".Priority"));
-                    chance = ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Chance");
-                    if (chance == null) {
-                        entityMap.setChance(1);
-                    } else {
-                        entityMap.setChance(Double.parseDouble(chance));
-                    }
+                    entityMap.setChance(ConfigHandler.getConfig("entities.yml").getDouble("Entities." + group + ".Chance", 1));
                     entityMap.setReasons(ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Reasons"));
                     entityMap.setIgnoreReasons(ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Ignore-Reasons"));
                     entityMap.setBoimes(ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Biomes"));
                     entityMap.setIgnoreBoimes(ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Ignore-Biomes"));
                     entityMap.setLiquid(ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Liquid"));
                     entityMap.setDay(ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Day"));
+                    entityMap.setPermission(ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Permission"));
                     entityMap.setSucCmds(ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Commands"));
                     entityMap.setFaiCmds(ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Failed-Commands"));
                     entityMap.setBlocksMaps(ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Blocks"));
@@ -200,11 +194,9 @@ public class ConfigPath {
         ConfigurationSection groupsConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Entities.Spawn.Limit.Groups");
         if (groupsConfig != null) {
             LimitMap limitMap;
-            String groupEnable;
             boolean afkEnable;
             for (String group : groupsConfig.getKeys(false)) {
-                groupEnable = ConfigHandler.getConfig("config.yml").getString("Entities.Spawn.Limit.Groups." + group + ".Enable");
-                if (groupEnable == null || groupEnable.equals("true")) {
+                if (ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Limit.Groups." + group + ".Enable", true)) {
                     limitMap = new LimitMap();
                     limitMap.setChance(ConfigHandler.getConfig("config.yml").getLong("Entities.Spawn.Limit.Groups." + group + ".Chance"));
                     limitMap.setAmount(ConfigHandler.getConfig("config.yml").getInt("Entities.Spawn.Limit.Groups." + group + ".Amount"));
@@ -245,12 +237,8 @@ public class ConfigPath {
         ConfigurationSection groupsConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Entities.Drop.Groups");
         if (groupsConfig != null) {
             DropMap dropMap;
-            List<String> blocksMaps;
-            List<String> locMaps;
-            String groupEnable;
             for (String group : groupsConfig.getKeys(false)) {
-                groupEnable = ConfigHandler.getConfig("config.yml").getString("Entities.Drop." + group + ".Enable");
-                if (groupEnable == null || groupEnable.equals("true")) {
+                if (ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop." + group + ".Enable", true)) {
                     dropMap = new DropMap();
                     dropMap.setPriority(ConfigHandler.getConfig("config.yml").getLong("Entities.Drop.Groups." + group + ".Priority"));
                     dropMap.setExp(ConfigHandler.getConfig("config.yml").getDouble("Entities.Drop.Groups." + group + ".Exp"));

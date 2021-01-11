@@ -11,6 +11,7 @@ public class EntityMap {
     private List<String> ignoreBoimes;
     private String liquid;
     private String day;
+    private String perimssion;
     private List<String> sucCmds;
     private List<String> faiCmds;
     private List<String> locMaps;
@@ -50,6 +51,10 @@ public class EntityMap {
 
     public List<String> getIgnoreBoimes() {
         return ignoreBoimes;
+    }
+
+    public String getPerimssion() {
+        return perimssion;
     }
 
     public List<String> getLocMaps() {
@@ -106,6 +111,10 @@ public class EntityMap {
 
     public void setDay(String day) {
         this.day = day;
+    }
+
+    public void setPermission(String perimssion) {
+        this.perimssion = perimssion;
     }
 
     public void setBlocksMaps(List<String> blocksMaps) {

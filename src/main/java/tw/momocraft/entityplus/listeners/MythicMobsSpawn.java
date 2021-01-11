@@ -4,6 +4,7 @@ import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobSpawnEvent;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -12,6 +13,7 @@ import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.utils.entities.EntityMap;
 import tw.momocraft.entityplus.utils.entities.EntityUtils;
 
+import java.util.List;
 import java.util.Map;
 
 public class MythicMobsSpawn implements Listener {
@@ -23,15 +25,17 @@ public class MythicMobsSpawn implements Listener {
         }
         Entity entity = e.getEntity();
         String entityType = e.getMobType().getInternalName();
-        // To get entity properties.
-        Map<String, EntityMap> entityProp = ConfigHandler.getConfigPath().getEntityProp().get(entityType);
         // Checking if the properties contains this type of entity.
+        // To get properties.
+        Map<String, EntityMap> entityProp = ConfigHandler.getConfigPath().getEntityProp().get(entityType);
         if (entityProp != null) {
-            // Checking every groups of this entity.
+            // Checking every groups.
             Location loc = entity.getLocation();
             Block block = loc.getBlock();
+            boolean resFlag = ConfigHandler.getConfigPath().isSpawnResFlag();
+            List<Player> nearbyPlayers = EntityUtils.nearbyPlayers(loc);
             EntityMap entityMap;
-            boolean checkResFlag = ConfigHandler.getConfigPath().isSpawnResFlag();
+            String permission;
             for (String groupName : entityProp.keySet()) {
                 entityMap = entityProp.get(groupName);
                 // Checking the spawn "biome".
@@ -65,16 +69,26 @@ public class MythicMobsSpawn implements Listener {
                     continue;
                 }
                 // Checking the spawn "Residence-Flag".
-                if (!CorePlusAPI.getConditionManager().checkFlag(null, loc, "spawnbypass", false, checkResFlag)) {
+                if (!CorePlusAPI.getConditionManager().checkFlag(null, loc, "spawnbypass", false, resFlag)) {
                     CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPlugin(), "Spawn", entityType, "Residence-Flag", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the spawn "chance".
                 if (!CorePlusAPI.getUtilsManager().isRandChance(entityMap.getChance())) {
+                    // Checking the spawn permission.
+                    permission = entityMap.getPerimssion();
+                    if (permission != null) {
+                        if (!CorePlusAPI.getPlayerManager().havePermission(nearbyPlayers, permission, false)) {
+                            CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPlugin(), "Spawn", entityType, "Permission", "cancel", groupName,
+                                    new Throwable().getStackTrace()[0]);
+                            e.setCancelled();
+                            return;
+                        }
+                    }
                     // If the creature spawn location has reach the maximum creature amount, it will cancel the spawn event.
                     if (entityMap.getLimit() != null) {
-                        if (EntityUtils.checkLimit(entity, entityMap.getLimit())) {
+                        if (EntityUtils.checkLimit(entity, nearbyPlayers, entityMap.getLimit())) {
                             // Add a tag for this creature.
                             //ConfigHandler.getConfigPath().getLivingEntityMap().putMap(entity.getUniqueId(), new Pair<>(entityType, groupName));
                             CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPlugin(), "Spawn", entityType, "Limit", "return", groupName,

@@ -3,6 +3,7 @@ package tw.momocraft.entityplus.listeners;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -12,6 +13,7 @@ import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.utils.entities.EntityMap;
 import tw.momocraft.entityplus.utils.entities.EntityUtils;
 
+import java.util.List;
 import java.util.Map;
 
 public class CreatureSpawn implements Listener {
@@ -34,8 +36,10 @@ public class CreatureSpawn implements Listener {
             // Checking every groups.
             Location loc = entity.getLocation();
             Block block = loc.getBlock();
-            EntityMap entityMap;
             boolean resFlag = ConfigHandler.getConfigPath().isSpawnResFlag();
+            List<Player> nearbyPlayers = EntityUtils.nearbyPlayers(loc);
+            EntityMap entityMap;
+            String permission;
             for (String groupName : entityProp.keySet()) {
                 entityMap = entityProp.get(groupName);
                 // Checking the spawn "reasons".
@@ -82,9 +86,19 @@ public class CreatureSpawn implements Listener {
                 }
                 // Checking the spawn "chance".
                 if (!CorePlusAPI.getUtilsManager().isRandChance(entityMap.getChance())) {
+                    // Checking the spawn permission.
+                    permission = entityMap.getPerimssion();
+                    if (permission != null) {
+                        if (!CorePlusAPI.getPlayerManager().havePermission(nearbyPlayers, permission, false)) {
+                            CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPlugin(), "Spawn", entityType, "Permission", "cancel", groupName,
+                                    new Throwable().getStackTrace()[0]);
+                            e.setCancelled(true);
+                            return;
+                        }
+                    }
                     // If the creature spawn location has reach the maximum creature amount, it will cancel the spawn event.
                     if (entityMap.getLimit() != null) {
-                        if (EntityUtils.checkLimit(entity, entityMap.getLimit())) {
+                        if (EntityUtils.checkLimit(entity, nearbyPlayers, entityMap.getLimit())) {
                             // Add a tag for this creature.
                             //ConfigHandler.getConfigPath().getLivingEntityMap().putMap(entity.getUniqueId(), new Pair<>(entityType, groupName));
                             CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPlugin(), "Spawn", entityType, "Limit", "return", groupName,
