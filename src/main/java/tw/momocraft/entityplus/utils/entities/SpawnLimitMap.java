@@ -1,6 +1,6 @@
 package tw.momocraft.entityplus.utils.entities;
 
-public class LimitMap {
+public class SpawnLimitMap {
 
     private double chance;
     private int amount;

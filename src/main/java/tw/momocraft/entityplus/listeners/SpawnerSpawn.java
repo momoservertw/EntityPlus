@@ -102,7 +102,7 @@ public class SpawnerSpawn implements Listener {
                 e.setCancelled(true);
 
                 List<Player> nearbyPlayers = null;
-                int nearbyPlayerRange = ConfigHandler.getConfigPath().getNearbyPlayerRange();
+                int nearbyPlayerRange = ConfigHandler.getConfigPath().getSpawnerPlayerCheckRange();
                 if (nearbyPlayerRange != 0) {
                     nearbyPlayers = getNearbyPlayers(loc, nearbyPlayerRange);
                 }

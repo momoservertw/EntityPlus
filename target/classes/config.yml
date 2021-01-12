@@ -16,6 +16,24 @@ Entities:
           # Custom Residence flag "spawnbypass" to bypass the features.
           # Changing this option requires restarting the server.
           Residence-Flag: false
+    # Prevent spawning mobs if there is no any player nearby or the players don't has certain permission.
+    Nearby-Player:
+      Enable: false
+      Groups:
+        NormalMobs:
+          Enable: true
+          # Based on the value of the option "mob-spawn-range" in Spigot.yml.
+          Radius: "+2"
+        Basic:
+          Emable: true
+        Near:
+          Enable: true
+          # The range of blocks.
+          Radius: "32"
+        Boss:
+          Enable: true
+          Radius: "+2"
+          Permission: "entityplus.bypass.spawn.boss"
     # Prevent spawning new creatures if there are too many creatures nearby the location.
     Limit:
       Enable: false
@@ -25,28 +43,28 @@ Entities:
       Groups:
         NormalMobs:
           Enable: true
-          Chance: 0
           Amount: 10
+          Chance: 0
           AFK:
             Enable: false
-            Amount: 5
             Chance: 0
+            Amount: 5
           Search:
             X: 8
             Z: 8
             Y: 5
         BreedableMobs:
           Enable: true
-          Chance: 0
           Amount: 20
+          Chance: 0
           Search:
             X: 16
             Z: 16
             Y: 10
         WaterMobs:
           Enable: true
-          Chance: 0
           Amount: 10
+          Chance: 0
           Search:
             X: 16
             Z: 16

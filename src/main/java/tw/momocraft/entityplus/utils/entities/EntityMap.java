@@ -11,14 +11,13 @@ public class EntityMap {
     private List<String> ignoreBoimes;
     private String liquid;
     private String day;
-    private String perimssion;
     private List<String> sucCmds;
     private List<String> faiCmds;
     private List<String> locMaps;
     private List<String> blocksMaps;
-
     private double chance;
-    private LimitMap limit = null;
+    private String nearbyPlayer;
+    private String limit = null;
 
 
     public List<String> getTypes() {
@@ -53,10 +52,6 @@ public class EntityMap {
         return ignoreBoimes;
     }
 
-    public String getPerimssion() {
-        return perimssion;
-    }
-
     public List<String> getLocMaps() {
         return locMaps;
     }
@@ -69,9 +64,11 @@ public class EntityMap {
         return chance;
     }
 
-    public LimitMap getLimit() {
+    public String getLimit() {
         return limit;
     }
+
+    public String getNearbyPlayer() { return nearbyPlayer;}
 
     public List<String> getSucCmds() {
         return sucCmds;
@@ -113,10 +110,6 @@ public class EntityMap {
         this.day = day;
     }
 
-    public void setPermission(String perimssion) {
-        this.perimssion = perimssion;
-    }
-
     public void setBlocksMaps(List<String> blocksMaps) {
         this.blocksMaps = blocksMaps;
     }
@@ -129,8 +122,12 @@ public class EntityMap {
         this.chance = chance;
     }
 
-    public void setLimit(LimitMap limit) {
+    public void setLimit(String limit) {
         this.limit = limit;
+    }
+
+    public void setNearbyPlayer(String nearbyPlayer) {
+        this.nearbyPlayer = nearbyPlayer;
     }
 
     public void setSucCmds(List<String> sucCmds) {

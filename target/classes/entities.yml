@@ -17,6 +17,7 @@ Entities:
       - world_nether
       - world_the_end
     Limit: NormalMobs
+    Nearby-Player: NormalMobs
   BreedableMobs:
     Enable: false
     Priority: 2
@@ -94,3 +95,4 @@ Entities:
     Types:
       - SkeletonKing
     Chance: 0.1
+    Nearby-Player: Boss
