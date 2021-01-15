@@ -1,7 +1,6 @@
 package tw.momocraft.entityplus.utils.entities;
 
 import com.Zrips.CMI.CMI;
-import org.bukkit.Location;
 import org.bukkit.entity.*;
 import tw.momocraft.coreplus.api.CorePlusAPI;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
@@ -9,41 +8,26 @@ import tw.momocraft.entityplus.handlers.ConfigHandler;
 import java.util.List;
 
 public class EntityUtils {
-    public static boolean checkNearbyPlayers(Location loc, String group) {
-        SpawnNearbyMap spawnNearbyMap = ConfigHandler.getConfigPath().getSpawnNearbyProp().get(group);
-        if (spawnNearbyMap == null) {
-            return true;
-        }
-        List<Player> nearbyPlayers = CorePlusAPI.getUtilsManager().getNearbyPlayersXZ(loc, spawnNearbyMap.getRange());
-        if (nearbyPlayers.isEmpty()) {
-            return false;
-        }
-        String permission = spawnNearbyMap.getPermission();
-        if (permission != null) {
-            return CorePlusAPI.getPlayerManager().havePermission(nearbyPlayers, permission, false);
-        }
-        return true;
-    }
 
     /**
      * @param entity the checking entity.
      * @param group  the limit group of this type of entity.
      * @return if spawn location reach the maximum entity amount.
      */
-    public static boolean checkLimit(Entity entity, String group) {
+    public static boolean checkLimit(Entity entity, List<Player> nearPlayers, String group) {
         SpawnLimitMap limitMap = ConfigHandler.getConfigPath().getSpawnLimitProp().get(group);
         if (limitMap == null) {
+            CorePlusAPI.getLangManager().sendErrorMsg(ConfigHandler.getPlugin(), "Can not find the Spawn Limit group: " + group);
             return true;
         }
         int amount = limitMap.getAmount();
         double chance = limitMap.getChance();
-        int afkAmount = limitMap.getAFKAmount();
-        double afkChance = limitMap.getAFKChance();
-        if (limitMap.isAFK() && CorePlusAPI.getDependManager().CMIEnabled()) {
-            for (Player player : CorePlusAPI.getUtilsManager().getNearbyPlayersXZ(entity.getLocation(),
-                    ConfigHandler.getConfigPath().getMobSpawnRangeSquared())) {
+        if (ConfigHandler.getConfigPath().isSpawnLimitAFK()) {
+            int afkAmount = limitMap.getAFKAmount();
+            double afkChance = limitMap.getAFKChance();
+            for (Player player : nearPlayers) {
                 if (CMI.getInstance().getPlayerManager().getUser(player).isAfk()) {
-                    if (CorePlusAPI.getPlayerManager().hasPermission(player, "entityplus.bypass.spawnlimit.afk")) {
+                    if (CorePlusAPI.getPlayerManager().hasPerm(ConfigHandler.getPluginName(), player, "entityplus.bypass.spawnlimit.afk")) {
                         amount = limitMap.getAmount();
                         chance = limitMap.getChance();
                         break;

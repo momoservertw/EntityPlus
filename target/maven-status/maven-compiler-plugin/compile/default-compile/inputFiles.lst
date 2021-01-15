@@ -5,7 +5,6 @@ C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\ha
 C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\listeners\EntityDeath.java
 C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\listeners\SpawnerSpawn.java
 C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\utils\TabComplete.java
-C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\utils\entities\SpawnNearbyMap.java
 C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\utils\Dependence.java
 C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\listeners\CreatureSpawn.java
 C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\utils\entities\DamageMap.java
@@ -15,6 +14,7 @@ C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\ut
 C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\Commands.java
 C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\listeners\MythicMobsSpawn.java
 C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\handlers\RegisterHandler.java
+C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\utils\entities\SpawnRangeMap.java
 C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\EntityPlus.java
 C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\utils\entities\DropMap.java
 C:\Users\Sayuri\IdeaProjects\EntityPlus\src\main\java\tw\momocraft\entityplus\listeners\EntityDamage.java

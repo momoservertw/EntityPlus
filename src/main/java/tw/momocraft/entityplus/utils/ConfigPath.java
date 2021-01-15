@@ -37,12 +37,11 @@ public class ConfigPath {
     //  ============================================== //
     private boolean spawn;
     private boolean spawnResFlag;
-    private boolean spawnNearby;
-    private boolean spawnLimit;
+    private boolean spawnLimitAFK;
 
     private final Map<String, Map<String, EntityMap>> entityProp = new HashMap<>();
     private Map<String, SpawnLimitMap> spawnLimitProp = new HashMap<>();
-    private Map<String, SpawnNearbyMap> spawnNearbyProp = new HashMap<>();
+    private Map<String, SpawnRangeMap> spawnRangeProp = new HashMap<>();
 
     //  ============================================== //
     //         Drop Variables                          //
@@ -80,7 +79,7 @@ public class ConfigPath {
     private void setUp() {
         setupMsg();
         setGeneral();
-        setSpawnNearbyProp();
+        setSpawnRangeProp();
         setSpawnLimitProp();
         setDrop();
         setDamage();
@@ -115,6 +114,7 @@ public class ConfigPath {
             return;
         }
         spawnResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Settings.Features.Bypass.Residence-Flag");
+        spawnLimitAFK = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Limit.Settings.Features.AFK");
         ConfigurationSection groupsConfig = ConfigHandler.getConfig("entities.yml").getConfigurationSection("Entities");
         if (groupsConfig == null) {
             return;
@@ -135,12 +135,11 @@ public class ConfigPath {
             entityMap.setIgnoreBoimes(ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Ignore-Biomes"));
             entityMap.setLiquid(ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Liquid"));
             entityMap.setDay(ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Day"));
-            entityMap.setSucCmds(ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Commands"));
-            entityMap.setFaiCmds(ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Failed-Commands"));
             entityMap.setBlocksMaps(ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Blocks"));
             entityMap.setLocMaps(ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Location"));
+            entityMap.setRange(ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Range"));
             entityMap.setLimit(ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Limit"));
-            entityMap.setNearbyPlayer(ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Nearby-Player"));
+            entityMap.setCommands(ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Commands"));
             // Add properties to all entities.
             for (String entityType : entityMap.getTypes()) {
                 try {
@@ -164,7 +163,7 @@ public class ConfigPath {
             }
             sortMap = CorePlusAPI.getUtilsManager().sortByValue(sortMap);
             for (String group : sortMap.keySet()) {
-                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPlugin(), "Spawn", entityType, "setup", "continue", group,
+                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPlugin(), "Spawn", entityType, "setup", "continue", group,
                         new Throwable().getStackTrace()[0]);
                 newEnMap.put(group, entityProp.get(entityType).get(group));
             }
@@ -172,49 +171,37 @@ public class ConfigPath {
         }
     }
 
-    private void setSpawnNearbyProp() {
-        spawnNearby = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Nearby-Player.Enable");
-        if (!spawnNearby) {
+    private void setSpawnRangeProp() {
+        if (!ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Range.Enable")) {
             return;
         }
-        ConfigurationSection groupsConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Entities.Spawn.Nearby-Player.Groups");
+        ConfigurationSection groupsConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Entities.Spawn.Range.Groups");
         if (groupsConfig == null) {
             return;
         }
-        spawnNearbyProp = new HashMap<>();
         int basic = CorePlusAPI.getConfigManager().getConfig("spigot.yml").getInt("world-settings.default.mob-spawn-range", 8) * 16;
-        String range;
-        SpawnNearbyMap nearbyMap;
+        int range;
+        SpawnRangeMap spawnRangeMap;
         for (String group : groupsConfig.getKeys(false)) {
-            if (!(ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Nearby-Player.Groups." + group + ".Enable", true))) {
+            if (!(ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Range.Groups." + group + ".Enable", true))) {
                 continue;
             }
-            nearbyMap = new SpawnNearbyMap();
-            nearbyMap.setPermission(ConfigHandler.getConfig("config.yml").getString("Entities.Spawn.Nearby-Player.Groups." + group + ".Permission"));
-            range = ConfigHandler.getConfig("config.yml").getString("Entities.Spawn.Nearby-Player.Groups." + group + ".Range", String.valueOf(basic));
-            try {
-                nearbyMap.setRange(Integer.parseInt(range));
-            } catch (Exception e) {
-                try {
-                    if (range.contains("+")) {
-                        nearbyMap.setRange(basic + Integer.parseInt(range.replace("+", "")) * 16);
-                    } else {
-                        nearbyMap.setRange(basic - Integer.parseInt(range.replace("-", "")) * 16);
-                    }
-                } catch (Exception ex) {
-                    UtilsHandler.getLang().sendErrorMsg(tw.momocraft.coreplus.handlers.ConfigHandler.getPrefix(),
-                            "The format of Spawn Range is wrong \"" + group + "\"");
-                }
-            }
-            CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPlugin(), "Spawn-Nearby-Player", group, "setup", "continue",
+            spawnRangeMap = new SpawnRangeMap();
+            spawnRangeMap.setGliding(ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Range.Groups." + group + ".Cancel-Gliding"));
+            spawnRangeMap.setFlying(ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Range.Groups." + group + ".Cancel-Flying"));
+            spawnRangeMap.setPermission(ConfigHandler.getConfig("config.yml").getString("Entities.Spawn.Range.Groups." + group + ".Permission"));
+            range = ConfigHandler.getConfig("config.yml").getInt("Entities.Spawn.Range.Groups." + group + ".Block",
+                    (1 + ConfigHandler.getConfig("config.yml").getInt("Entities.Spawn.Range.Groups." + group + ".Extend")) * basic);
+            range *= range;
+            spawnRangeMap.setRange(range);
+            spawnRangeProp.put(group, spawnRangeMap);
+            CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPlugin(), "Spawn-Range", group, "setup", "continue", String.valueOf(range),
                     new Throwable().getStackTrace()[0]);
-            spawnNearbyProp.put(group, nearbyMap);
         }
     }
 
     private void setSpawnLimitProp() {
-        spawnLimit = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Limit.Enable");
-        if (!spawnLimit) {
+        if (!ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Limit.Enable")) {
             return;
         }
         boolean limitAFK = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Limit.Settings.Features.AFK");
@@ -243,7 +230,7 @@ public class ConfigPath {
             limitMap.setSearchX(ConfigHandler.getConfig("config.yml").getLong("Entities.Spawn.Limit.Groups." + group + ".Search.X"));
             limitMap.setSearchY(ConfigHandler.getConfig("config.yml").getLong("Entities.Spawn.Limit.Groups." + group + ".Search.Y"));
             limitMap.setSearchZ(ConfigHandler.getConfig("config.yml").getLong("Entities.Spawn.Limit.Groups." + group + ".Search.Z"));
-            CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPlugin(), "Spawn-Limit", group, "setup", "continue",
+            CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPlugin(), "Spawn-Limit", group, "setup", "continue",
                     new Throwable().getStackTrace()[0]);
             spawnLimitProp.put(group, limitMap);
         }
@@ -305,7 +292,7 @@ public class ConfigPath {
             }
             sortMap = CorePlusAPI.getUtilsManager().sortByValue(sortMap);
             for (String group : sortMap.keySet()) {
-                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPlugin(), "Drop", entityType, "setup", "continue", group,
+                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPlugin(), "Drop", entityType, "setup", "continue", group,
                         new Throwable().getStackTrace()[0]);
                 newEnMap.put(group, dropProp.get(entityType).get(group));
             }
@@ -389,7 +376,7 @@ public class ConfigPath {
             }
             sortMap = CorePlusAPI.getUtilsManager().sortByValue(sortMap);
             for (String group : sortMap.keySet()) {
-                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPlugin(), "Spawner", worldName, "setup", "continue", group,
+                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPlugin(), "Spawner", worldName, "setup", "continue", group,
                         new Throwable().getStackTrace()[0]);
                 newMap.put(group, spawnerProp.get(worldName).get(group));
             }
@@ -461,7 +448,7 @@ public class ConfigPath {
             }
             sortMap = CorePlusAPI.getUtilsManager().sortByValue(sortMap);
             for (String group : sortMap.keySet()) {
-                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPlugin(), "Damage", entityType, "setup", "continue", group,
+                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPlugin(), "Damage", entityType, "setup", "continue", group,
                         new Throwable().getStackTrace()[0]);
                 newEnMap.put(group, damageProp.get(entityType).get(group));
             }
@@ -514,12 +501,8 @@ public class ConfigPath {
         return spawnResFlag;
     }
 
-    public boolean isSpawnNearby() {
-        return spawnNearby;
-    }
-
-    public boolean isSpawnLimit() {
-        return spawnLimit;
+    public boolean isSpawnLimitAFK() {
+        return spawnLimitAFK;
     }
 
     public Map<String, Map<String, EntityMap>> getEntityProp() {
@@ -530,8 +513,8 @@ public class ConfigPath {
         return dropProp;
     }
 
-    public Map<String, SpawnNearbyMap> getSpawnNearbyProp() {
-        return spawnNearbyProp;
+    public Map<String, SpawnRangeMap> getSpawnRangeProp() {
+        return spawnRangeProp;
     }
 
     public Map<String, SpawnLimitMap> getSpawnLimitProp() {

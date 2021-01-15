@@ -11,12 +11,11 @@ public class EntityMap {
     private List<String> ignoreBoimes;
     private String liquid;
     private String day;
-    private List<String> sucCmds;
-    private List<String> faiCmds;
+    private List<String> commands;
     private List<String> locMaps;
     private List<String> blocksMaps;
     private double chance;
-    private String nearbyPlayer;
+    private String range;
     private String limit = null;
 
 
@@ -68,14 +67,10 @@ public class EntityMap {
         return limit;
     }
 
-    public String getNearbyPlayer() { return nearbyPlayer;}
+    public String getRange() { return range;}
 
-    public List<String> getSucCmds() {
-        return sucCmds;
-    }
-
-    public List<String> getFaiCmds() {
-        return faiCmds;
+    public List<String> getCommands() {
+        return commands;
     }
 
     public void setTypes(List<String> types) {
@@ -126,15 +121,11 @@ public class EntityMap {
         this.limit = limit;
     }
 
-    public void setNearbyPlayer(String nearbyPlayer) {
-        this.nearbyPlayer = nearbyPlayer;
+    public void setRange(String range) {
+        this.range = range;
     }
 
-    public void setSucCmds(List<String> sucCmds) {
-        this.sucCmds = sucCmds;
-    }
-
-    public void setFaiCmds(List<String> faiCmds) {
-        this.faiCmds = faiCmds;
+    public void setCommands(List<String> commands) {
+        this.commands = commands;
     }
 }

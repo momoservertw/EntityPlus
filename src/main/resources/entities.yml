@@ -17,7 +17,7 @@ Entities:
       - world_nether
       - world_the_end
     Limit: NormalMobs
-    Nearby-Player: NormalMobs
+    Range: Default
   BreedableMobs:
     Enable: false
     Priority: 2
@@ -62,7 +62,7 @@ Entities:
     Reasons:
       - NATURAL
     Blocks:
-      - Monument
+      - IgnoreNearbyMonument
   Iron_Golem:
     Enable: false
     Priority: 3
@@ -95,4 +95,3 @@ Entities:
     Types:
       - SkeletonKing
     Chance: 0.1
-    Nearby-Player: Boss

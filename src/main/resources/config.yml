@@ -3,6 +3,7 @@
 #  Wiki: https://github.com/momoservertw/EntityPlus/wiki
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 Config-Version: 12
+Debugging: false
 
 # Controlling entities spawn conditions, rewards, and damage.
 Entities:
@@ -16,23 +17,27 @@ Entities:
           # Custom Residence flag "spawnbypass" to bypass the features.
           # Changing this option requires restarting the server.
           Residence-Flag: false
-    # Prevent spawning mobs if there is no any player nearby or the players don't has certain permission.
-    Nearby-Player:
+    # Limit the range of monsters around the player to avoid unnecessary monsters.
+    Range:
       Enable: false
+      # You need to add an option "range: GroupName" in entities.yml.
       Groups:
-        NormalMobs:
+        Default:
           Enable: true
-          # Based on the value of the option "mob-spawn-range" in Spigot.yml.
-          Radius: "+2"
-        Basic:
-          Emable: true
+          # Extend more chunks to allow spawn mobs. Based on the value of the option "mob-spawn-range" in Spigot.yml.
+          Extend: 0
+          # Prevent spawn monster when all player nearby is using Elytra.
+          Cancel-Gliding: true
+          Cancel-Flying: true
         Near:
           Enable: true
-          # The range of blocks.
-          Radius: "32"
+          # Unit: block
+          Block: 48
         Boss:
           Enable: true
-          Radius: "+2"
+          Extend: 0
+          Cancel-Gliding: true
+          Cancel-Flying: true
           Permission: "entityplus.bypass.spawn.boss"
     # Prevent spawning new creatures if there are too many creatures nearby the location.
     Limit:
@@ -40,6 +45,7 @@ Entities:
       Settings:
         Features:
           AFK: false
+      # You need to add an option in entities.yml.
       Groups:
         NormalMobs:
           Enable: true
@@ -163,7 +169,11 @@ Entities:
 Spawner:
   Enable: false
   Settings:
-    # Using for placeholders %nearbyplayers%. Set "0" to disable checking.
+    Message:
+      Log: true
+      Console: true
+      Nearby-Players: true
+    # Sending commands nearby players. Set "0" to disable checking.
     Nearby-Players-Range: 32
     Bypass:
       # Custom Residence flag "spawnerbypass" to bypass the features.
@@ -187,9 +197,9 @@ Spawner:
         SPIDER: 1
         CAVE_SPIDER: 1
       Commands:
-        - "log-custom: SpawnerChanged, %spawner% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%, nearby players: %nearbyplayers%"
-        - "print: &c%spawner% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%, nearby players: %nearbyplayers%"
-        - "nearby-message: &c%spawner% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%."
+        - "log-custom: SpawnerChanged, %entity_display_name% spawner - %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%, nearby players: %nearbyplayers%"
+        - "print: &c%entity_display_name% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%, nearby players: %nearbyplayers%"
+        - "targets-message: &c%entity_display_name% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%."
     Nether:
       Enable: true
       Location:
@@ -199,18 +209,18 @@ Spawner:
       Change-Types:
         - BLAZE
       Commands:
-        - "log-custom: SpawnerChanged, %spawner% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%, nearby players: %nearbyplayers%"
+        - "log-custom: SpawnerChanged, %spawner% spawner - %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%, nearby players: %nearbyplayers%"
         - "print: &c%spawner% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%, nearby players: %nearbyplayers%"
-        - "nearby-message: &c%spawner% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%."
+        - "targets-message: &c%spawner% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%."
     Remove:
       Enable: true
       Remove: true
       Location:
         - world_the_end
       Commands:
-        - "log-custom: SpawnerChanged, %spawner% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been removed, nearby players: %nearbyplayers%"
+        - "log-custom: SpawnerChanged, %spawner% spawner - %world%(%loc_x%, %loc_y%, %loc_z%) has been removed, nearby players: %nearbyplayers%"
         - "print: &c%spawner% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been removed, nearby players: %nearbyplayers%"
-        - "nearby-message: &c%spawner% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been removed."
+        - "targets-message: &c%spawner% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been removed."
 
 Message:
   prefix: '&7[&dEntityPlus&7]&r '

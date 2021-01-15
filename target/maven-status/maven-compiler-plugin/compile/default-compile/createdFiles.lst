@@ -4,10 +4,10 @@ tw\momocraft\entityplus\handlers\RegisterHandler.class
 tw\momocraft\entityplus\utils\entities\DropMap.class
 tw\momocraft\entityplus\utils\entities\SpawnLimitMap.class
 tw\momocraft\entityplus\listeners\CreatureSpawn.class
+tw\momocraft\entityplus\utils\entities\SpawnRangeMap.class
 tw\momocraft\entityplus\handlers\ConfigHandler.class
 tw\momocraft\entityplus\utils\ConfigPath.class
 tw\momocraft\entityplus\utils\entities\SpawnerMap.class
-tw\momocraft\entityplus\utils\entities\SpawnNearbyMap.class
 tw\momocraft\entityplus\listeners\SpawnerSpawn.class
 tw\momocraft\entityplus\utils\entities\DamageMap.class
 tw\momocraft\entityplus\utils\TabComplete.class

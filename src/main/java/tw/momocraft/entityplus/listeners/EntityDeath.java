@@ -40,15 +40,15 @@ public class EntityDeath implements Listener {
                 // Checking the bypass "Residence-Flag".
                 if (!CorePlusAPI.getConditionManager().checkFlag(null, e.getEntity().getLocation(), "dropbypass", false,
                         ConfigHandler.getConfigPath().isDropResFlag())) {
-                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.getPlugin(), "Drop", entityType, "!Residence-Flag", "return",
+                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPlugin(), "Drop", entityType, "!Residence-Flag", "return",
                             new Throwable().getStackTrace()[0]);
                     return;
                 }
                 // Checking player reward permissions.
                 List<String> permsList = new ArrayList<>();
                 for (String key : dropProp.keySet()) {
-                    if (CorePlusAPI.getPlayerManager().hasPermission(player, "entityplus.drop.*")
-                            || CorePlusAPI.getPlayerManager().hasPermission(player, "entityplus.drop." + key)) {
+                    if (CorePlusAPI.getPlayerManager().hasPerm(ConfigHandler.getPluginName(), player, "entityplus.drop.*")
+                            || CorePlusAPI.getPlayerManager().hasPerm(ConfigHandler.getPluginName(), player, "entityplus.drop." + key)) {
                         permsList.add(key);
                     }
                 }

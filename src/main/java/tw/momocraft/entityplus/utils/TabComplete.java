@@ -5,6 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.util.StringUtil;
 import tw.momocraft.coreplus.api.CorePlusAPI;
+import tw.momocraft.entityplus.handlers.ConfigHandler;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,13 +41,13 @@ public class TabComplete implements TabCompleter {
 
         switch (args.length) {
             case 1:
-                if (CorePlusAPI.getPlayerManager().hasPermission(sender, "entityplus.use")) {
+                if (CorePlusAPI.getPlayerManager().hasPerm(ConfigHandler.getPluginName(), sender, "entityplus.use")) {
                     commands.add("help");
                 }
-                if (CorePlusAPI.getPlayerManager().hasPermission(sender, "entityplus.command.reload")) {
+                if (CorePlusAPI.getPlayerManager().hasPerm(ConfigHandler.getPluginName(), sender, "entityplus.command.reload")) {
                     commands.add("reload");
                 }
-                if (CorePlusAPI.getPlayerManager().hasPermission(sender, "entityplus.command.version")) {
+                if (CorePlusAPI.getPlayerManager().hasPerm(ConfigHandler.getPluginName(), sender, "entityplus.command.version")) {
                     commands.add("version");
                 }
                 break;
