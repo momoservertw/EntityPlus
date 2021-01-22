@@ -93,7 +93,7 @@ public class SpawnerSpawn implements Listener {
             // Changing the type of spawner.
             Map<String, Long> changeMap = spawnerMap.getChangeMap();
             if (changeMap == null) {
-                CorePlusAPI.getLangManager().sendErrorMsg(ConfigHandler.getPlugin(), "The \"Change-Types\" is empty.");
+                CorePlusAPI.getLangManager().sendErrorMsg(ConfigHandler.getPluginName(), "The \"Change-Types\" is empty.");
                 return;
             }
             long totalChance = 0;

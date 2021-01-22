@@ -17,7 +17,7 @@ public class EntityUtils {
     public static boolean checkLimit(Entity entity, List<Player> nearPlayers, String group) {
         SpawnLimitMap limitMap = ConfigHandler.getConfigPath().getSpawnLimitProp().get(group);
         if (limitMap == null) {
-            CorePlusAPI.getLangManager().sendErrorMsg(ConfigHandler.getPlugin(), "Can not find the Spawn Limit group: " + group);
+            CorePlusAPI.getLangManager().sendErrorMsg(ConfigHandler.getPluginName(), "Can not find the Spawn Limit group: " + group);
             return true;
         }
         int amount = limitMap.getAmount();

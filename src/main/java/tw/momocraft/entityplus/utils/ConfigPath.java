@@ -349,7 +349,7 @@ public class ConfigPath {
             // Add properties to all Worlds.
             LocationMap locationMap;
             for (String locName : spawnerMap.getLocList()) {
-                locationMap = CorePlusAPI.getConditionManager().getLocProp().get(locName);
+                locationMap = CorePlusAPI.getConfigManager().getLocProp().get(locName);
                 if (locationMap == null) {
                     continue;
                 }

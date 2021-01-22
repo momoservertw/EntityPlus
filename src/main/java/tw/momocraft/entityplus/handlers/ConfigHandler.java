@@ -52,7 +52,7 @@ public class ConfigHandler {
             try {
                 EntityPlus.getInstance().saveResource(fileName, false);
             } catch (Exception e) {
-                CorePlusAPI.getLangManager().sendErrorMsg(getPlugin(), "&cCannot save " + fileName + " to disk!");
+                CorePlusAPI.getLangManager().sendErrorMsg(getPluginName(), "&cCannot save " + fileName + " to disk!");
                 return;
             }
         }

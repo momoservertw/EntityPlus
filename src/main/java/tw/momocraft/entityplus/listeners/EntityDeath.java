@@ -38,7 +38,7 @@ public class EntityDeath implements Listener {
             // Checking if the properties contains this type of entity.
             if (dropProp != null) {
                 // Checking the bypass "Residence-Flag".
-                if (!CorePlusAPI.getConditionManager().checkFlag(null, e.getEntity().getLocation(), "dropbypass", false,
+                if (!CorePlusAPI.getConditionManager().checkFlag(e.getEntity().getLocation(), "dropbypass", false,
                         ConfigHandler.getConfigPath().isDropResFlag())) {
                     CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPlugin(), "Drop", entityType, "!Residence-Flag", "return",
                             new Throwable().getStackTrace()[0]);

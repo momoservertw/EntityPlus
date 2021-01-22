@@ -83,7 +83,7 @@ public class EntityDamage implements Listener {
                     continue;
                 }
                 // Checking the spawn "Residence-Flag".
-                if (!CorePlusAPI.getConditionManager().checkFlag(null, loc, "damagebypass", false, checkResFlag)) {
+                if (!CorePlusAPI.getConditionManager().checkFlag(loc, "damagebypass", false, checkResFlag)) {
                     CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPlugin(), "Damage", entityType, "Residence-Flag", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
