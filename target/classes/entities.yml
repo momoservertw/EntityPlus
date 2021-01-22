@@ -37,6 +37,7 @@ Entities:
     Reasons:
       - NATURAL
     Limit: WaterMobs
+    Range: Default
   Bat:
     Enable: false
     Priority: 3
@@ -45,6 +46,7 @@ Entities:
     Chance: 0.2
     Reasons:
       - NATURAL
+    Range: Default
   Phantom:
     Enable: false
     Priority: 3
@@ -53,6 +55,7 @@ Entities:
     Chance: 0.3
     Reasons:
       - NATURAL
+    Range: Default
   Guardian:
     Enable: false
     Priority: 3
@@ -63,6 +66,7 @@ Entities:
       - NATURAL
     Blocks:
       - IgnoreNearbyMonument
+    Range: Default
   Iron_Golem:
     Enable: false
     Priority: 3
