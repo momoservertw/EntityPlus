@@ -143,7 +143,7 @@ public class SpawnerSpawn implements Listener {
                     .replace("%loc_z%", String.valueOf(loc.getBlockZ()))
             ;
             if (targets == null || targets.isEmpty()) {
-                s = s.replace("%targets%", CorePlusAPI.getLangManager().getTranslation("noTargets"));
+                s = s.replace("%targets%", CorePlusAPI.getLangManager().getMessageTranslation("noTargets"));
             } else {
                 s = s.replace("%targets%", CorePlusAPI.getLangManager().getPlayersString(targets));
             }

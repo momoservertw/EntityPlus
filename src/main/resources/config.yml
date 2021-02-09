@@ -26,7 +26,7 @@ Entities:
           Enable: true
           # Extend more chunks to allow spawn mobs. Based on the value of the option "mob-spawn-range" in Spigot.yml.
           Extend: 0
-          # Prevent spawn monster when all player nearby is using Elytra.
+          # Prevent spawn monsters when all player nearby is using elytra.
           Cancel-Gliding: true
           Cancel-Flying: true
         Near:
@@ -38,7 +38,7 @@ Entities:
           Extend: 0
           Cancel-Gliding: true
           Cancel-Flying: true
-          Permission: "entityplus.bypass.spawn.boss"
+          Permission: "entityplus.spawn.mobs.boss"
     # Prevent spawning new creatures if there are too many creatures nearby the location.
     Limit:
       Enable: false
