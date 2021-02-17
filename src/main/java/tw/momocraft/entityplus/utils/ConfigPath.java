@@ -2,7 +2,6 @@ package tw.momocraft.entityplus.utils;
 
 import org.bukkit.configuration.ConfigurationSection;
 import tw.momocraft.coreplus.api.CorePlusAPI;
-import tw.momocraft.coreplus.handlers.UtilsHandler;
 import tw.momocraft.coreplus.utils.conditions.LocationMap;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.utils.entities.*;
@@ -25,12 +24,6 @@ public class ConfigPath {
     private String msgHelp;
     private String msgReload;
     private String msgVersion;
-
-    //  ============================================== //
-    //         General Variables                       //
-    //  ============================================== //
-    private int mobSpawnRange;
-    private int mobSpawnRangeSquared;
 
     //  ============================================== //
     //         Spawn Variables                         //
@@ -78,7 +71,6 @@ public class ConfigPath {
     //  ============================================== //
     private void setUp() {
         setupMsg();
-        setGeneral();
         setSpawnRangeProp();
         setSpawnLimitProp();
         setDrop();
@@ -95,14 +87,6 @@ public class ConfigPath {
         msgHelp = ConfigHandler.getConfig("config.yml").getString("Message.Commands.help");
         msgReload = ConfigHandler.getConfig("config.yml").getString("Message.Commands.reload");
         msgVersion = ConfigHandler.getConfig("config.yml").getString("Message.Commands.version");
-    }
-
-    //  ============================================== //
-    //         General Setter                          //
-    //  ============================================== //
-    private void setGeneral() {
-        mobSpawnRange = (CorePlusAPI.getConfigManager().getConfig("spigot.yml").getInt("world-settings.default.mob-spawn-range") + 2) * 16;
-        mobSpawnRangeSquared = mobSpawnRange * mobSpawnRange;
     }
 
     //  ============================================== //
@@ -163,7 +147,7 @@ public class ConfigPath {
             }
             sortMap = CorePlusAPI.getUtilsManager().sortByValue(sortMap);
             for (String group : sortMap.keySet()) {
-                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPlugin(), "Spawn", entityType, "setup", "continue", group,
+                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(), "Spawn", entityType, "setup", "continue", group,
                         new Throwable().getStackTrace()[0]);
                 newEnMap.put(group, entityProp.get(entityType).get(group));
             }
@@ -195,7 +179,7 @@ public class ConfigPath {
             range *= range;
             spawnRangeMap.setRange(range);
             spawnRangeProp.put(group, spawnRangeMap);
-            CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPlugin(), "Spawn-Range", group, "setup", "continue", String.valueOf(range),
+            CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(), "Spawn-Range", group, "setup", "continue", String.valueOf(range),
                     new Throwable().getStackTrace()[0]);
         }
     }
@@ -230,7 +214,7 @@ public class ConfigPath {
             limitMap.setSearchX(ConfigHandler.getConfig("config.yml").getLong("Entities.Spawn.Limit.Groups." + group + ".Search.X"));
             limitMap.setSearchY(ConfigHandler.getConfig("config.yml").getLong("Entities.Spawn.Limit.Groups." + group + ".Search.Y"));
             limitMap.setSearchZ(ConfigHandler.getConfig("config.yml").getLong("Entities.Spawn.Limit.Groups." + group + ".Search.Z"));
-            CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPlugin(), "Spawn-Limit", group, "setup", "continue",
+            CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(), "Spawn-Limit", group, "setup", "continue",
                     new Throwable().getStackTrace()[0]);
             spawnLimitProp.put(group, limitMap);
         }
@@ -292,7 +276,7 @@ public class ConfigPath {
             }
             sortMap = CorePlusAPI.getUtilsManager().sortByValue(sortMap);
             for (String group : sortMap.keySet()) {
-                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPlugin(), "Drop", entityType, "setup", "continue", group,
+                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(), "Drop", entityType, "setup", "continue", group,
                         new Throwable().getStackTrace()[0]);
                 newEnMap.put(group, dropProp.get(entityType).get(group));
             }
@@ -338,7 +322,7 @@ public class ConfigPath {
             } else {
                 changeList = ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Change-Types");
                 if (changeList.isEmpty() && !spawnerMap.isRemove()) {
-                    CorePlusAPI.getLangManager().sendConsoleMsg(ConfigHandler.getPlugin(), "&cThere is an error occurred. The spawner change type of \"" + group + "\" is empty.");
+                    CorePlusAPI.getLangManager().sendConsoleMsg(ConfigHandler.getPluginPrefix(), "&cThere is an error occurred. The spawner change type of \"" + group + "\" is empty.");
                     continue;
                 }
                 for (String changeType : changeList) {
@@ -376,7 +360,7 @@ public class ConfigPath {
             }
             sortMap = CorePlusAPI.getUtilsManager().sortByValue(sortMap);
             for (String group : sortMap.keySet()) {
-                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPlugin(), "Spawner", worldName, "setup", "continue", group,
+                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(), "Spawner", worldName, "setup", "continue", group,
                         new Throwable().getStackTrace()[0]);
                 newMap.put(group, spawnerProp.get(worldName).get(group));
             }
@@ -394,7 +378,7 @@ public class ConfigPath {
         }
         damageResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Damage.Settings.Features.Bypass.Residence-Flag");
         ConfigurationSection groupsConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Entities.Damage.Groups");
-        if (groupsConfig != null) {
+        if (groupsConfig == null) {
             return;
         }
         DamageMap damageMap;
@@ -448,7 +432,7 @@ public class ConfigPath {
             }
             sortMap = CorePlusAPI.getUtilsManager().sortByValue(sortMap);
             for (String group : sortMap.keySet()) {
-                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPlugin(), "Damage", entityType, "setup", "continue", group,
+                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(), "Damage", entityType, "setup", "continue", group,
                         new Throwable().getStackTrace()[0]);
                 newEnMap.put(group, damageProp.get(entityType).get(group));
             }
@@ -478,14 +462,6 @@ public class ConfigPath {
     //  ============================================== //
     //         General Getter                          //
     //  ============================================== //
-    public int getMobSpawnRange() {
-        return mobSpawnRange;
-    }
-
-    public int getMobSpawnRangeSquared() {
-        return mobSpawnRangeSquared;
-    }
-
     public int getSpawnerPlayerCheckRange() {
         return spawnerPlayerCheckRange;
     }

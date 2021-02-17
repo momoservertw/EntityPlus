@@ -10,9 +10,9 @@ tw\momocraft\entityplus\utils\ConfigPath.class
 tw\momocraft\entityplus\utils\entities\SpawnerMap.class
 tw\momocraft\entityplus\listeners\SpawnerSpawn.class
 tw\momocraft\entityplus\utils\entities\DamageMap.class
-tw\momocraft\entityplus\utils\TabComplete.class
 tw\momocraft\entityplus\listeners\MythicMobsLootDrop.class
 tw\momocraft\entityplus\utils\entities\EntityUtils.class
+tw\momocraft\entityplus\TabComplete.class
 tw\momocraft\entityplus\utils\Dependence.class
 tw\momocraft\entityplus\Commands.class
 tw\momocraft\entityplus\listeners\EntityDeath.class

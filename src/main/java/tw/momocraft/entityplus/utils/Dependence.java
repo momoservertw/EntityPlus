@@ -31,7 +31,7 @@ public class Dependence {
                 + (CMIEnabled() ? "CMI, " : "")
                 + (ResidenceEnabled() ? "Residence, " : "");
         try {
-            CorePlusAPI.getLangManager().sendConsoleMsg(ConfigHandler.getPlugin(), hookMsg.substring(0, hookMsg.lastIndexOf(", ")) + "]");
+            CorePlusAPI.getLangManager().sendConsoleMsg(ConfigHandler.getPluginPrefix(), hookMsg.substring(0, hookMsg.lastIndexOf(", ")) + "]");
         } catch (Exception ignored) {
         }
 
@@ -42,7 +42,7 @@ public class Dependence {
                     + (FlagPermissions.getPosibleAreaFlags().contains("damagebypass") ? "damagebypass, " : "")
             ;
             try {
-                CorePlusAPI.getLangManager().sendConsoleMsg(ConfigHandler.getPlugin(), hookMsg.substring(0, hookMsg.lastIndexOf(", ")) + "]");
+                CorePlusAPI.getLangManager().sendConsoleMsg(ConfigHandler.getPluginPrefix(), hookMsg.substring(0, hookMsg.lastIndexOf(", ")) + "]");
             } catch (Exception ignored) {
             }
         }

@@ -25,7 +25,7 @@ public class ConfigHandler {
         setDepends(new Dependence());
         setConfigPath(new ConfigPath());
         if (!reload) {
-            CorePlusAPI.getUpdateManager().check(getPlugin(), Bukkit.getConsoleSender(),
+            CorePlusAPI.getUpdateManager().check(getPluginPrefix(), Bukkit.getConsoleSender(),
                     EntityPlus.getInstance().getDescription().getName(),
                     EntityPlus.getInstance().getDescription().getVersion(), true);
         }
@@ -124,16 +124,16 @@ public class ConfigHandler {
         return configPath;
     }
 
-    public static String getPlugin() {
+    public static String getPluginName() {
+        return CorePlus.getInstance().getDescription().getName();
+    }
+
+    public static String getPluginPrefix() {
         return "[" + EntityPlus.getInstance().getDescription().getName() + "] ";
     }
 
     public static String getPrefix() {
         return getConfig("config.yml").getString("Message.prefix");
-    }
-
-    public static String getPluginName() {
-        return CorePlus.getInstance().getDescription().getName();
     }
 
     public static boolean isDebugging() {

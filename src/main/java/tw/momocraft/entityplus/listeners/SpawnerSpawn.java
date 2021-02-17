@@ -27,7 +27,7 @@ public class SpawnerSpawn implements Listener {
         try {
             entityType = spawner.getSpawnedType().name();
         } catch (Exception ex) {
-            CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPlugin(), "Spawner", "Unknown type", "Location", "return",
+            CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(), "Spawner", "Unknown type", "Location", "return",
                     new Throwable().getStackTrace()[0]);
             return;
         }
@@ -52,19 +52,19 @@ public class SpawnerSpawn implements Listener {
             }
             // Checking the spawn "location".
             if (!CorePlusAPI.getConditionManager().checkLocation(loc, spawnerMap.getLocList(), true)) {
-                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPlugin(), "Spawner", entityType, "Location", "continue", groupName,
+                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(), "Spawner", entityType, "Location", "continue", groupName,
                         new Throwable().getStackTrace()[0]);
                 continue;
             }
             // Checking the "blocks" nearby the spawn location.
             if (!CorePlusAPI.getConditionManager().checkBlocks(loc, spawnerMap.getBlocksList(), true)) {
-                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPlugin(), "Spawner", entityType, "Blocks", "continue", groupName,
+                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(), "Spawner", entityType, "Blocks", "continue", groupName,
                         new Throwable().getStackTrace()[0]);
                 continue;
             }
             // Checking the spawn "Residence-Flag".
             if (!CorePlusAPI.getConditionManager().checkFlag(loc, "spawnerbypass", false, resFlag)) {
-                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPlugin(), "Spawner", entityType, "Residence-Flag", "continue", groupName,
+                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(), "Spawner", entityType, "Residence-Flag", "continue", groupName,
                         new Throwable().getStackTrace()[0]);
                 continue;
             }
@@ -86,7 +86,7 @@ public class SpawnerSpawn implements Listener {
                     CorePlusAPI.getCommandManager().executeCmdList(
                             ConfigHandler.getPrefix(), spawnerMap.getCommands(), true, langHolder);
                 }
-                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPlugin(), "Spawner", entityType, "Remove", "remove",
+                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(), "Spawner", entityType, "Remove", "remove",
                         new Throwable().getStackTrace()[0]);
                 return;
             }
@@ -126,14 +126,14 @@ public class SpawnerSpawn implements Listener {
                     CorePlusAPI.getCommandManager().executeCmdList(
                             ConfigHandler.getPrefix(), spawnerMap.getCommands(), true, langHolder);
                 }
-                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPlugin(), "Spawner", entityType, changeType, "change",
+                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(), "Spawner", entityType, changeType, "change",
                         new Throwable().getStackTrace()[0]);
                 return;
             }
         }
     }
 
-    private List<String> translate(Location loc, List<String> input, List<Player> targets, String[]... placeHolders) {
+    private List<String> translate(Location loc, List<String> input, List<Player> targets) {
         List<String> commands = new ArrayList<>();
         for (String s : input) {
             s = s.replace("%world%", loc.getWorld().getName())

@@ -13,12 +13,12 @@ public class EntityPlus extends JavaPlugin {
         instance = this;
         ConfigHandler.generateData(false);
         RegisterHandler.registerEvents();
-        CorePlusAPI.getLangManager().sendConsoleMsg(ConfigHandler.getPlugin(), "&fhas been Enabled.");
+        CorePlusAPI.getLangManager().sendConsoleMsg(ConfigHandler.getPluginPrefix(), "&fhas been Enabled.");
     }
 
     @Override
     public void onDisable() {
-        CorePlusAPI.getLangManager().sendConsoleMsg(ConfigHandler.getPlugin(), "&fhas been Disabled.");
+        CorePlusAPI.getLangManager().sendConsoleMsg(ConfigHandler.getPluginPrefix(), "&fhas been Disabled.");
     }
 
     public static EntityPlus getInstance() {

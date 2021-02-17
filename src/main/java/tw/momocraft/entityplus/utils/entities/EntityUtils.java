@@ -27,7 +27,7 @@ public class EntityUtils {
             double afkChance = limitMap.getAFKChance();
             for (Player player : nearPlayers) {
                 if (CMI.getInstance().getPlayerManager().getUser(player).isAfk()) {
-                    if (CorePlusAPI.getPlayerManager().hasPerm(ConfigHandler.getPluginName(), player, "entityplus.bypass.spawnlimit.afk")) {
+                    if (CorePlusAPI.getPlayerManager().hasPerm(player, "entityplus.bypass.spawnlimit.afk")) {
                         amount = limitMap.getAmount();
                         chance = limitMap.getChance();
                         break;
