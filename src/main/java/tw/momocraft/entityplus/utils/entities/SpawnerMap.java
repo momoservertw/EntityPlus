@@ -33,7 +33,9 @@ public class SpawnerMap {
         return locList;
     }
 
-    public List<String> getBlocksList() { return blocksList; }
+    public List<String> getBlocksList() {
+        return blocksList;
+    }
 
     public Map<String, Long> getChangeMap() {
         return changeMap;

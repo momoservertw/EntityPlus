@@ -6,11 +6,7 @@ import tw.momocraft.coreplus.utils.conditions.LocationMap;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.utils.entities.*;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ConfigPath {
     public ConfigPath() {

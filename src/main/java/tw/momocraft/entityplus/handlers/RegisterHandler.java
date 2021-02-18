@@ -4,8 +4,8 @@ import com.bekvon.bukkit.residence.protection.FlagPermissions;
 import tw.momocraft.coreplus.api.CorePlusAPI;
 import tw.momocraft.entityplus.Commands;
 import tw.momocraft.entityplus.EntityPlus;
-import tw.momocraft.entityplus.listeners.*;
 import tw.momocraft.entityplus.TabComplete;
+import tw.momocraft.entityplus.listeners.*;
 
 public class RegisterHandler {
 

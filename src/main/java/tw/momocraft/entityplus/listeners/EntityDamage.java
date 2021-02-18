@@ -71,7 +71,7 @@ public class EntityDamage implements Listener {
                     continue;
                 }
                 // Checking the spawn "location".
-                if (!CorePlusAPI.getConditionManager().checkLocation(loc, damageMap.getLocList(), true)) {
+                if (!CorePlusAPI.getConditionManager().checkLocation(ConfigHandler.getPluginName(), loc, damageMap.getLocList(), true)) {
                     CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(), "Damage", entityType, "Location", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;

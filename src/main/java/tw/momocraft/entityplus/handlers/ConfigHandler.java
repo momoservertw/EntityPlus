@@ -6,7 +6,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import tw.momocraft.coreplus.CorePlus;
 import tw.momocraft.coreplus.api.CorePlusAPI;
 import tw.momocraft.entityplus.EntityPlus;
-import tw.momocraft.entityplus.utils.*;
+import tw.momocraft.entityplus.utils.ConfigPath;
+import tw.momocraft.entityplus.utils.Dependence;
 
 import java.io.File;
 import java.time.LocalDateTime;

@@ -51,7 +51,7 @@ public class SpawnerSpawn implements Listener {
                 continue;
             }
             // Checking the spawn "location".
-            if (!CorePlusAPI.getConditionManager().checkLocation(loc, spawnerMap.getLocList(), true)) {
+            if (!CorePlusAPI.getConditionManager().checkLocation(ConfigHandler.getPluginName(), loc, spawnerMap.getLocList(), true)) {
                 CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(), "Spawner", entityType, "Location", "continue", groupName,
                         new Throwable().getStackTrace()[0]);
                 continue;

@@ -1,7 +1,8 @@
 package tw.momocraft.entityplus.utils.entities;
 
 import com.Zrips.CMI.CMI;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import tw.momocraft.coreplus.api.CorePlusAPI;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 

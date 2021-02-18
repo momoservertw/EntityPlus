@@ -55,7 +55,7 @@ public class MythicMobsSpawn implements Listener {
                     continue;
                 }
                 // Checking the spawn "location".
-                if (!CorePlusAPI.getConditionManager().checkLocation(loc, entityMap.getLocMaps(), true)) {
+                if (!CorePlusAPI.getConditionManager().checkLocation(ConfigHandler.getPluginName(), loc, entityMap.getLocMaps(), true)) {
                     CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(), "Spawn", entityType, "Location", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
