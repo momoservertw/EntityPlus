@@ -1,8 +1,8 @@
 package tw.momocraft.entityplus.listeners;
 
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -26,7 +26,7 @@ public class CreatureSpawn implements Listener {
         }
         String reason = e.getSpawnReason().name();
         // To skip MythicMobs and checking them in MythicMobs Listener.
-        if (reason.equals("CUSTOM") && ConfigHandler.getDepends().MythicMobsEnabled()) {
+        if (reason.equals("CUSTOM") && CorePlusAPI.getDependManager().MythicMobsEnabled()) {
             return;
         }
         Entity entity = e.getEntity();
@@ -43,49 +43,57 @@ public class CreatureSpawn implements Listener {
                 entityMap = entityProp.get(groupName);
                 // Checking the spawn "reasons".
                 if (!CorePlusAPI.getUtilsManager().containIgnoreValue(reason, entityMap.getReasons(), entityMap.getIgnoreReasons())) {
-                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(), "Spawn", entityType, "Reason", "continue", groupName,
+                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
+                            "Spawn", entityType, "Reason", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the spawn "biome".
                 if (!CorePlusAPI.getUtilsManager().containIgnoreValue(block.getBiome().name(), entityMap.getBoimes(), entityMap.getIgnoreBoimes())) {
-                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(), "Spawn", entityType, "Biome", "continue", groupName,
+                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
+                            "Spawn", entityType, "Biome", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the spawn location is "liquid" or not.
                 if (!CorePlusAPI.getUtilsManager().isLiquid(block, entityMap.getLiquid(), true)) {
-                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(), "Spawn", entityType, "Liquid", "continue", groupName,
+                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
+                            "Spawn", entityType, "Liquid", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the spawn time is "Day" or not.
                 if (!CorePlusAPI.getUtilsManager().isDay(loc.getWorld().getTime(), entityMap.getDay(), true)) {
-                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(), "Spawn", entityType, "Day", "continue", groupName,
+                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
+                            "Spawn", entityType, "Day", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the spawn "location".
                 if (!CorePlusAPI.getConditionManager().checkLocation(ConfigHandler.getPluginName(), loc, entityMap.getLocMaps(), true)) {
-                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(), "Spawn", entityType, "Location", "continue", groupName,
+                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
+                            "Spawn", entityType, "Location", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the "blocks" nearby the spawn location.
                 if (!CorePlusAPI.getConditionManager().checkBlocks(loc, entityMap.getBlocksMaps(), true)) {
-                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(), "Spawn", entityType, "Blocks", "continue", groupName,
+                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
+                            "Spawn", entityType, "Blocks", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the spawn "Residence-Flag".
                 if (!CorePlusAPI.getConditionManager().checkFlag(loc, "spawnbypass", false, resFlag)) {
-                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(), "Spawn", entityType, "Residence-Flag", "continue", groupName,
+                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
+                            "Spawn", entityType, "Residence-Flag", "continue", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
                 // Checking the spawn "chance".
                 if (!CorePlusAPI.getUtilsManager().isRandChance(entityMap.getChance())) {
-                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(), "Spawn", entityType, "Chance", "cancel", groupName,
+                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
+                            "Spawn", entityType, "Chance", "cancel", groupName,
                             new Throwable().getStackTrace()[0]);
                     e.setCancelled(true);
                     return;
@@ -145,7 +153,8 @@ public class CreatureSpawn implements Listener {
                 // Check spawn amount limit.
                 if (entityMap.getLimit() != null) {
                     if (!EntityUtils.checkLimit(entity, nearbyPlayers, entityMap.getLimit())) {
-                        CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(), "Spawn", entityType, "Limit", "cancel", groupName,
+                        CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
+                                "Spawn", entityType, "Limit", "cancel", groupName,
                                 new Throwable().getStackTrace()[0]);
                         e.setCancelled(true);
                         return;
@@ -159,7 +168,8 @@ public class CreatureSpawn implements Listener {
                     langHolder[19] = CorePlusAPI.getLangManager().getPlayersString(nearbyPlayers); // %targets%
                     CorePlusAPI.getCommandManager().executeCmdList(ConfigHandler.getPrefix(), nearbyPlayers, entityMap.getCommands(), true, langHolder);
                 }
-                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(), "Spawn", entityType, "Final", "return", groupName,
+                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
+                        "Spawn", entityType, "Final", "return", groupName,
                         new Throwable().getStackTrace()[0]);
                 return;
             }

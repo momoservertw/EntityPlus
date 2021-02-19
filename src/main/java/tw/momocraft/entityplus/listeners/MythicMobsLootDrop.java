@@ -35,7 +35,8 @@ public class MythicMobsLootDrop implements Listener {
                 // Checking the bypass "Residence-Flag".
                 if (!CorePlusAPI.getConditionManager().checkFlag(e.getEntity().getLocation(), "dropbypass", false,
                         ConfigHandler.getConfigPath().isDropResFlag())) {
-                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(), "Drop", entityType, "!Residence-Flag", "return",
+                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
+                            "Drop", entityType, "!Residence-Flag", "return",
                             new Throwable().getStackTrace()[0]);
                     return;
                 }

@@ -21,7 +21,7 @@ public class EntityDeath implements Listener {
         Entity entity = e.getEntity();
         UUID entityUUID = entity.getUniqueId();
         // To stop checking the MythicMobs.
-        if (ConfigHandler.getDepends().MythicMobsEnabled()) {
+        if (CorePlusAPI.getDependManager().MythicMobsEnabled()) {
             if (MythicMobs.inst().getAPIHelper().isMythicMob(entityUUID)) {
                 return;
             }
@@ -38,9 +38,10 @@ public class EntityDeath implements Listener {
             // Checking if the properties contains this type of entity.
             if (dropProp != null) {
                 // Checking the bypass "Residence-Flag".
-                if (!CorePlusAPI.getConditionManager().checkFlag(e.getEntity().getLocation(), "dropbypass", false,
-                        ConfigHandler.getConfigPath().isDropResFlag())) {
-                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(), "Drop", entityType, "!Residence-Flag", "return",
+                if (!CorePlusAPI.getConditionManager().checkFlag(e.getEntity().getLocation(),
+                        "dropbypass", false, ConfigHandler.getConfigPath().isDropResFlag())) {
+                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
+                            "Drop", entityType, "!Residence-Flag", "return",
                             new Throwable().getStackTrace()[0]);
                     return;
                 }

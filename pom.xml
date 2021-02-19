@@ -26,10 +26,10 @@
             <id>sk89q-repo</id>
             <url>https://maven.sk89q.com/repo/</url>
         </repository>
-        <!--Spigot/CraftBukkit Repo-->
+        <!--Paper Repo-->
         <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+            <id>papermc</id>
+            <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
         <!--MythicMobs API-->
         <repository>
@@ -45,18 +45,11 @@
             <artifactId>guava</artifactId>
             <version>18.0</version>
         </dependency>
-        <!--Spigot API-->
+        <!--Paper API-->
         <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.16.4-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <!--CraftBukkit API-->
-        <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
-            <version>LATEST</version>
+            <groupId>com.destroystokyo.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>1.16.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!--CorePlus API-->
@@ -73,22 +66,6 @@
             <artifactId>MythicMobs</artifactId>
             <version>LATEST</version>
             <scope>provided</scope>
-        </dependency>
-        <!--CMI API-->
-        <dependency>
-            <groupId>me.CMI</groupId>
-            <artifactId>CMI</artifactId>
-            <scope>system</scope>
-            <systemPath>${pom.basedir}/src/main/java/tw/momocraft/entityplus/extra/CMIAPI7.6.2.0.jar</systemPath>
-            <version>LATEST</version>
-        </dependency>
-        <!--Residence API-->
-        <dependency>
-            <groupId>me.Residence</groupId>
-            <artifactId>Residence</artifactId>
-            <scope>system</scope>
-            <systemPath>${pom.basedir}/src/main/java/tw/momocraft/entityplus/extra/Residence4.9.2.1.jar</systemPath>
-            <version>LEGACY</version>
         </dependency>
     </dependencies>
 

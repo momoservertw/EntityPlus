@@ -7,7 +7,6 @@ import tw.momocraft.coreplus.CorePlus;
 import tw.momocraft.coreplus.api.CorePlusAPI;
 import tw.momocraft.entityplus.EntityPlus;
 import tw.momocraft.entityplus.utils.ConfigPath;
-import tw.momocraft.entityplus.utils.Dependence;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -17,16 +16,14 @@ public class ConfigHandler {
 
     private static YamlConfiguration configYAML;
     private static YamlConfiguration entitiesYAML;
-    private static Dependence depends;
     private static ConfigPath configPath;
 
     public static void generateData(boolean reload) {
         genConfigFile("config.yml");
         genConfigFile("entities.yml");
-        setDepends(new Dependence());
         setConfigPath(new ConfigPath());
         if (!reload) {
-            CorePlusAPI.getUpdateManager().check(getPluginPrefix(), Bukkit.getConsoleSender(),
+            CorePlusAPI.getUpdateManager().check(getPluginName(), getPluginPrefix(), Bukkit.getConsoleSender(),
                     EntityPlus.getInstance().getDescription().getName(),
                     EntityPlus.getInstance().getDescription().getVersion(), true);
         }
@@ -107,14 +104,6 @@ public class ConfigHandler {
             }
         }
         getConfig(fileName).options().copyDefaults(false);
-    }
-
-    public static Dependence getDepends() {
-        return depends;
-    }
-
-    private static void setDepends(Dependence depend) {
-        depends = depend;
     }
 
     private static void setConfigPath(ConfigPath configPath) {
