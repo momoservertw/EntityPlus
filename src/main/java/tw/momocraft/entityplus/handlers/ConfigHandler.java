@@ -106,8 +106,8 @@ public class ConfigHandler {
         getConfig(fileName).options().copyDefaults(false);
     }
 
-    private static void setConfigPath(ConfigPath configPath) {
-        ConfigHandler.configPath = configPath;
+    private static void setConfigPath(ConfigPath configPaths) {
+        configPath = configPaths;
     }
 
     public static ConfigPath getConfigPath() {

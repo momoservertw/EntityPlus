@@ -66,7 +66,7 @@ public class ConfigPath {
     //         Setup all configuration                 //
     //  ============================================== //
     private void setUp() {
-        setupMsg();
+        setMsg();
         setSpawnRangeProp();
         setSpawnLimitProp();
         setDrop();
@@ -78,7 +78,7 @@ public class ConfigPath {
     //  ============================================== //
     //         Message Setter                          //
     //  ============================================== //
-    private void setupMsg() {
+    private void setMsg() {
         msgTitle = ConfigHandler.getConfig("config.yml").getString("Message.Commands.title");
         msgHelp = ConfigHandler.getConfig("config.yml").getString("Message.Commands.help");
         msgReload = ConfigHandler.getConfig("config.yml").getString("Message.Commands.reload");
