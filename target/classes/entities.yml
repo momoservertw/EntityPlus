@@ -5,31 +5,55 @@
 Config-Version: 1
 
 Entities:
+  # This group is used to inherit to other groups, the settings can be overrode.
+  Global:
+    Enable: false
+    Priority: 0
+    Spawn:
+      Location:
+        - world
+        - world_nether
+        - world_the_end
+    Drop:
+      - lucky1
+      - lucky2
+    Damage:
+      - Skip-Duration
+      - Fast-Kill
+      - Fast-Kill-WitherRose
   NormalMobs:
     Enable: false
+    # Inherit the "Global" group settings.
+    Inherit: Global
     Priority: 2
     Types:
       - NormalMobs
-    Ignore-Reasons:
-      - SPAWNER_EGG
-    Location:
-      - world
-      - world_nether
-      - world_the_end
+    Spawn:
+      Chance:
+        Max-Distance: 96
+        Outside: 1
+        Cave: 0.3
+        Gliding: 0.3
+        Flying: 0.3
+        AFK: 0.2
+      Ignore-Reasons:
+        - SPAWNER_EGG
     Limit: NormalMobs
-    Range: Default
   BreedableMobs:
     Enable: false
+    Inherit: Global
     Priority: 2
     Types:
       - BreedableMobs
-    Ignore-Reasons:
-      - SPAWNER_EGG
-      - NATURAL
-      - BEEHIVE
+    Spawn:
+      Ignore-Reasons:
+        - SPAWNER_EGG
+        - NATURAL
+        - BEEHIVE
     Limit: BreedableMobs
   WaterMobs:
     Enable: false
+    Inherit: Global
     Priority: 2
     Types:
       - WaterMobs
@@ -37,65 +61,63 @@ Entities:
     Reasons:
       - NATURAL
     Limit: WaterMobs
-    Range: Default
   Bat:
     Enable: false
+    Inherit: Global
     Priority: 3
     Types:
       - BAT
-    Chance: 0.2
-    Reasons:
-      - NATURAL
-    Range: Default
+    Spawn:
+      Chance: 0.2
+      Reasons:
+        - NATURAL
   Phantom:
     Enable: false
+    Inherit: Global
     Priority: 3
     Types:
       - PHANTOM
-    Chance: 0.3
-    Reasons:
-      - NATURAL
-    Range: Default
+    Spawn:
+      Chance: 0.3
+      Reasons:
+        - NATURAL
   Guardian:
     Enable: false
+    Inherit: NormalMobs
     Priority: 3
     Types:
       - GUARDIAN
-    Chance: 0.01
-    Reasons:
-      - NATURAL
-    Blocks:
-      - IgnoreNearbyMonument
-    Range: Default
+    Spawn:
+      Chance: 0.01
+      Reasons:
+        - NATURAL
+      Blocks:
+        - IgnoreNearbyMonument
   Iron_Golem:
     Enable: false
+    Inherit: Global
     Priority: 3
     Types:
       - IRON_GOLEM
-    Chance: 0.3
-    Reasons:
-      - VILLAGE_DEFENSE
+    Spawn:
+      Chance: 0.3
+      Reasons:
+        - VILLAGE_DEFENSE
   ZOMBIFIED_PIGLIN:
     Enable: false
+    Inherit: Global
     Priority: 3
     Types:
       - ZOMBIFIED_PIGLIN
-    Chance: 0.5
-    Reasons:
-      - NETHER_PORTAL
-  Wither_Skeleton:
-    Enable: false
-    Priority: 3
-    Types:
-      - WITHER_SKELETON
-    Chance: 0.1
-    Reasons:
-      - NATURAL
-    Blocks:
-      - WitherRose
+    Spawn:
+      Chance: 0.3
+      Reasons:
+        - NETHER_PORTAL
   MythicMobs_Example:
     Enable: false
     Priority: 3
     Types:
       - SkeletonKing
-    Chance: 0.1
+    Spawn:
+      Chance: 0.1
+      Permission: true

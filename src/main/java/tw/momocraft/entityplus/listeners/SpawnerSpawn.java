@@ -19,9 +19,9 @@ import java.util.Map;
 
 public class SpawnerSpawn implements Listener {
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onSpawnerSpawn(SpawnerSpawnEvent e) {
-        if (!ConfigHandler.getConfigPath().isSpawner() || e.isCancelled()) {
+        if (!ConfigHandler.getConfigPath().isSpawner()) {
             return;
         }
         CreatureSpawner spawner = e.getSpawner();
@@ -82,7 +82,7 @@ public class SpawnerSpawn implements Listener {
                 String[] langHolder = CorePlusAPI.getLangManager().newString();
                 langHolder[8] = entityType; // %entity%
                 langHolder[25] = entityType; // %new_entity%
-                int nearbyPlayerRange = ConfigHandler.getConfigPath().getSpawnerPlayerCheckRange();
+                int nearbyPlayerRange = ConfigHandler.getConfigPath().getSpawnerNearbyPlayerRange();
                 if (nearbyPlayerRange != 0) {
                     List<Player> nearbyPlayers = CorePlusAPI.getUtilsManager().getNearbyPlayersXZY(loc, nearbyPlayerRange);
                     langHolder[19] = CorePlusAPI.getLangManager().getPlayersString(nearbyPlayers); // %targets%
@@ -123,7 +123,7 @@ public class SpawnerSpawn implements Listener {
                 String[] langHolder = CorePlusAPI.getLangManager().newString();
                 langHolder[8] = entityType; // %entity%
                 langHolder[25] = changeType; // %new_entity%
-                int nearbyPlayerRange = ConfigHandler.getConfigPath().getSpawnerPlayerCheckRange();
+                int nearbyPlayerRange = ConfigHandler.getConfigPath().getSpawnerNearbyPlayerRange();
                 if (nearbyPlayerRange != 0) {
                     List<Player> nearbyPlayers = CorePlusAPI.getUtilsManager().getNearbyPlayersXZY(loc, nearbyPlayerRange);
                     langHolder[19] = CorePlusAPI.getLangManager().getPlayersString(nearbyPlayers); // %targets%

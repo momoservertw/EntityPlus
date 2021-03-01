@@ -3,7 +3,6 @@ package tw.momocraft.entityplus.handlers;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import tw.momocraft.coreplus.CorePlus;
 import tw.momocraft.coreplus.api.CorePlusAPI;
 import tw.momocraft.entityplus.EntityPlus;
 import tw.momocraft.entityplus.utils.ConfigPath;
@@ -21,6 +20,7 @@ public class ConfigHandler {
     public static void generateData(boolean reload) {
         genConfigFile("config.yml");
         genConfigFile("entities.yml");
+        UtilsHandler.setup();
         setConfigPath(new ConfigPath());
         if (!reload) {
             CorePlusAPI.getUpdateManager().check(getPluginName(), getPluginPrefix(), Bukkit.getConsoleSender(),
@@ -50,7 +50,7 @@ public class ConfigHandler {
             try {
                 EntityPlus.getInstance().saveResource(fileName, false);
             } catch (Exception e) {
-                CorePlusAPI.getLangManager().sendErrorMsg(getPluginName(), "&cCannot save " + fileName + " to disk!");
+                CorePlusAPI.getLangManager().sendErrorMsg(getPluginName(), "Cannot save " + fileName + " to disk!");
                 return;
             }
         }
@@ -115,7 +115,7 @@ public class ConfigHandler {
     }
 
     public static String getPluginName() {
-        return CorePlus.getInstance().getDescription().getName();
+        return EntityPlus.getInstance().getDescription().getName();
     }
 
     public static String getPluginPrefix() {

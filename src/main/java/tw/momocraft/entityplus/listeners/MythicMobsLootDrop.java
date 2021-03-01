@@ -14,110 +14,111 @@ import java.util.*;
 
 public class MythicMobsLootDrop implements Listener {
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onMythicMobLootDrop(MythicMobLootDropEvent e) {
         // Checking the Drop feature.
-        if (ConfigHandler.getConfigPath().isDrop()) {
-            Player player;
-            try {
-                player = (Player) e.getKiller();
-                if (player == null) {
-                    return;
-                }
-            } catch (Exception ex) {
+        if (!ConfigHandler.getConfigPath().isEnDrop()) {
+            return;
+        }
+        Player player;
+        try {
+            player = (Player) e.getKiller();
+            if (player == null) {
                 return;
             }
-            String entityType = e.getMobType().getInternalName();
-            // To get drop properties.
-            Map<String, DropMap> dropProp = ConfigHandler.getConfigPath().getDropProp().get(entityType);
-            // Checking if the properties contains this type of entity.
-            if (dropProp != null) {
-                // Checking the bypass "Residence-Flag".
-                if (!CorePlusAPI.getConditionManager().checkFlag(e.getEntity().getLocation(), "dropbypass", false,
-                        ConfigHandler.getConfigPath().isDropResFlag())) {
-                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
-                            "Drop", entityType, "!Residence-Flag", "return",
-                            new Throwable().getStackTrace()[0]);
-                    return;
+        } catch (Exception ex) {
+            return;
+        }
+        String entityType = e.getMobType().getInternalName();
+        // To get drop properties.
+        Map<String, DropMap> dropProp = ConfigHandler.getConfigPath().getEnDropProp().get(entityType);
+        // Checking if the properties contains this type of entity.
+        if (dropProp != null) {
+            // Checking the bypass "Residence-Flag".
+            if (!CorePlusAPI.getConditionManager().checkFlag(e.getEntity().getLocation(), "dropbypass", false,
+                    ConfigHandler.getConfigPath().isEnDropResFlag())) {
+                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
+                        "Drop", entityType, "!Residence-Flag", "return",
+                        new Throwable().getStackTrace()[0]);
+                return;
+            }
+            // Checking player reward permissions.
+            List<String> permsList = new ArrayList<>();
+            for (String key : dropProp.keySet()) {
+                if (CorePlusAPI.getPlayerManager().hasPerm(player, "entityplus.drop.*")
+                        || CorePlusAPI.getPlayerManager().hasPerm(player, "entityplus.drop." + key)) {
+                    permsList.add(key);
                 }
-                // Checking player reward permissions.
-                List<String> permsList = new ArrayList<>();
-                for (String key : dropProp.keySet()) {
-                    if (CorePlusAPI.getPlayerManager().hasPerm(player, "entityplus.drop.*")
-                            || CorePlusAPI.getPlayerManager().hasPerm(player, "entityplus.drop." + key)) {
-                        permsList.add(key);
-                    }
-                }
-                if (permsList.isEmpty()) {
-                    return;
-                }
-                double totalExp = 1;
-                double totalItem = 1;
-                double totalMoney = 1;
-                double exp;
-                double item;
-                double money;
-                // Checking the bonus mode.
-                if (ConfigHandler.getConfigPath().isDropBonus()) {
-                    String combinedMethod = ConfigHandler.getConfigPath().getDropBonusMode();
-                    for (String key : permsList) {
-                        if (dropProp.get(key) != null) {
-                            exp = dropProp.get(key).getExp();
-                            item = dropProp.get(key).getItems();
-                            money = dropProp.get(key).getMoney();
-                            if (combinedMethod.equals("plus")) {
-                                exp--;
-                                item--;
-                                money--;
-                                totalExp += exp;
-                                totalItem += item;
-                                totalMoney += money;
-                            } else if (combinedMethod.equals("multiply")) {
-                                totalExp *= exp;
-                                totalItem *= item;
-                                totalMoney *= money;
-                            } else {
-                                exp--;
-                                item--;
-                                money--;
-                                totalExp += exp;
-                                totalItem += item;
-                                totalMoney += money;
-                            }
+            }
+            if (permsList.isEmpty()) {
+                return;
+            }
+            double totalExp = 1;
+            double totalItem = 1;
+            double totalMoney = 1;
+            double exp;
+            double item;
+            double money;
+            // Checking the bonus mode.
+            if (ConfigHandler.getConfigPath().isEnDropBonus()) {
+                String combinedMethod = ConfigHandler.getConfigPath().getEnDropMultiPerm();
+                for (String key : permsList) {
+                    if (dropProp.get(key) != null) {
+                        exp = dropProp.get(key).getExp();
+                        item = dropProp.get(key).getItems();
+                        money = dropProp.get(key).getMoney();
+                        if (combinedMethod.equals("plus")) {
+                            exp--;
+                            item--;
+                            money--;
+                            totalExp += exp;
+                            totalItem += item;
+                            totalMoney += money;
+                        } else if (combinedMethod.equals("multiply")) {
+                            totalExp *= exp;
+                            totalItem *= item;
+                            totalMoney *= money;
+                        } else {
+                            exp--;
+                            item--;
+                            money--;
+                            totalExp += exp;
+                            totalItem += item;
+                            totalMoney += money;
                         }
                     }
-                } else {
-                    // Choosing the first drop (The highest priority).
-                    exp = dropProp.get(permsList.get(0)).getExp();
-                    item = dropProp.get(permsList.get(0)).getItems();
-                    money = dropProp.get(permsList.get(0)).getMoney();
-                    totalExp *= exp;
-                    totalItem *= item;
-                    totalMoney *= money;
                 }
-                // Setting the higher exp.
-                if (ConfigHandler.getConfigPath().isDropExp()) {
-                    totalExp *= e.getExp();
-                    e.setExp((int) totalExp);
-                }
-                // Setting the higher money.
-                if (ConfigHandler.getConfigPath().isDropMoney()) {
-                    totalMoney *= e.getMoney();
-                    e.setMoney((int) totalMoney);
-                }
-                // Giving more items.
-                if (ConfigHandler.getConfigPath().isDropItem()) {
-                    Collection<Drop> dropItem = e.getPhysicalDrops();
-                    double dropDecimal;
-                    for (Drop itemStack : dropItem) {
-                        totalItem *= itemStack.getAmount();
-                        dropDecimal = totalItem % 1;
-                        totalItem -= dropDecimal;
-                        if (dropDecimal > 0 && dropDecimal < new Random().nextDouble()) {
-                            totalItem++;
-                        }
-                        itemStack.setAmount((int) (totalItem));
+            } else {
+                // Choosing the first drop (The highest priority).
+                exp = dropProp.get(permsList.get(0)).getExp();
+                item = dropProp.get(permsList.get(0)).getItems();
+                money = dropProp.get(permsList.get(0)).getMoney();
+                totalExp *= exp;
+                totalItem *= item;
+                totalMoney *= money;
+            }
+            // Setting the higher exp.
+            if (ConfigHandler.getConfigPath().isEnDropExp()) {
+                totalExp *= e.getExp();
+                e.setExp((int) totalExp);
+            }
+            // Setting the higher money.
+            if (ConfigHandler.getConfigPath().isEnDropMoney()) {
+                totalMoney *= e.getMoney();
+                e.setMoney((int) totalMoney);
+            }
+            // Giving more items.
+            if (ConfigHandler.getConfigPath().isEnDropItem()) {
+                Collection<Drop> dropItem = e.getPhysicalDrops();
+                double dropDecimal;
+                for (Drop itemStack : dropItem) {
+                    totalItem *= itemStack.getAmount();
+                    dropDecimal = totalItem % 1;
+                    totalItem -= dropDecimal;
+                    if (dropDecimal > 0 && dropDecimal < new Random().nextDouble()) {
+                        totalItem++;
                     }
+                    itemStack.setAmount((int) (totalItem));
                 }
             }
         }

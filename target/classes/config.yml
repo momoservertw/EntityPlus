@@ -5,95 +5,78 @@
 Config-Version: 12
 Debugging: false
 
-# Controlling entities spawn conditions, rewards, and damage.
+# Controlling entities spawn, rewards, and damage.
+# You need to add options in entities.yml.
 Entities:
+  Enable: false
   # Controlling entities spawn conditions.
   # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn
   Spawn:
+    Settings:
+      # Custom Residence flag "spawnbypass" to bypass the features.
+      Residence-Flag: false
+  # Limit the spawn amount and purge the exceeded mobs.
+  # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn
+  Limit:
     Enable: false
     Settings:
-      Features:
-        Bypass:
-          # Custom Residence flag "spawnbypass" to bypass the features.
-          # Changing this option requires restarting the server.
-          Residence-Flag: false
-    # Limit the range of monsters around the player to avoid unnecessary monsters.
-    Range:
-      Enable: false
-      # You need to add an option "range: GroupName" in entities.yml.
-      Groups:
-        Default:
+      # Custom Residence flag "entitylimitbypass" to bypass the features.
+      Residence-Flag: false
+      Purge:
+        Enable: false
+        Particle:
           Enable: true
-          # Extend more chunks to allow spawn mobs. Based on the value of the option "mob-spawn-range" in Spigot.yml.
-          Extend: 0
-          # Prevent spawn monsters when all player nearby is using elytra.
-          Cancel-Gliding: true
-          Cancel-Flying: true
-        Near:
-          Enable: true
-          # Unit: block
-          Block: 48
-        Boss:
-          Enable: true
-          Extend: 0
-          Cancel-Gliding: true
-          Cancel-Flying: true
-          Permission: "entityplus.spawn.mobs.boss"
-    # Prevent spawning new creatures if there are too many creatures nearby the location.
-    Limit:
-      Enable: false
-      Settings:
-        Features:
-          AFK: false
-      # You need to add an option in entities.yml.
-      Groups:
-        NormalMobs:
-          Enable: true
-          Amount: 10
-          Chance: 0
-          AFK:
-            Enable: false
-            Chance: 0
-            Amount: 5
-          Search:
-            X: 8
-            Z: 8
-            Y: 5
-        BreedableMobs:
-          Enable: true
-          Amount: 20
-          Chance: 0
-          Search:
-            X: 16
-            Z: 16
-            Y: 10
-        WaterMobs:
-          Enable: true
-          Amount: 10
-          Chance: 0
-          Search:
-            X: 16
-            Z: 16
-            Y: 10
+          Type:
+        Remove: true
+        Check:
+          Chunk-Radius: 3
+          Player-Teleport: true
+          Schedule:
+            Enable: true
+            Interval: 180
+          Prevent:
+            Gliding: true
+            Flying: true
+            Not-AFK: false
+        Ignore:
+          LiveTime-Under: 30
+          Named: true
+          Named-MythicMobs: false
+          Tamed: true
+          With-Saddle: true
+          Pickup: true
+          Baby-Animals: true
+          # It will override the entities settings.
+          List:
+            - WITHER
+            - Boss
+    Groups:
+      NormalMobs:
+        Enable: true
+        Amount: 10
+        Chunk: 1
+        Purge: true
+        LiveTime-Over: 300
+      BreedableMobs:
+        Enable: true
+        Chunk: 2
+        Amount: 30
+      WaterMobs:
+        Enable: true
+        Chunk: 2
+        Amount: 5
   # Changing the reward for killing creatures.
   # More information: https://github.com/momoservertw/EntityPlus/wiki/Drop
   Drop:
     Enable: false
     Settings:
       Features:
-        Exp: true
-        Items: true
-        MythicMobs:
-          Money: true
         Bypass:
           # Custom Residence flag "dropbypass" to bypass the features.
-          # Changing this option requires restarting the server.
           Residence-Flag: false
       # If players has multiple groups, they will get all extra rewards.
-      # Mode: "plus" or "multiply"
-      Bonus:
-        Enable: true
-        Mode: "plus"
+      # Mode: "none", "plus" or "multiply"
+      Multiple-Groups: "none"
     # Permission: "entityplus.drop.GROUP"
     Groups:
       lucky1:
@@ -102,17 +85,14 @@ Entities:
         Exp: 1.5
         Items: 1.5
         Money: 1.5
-        # Available type: Vanilla, Custom Group, MythicMobs
-        Types:
-          - NormalMobs
+        Commands: []
       lucky2:
         Enable: true
         Priority: 2
         Exp: 2
         Items: 2
         Money: 2
-        Types:
-          - NormalMobs
+        Commands: []
   # Skipping the damage duration and damaging the creature immediately.
   # More information: https://github.com/momoservertw/EntityPlus/wiki/Damage
   Damage:
@@ -121,14 +101,10 @@ Entities:
       Features:
         Bypass:
           # Custom Residence flag "damagebypass" to bypass the features.
-          # Changing this option requires restarting the server.
           Residence-Flag: false
     Groups:
       Skip-Duration:
         Enable: true
-        Priority: 2
-        Types:
-          - NormalMobs
         Reasons:
           - FIRE_TICK
           - WITHER
@@ -140,9 +116,6 @@ Entities:
           Sunburn: true
       Fast-Kill:
         Enable: true
-        Priority: 2
-        Types:
-          - NormalMobs
         Reasons:
           - CRAMMING
           - DRYOUT
@@ -152,9 +125,6 @@ Entities:
           Player-Nearby-Range: 10
       Fast-Kill-WitherRose:
         Enable: true
-        Priority: 2
-        Types:
-          - NormalMobs
         Reasons:
           - WITHER
         Blocks:
@@ -177,7 +147,6 @@ Spawner:
     Nearby-Players-Range: 32
     Bypass:
       # Custom Residence flag "spawnerbypass" to bypass the features.
-      # Changing this option requires restarting the server.
       Residence-Flag: false
   Groups:
     Normal:

@@ -4,7 +4,8 @@ author: Momocraft
 api-version: 1.13
 version: 1.3.0
 description: Control entities.
-softdepend: [CorePlus, MythicMobs]
+depend: [CorePlus]
+softdepend: [MythicMobs]
 
 commands:
   entityplus:
