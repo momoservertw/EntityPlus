@@ -154,7 +154,8 @@ public class ConfigPath {
             }
             sortMap = CorePlusAPI.getUtilsManager().sortByValue(sortMap);
             for (String group : sortMap.keySet()) {
-                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(), "Spawn", entityType, "setup", "continue", group,
+                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
+                        "Spawn", entityType, "setup", "continue", group,
                         new Throwable().getStackTrace()[0]);
                 newEnMap.put(group, enSpawnProp.get(entityType).get(group));
             }

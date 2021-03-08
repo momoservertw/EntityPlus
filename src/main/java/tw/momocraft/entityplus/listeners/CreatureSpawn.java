@@ -58,16 +58,9 @@ public class CreatureSpawn implements Listener {
                 continue;
             }
             // Checking the spawn location is "liquid" or not.
-            if (!CorePlusAPI.getUtilsManager().isLiquid(block, entityMap.getLiquid(), true)) {
+            if (!CorePlusAPI.getConditionManager()..isLiquid(block, entityMap.getLiquid(), true)) {
                 CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
                         "Spawn", entityType, "Liquid", "continue", groupName,
-                        new Throwable().getStackTrace()[0]);
-                continue;
-            }
-            // Checking the spawn time is "Day" or not.
-            if (!CorePlusAPI.getUtilsManager().isDay(loc.getWorld().getTime(), entityMap.getDay(), true)) {
-                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
-                        "Spawn", entityType, "Day", "continue", groupName,
                         new Throwable().getStackTrace()[0]);
                 continue;
             }
