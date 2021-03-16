@@ -5,15 +5,12 @@
 Config-Version: 1
 
 Entities:
-  # This group is used to inherit to other groups, the settings can be overrode.
+  # ░░░░░░░░░░░░░░░░░░
+  # ░░  Inherit     ░░
+  # ░░░░░░░░░░░░░░░░░░
+  # This group is used to inherit to other groups.
   Global:
     Enable: false
-    Priority: 0
-    Spawn:
-      Location:
-        - world
-        - world_nether
-        - world_the_end
     Drop:
       - lucky1
       - lucky2
@@ -21,24 +18,61 @@ Entities:
       - Skip-Duration
       - Fast-Kill
       - Fast-Kill-WitherRose
+  # ░░░░░░░░░░░░░░░░░░
+  # ░░  Monsters    ░░
+  # ░░░░░░░░░░░░░░░░░░
   NormalMobs:
     Enable: false
-    # Inherit the "Global" group settings.
+    # Inherit all settings from group "Global", options can be overrode or disabled by setting "none".
+    # The limit amount also h
     Inherit: Global
     Priority: 2
     Types:
       - NormalMobs
     Spawn:
+      Max-Distance: 96
       Chance:
-        Max-Distance: 96
-        Outside: 1
-        Cave: 0.3
-        Gliding: 0.3
-        Flying: 0.3
+        Default: 1
+        Gliding: 0
+        Flying: 0
         AFK: 0.2
-      Ignore-Reasons:
-        - SPAWNER_EGG
-    Limit: NormalMobs
+        Custom:
+          Cave: "%entity_cave%=true, 0.3"
+      Reasons:
+        - NATURAL
+    Limit: "block, 8, 5"
+    Purge: "chunk, 0, 10"
+  Phantom:
+    Enable: false
+    Inherit: NormalMobs
+    Priority: 3
+    Types:
+      - PHANTOM
+    Spawn:
+      Chance: 0.3
+  Guardian:
+    Enable: false
+    Inherit: NormalMobs
+    Priority: 3
+    Types:
+      - GUARDIAN
+    Spawn:
+      Conditions:
+        - "%entity_location_IgnoreNearbyMonument%=true"
+    Limit: "chunk, 1, 5"
+  Zombified_Piglin:
+    Enable: false
+    Inherit: NormalMobs
+    Priority: 3
+    Types:
+      - ZOMBIFIED_PIGLIN
+    Spawn:
+      Chance: 0.3
+      Reasons:
+        - NETHER_PORTAL
+  # ░░░░░░░░░░░░░░░░░░
+  # ░░  Animals     ░░
+  # ░░░░░░░░░░░░░░░░░░
   BreedableMobs:
     Enable: false
     Inherit: Global
@@ -50,52 +84,44 @@ Entities:
         - SPAWNER_EGG
         - NATURAL
         - BEEHIVE
-    Limit: BreedableMobs
-  WaterMobs:
+    Limit: "chunk, 0, 16"
+    Purge: "chunk, 0, 16"
+  Pets:
+    Enable: false
+    Inherit: BreedableMobs
+    Types:
+      - Pets
+    Limit: "chunk, 0, 16"
+    Purge: "chunk, 0, 16"
+  # ░░░░░░░░░░░░░░░░░░
+  # ░░  Useless     ░░
+  # ░░░░░░░░░░░░░░░░░░
+  Useless_natural:
     Enable: false
     Inherit: Global
     Priority: 2
     Types:
-      - WaterMobs
-    Chance: 0.2
-    Reasons:
-      - NATURAL
-    Limit: WaterMobs
-  Bat:
-    Enable: false
-    Inherit: Global
-    Priority: 3
-    Types:
-      - BAT
+      - Useless
     Spawn:
       Chance: 0.2
       Reasons:
         - NATURAL
-  Phantom:
+    Limit: "chunk, 1, 5"
+    Purge: "chunk, 1, 5"
+  Useless_other:
     Enable: false
-    Inherit: Global
-    Priority: 3
-    Types:
-      - PHANTOM
+    Inherit: Useless_natural
     Spawn:
-      Chance: 0.3
-      Reasons:
+      Chance: 1
+      # Ignore-Reasons is checking before "Reason".
+      Ignore-Reasons:
         - NATURAL
-  Guardian:
-    Enable: false
-    Inherit: NormalMobs
-    Priority: 3
-    Types:
-      - GUARDIAN
-    Spawn:
-      Chance: 0.01
-      Reasons:
-        - NATURAL
-      Blocks:
-        - IgnoreNearbyMonument
+  # ░░░░░░░░░░░░░░░░░░
+  # ░░  Others      ░░
+  # ░░░░░░░░░░░░░░░░░░
   Iron_Golem:
     Enable: false
-    Inherit: Global
+    Inherit: Pets
     Priority: 3
     Types:
       - IRON_GOLEM
@@ -103,16 +129,22 @@ Entities:
       Chance: 0.3
       Reasons:
         - VILLAGE_DEFENSE
-  ZOMBIFIED_PIGLIN:
+      Ignore-Reasons: none
+  # ░░░░░░░░░░░░░░░░░░
+  # ░░  Boss        ░░
+  # ░░░░░░░░░░░░░░░░░░
+  Boss:
     Enable: false
     Inherit: Global
     Priority: 3
     Types:
-      - ZOMBIFIED_PIGLIN
+      - WITHER
     Spawn:
       Chance: 0.3
       Reasons:
         - NETHER_PORTAL
+    Limit: "chunk, 0, 10"
+    Purge: "chunk, 0, 10"
   MythicMobs_Example:
     Enable: false
     Priority: 3
@@ -120,4 +152,6 @@ Entities:
       - SkeletonKing
     Spawn:
       Chance: 0.1
-      Permission: true
+      Permission: "entityplus.spawn.MythicMobs_Example"
+    Limit: "chunk, 0, 10"
+    Purge: "chunk, 0, 10"

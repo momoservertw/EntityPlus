@@ -1,13 +1,11 @@
 package tw.momocraft.entityplus.utils.entities;
 
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.*;
-import tw.momocraft.coreplus.api.CorePlusAPI;
-import tw.momocraft.entityplus.handlers.ConfigHandler;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class EntityUtils {
 
@@ -29,47 +27,51 @@ public class EntityUtils {
         return livingEntityMap.get(uuid);
     }
 
-    /**
-     * @param entity the checking entity.
-     * @param group  the limit group of this type of entity.
-     * @return if spawn location reach the maximum entity amount.
-     */
-    public static boolean checkLimit(Entity entity, List<Player> nearPlayers, String group) {
-        SpawnLimitMap limitMap = ConfigHandler.getConfigPath().getEnLimitProp().get(group);
-        if (limitMap == null) {
-            CorePlusAPI.getLangManager().sendErrorMsg(ConfigHandler.getPluginName(),
-                    "Can not find the Spawn Limit group: " + group);
+    public static boolean checkLimit(Location loc, String entityGroup, AmountMap amountMap) {
+        if (amountMap == null)
             return true;
-        }
-        int amount = limitMap.getAmount();
-        double chance = limitMap.getChance();
-        if (ConfigHandler.getConfigPath().isEnSpawnLimitAFK()) {
-            int afkAmount = limitMap.getAFKAmount();
-            double afkChance = limitMap.getAFKChance();
-            for (Player player : nearPlayers) {
-                if (CorePlusAPI.getPlayerManager().isAFK(player)) {
-                    if (CorePlusAPI.getPlayerManager().hasPerm(player, "entityplus.bypass.spawnlimit.afk")) {
-                        amount = limitMap.getAmount();
-                        chance = limitMap.getChance();
-                        break;
-                    } else {
-                        amount = afkAmount;
-                        chance = afkChance;
+        int amount = amountMap.getAmount();
+        List<Entity> nearbyEntities = getNearbyEntities(loc, entityGroup, amountMap);
+        if (nearbyEntities == null)
+            return true;
+        return nearbyEntities.size() < amount;
+    }
+
+    public static List<Entity> getNearbyEntities(Location loc, String entityGroup, AmountMap amountMap) {
+        if (amountMap == null)
+            return null;
+        int radius = amountMap.getRadius();
+        List<Entity> nearbyEntities;
+        if (amountMap.getUnit().equals("chunk")) {
+            if (radius > 0) {
+                List<Chunk> chunks = new ArrayList<>();
+                World world = loc.getWorld();
+                int chunkX = loc.getChunk().getX();
+                int chunkZ = loc.getChunk().getZ();
+                for (int x = -radius; x <= radius; x++) {
+                    for (int z = -radius; z <= radius; z++) {
+                        chunks.add(world.getChunkAt(chunkX + x, chunkZ + z));
                     }
                 }
+                nearbyEntities = new ArrayList<>();
+                for (Chunk chunk : chunks) {
+                    nearbyEntities.addAll(Arrays.asList(chunk.getEntities()));
+                }
+            } else {
+                nearbyEntities = Arrays.asList(loc.getChunk().getEntities());
             }
+        } else if (amountMap.getUnit().equals("block")) {
+            nearbyEntities = new ArrayList<>(loc.getNearbyEntities(amountMap.getRadius(), amountMap.getRadius(), amountMap.getRadius()));
+        } else {
+            return null;
         }
-        List<Entity> nearbyEntities = entity.getNearbyEntities(limitMap.getSearchX(), limitMap.getSearchY(), limitMap.getSearchZ());
-        int nearbySize = nearbyEntities.size();
+        List<Entity> newNearbyEntities = new ArrayList<>();
         for (Entity en : nearbyEntities) {
-            if (en instanceof Player) {
-                nearbySize--;
+            if (entityGroup.equals(EntityUtils.getLivingEntityMap().get(en.getUniqueId()))) {
+                newNearbyEntities.add(en);
             }
         }
-        if (nearbySize < amount) {
-            return true;
-        }
-        return CorePlusAPI.getUtilsManager().isRandChance(chance);
+        return newNearbyEntities;
     }
 
     public static boolean isIgnore(Entity entity) {

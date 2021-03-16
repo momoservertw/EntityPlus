@@ -2,6 +2,8 @@ package tw.momocraft.entityplus.utils.entities;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -14,15 +16,14 @@ public class Purge {
 
     Map<String, Chunk> chunkMap = new HashMap<>();
 
+
     public static void check() {
-
-        en.getTicksLived();
-        Bukkit.getWorld("").getLoadedChunks();
-    }
-
-    public static void start() {
-        for (Player player : Bukkit.getOnlinePlayers()) {
-
+        Location center;
+        for (World world : Bukkit.getWorlds()) {
+            for (Chunk chunk : world.getLoadedChunks()) {
+                center = new Location(chunk.getWorld(), chunk.getX() << 4, 64, chunk.getZ() << 4).add(7, 0, 7);
+                center.getNearbyEntities()
+            }
         }
     }
 
@@ -38,7 +39,7 @@ public class Purge {
             if (EntityUtils.isIgnore(entity)) {
                 continue;
             }
-            if (entity.getTicksLived() > entityMap.getT)) {
+            if (entity.getTicksLived() > entityMap.getT)){
 
             }
         }

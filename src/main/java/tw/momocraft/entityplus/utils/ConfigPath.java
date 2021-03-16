@@ -2,6 +2,7 @@ package tw.momocraft.entityplus.utils;
 
 import org.bukkit.configuration.ConfigurationSection;
 import tw.momocraft.coreplus.api.CorePlusAPI;
+import tw.momocraft.coreplus.handlers.UtilsHandler;
 import tw.momocraft.coreplus.utils.conditions.LocationMap;
 import tw.momocraft.entityplus.EntityPlus;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
@@ -26,24 +27,41 @@ public class ConfigPath {
     //         Entities Variables                      //
     //  ============================================== //
     private boolean entities;
-    private final Map<String, Map<String, EntityMap>> enSpawnProp = new HashMap<>();
-    private boolean enSpawn;
+    private final Map<String, Map<String, EntityMap>> entitiesProp = new HashMap<>();
+    // Spawn
     private boolean enSpawnResFlag;
-    private boolean enSpawnLimitAFK;
-
-    private final Map<String, Map<String, EntityMap>> enSpawnChangeProp = new HashMap<>();
-    private final Map<String, SpawnLimitMap> enLimitProp = new HashMap<>();
-    private Map<String, Map<String, DropMap>> enDropProp = new HashMap<>();
-    private final Map<String, Map<String, DamageMap>> enDamageProp = new HashMap<>();
-
+    private int enSpawnMaxDistance;
+    // Limit
+    private boolean enLimit;
+    private boolean enLimitResFlag;
+    // Purge
+    private boolean enPurge;
+    private boolean enPurgeResFlag;
+    private boolean enPurgeCheckTeleport;
+    private boolean enPurgeCheckSchedule;
+    private int enPurgeCheckScheduleInterval;
+    private boolean enPurgeCheckScheduleAFK;
+    private boolean enPurgeDeathDrop;
+    private boolean enPurgeDeathParticle;
+    private String enPurgeDeathParticleType;
+    private int enPurgeIgnoreLiveTime;
+    private boolean enPurgeIgnoreNamed;
+    private boolean enPurgeIgnoreNamedMM;
+    private boolean enPurgeIgnoreTamed;
+    private boolean enPurgeIgnoreSaddle;
+    private boolean enPurgeIgnorePickup;
+    private boolean enPurgeIgnoreBaby;
+    // Drop
     private boolean enDrop;
+    private Map<String, Map<String, DropMap>> enDropProp = new HashMap<>();
     private boolean enDropResFlag;
     private String enDropMultiPerm;
     private boolean enDropExp;
     private boolean enDropItem;
     private boolean enDropMoney;
-
+    // Damage
     private boolean enDamage;
+    private final Map<String, Map<String, DamageMap>> enDamageProp = new HashMap<>();
     private boolean enDamageResFlag;
 
     //  ============================================== //
@@ -90,58 +108,43 @@ public class ConfigPath {
     }
 
     //  ============================================== //
-    //         Entites Setter                          //
+    //         Entities Setter                          //
     //  ============================================== //
     private void setEntities() {
-        setSpawnRangeProp();
-        setSpawnLimitProp();
-        setDrop();
-        setDamage();
-        setSpawn();
-    }
-    private void setSpawn() {
-        enSpawn = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Enable");
-        if (!enSpawn) {
+        entities = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Enable");
+        if (!entities) {
             return;
         }
-        enSpawnResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Settings.Features.Bypass.Residence-Flag");
-        enSpawnLimitAFK = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Limit.Settings.Features.AFK");
+        setSpawn();
+        setLimit();
+        setPurge();
+        setDrop();
+        setDamage();
+    }
+
+    private void setSpawn() {
+        enSpawnResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Settings.Bypass.Residence-Flag");
+        enSpawnMaxDistance = ConfigHandler.getConfig("config.yml").getInt("Entities.Spawn.Settings.Max-Distance");
         ConfigurationSection groupsConfig = ConfigHandler.getConfig("entities.yml").getConfigurationSection("Entities");
         if (groupsConfig == null) {
             return;
         }
         EntityMap entityMap;
         for (String group : groupsConfig.getKeys(false)) {
-            if (!ConfigHandler.getConfig("entities.yml").getBoolean("Entities." + group + ".Enable", true)) {
-                continue;
-            }
-            entityMap = new EntityMap();
-            entityMap.setTypes(CorePlusAPI.getConfigManager().getTypeList(ConfigHandler.getPrefix(),
-                    ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Types"), "Entities"));
-            entityMap.setPriority(ConfigHandler.getConfig("entities.yml").getLong("Entities." + group + ".Priority"));
-            entityMap.setChance(ConfigHandler.getConfig("entities.yml").getDouble("Entities." + group + ".Chance", 1));
-            entityMap.setReasons(ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Reasons"));
-            entityMap.setIgnoreReasons(ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Ignore-Reasons"));
-            entityMap.setBoimes(ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Biomes"));
-            entityMap.setIgnoreBoimes(ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Ignore-Biomes"));
-            entityMap.setLiquid(ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Liquid"));
-            entityMap.setDay(ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Day"));
-            entityMap.setBlocksMaps(ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Blocks"));
-            entityMap.setLocMaps(ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Location"));
-            entityMap.setRange(ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Range"));
-            entityMap.setLimit(ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Limit"));
-            entityMap.setCommands(ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Commands"));
-            // Add properties to all entities.
+            // Getting all entity settings.
+            entityMap = getEntityMap(new EntityMap(), group);
+            // Adding properties to all entity types.
             for (String entityType : entityMap.getTypes()) {
                 try {
-                    enSpawnProp.get(entityType).put(group, entityMap);
+                    entitiesProp.get(entityType).put(group, entityMap);
                 } catch (Exception ex) {
-                    enSpawnProp.put(entityType, new HashMap<>());
-                    enSpawnProp.get(entityType).put(group, entityMap);
+                    entitiesProp.put(entityType, new HashMap<>());
+                    entitiesProp.get(entityType).put(group, entityMap);
                 }
             }
         }
-        Iterator<String> i = enSpawnProp.keySet().iterator();
+        // Sorting the entity checking sequence by priorities.
+        Iterator<String> i = entitiesProp.keySet().iterator();
         Map<String, Long> sortMap;
         Map<String, EntityMap> newEnMap;
         String entityType;
@@ -149,90 +152,185 @@ public class ConfigPath {
             entityType = i.next();
             sortMap = new HashMap<>();
             newEnMap = new LinkedHashMap<>();
-            for (String group : enSpawnProp.get(entityType).keySet()) {
-                sortMap.put(group, enSpawnProp.get(entityType).get(group).getPriority());
+            for (String group : entitiesProp.get(entityType).keySet()) {
+                sortMap.put(group, entitiesProp.get(entityType).get(group).getPriority());
             }
             sortMap = CorePlusAPI.getUtilsManager().sortByValue(sortMap);
             for (String group : sortMap.keySet()) {
                 CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
                         "Spawn", entityType, "setup", "continue", group,
                         new Throwable().getStackTrace()[0]);
-                newEnMap.put(group, enSpawnProp.get(entityType).get(group));
+                newEnMap.put(group, entitiesProp.get(entityType).get(group));
             }
-            enSpawnProp.replace(entityType, newEnMap);
+            entitiesProp.replace(entityType, newEnMap);
         }
     }
 
-    private void setEntityPurge() {
-        if (!ConfigHandler.getConfig("config.yml").getBoolean("Entities.Limit.Enable")) {
-            return;
+    private EntityMap getEntityMap(EntityMap entityMap, String group) {
+        if (!ConfigHandler.getConfig("entities.yml").getBoolean("Entities." + group + ".Enable", true)) {
+            return entityMap;
         }
-    }
-
-    private void setSpawnRangeProp() {
-        if (!ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Range.Enable")) {
-            return;
+        String value;
+        // Inherit
+        value = ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Inherit");
+        if (value != null) {
+            entityMap = getEntityMap(entityMap, value);
+            entityMap.setInherit(value);
         }
-        ConfigurationSection groupsConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Entities.Spawn.Range.Groups");
-        if (groupsConfig == null) {
-            return;
-        }
-        int basic = CorePlusAPI.getConfigManager().getConfig("spigot.yml").getInt("world-settings.default.mob-spawn-range", 8);
-        System.out.println(basic);
-        int range;
-        SpawnRangeMap spawnRangeMap;
-        for (String group : groupsConfig.getKeys(false)) {
-            if (!ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Range.Groups." + group + ".Enable", true)) {
-                continue;
+        // GroupName
+        if (group != null)
+            entityMap.setGroupName(group);
+        // Types
+        List<String> types = CorePlusAPI.getConfigManager().getTypeList(ConfigHandler.getPrefix(),
+                ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Types"), "Entities");
+        if (types != null)
+            entityMap.setTypes(types);
+        // Priority
+        int priority = ConfigHandler.getConfig("entities.yml").getInt("Entities." + group + ".Priority", -1);
+        if (priority != -1)
+            entityMap.setPriority(priority);
+        // Chance
+        value = ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Chance");
+        if (value != null) {
+            ChanceMap chanceMap = new ChanceMap();
+            ConfigurationSection chanceConfig =
+                    ConfigHandler.getConfig("entities.yml").getConfigurationSection("Entities." + group + ".Chance");
+            if (chanceConfig != null) {
+                chanceMap.setMain(ConfigHandler.getConfig("entities.yml").getDouble("Entities." + group + ".Chance.Main", 1));
+                chanceMap.setAfk(ConfigHandler.getConfig("entities.yml").getDouble("Entities." + group + ".Chance.AFK", 1));
+                chanceMap.setFlying(ConfigHandler.getConfig("entities.yml").getDouble("Entities." + group + ".Chance.Flying", 1));
+                chanceMap.setGliding(ConfigHandler.getConfig("entities.yml").getDouble("Entities." + group + ".Chance.Gliding", 1));
+                ConfigurationSection chanceCustomConfig = ConfigHandler.getConfig("entities.yml").getConfigurationSection("Entities." + group + ".Chance.Custom");
+                if (chanceCustomConfig != null) {
+                    String chanceCustomValue;
+                    for (String condition : chanceCustomConfig.getKeys(false)) {
+                        try {
+                            chanceCustomValue = ConfigHandler.getConfig("entities.yml").getString(
+                                    "Entities." + group + ".Chance.Custom." + condition);
+                            if (chanceCustomValue == null) {
+                                continue;
+                            }
+                            chanceMap.addCustom(chanceCustomValue.substring(0, chanceCustomValue.lastIndexOf(", ")),
+                                    chanceCustomValue.lastIndexOf(", " + 2));
+                        } catch (Exception ignored) {
+                        }
+                    }
+                }
+            } else {
+                chanceMap.setMain(Double.parseDouble(value));
+                entityMap.setChanceMap(chanceMap);
             }
-            spawnRangeMap = new SpawnRangeMap();
-            spawnRangeMap.setGliding(ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Range.Groups." + group + ".Cancel-Gliding"));
-            spawnRangeMap.setFlying(ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Range.Groups." + group + ".Cancel-Flying"));
-            spawnRangeMap.setPermission(ConfigHandler.getConfig("config.yml").getString("Entities.Spawn.Range.Groups." + group + ".Permission"));
-            range = ConfigHandler.getConfig("config.yml").getInt("Entities.Spawn.Range.Groups." + group + ".Block",
-                    (ConfigHandler.getConfig("config.yml").getInt("Entities.Spawn.Range.Groups." + group + ".Extend") + basic) * 16);
-            range *= range;
-            spawnRangeMap.setRange(range);
-            spawnRangeProp.put(group, spawnRangeMap);
-            CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(), "Spawn-Range", group, "setup", "continue", String.valueOf(range),
-                    new Throwable().getStackTrace()[0]);
         }
+        List<String> valueList;
+        // Reasons
+        valueList = ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Reasons");
+        if (!valueList.isEmpty()) {
+            entityMap.setReasons(valueList);
+        }
+        // Ignore-Reasons
+        valueList = ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Ignore-Reasons");
+        if (!valueList.isEmpty()) {
+            entityMap.setIgnoreReasons(valueList);
+        }
+        // Ignore-Reasons
+        valueList = ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Ignore-Reasons");
+        if (!valueList.isEmpty()) {
+            entityMap.setIgnoreReasons(valueList);
+        }
+        // Permissions
+        value = ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Permission");
+        if (value != null) {
+            entityMap.setPermission(value);
+        }
+        // Conditions
+        valueList = ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Conditions");
+        if (!valueList.isEmpty())
+            entityMap.setConditions(valueList);
+        // Limit
+        if (enLimit) {
+            String limit = ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Limit");
+            if (limit != null) {
+                if (limit.equals("none")) {
+                    entityMap.setLimitMap(null);
+                } else {
+                    String[] amountSplit = limit.split(", ");
+                    if (amountSplit.length == 3) {
+                        try {
+                            AmountMap amountMap = new AmountMap();
+                            amountMap.setUnit(amountSplit[0]);
+                            amountMap.setRadius(Double.parseDouble(amountSplit[1]));
+                            amountMap.setAmount(Integer.parseInt(amountSplit[2]));
+                            entityMap.setLimitMap(amountMap);
+                        } catch (Exception ex) {
+                            UtilsHandler.getLang().sendErrorMsg(ConfigHandler.getPluginName(),
+                                    "Not correct format of entity Limit: \"" + limit + "\"");
+                            UtilsHandler.getLang().sendErrorMsg(ConfigHandler.getPluginName(),
+                                    "More information: https://github.com/momoservertw/EntityPlus/wiki/Entities#Limit");
+                            UtilsHandler.getLang().sendDebugTrace(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(), ex);
+                        }
+                    }
+                }
+            }
+        }
+        // Purge
+        if (enPurge) {
+            String purge = ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".purge");
+            if (purge != null) {
+                if (purge.equals("none")) {
+                    entityMap.setPurgeMap(null);
+                } else {
+                    String[] amountSplit = purge.split(", ");
+                    if (amountSplit.length == 3) {
+                        try {
+                            AmountMap amountMap = new AmountMap();
+                            amountMap.setUnit(amountSplit[0]);
+                            amountMap.setRadius(Double.parseDouble(amountSplit[1]));
+                            amountMap.setAmount(Integer.parseInt(amountSplit[2]));
+                            entityMap.setPurgeMap(amountMap);
+                        } catch (Exception ex) {
+                            UtilsHandler.getLang().sendErrorMsg(ConfigHandler.getPluginName(),
+                                    "Not correct format of entity Purge: \"" + purge + "\"");
+                            UtilsHandler.getLang().sendErrorMsg(ConfigHandler.getPluginName(),
+                                    "More information: https://github.com/momoservertw/EntityPlus/wiki/Entities#Purge");
+                            UtilsHandler.getLang().sendDebugTrace(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(), ex);
+                        }
+                    }
+                }
+            }
+        }
+        // Commands
+        valueList = ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Commands");
+        if (!valueList.isEmpty())
+            entityMap.setCommands(valueList);
+        return entityMap;
     }
 
-    private void setSpawnLimitProp() {
+    private void setLimit() {
         if (!ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Limit.Enable")) {
             return;
         }
-        boolean limitAFK = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Limit.Settings.Features.AFK");
-        enLimitProp = new HashMap<>();
-        ConfigurationSection groupsConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Entities.Spawn.Limit.Groups");
-        if (groupsConfig == null) {
+        enLimitResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Limit.Residence-Flag");
+    }
+
+    private void setPurge() {
+        if (!ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Limit.Enable")) {
             return;
         }
-        SpawnLimitMap limitMap;
-        boolean afkEnable;
-        for (String group : groupsConfig.getKeys(false)) {
-            if (!ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Limit.Groups." + group + ".Enable", true)) {
-                continue;
-            }
-            limitMap = new SpawnLimitMap();
-            limitMap.setChance(ConfigHandler.getConfig("config.yml").getLong("Entities.Spawn.Limit.Groups." + group + ".Chance"));
-            limitMap.setAmount(ConfigHandler.getConfig("config.yml").getInt("Entities.Spawn.Limit.Groups." + group + ".Amount"));
-            if (limitAFK) {
-                afkEnable = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Limits.Groups." + group + ".AFK.Enable");
-                limitMap.setAFK(afkEnable);
-                if (afkEnable) {
-                    limitMap.setAFKAmount(ConfigHandler.getConfig("config.yml").getInt("Entities.Spawn.Limits.Groups." + group + ".AFK.Amount"));
-                    limitMap.setAFKChance(ConfigHandler.getConfig("config.yml").getDouble("Entities.Spawn.Limits.Groups." + group + ".AFK.Chance"));
-                }
-            }
-            limitMap.setSearchX(ConfigHandler.getConfig("config.yml").getLong("Entities.Spawn.Limit.Groups." + group + ".Search.X"));
-            limitMap.setSearchY(ConfigHandler.getConfig("config.yml").getLong("Entities.Spawn.Limit.Groups." + group + ".Search.Y"));
-            limitMap.setSearchZ(ConfigHandler.getConfig("config.yml").getLong("Entities.Spawn.Limit.Groups." + group + ".Search.Z"));
-            CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(), "Spawn-Limit", group, "setup", "continue",
-                    new Throwable().getStackTrace()[0]);
-            enLimitProp.put(group, limitMap);
-        }
+        enPurgeResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Purge.Residence-Flag");
+        enPurgeCheckTeleport = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Purge.Check.Player-Teleport");
+        enPurgeCheckSchedule = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Purge.Check.Schedule.Enable");
+        enPurgeCheckScheduleInterval = ConfigHandler.getConfig("config.yml").getInt("Entities.Spawn.Purge.Check.Schedule.Interval");
+        enPurgeCheckScheduleAFK = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Purge.Check.Schedule.Only-AFK");
+        enPurgeDeathDrop = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Purge.Death.Drop");
+        enPurgeDeathParticle = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Purge.Death.Particle.Enable");
+        enPurgeDeathParticleType = ConfigHandler.getConfig("config.yml").getString("Entities.Spawn.Purge.Death.Particle.Type");
+        enPurgeIgnoreLiveTime = ConfigHandler.getConfig("config.yml").getInt("Entities.Spawn.Purge.Ignore.Live-Time-Under");
+        enPurgeIgnoreNamed = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Purge.Ignore.Named");
+        enPurgeIgnoreNamedMM = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Purge.Ignore.Named-MythicMobs");
+        enPurgeIgnoreTamed = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Purge.Ignore.Tamed");
+        enPurgeIgnoreSaddle = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Purge.Ignore.With-Saddle");
+        enPurgeIgnorePickup = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Purge.Ignore.Pickup");
+        enPurgeIgnoreBaby = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Purge.Ignore.Baby");
     }
 
     //  ============================================== //
@@ -475,38 +573,106 @@ public class ConfigPath {
     }
 
     //  ============================================== //
-    //         Spawn Getter                            //
+    //         Entities Getter                         //
     //  ============================================== //
-    public boolean isEnSpawn() {
-        return enSpawn;
+    public boolean isEntities() {
+        return entities;
     }
 
+    public Map<String, Map<String, EntityMap>> getEntitiesProp() {
+        return entitiesProp;
+    }
+
+    //  ============================================== //
+    //         Entities Spawn Getter                   //
+    //  ============================================== //
     public boolean isEnSpawnResFlag() {
         return enSpawnResFlag;
     }
 
-    public boolean isEnSpawnLimitAFK() {
-        return enSpawnLimitAFK;
-    }
-
-    public Map<String, Map<String, EntityMap>> getEnSpawnProp() {
-        return enSpawnProp;
-    }
-
-    public Map<String, Map<String, DropMap>> getEnDropProp() {
-        return enDropProp;
-    }
-
-    public Map<String, SpawnRangeMap> getSpawnRangeProp() {
-        return spawnRangeProp;
-    }
-
-    public Map<String, SpawnLimitMap> getEnLimitProp() {
-        return enLimitProp;
+    public int getEnSpawnMaxDistance() {
+        return enSpawnMaxDistance;
     }
 
     //  ============================================== //
-    //         Drop Getter                            //
+    //         Entities Limit Getter                   //
+    //  ============================================== //
+    public boolean isEnLimit() {
+        return enLimit;
+    }
+
+    public boolean isEnLimitResFlag() {
+        return enLimitResFlag;
+    }
+
+    //  ============================================== //
+    //         Entities Purge Getter                   //
+    //  ============================================== //
+    public boolean isEnPurge() {
+        return enPurge;
+    }
+
+    public boolean isEnPurgeResFlag() {
+        return enPurgeResFlag;
+    }
+
+    public boolean isEnPurgeCheckTeleport() {
+        return enPurgeCheckTeleport;
+    }
+
+    public boolean isEnPurgeCheckSchedule() {
+        return enPurgeCheckSchedule;
+    }
+
+    public int getEnPurgeCheckScheduleInterval() {
+        return enPurgeCheckScheduleInterval;
+    }
+
+    public boolean isEnPurgeCheckScheduleAFK() {
+        return enPurgeCheckScheduleAFK;
+    }
+
+    public boolean isEnPurgeDeathDrop() {
+        return enPurgeDeathDrop;
+    }
+
+    public boolean isEnPurgeDeathParticle() {
+        return enPurgeDeathParticle;
+    }
+
+    public String getEnPurgeDeathParticleType() {
+        return enPurgeDeathParticleType;
+    }
+
+    public int getEnPurgeIgnoreLiveTime() {
+        return enPurgeIgnoreLiveTime;
+    }
+
+    public boolean isEnPurgeIgnoreNamed() {
+        return enPurgeIgnoreNamed;
+    }
+
+    public boolean isEnPurgeIgnoreNamedMM() {
+        return enPurgeIgnoreNamedMM;
+    }
+
+    public boolean isEnPurgeIgnoreTamed() {
+        return enPurgeIgnoreTamed;
+    }
+
+    public boolean isEnPurgeIgnoreSaddle() {
+        return enPurgeIgnoreSaddle;
+    }
+
+    public boolean isEnPurgeIgnorePickup() {
+        return enPurgeIgnorePickup;
+    }
+
+    public boolean isEnPurgeIgnoreBaby() {
+        return enPurgeIgnoreBaby;
+    }
+    //  ============================================== //
+    //         Entities Drop Getter                    //
     //  ============================================== //
     public boolean isEnDrop() {
         return enDrop;
@@ -514,10 +680,6 @@ public class ConfigPath {
 
     public boolean isEnDropResFlag() {
         return enDropResFlag;
-    }
-
-    public boolean isEnDropBonus() {
-        return enDropBonus;
     }
 
     public String getEnDropMultiPerm() {
@@ -534,6 +696,10 @@ public class ConfigPath {
 
     public boolean isEnDropItem() {
         return enDropItem;
+    }
+
+    public Map<String, Map<String, DropMap>> getEnDropProp() {
+        return enDropProp;
     }
 
     //  ============================================== //

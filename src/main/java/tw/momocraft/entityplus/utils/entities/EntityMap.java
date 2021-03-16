@@ -3,126 +3,164 @@ package tw.momocraft.entityplus.utils.entities;
 import java.util.List;
 
 public class EntityMap {
+    private String groupName;
+    private int maxDistance;
+    private String inherit;
     private List<String> types;
     private long priority;
     private List<String> reasons;
     private List<String> ignoreReasons;
-    private List<String> boimes;
-    private List<String> ignoreBoimes;
-    private String liquid;
-    private String day;
-    private List<String> commands;
-    private List<String> locMaps;
-    private List<String> blocksMaps;
+    private String permission;
+    private List<String> conditions;
     private double chance;
-    private String range;
-    private String limit = null;
+    private ChanceMap chanceMap;
 
+    private AmountMap limitMap;
+    private AmountMap purgeMap;
+    private String purgeGroup;
+    private String purgeUnit;
+    private String purgeRadius;
+    private String purgeAmount;
+    private List<String> commands;
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public String getInherit() {
+        return inherit;
+    }
+
+    public void setInherit(String inherit) {
+        this.inherit = inherit;
+    }
 
     public List<String> getTypes() {
         return types;
-    }
-
-    public long getPriority() {
-        return priority;
-    }
-
-    public String getDay() {
-        return day;
-    }
-
-    public String getLiquid() {
-        return liquid;
-    }
-
-    public List<String> getReasons() {
-        return reasons;
-    }
-
-    public List<String> getIgnoreReasons() {
-        return ignoreReasons;
-    }
-
-    public List<String> getBoimes() {
-        return boimes;
-    }
-
-    public List<String> getIgnoreBoimes() {
-        return ignoreBoimes;
-    }
-
-    public List<String> getLocMaps() {
-        return locMaps;
-    }
-
-    public List<String> getBlocksMaps() {
-        return blocksMaps;
-    }
-
-    public double getChance() {
-        return chance;
-    }
-
-    public String getLimit() {
-        return limit;
-    }
-
-    public String getRange() { return range;}
-
-    public List<String> getCommands() {
-        return commands;
     }
 
     public void setTypes(List<String> types) {
         this.types = types;
     }
 
+    public long getPriority() {
+        return priority;
+    }
+
     public void setPriority(long priority) {
         this.priority = priority;
+    }
+
+    public List<String> getReasons() {
+        return reasons;
     }
 
     public void setReasons(List<String> reasons) {
         this.reasons = reasons;
     }
 
+    public List<String> getIgnoreReasons() {
+        return ignoreReasons;
+    }
+
     public void setIgnoreReasons(List<String> ignoreReasons) {
         this.ignoreReasons = ignoreReasons;
     }
 
-    public void setBoimes(List<String> boimes) {
-        this.boimes = boimes;
+    public String getPermission() {
+        return permission;
     }
 
-    public void setIgnoreBoimes(List<String> ignoreBoimes) {
-        this.ignoreBoimes = ignoreBoimes;
+    public void setPermission(String permission) {
+        this.permission = permission;
     }
 
-    public void setLiquid(String liquid) {
-        this.liquid = liquid;
+    public List<String> getConditions() {
+        return conditions;
     }
 
-    public void setDay(String day) {
-        this.day = day;
+    public void setConditions(List<String> conditions) {
+        this.conditions = conditions;
     }
 
-    public void setBlocksMaps(List<String> blocksMaps) {
-        this.blocksMaps = blocksMaps;
-    }
-
-    public void setLocMaps(List<String> locationMaps) {
-        this.locMaps = locationMaps;
+    public double getChance() {
+        return chance;
     }
 
     public void setChance(double chance) {
         this.chance = chance;
     }
 
-    public void setLimit(String limit) {
-        this.limit = limit;
+    public ChanceMap getChanceMap() {
+        return chanceMap;
     }
 
-    public void setRange(String range) {
-        this.range = range;
+    public void setChanceMap(ChanceMap chanceMap) {
+        this.chanceMap = chanceMap;
+    }
+
+    public int getMaxDistance() {
+        return maxDistance;
+    }
+
+    public void setMaxDistance(int maxDistance) {
+        this.maxDistance = maxDistance;
+    }
+
+    public AmountMap getLimitMap() {
+        return limitMap;
+    }
+
+    public void setLimitMap(AmountMap limitMap) {
+        this.limitMap = limitMap;
+    }
+
+    public AmountMap getPurgeMap() {
+        return purgeMap;
+    }
+
+    public void setPurgeMap(AmountMap purgeMap) {
+        this.purgeMap = purgeMap;
+    }
+
+    public String getPurgeGroup() {
+        return purgeGroup;
+    }
+
+    public void setPurgeGroup(String purgeGroup) {
+        this.purgeGroup = purgeGroup;
+    }
+
+    public String getPurgeUnit() {
+        return purgeUnit;
+    }
+
+    public void setPurgeUnit(String purgeUnit) {
+        this.purgeUnit = purgeUnit;
+    }
+
+    public String getPurgeRadius() {
+        return purgeRadius;
+    }
+
+    public void setPurgeRadius(String purgeRadius) {
+        this.purgeRadius = purgeRadius;
+    }
+
+    public String getPurgeAmount() {
+        return purgeAmount;
+    }
+
+    public void setPurgeAmount(String purgeAmount) {
+        this.purgeAmount = purgeAmount;
+    }
+
+    public List<String> getCommands() {
+        return commands;
     }
 
     public void setCommands(List<String> commands) {

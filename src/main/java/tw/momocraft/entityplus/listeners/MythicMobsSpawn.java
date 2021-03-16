@@ -12,7 +12,6 @@ import tw.momocraft.coreplus.api.CorePlusAPI;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.utils.entities.EntityMap;
 import tw.momocraft.entityplus.utils.entities.EntityUtils;
-import tw.momocraft.entityplus.utils.entities.SpawnRangeMap;
 
 import java.util.List;
 import java.util.Map;
@@ -21,13 +20,13 @@ public class MythicMobsSpawn implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onMythicMobsSpawn(MythicMobSpawnEvent e) {
-        if (!ConfigHandler.getConfigPath().isEnSpawn()) {
+        if (!ConfigHandler.getConfigPath().isEntities()) {
             return;
         }
         Entity entity = e.getEntity();
         String entityType = e.getMobType().getInternalName();
         // To get properties.
-        Map<String, EntityMap> entityProp = ConfigHandler.getConfigPath().getEnSpawnProp().get(entityType);
+        Map<String, EntityMap> entityProp = ConfigHandler.getConfigPath().getEntitiesProp().get(entityType);
         if (entityProp == null) {
             return;
         }
@@ -81,7 +80,7 @@ public class MythicMobsSpawn implements Listener {
                 continue;
             }
             // Checking the spawn "chance".
-            if (!CorePlusAPI.getUtilsManager().isRandChance(entityMap.getChance())) {
+            if (!CorePlusAPI.getUtilsManager().isRandChance(entityMap.getChanceMap())) {
                 CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
                         "Spawn", entityType, "Chance", "cancel", groupName,
                         new Throwable().getStackTrace()[0]);
@@ -141,8 +140,8 @@ public class MythicMobsSpawn implements Listener {
                 }
             }
             // Check spawn amount limit.
-            if (entityMap.getLimit() != null) {
-                if (!EntityUtils.checkLimit(entity, nearbyPlayers, entityMap.getLimit())) {
+            if (entityMap.getLimitAmount() != null) {
+                if (!EntityUtils.checkLimit(entity, nearbyPlayers, entityMap.getLimitAmount())) {
                     CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
                             "Spawn", entityType, "Limit", "cancel", groupName,
                             new Throwable().getStackTrace()[0]);
