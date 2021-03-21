@@ -16,6 +16,7 @@ import org.bukkit.potion.PotionEffectType;
 import tw.momocraft.coreplus.api.CorePlusAPI;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.utils.entities.DamageMap;
+import tw.momocraft.entityplus.utils.entities.EntityUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -24,87 +25,62 @@ public class EntityDamage implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityDamage(EntityDamageEvent e) {
-        if (!ConfigHandler.getConfigPath().isEnDamage()) {
+        if (!ConfigHandler.getConfigPath().isEnDamage())
             return;
-        }
-        Entity en = e.getEntity();
-        if (en instanceof Player) {
-            return;
-        }
+        // Checking if the entity has property.
         Entity entity = e.getEntity();
+        String entityGroup = EntityUtils.getEntityType(entity.getUniqueId());
+        if (entityGroup == null)
+            return;
+        if (entity instanceof Player)
+            return;
         String entityType = entity.getType().name();
         String reason = e.getCause().name();
-        // To get entity properties.
-        Map<String, DamageMap> damageProp = ConfigHandler.getConfigPath().getEnDamageProp().get(entityType);
-        // Checking if the properties contains this type of entity.
-        if (damageProp == null) {
+        // To get damage properties.
+        List<String> damageList = ConfigHandler.getConfigPath().getEntitiesProp().get(entityType).get(entityGroup).getDamageList();
+        if (damageList == null || damageList.isEmpty())
+            return;
+        // Checking the bypass "Residence-Flag".
+        Location loc = entity.getLocation();
+        if (!CorePlusAPI.getCondition().checkFlag(loc,
+                "damagebypass", false, ConfigHandler.getConfigPath().isEnDamageResFlag())) {
+            CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                    "Damage", entityType, "!Residence-Flag", "return",
+                    new Throwable().getStackTrace()[0]);
             return;
         }
-        Location loc = entity.getLocation();
         Block block = loc.getBlock();
         DamageMap damageMap;
-        boolean checkResFlag = ConfigHandler.getConfigPath().isEnDamageResFlag();
+        Map<String, DamageMap> damageProp = ConfigHandler.getConfigPath().getEnDamageProp();
+        List<String> conditionList;
         // Checking every groups of this entity.
         back:
-        for (String groupName : damageProp.keySet()) {
-            damageMap = damageProp.get(groupName);
-            // Checking the spawn "reasons".
-            if (!CorePlusAPI.getUtilsManager().containIgnoreValue(reason, damageMap.getReasons(), damageMap.getIgnoreReasons())) {
-                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
-                        "Damage", entityType, "Reason", "continue", groupName,
+        for (String group : damageList) {
+            damageMap = damageProp.get(group);
+            // Checking the "reasons".
+            if (!CorePlusAPI.getUtils().containIgnoreValue(reason, damageMap.getReasons(), damageMap.getIgnoreReasons())) {
+                CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                        "Damage", entityType, "Reason", "continue", group,
                         new Throwable().getStackTrace()[0]);
                 continue;
             }
-            // Checking the spawn "biome".
-            if (!CorePlusAPI.getUtilsManager().containIgnoreValue(block.getBiome().name(), damageMap.getBoimes(), damageMap.getIgnoreBoimes())) {
-                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
-                        "Damage", entityType, "Biome", "continue", groupName,
-                        new Throwable().getStackTrace()[0]);
-                continue;
-            }
-            // Checking the spawn location is "liquid" or not.
-            if (!CorePlusAPI.getUtilsManager().isLiquid(block, damageMap.getLiquid(), true)) {
-                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
-                        "Damage", entityType, "Liquid", "continue", groupName,
-                        new Throwable().getStackTrace()[0]);
-                continue;
-            }
-            // Checking the spawn time is "Day" or not.
-            if (!CorePlusAPI.getUtilsManager().isDay(loc.getWorld().getTime(), damageMap.getDay(), true)) {
-                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
-                        "Damage", entityType, "Day", "continue", groupName,
-                        new Throwable().getStackTrace()[0]);
-                continue;
-            }
-            // Checking the spawn "location".
-            if (!CorePlusAPI.getConditionManager().checkLocation(ConfigHandler.getPluginName(), loc, damageMap.getLocList(), true)) {
-                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
-                        "Damage", entityType, "Location", "continue", groupName,
-                        new Throwable().getStackTrace()[0]);
-                continue;
-            }
-            // Checking the "blocks" nearby the spawn location.
-            if (!CorePlusAPI.getConditionManager().checkBlocks(loc, damageMap.getBlocksList(), true)) {
-                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
-                        "Damage", entityType, "Blocks", "continue", groupName,
-                        new Throwable().getStackTrace()[0]);
-                continue;
-            }
-            // Checking the spawn "Residence-Flag".
-            if (!CorePlusAPI.getConditionManager().checkFlag(loc, "damagebypass", false, checkResFlag)) {
-                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
-                        "Damage", entityType, "Residence-Flag", "continue", groupName,
+            // Checking the "Conditions".
+            conditionList = CorePlusAPI.getLang().transByEntity(ConfigHandler.getPluginName(), null,
+                    damageMap.getConditions(), entity, "entity", false);
+            if (!CorePlusAPI.getCondition().checkCondition(conditionList)) {
+                CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                        "Damage", entityType, "Condition", "continue", group,
                         new Throwable().getStackTrace()[0]);
                 continue;
             }
             // Checking the nearby players.
             int playerNear = damageMap.getPlayerNear();
             if (playerNear > 0) {
-                List<Entity> nearbyEntities = en.getNearbyEntities(playerNear, playerNear, playerNear);
+                List<Entity> nearbyEntities = entity.getNearbyEntities(playerNear, playerNear, playerNear);
                 for (Entity nearEntity : nearbyEntities) {
                     if (nearEntity instanceof Player) {
-                        CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
-                                "Damage", entityType, "PlayerNear", "return", groupName,
+                        CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                                "Damage", entityType, "PlayerNear", "return", group,
                                 new Throwable().getStackTrace()[0]);
                         continue back;
                     }
@@ -119,30 +95,30 @@ public class EntityDamage implements Listener {
                 try {
                     if (length == 2) {
                         // Damage: ">= 5"
-                        if (!CorePlusAPI.getUtilsManager().getCompare(values[0], damage, Integer.parseInt(values[1]))) {
-                            CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
-                                    "Damage", entityType, "Damage", "return", groupName,
+                        if (!CorePlusAPI.getUtils().getCompare(values[0], damage, Integer.parseInt(values[1]))) {
+                            CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                                    "Damage", entityType, "Damage", "return", group,
                                     new Throwable().getStackTrace()[0]);
                             continue;
                         }
                     } else if (length == 3) {
                         // Damage: "1 ~ 3"
-                        if (!CorePlusAPI.getUtilsManager().getRange(damage, Integer.parseInt(values[0]), Integer.parseInt(values[1]), true)) {
-                            CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
-                                    "Damage", entityType, "Damage", "return", groupName,
+                        if (!CorePlusAPI.getUtils().getRange(damage, Integer.parseInt(values[0]), Integer.parseInt(values[1]), true)) {
+                            CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                                    "Damage", entityType, "Damage", "return", group,
                                     new Throwable().getStackTrace()[0]);
                             continue;
                         }
                     }
                 } catch (Exception ex) {
-                    CorePlusAPI.getLangManager().sendConsoleMsg(ConfigHandler.getPluginPrefix(),
+                    CorePlusAPI.getLang().sendConsoleMsg(ConfigHandler.getPluginPrefix(),
                             "&cThere is an error occurred. Please check the \"Damage\" format.");
-                    CorePlusAPI.getLangManager().sendConsoleMsg(ConfigHandler.getPluginPrefix(),
-                            "&cDamage - " + groupName + ", Damage: " + compareDamage);
+                    CorePlusAPI.getLang().sendConsoleMsg(ConfigHandler.getPluginPrefix(),
+                            "&cDamage - " + group + ", Damage: " + compareDamage);
                 }
             }
-            Damageable damageEn = (Damageable) en;
-            LivingEntity livingEn = (LivingEntity) en;
+            Damageable damageEn = (Damageable) entity;
+            LivingEntity livingEn = (LivingEntity) entity;
             // Executing action.
             switch (damageMap.getAction().toLowerCase()) {
                 case "skip-duration":
@@ -153,19 +129,19 @@ public class EntityDamage implements Listener {
                         if (effectTick > 0) {
                             if (entityType.equals("ZOMBIE") || entityType.equals("ZOMBIE_VILLAGER") || entityType.equals("DROWNED") ||
                                     entityType.equals("SKELETON") || entityType.equals("STRAY")) {
-                                if (damageMap.getSunburn()) {
+                                if (damageMap.isSunburn()) {
                                     // Checking if there any blocks on the top of the creature.
                                     if (block.getRelative(BlockFace.UP).getType() != Material.AIR) {
-                                        CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
-                                                "Damage", entityType, "Skip-Duration: Sunburn-Top", "return", groupName,
+                                        CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                                                "Damage", entityType, "Skip-Duration: Sunburn-Top", "return", group,
                                                 new Throwable().getStackTrace()[0]);
                                         continue back;
                                     }
                                     double time = loc.getWorld().getTime();
                                     // Checking if the time.
                                     if (time >= 12300 && time <= 23850) {
-                                        CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
-                                                "Damage", entityType, "Skip-Duration: Sunburn-Time", "return", groupName,
+                                        CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                                                "Damage", entityType, "Skip-Duration: Sunburn-Time", "return", group,
                                                 new Throwable().getStackTrace()[0]);
                                         continue back;
                                     }
@@ -176,12 +152,11 @@ public class EntityDamage implements Listener {
                             damage += effectDamage;
                             damageEn.setHealth(Math.max(0, damageEn.getHealth() - damage));
                             livingEn.setFireTicks(0);
-                            CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
-                                    "Damage", entityType, "Skip-Duration: fire", "return", groupName,
+                            CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                                    "Damage", entityType, "Skip-Duration: fire", "return", group,
                                     new Throwable().getStackTrace()[0]);
-                            if (damageEn.getHealth() == 0) {
+                            if (damageEn.getHealth() == 0)
                                 return;
-                            }
                         }
                         continue back;
                     } else if (damageMap.getReasons().contains("WITHER") && reason.equals("WITHER")) {
@@ -193,12 +168,11 @@ public class EntityDamage implements Listener {
                                 damage += effectDamage;
                                 damageEn.setHealth(Math.max(0, damageEn.getHealth() - damage));
                                 livingEn.removePotionEffect(PotionEffectType.WITHER);
-                                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
-                                        "Damage", entityType, "Skip-Duration: wither", "return", groupName,
+                                CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                                        "Damage", entityType, "Skip-Duration: wither", "return", group,
                                         new Throwable().getStackTrace()[0]);
-                                if (damageEn.getHealth() == 0) {
+                                if (damageEn.getHealth() == 0)
                                     return;
-                                }
                             }
                         } catch (Exception ignored) {
                         }
@@ -212,12 +186,11 @@ public class EntityDamage implements Listener {
                                 damage += effectDamage;
                                 damageEn.setHealth(Math.max(0, damageEn.getHealth() - damage));
                                 livingEn.removePotionEffect(PotionEffectType.POISON);
-                                CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
-                                        "Damage", entityType, "Skip-Duration: poison", "return", groupName,
+                                CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                                        "Damage", entityType, "Skip-Duration: poison", "return", group,
                                         new Throwable().getStackTrace()[0]);
-                                if (damageEn.getHealth() == 0) {
+                                if (damageEn.getHealth() == 0)
                                     return;
-                                }
                             }
                         } catch (Exception ignored) {
                         }
@@ -226,46 +199,41 @@ public class EntityDamage implements Listener {
                     return;
                 case "kill":
                     damageEn.setHealth(0);
-                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
-                            "Damage", entityType, "Kill", "return", groupName,
+                    CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                            "Damage", entityType, "Kill", "return", group,
                             new Throwable().getStackTrace()[0]);
                     return;
                 case "remove":
                     entity.remove();
-                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
-                            "Damage", entityType, "Remove", "return", groupName,
+                    CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                            "Damage", entityType, "Remove", "return", group,
                             new Throwable().getStackTrace()[0]);
                     return;
                 case "damage":
                     damage = Integer.parseInt(damageMap.getActionValue());
                     e.setDamage(damage);
-                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
-                            "Damage", entityType, "Damage", "return", groupName,
+                    CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                            "Damage", entityType, "Damage", "return", group,
                             new Throwable().getStackTrace()[0]);
-                    if (damageEn.getHealth() <= damage) {
+                    if (damageEn.getHealth() <= damage)
                         return;
-                    }
                     continue back;
                 case "damage-rate":
                     damage *= Integer.parseInt(damageMap.getActionValue());
                     e.setDamage(damage);
-                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
-                            "Damage", entityType, "Damage-rate", "return", groupName,
+                    CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                            "Damage", entityType, "Damage-rate", "return", group,
                             new Throwable().getStackTrace()[0]);
-                    if (damageEn.getHealth() <= damage) {
+                    if (damageEn.getHealth() <= damage)
                         return;
-                    }
                     continue back;
                 case "health":
                     damageEn.setHealth(Double.parseDouble(damageMap.getActionValue()));
-                    CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
-                            "Damage", entityType, "Health", "return", groupName,
+                    CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                            "Damage", entityType, "Health", "return", group,
                             new Throwable().getStackTrace()[0]);
-                    if (damageEn.getHealth() == 0) {
+                    if (damageEn.getHealth() == 0)
                         return;
-                    }
-                    continue back;
-                default:
             }
         }
     }

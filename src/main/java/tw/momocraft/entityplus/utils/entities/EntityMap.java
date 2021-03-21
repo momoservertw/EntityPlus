@@ -1,8 +1,17 @@
 package tw.momocraft.entityplus.utils.entities;
 
+import tw.momocraft.entityplus.handlers.ConfigHandler;
+
 import java.util.List;
+import java.util.Map;
 
 public class EntityMap {
+
+    public EntityMap() {
+        maxDistance = ConfigHandler.getConfig("config.yml").getInt("Entities.Spawn.Settings.Max-Distance");
+        maxDistance *= maxDistance;
+    }
+
     private String groupName;
     private int maxDistance;
     private String inherit;
@@ -12,16 +21,17 @@ public class EntityMap {
     private List<String> ignoreReasons;
     private String permission;
     private List<String> conditions;
-    private double chance;
-    private ChanceMap chanceMap;
+    private Map<String, Double> chanceMap;
 
+    private String limitGroup;
     private AmountMap limitMap;
-    private AmountMap purgeMap;
     private String purgeGroup;
-    private String purgeUnit;
-    private String purgeRadius;
-    private String purgeAmount;
+    private int purge;
     private List<String> commands;
+
+    private List<String> dropList;
+    private List<String> damageList;
+
 
     public String getGroupName() {
         return groupName;
@@ -29,6 +39,14 @@ public class EntityMap {
 
     public void setGroupName(String groupName) {
         this.groupName = groupName;
+    }
+
+    public int getMaxDistance() {
+        return maxDistance;
+    }
+
+    public void setMaxDistance(int maxDistance) {
+        this.maxDistance = maxDistance;
     }
 
     public String getInherit() {
@@ -87,28 +105,20 @@ public class EntityMap {
         this.conditions = conditions;
     }
 
-    public double getChance() {
-        return chance;
-    }
-
-    public void setChance(double chance) {
-        this.chance = chance;
-    }
-
-    public ChanceMap getChanceMap() {
+    public Map<String, Double> getChanceMap() {
         return chanceMap;
     }
 
-    public void setChanceMap(ChanceMap chanceMap) {
+    public void setChanceMap(Map<String, Double> chanceMap) {
         this.chanceMap = chanceMap;
     }
 
-    public int getMaxDistance() {
-        return maxDistance;
+    public String getLimitGroup() {
+        return limitGroup;
     }
 
-    public void setMaxDistance(int maxDistance) {
-        this.maxDistance = maxDistance;
+    public void setLimitGroup(String limitGroup) {
+        this.limitGroup = limitGroup;
     }
 
     public AmountMap getLimitMap() {
@@ -119,14 +129,6 @@ public class EntityMap {
         this.limitMap = limitMap;
     }
 
-    public AmountMap getPurgeMap() {
-        return purgeMap;
-    }
-
-    public void setPurgeMap(AmountMap purgeMap) {
-        this.purgeMap = purgeMap;
-    }
-
     public String getPurgeGroup() {
         return purgeGroup;
     }
@@ -135,28 +137,12 @@ public class EntityMap {
         this.purgeGroup = purgeGroup;
     }
 
-    public String getPurgeUnit() {
-        return purgeUnit;
+    public int getPurge() {
+        return purge;
     }
 
-    public void setPurgeUnit(String purgeUnit) {
-        this.purgeUnit = purgeUnit;
-    }
-
-    public String getPurgeRadius() {
-        return purgeRadius;
-    }
-
-    public void setPurgeRadius(String purgeRadius) {
-        this.purgeRadius = purgeRadius;
-    }
-
-    public String getPurgeAmount() {
-        return purgeAmount;
-    }
-
-    public void setPurgeAmount(String purgeAmount) {
-        this.purgeAmount = purgeAmount;
+    public void setPurge(int purge) {
+        this.purge = purge;
     }
 
     public List<String> getCommands() {
@@ -165,5 +151,21 @@ public class EntityMap {
 
     public void setCommands(List<String> commands) {
         this.commands = commands;
+    }
+
+    public List<String> getDropList() {
+        return dropList;
+    }
+
+    public void setDropList(List<String> dropList) {
+        this.dropList = dropList;
+    }
+
+    public List<String> getDamageList() {
+        return damageList;
+    }
+
+    public void setDamageList(List<String> damageList) {
+        this.damageList = damageList;
     }
 }

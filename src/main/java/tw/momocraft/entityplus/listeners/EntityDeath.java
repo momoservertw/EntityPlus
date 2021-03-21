@@ -2,6 +2,7 @@ package tw.momocraft.entityplus.listeners;
 
 import io.lumine.xikage.mythicmobs.MythicMobs;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -11,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import tw.momocraft.coreplus.api.CorePlusAPI;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.utils.entities.DropMap;
+import tw.momocraft.entityplus.utils.entities.EntityUtils;
 
 import java.util.*;
 
@@ -18,46 +20,60 @@ public class EntityDeath implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityDeath(EntityDeathEvent e) {
-        // Checking the Drop feature.
-        if (!ConfigHandler.getConfigPath().isEnDrop()) {
+        if (!ConfigHandler.getConfigPath().isEnDrop())
             return;
-        }
+        // Checking if the entity has property.
+        LivingEntity entity = e.getEntity();
+        String entityGroup = EntityUtils.getEntityType(entity.getUniqueId());
+        if (entityGroup == null)
+            return;
         Player player = e.getEntity().getKiller();
-        if (player == null) {
+        if (player == null)
             return;
-        }
-        Entity entity = e.getEntity();
         UUID entityUUID = entity.getUniqueId();
         // To stop checking the MythicMobs.
-        if (CorePlusAPI.getDependManager().MythicMobsEnabled()) {
-            if (MythicMobs.inst().getAPIHelper().isMythicMob(entityUUID)) {
+        if (CorePlusAPI.getDepend().MythicMobsEnabled())
+            if (MythicMobs.inst().getAPIHelper().isMythicMob(entityUUID))
                 return;
-            }
-        }
         String entityType = entity.getType().name();
         // To get drop properties.
-        Map<String, DropMap> dropProp = ConfigHandler.getConfigPath().getEnDropProp().get(entityType);
-        // Checking if the properties contains this type of entity.
-        if (dropProp == null) {
+        List<String> dropList = ConfigHandler.getConfigPath().getEntitiesProp().get(entityType).get(entityGroup).getDropList();
+        if (dropList == null || dropList.isEmpty())
             return;
-        }
         // Checking the bypass "Residence-Flag".
-        if (!CorePlusAPI.getConditionManager().checkFlag(e.getEntity().getLocation(),
+        if (!CorePlusAPI.getCondition().checkFlag(e.getEntity().getLocation(),
                 "dropbypass", false, ConfigHandler.getConfigPath().isEnDropResFlag())) {
-            CorePlusAPI.getLangManager().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginPrefix(),
+            CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
                     "Drop", entityType, "!Residence-Flag", "return",
                     new Throwable().getStackTrace()[0]);
             return;
         }
         // Checking player reward permissions.
-        List<String> permsList = new ArrayList<>();
-        for (String key : dropProp.keySet()) {
-            if (CorePlusAPI.getPlayerManager().hasPerm(player, "entityplus.drop.*")
-                    || CorePlusAPI.getPlayerManager().hasPerm(player, "entityplus.drop." + key)) {
-                permsList.add(key);
+        DropMap dropMap;
+        List<DropMap> dropMapList = new ArrayList<>();
+        List<String> commandList = new ArrayList<>();
+        Map<String, DropMap> dropProp = ConfigHandler.getConfigPath().getEnDropProp();
+        for (String group : dropList) {
+            if (CorePlusAPI.getPlayer().hasPerm(player, "entityplus.drop.*")
+                    || CorePlusAPI.getPlayer().hasPerm(player, "entityplus.drop." + group)) {
+                dropMap = dropProp.get(group);
+                if (dropMap == null)
+                    continue;
+                // Checking the "Conditions".
+                if (!CorePlusAPI.getCondition().checkCondition(dropMap.getConditions())) {
+                    CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                            "Damage", entityType, "Condition", "continue", group,
+                            new Throwable().getStackTrace()[0]);
+                    continue;
+                }
+                dropMapList.add(dropMap);
+                commandList.addAll(dropMap.getCommands());
             }
         }
-        if (permsList.isEmpty()) {
+        if (dropMapList.isEmpty()) {
+            CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                    "Drop", entityType, "Permission", "return",
+                    new Throwable().getStackTrace()[0]);
             return;
         }
         double totalExp = 1;
@@ -65,32 +81,28 @@ public class EntityDeath implements Listener {
         double exp;
         double item;
         // Checking the bonus mode.
-        if (ConfigHandler.getConfigPath().isEnDropBonus()) {
-            String combinedMethod = ConfigHandler.getConfigPath().getEnDropMultiPerm();
-            for (String key : permsList) {
-                if (dropProp.get(key) != null) {
-                    exp = dropProp.get(key).getExp();
-                    item = dropProp.get(key).getItems();
-                    if (combinedMethod.equals("plus")) {
-                        exp--;
-                        item--;
-                        totalExp += exp;
-                        totalItem += item;
-                    } else if (combinedMethod.equals("multiply")) {
-                        totalExp *= exp;
-                        totalItem *= item;
-                    } else {
-                        exp--;
-                        item--;
-                        totalExp += exp;
-                        totalItem += item;
-                    }
+        String combinedMethod = ConfigHandler.getConfigPath().getEnDropMultiPerm();
+        if (combinedMethod.equals("plus") || combinedMethod.equals("multiply")) {
+            for (DropMap drop : dropMapList) {
+                if (drop == null)
+                    continue;
+                exp = drop.getExp();
+                item = drop.getItems();
+                if (combinedMethod.equals("plus")) {
+                    exp--;
+                    item--;
+                    totalExp += exp;
+                    totalItem += item;
+                } else {
+                    totalExp *= exp;
+                    totalItem *= item;
                 }
             }
         } else {
             // Choosing the first drop (The highest priority).
-            exp = dropProp.get(permsList.get(0)).getExp();
-            item = dropProp.get(permsList.get(0)).getItems();
+            dropMap = dropMapList.get(0);
+            exp = dropMap.getExp();
+            item = dropMap.getItems();
             totalExp *= exp;
             totalItem *= item;
         }
@@ -108,10 +120,22 @@ public class EntityDeath implements Listener {
                 totalItem *= itemStack.getAmount();
                 dropDecimal = totalItem % 1;
                 totalItem -= dropDecimal;
-                if (dropDecimal > 0 && dropDecimal < new Random().nextDouble()) {
+                if (dropDecimal > 0 && dropDecimal < new Random().nextDouble())
                     totalItem++;
-                }
                 itemStack.setAmount((int) (totalItem));
+            }
+        }
+        // Executing commands.
+        if (ConfigHandler.getConfigPath().isEnDropCommand()) {
+            if (!commandList.isEmpty()) {
+                commandList = CorePlusAPI.getLang().transByEntity(
+                        ConfigHandler.getPluginName(), CorePlusAPI.getPlayer().getPlayerLocal(player),
+                        commandList, e.getEntity(), "entity", true);
+                commandList = CorePlusAPI.getLang().transByPlayer(
+                        ConfigHandler.getPluginName(), CorePlusAPI.getPlayer().getPlayerLocal(player),
+                        commandList, player, "player");
+                CorePlusAPI.getCommand().executeCmdList(ConfigHandler.getPrefix(),
+                        player, commandList, true);
             }
         }
     }

@@ -9,62 +9,54 @@ public class DropMap {
     private double items;
     private double money;
     private List<String> commands;
-    private List<String> locList;
-    private List<String> blocksList;
+    private List<String> conditions;
+
 
     public long getPriority() {
         return priority;
-    }
-
-    public double getExp() {
-        return exp;
-    }
-
-    public double getItems() {
-        return items;
-    }
-
-    public double getMoney() {
-        return money;
-    }
-
-    public List<String> getCommands() {
-        return commands;
-    }
-
-    public List<String> getLocList() {
-        return locList;
-    }
-
-    public List<String> getBlocksList() {
-        return blocksList;
     }
 
     public void setPriority(long priority) {
         this.priority = priority;
     }
 
+    public double getExp() {
+        return exp;
+    }
+
     public void setExp(double exp) {
         this.exp = exp;
+    }
+
+    public double getItems() {
+        return items;
     }
 
     public void setItems(double items) {
         this.items = items;
     }
 
+    public double getMoney() {
+        return money;
+    }
+
     public void setMoney(double money) {
         this.money = money;
+    }
+
+    public List<String> getCommands() {
+        return commands;
     }
 
     public void setCommands(List<String> commands) {
         this.commands = commands;
     }
 
-    public void setLocList(List<String> locList) {
-        this.locList = locList;
+    public List<String> getConditions() {
+        return conditions;
     }
 
-    public void setBlocksList(List<String> blocksList) {
-        this.blocksList = blocksList;
+    public void setConditions(List<String> conditions) {
+        this.conditions = conditions;
     }
 }

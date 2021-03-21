@@ -19,16 +19,17 @@ public class DependHandler {
         EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new CreatureSpawn(), EntityPlus.getInstance());
         EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new SpawnerSpawn(), EntityPlus.getInstance());
         EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new EntityDeath(), EntityPlus.getInstance());
+        EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new ChunkLoad(), EntityPlus.getInstance());
 
-        if (CorePlusAPI.getDependManager().MythicMobsEnabled()) {
+        if (CorePlusAPI.getDepend().MythicMobsEnabled()) {
             EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new MythicMobsSpawn(), EntityPlus.getInstance());
             EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new MythicMobsLootDrop(), EntityPlus.getInstance());
         }
-        if (CorePlusAPI.getDependManager().ResidenceEnabled()) {
-            CorePlusAPI.getConditionManager().registerFlag("spawnbypass");
-            CorePlusAPI.getConditionManager().registerFlag("spawnerbypass");
-            CorePlusAPI.getConditionManager().registerFlag("dropbypass");
-            CorePlusAPI.getConditionManager().registerFlag("damagebypass");
+        if (CorePlusAPI.getDepend().ResidenceEnabled()) {
+            CorePlusAPI.getCondition().registerFlag("spawnbypass");
+            CorePlusAPI.getCondition().registerFlag("spawnerbypass");
+            CorePlusAPI.getCondition().registerFlag("dropbypass");
+            CorePlusAPI.getCondition().registerFlag("damagebypass");
         }
     }
 }

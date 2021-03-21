@@ -31,17 +31,17 @@ Entities:
       - NormalMobs
     Spawn:
       Max-Distance: 96
+      # Priority is top to bottom.
       Chance:
-        Default: 1
+        AFK: 0.2
         Gliding: 0
         Flying: 0
-        AFK: 0.2
-        Custom:
-          Cave: "%entity_cave%=true, 0.3"
+        "%entity_cave%=true": 0.3
+        Default: 1
       Reasons:
         - NATURAL
-    Limit: "block, 8, 5"
-    Purge: "chunk, 0, 10"
+    Limit: "chunk, 0, 5"
+    Purge: 10
   Phantom:
     Enable: false
     Inherit: NormalMobs
@@ -59,7 +59,7 @@ Entities:
     Spawn:
       Conditions:
         - "%entity_location_IgnoreNearbyMonument%=true"
-    Limit: "chunk, 1, 5"
+    Limit: "chunk, 0, 3"
   Zombified_Piglin:
     Enable: false
     Inherit: NormalMobs
@@ -85,14 +85,14 @@ Entities:
         - NATURAL
         - BEEHIVE
     Limit: "chunk, 0, 16"
-    Purge: "chunk, 0, 16"
+    Purge: 16
   Pets:
     Enable: false
     Inherit: BreedableMobs
     Types:
       - Pets
-    Limit: "chunk, 0, 16"
-    Purge: "chunk, 0, 16"
+    Limit: 16
+    Purge: 16
   # ░░░░░░░░░░░░░░░░░░
   # ░░  Useless     ░░
   # ░░░░░░░░░░░░░░░░░░
@@ -106,8 +106,8 @@ Entities:
       Chance: 0.2
       Reasons:
         - NATURAL
-    Limit: "chunk, 1, 5"
-    Purge: "chunk, 1, 5"
+    Limit: "chunk, 0, 16"
+    Purge: 16
   Useless_other:
     Enable: false
     Inherit: Useless_natural
@@ -143,8 +143,8 @@ Entities:
       Chance: 0.3
       Reasons:
         - NETHER_PORTAL
-    Limit: "chunk, 0, 10"
-    Purge: "chunk, 0, 10"
+    Limit: "chunk, 0, 20"
+    Purge: 20
   MythicMobs_Example:
     Enable: false
     Priority: 3
@@ -154,4 +154,4 @@ Entities:
       Chance: 0.1
       Permission: "entityplus.spawn.MythicMobs_Example"
     Limit: "chunk, 0, 10"
-    Purge: "chunk, 0, 10"
+    Purge: 10

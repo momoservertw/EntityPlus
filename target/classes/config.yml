@@ -6,77 +6,68 @@ Config-Version: 12
 Debugging: false
 
 # Controlling entities spawn, rewards, and damage.
-# You need to add options in entities.yml.
+# You need to setup the entities in entities.yml.
+# More information: https://github.com/momoservertw/EntityPlus/wiki/Entities
 Entities:
   Enable: false
   # Controlling entities spawn conditions.
-  # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn
   Spawn:
     Settings:
       # Custom Residence flag "spawnbypass" to bypass the features.
       Residence-Flag: false
-  # Limit the spawn amount and purge the exceeded mobs.
-  # More information: https://github.com/momoservertw/EntityPlus/wiki/Spawn
+      # Prevent entities from spawning outside the radius.
+      Max-Distance: 125
+  # Limits the creatures spawn amount.
   Limit:
     Enable: false
     Settings:
       # Custom Residence flag "entitylimitbypass" to bypass the features.
       Residence-Flag: false
-      Purge:
-        Enable: false
-        Particle:
-          Enable: true
-          Type:
-        Remove: true
-        Check:
-          Chunk-Radius: 3
-          Player-Teleport: true
-          Schedule:
-            Enable: true
-            Interval: 180
-          Prevent:
-            Gliding: true
-            Flying: true
-            Not-AFK: false
-        Ignore:
-          LiveTime-Under: 30
-          Named: true
-          Named-MythicMobs: false
-          Tamed: true
-          With-Saddle: true
-          Pickup: true
-          Baby-Animals: true
-          # It will override the entities settings.
-          List:
-            - WITHER
-            - Boss
-    Groups:
-      NormalMobs:
+  # Limit the spawn amount and purge the exceeded mobs.
+  Purge:
+    Enable: false
+    Settings:
+      # Custom Residence flag "entitypurgebypass" to bypass the features.
+      Residence-Flag: false
+      Message:
         Enable: true
-        Amount: 10
-        Chunk: 1
-        Purge: true
-        LiveTime-Over: 300
-      BreedableMobs:
+        Broadcast: false
+        Console: true
+    Check:
+      Player-Teleport: false
+      Schedule:
         Enable: true
-        Chunk: 2
-        Amount: 30
-      WaterMobs:
+        Interval: 180
+        # Only purges when player is AFK. Need: CMI
+        AFK: false
+    Death:
+      Drop: false
+      Particle:
         Enable: true
-        Chunk: 2
-        Amount: 5
-  # Changing the reward for killing creatures.
-  # More information: https://github.com/momoservertw/EntityPlus/wiki/Drop
+        Type: SPELL_MOB
+    Ignore:
+      Live-Time-Under: 30
+      Named: true
+      Named-MythicMobs: false
+      Tamed: true
+      With-Saddle: true
+      Pickup: true
+      Baby: true
+  # Changing the rewards for killing creatures.
   Drop:
     Enable: false
     Settings:
-      Features:
-        Bypass:
-          # Custom Residence flag "dropbypass" to bypass the features.
-          Residence-Flag: false
+      Bypass:
+        # Custom Residence flag "dropbypass" to bypass the features.
+        Residence-Flag: false
       # If players has multiple groups, they will get all extra rewards.
       # Mode: "none", "plus" or "multiply"
       Multiple-Groups: "none"
+      Options:
+        Exp: true
+        Items: true
+        Money: true
+        Commands: true
     # Permission: "entityplus.drop.GROUP"
     Groups:
       lucky1:
@@ -85,6 +76,7 @@ Entities:
         Exp: 1.5
         Items: 1.5
         Money: 1.5
+        Conditions: []
         Commands: []
       lucky2:
         Enable: true
@@ -92,16 +84,13 @@ Entities:
         Exp: 2
         Items: 2
         Money: 2
-        Commands: []
   # Skipping the damage duration and damaging the creature immediately.
-  # More information: https://github.com/momoservertw/EntityPlus/wiki/Damage
   Damage:
     Enable: false
     Settings:
-      Features:
-        Bypass:
-          # Custom Residence flag "damagebypass" to bypass the features.
-          Residence-Flag: false
+      Bypass:
+        # Custom Residence flag "damagebypass" to bypass the features.
+        Residence-Flag: false
     Groups:
       Skip-Duration:
         Enable: true
@@ -114,6 +103,8 @@ Entities:
         Ignore:
           Player-Nearby-Range: 10
           Sunburn: true
+        Conditions: []
+        Commands: []
       Fast-Kill:
         Enable: true
         Reasons:
@@ -195,6 +186,14 @@ Message:
   prefix: '&7[&dEntityPlus&7]&r '
   Commands:
     title: "&8▩▩▩▩▩▩▩▩▩▩ &d&lEntityPlus &8▩▩▩▩▩▩▩▩▩▩"
-    help: "&a/ep help &8- &7This help menu."
-    reload: "&a/ep reload &8- &7Reloads config file."
-    version: '&f/ep version &8- &7Checks the plugin version and updates.'
+    help: "/ep help &8- &7This help menu."
+    reload: "/ep reload &8- &7Reloads config file."
+    version: "/ep version &8- &7Checks the plugin version and updates."
+    purgeSchedule: "/ep purge schedule <on/off> &8- &7Changes the purging schedule status."
+    purgeCheck: "/ep purge check &8- &7Purge creatures that exceed the limit."
+  purgeSucced: "%prefix% &eRemoved a total of: &7%amount% &e(%value%&e)"
+  purgeListed: "%prefix% &eListed a total of: &7%amount% &e(%value%&e)"
+  purgeOn: "%prefix% &aEnabled the purging process."
+  purgeOff: "%prefix% &cDisabled the purging process."
+  purgeAlreadyOn: "%prefix% &fThe purge process has already enabled."
+  purgeAlreadyOff: "%prefix% &fThe purge process has already disabled."

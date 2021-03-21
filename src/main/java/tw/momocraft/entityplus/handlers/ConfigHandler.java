@@ -20,10 +20,11 @@ public class ConfigHandler {
     public static void generateData(boolean reload) {
         genConfigFile("config.yml");
         genConfigFile("entities.yml");
-        UtilsHandler.setup();
+        UtilsHandler.setUpFirst();
         setConfigPath(new ConfigPath());
+        UtilsHandler.setUpLast();
         if (!reload) {
-            CorePlusAPI.getUpdateManager().check(getPluginName(), getPluginPrefix(), Bukkit.getConsoleSender(),
+            CorePlusAPI.getUpdate().check(getPluginName(), getPluginPrefix(), Bukkit.getConsoleSender(),
                     EntityPlus.getInstance().getDescription().getName(),
                     EntityPlus.getInstance().getDescription().getVersion(), true);
         }
@@ -50,7 +51,7 @@ public class ConfigHandler {
             try {
                 EntityPlus.getInstance().saveResource(fileName, false);
             } catch (Exception e) {
-                CorePlusAPI.getLangManager().sendErrorMsg(getPluginName(), "Cannot save " + fileName + " to disk!");
+                CorePlusAPI.getLang().sendErrorMsg(getPluginName(), "Cannot save " + fileName + " to disk!");
                 return;
             }
         }
@@ -99,7 +100,7 @@ public class ConfigHandler {
                     File configFile = new File(filePath, fileName);
                     configFile.delete();
                     getConfigData(filePath, fileName);
-                    CorePlusAPI.getLangManager().sendConsoleMsg(getPrefix(), "&4The file \"" + fileName + "\" is out of date, generating a new one!");
+                    CorePlusAPI.getLang().sendConsoleMsg(getPrefix(), "&4The file \"" + fileName + "\" is out of date, generating a new one!");
                 }
             }
         }
