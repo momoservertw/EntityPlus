@@ -21,6 +21,10 @@ public class DependHandler {
         EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new EntityDeath(), EntityPlus.getInstance());
         EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new ChunkLoad(), EntityPlus.getInstance());
 
+        if (CorePlusAPI.getDepend().isPaper()) {
+            EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new EntityRemoveFromWorld(), EntityPlus.getInstance());
+        }
+
         if (CorePlusAPI.getDepend().MythicMobsEnabled()) {
             EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new MythicMobsSpawn(), EntityPlus.getInstance());
             EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new MythicMobsLootDrop(), EntityPlus.getInstance());

@@ -1,5 +1,6 @@
 package tw.momocraft.entityplus.utils.entities;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -13,6 +14,7 @@ public class EntityUtils {
 
     public static Map<UUID, String> livingEntityMap = new HashMap<>();
 
+
     public static Map<UUID, String> getLivingEntityMap() {
         return livingEntityMap;
     }
@@ -21,23 +23,33 @@ public class EntityUtils {
         livingEntityMap.put(uuid, type);
     }
 
-    public static boolean checkEntityReturnCanceled(Entity entity) {
-        String reason = entity.getEntitySpawnReason().name();
+    public static void resetLivingEntityMap() {
+        livingEntityMap = new HashMap<>();
+        for (World world : Bukkit.getWorlds()) {
+            for (Chunk chunk : world.getLoadedChunks()) {
+                for (Entity entity : chunk.getEntities())
+                    EntityUtils.checkEntityReturnCanceled(entity, false);
+            }
+        }
+    }
+
+    public static boolean checkEntityReturnCanceled(Entity entity, boolean spawn) {
         String entityType = entity.getType().name();
-        // To skip MythicMobs and checking them in MythicMobs Listener.
+        // Loading MythicMob.
         if (CorePlusAPI.getDepend().MythicMobsEnabled()) {
             String mmType = CorePlusAPI.getEntity().getMythicMobName(entity);
             if (mmType != null)
                 entityType = mmType;
         }
-        // To get properties.
+        // Getting properties.
         Map<String, EntityMap> entityProp = ConfigHandler.getConfigPath().getEntitiesProp().get(entityType);
         if (entityProp == null)
             return false;
         Location loc = entity.getLocation();
         boolean checkResFlag = ConfigHandler.getConfigPath().isEnSpawnResFlag();
+        String reason = entity.getEntitySpawnReason().name();
         EntityMap entityMap;
-        // Checking every groups.
+        // Checking every groups of the entity type.
         for (String groupName : entityProp.keySet()) {
             entityMap = entityProp.get(groupName);
             // Checking "Reasons".
@@ -62,90 +74,92 @@ public class EntityUtils {
                 continue;
             }
             /////// Is custom entity ///////
-            // Checking "Max-Distance".
-            List<Player> nearbyPlayers = CorePlusAPI.getUtils().getNearbyPlayersXZY(loc, entityMap.getMaxDistance());
-            if (nearbyPlayers.isEmpty()) {
-                CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
-                        "Spawn", groupName, "Max-Distance", "cancel", entityType,
-                        new Throwable().getStackTrace()[0]);
-                return true;
-            }
-            // Checking "Permission".
-            if (!CorePlusAPI.getPlayer().havePermPlayer(nearbyPlayers, entityMap.getPermission())) {
-                CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
-                        "Spawn", groupName, "Permission", "cancel", entityType,
-                        new Throwable().getStackTrace()[0]);
-                return true;
-            }
-            // Setting "Chance".
-            double chance = 1;
-            Map<String, Double> chanceMap = entityMap.getChanceMap();
-            if (chanceMap != null) {
-                String translatedGroup;
-                back:
-                for (String chanceGroup : chanceMap.keySet()) {
-                    switch (chanceGroup) {
-                        case "Default":
-                            chance = chanceMap.get(chanceGroup);
-                            break back;
-                        case "AFK":
-                            for (Player player : nearbyPlayers)
-                                if (!CorePlusAPI.getPlayer().isAFK(player))
-                                    continue back;
-                            chance = chanceMap.get(chanceGroup);
-                            break back;
-                        case "Gliding":
-                            for (Player player : nearbyPlayers)
-                                if (!player.isGliding())
-                                    continue back;
-                            chance = chanceMap.get(chanceGroup);
-                            break back;
-                        case "Flying":
-                            for (Player player : nearbyPlayers)
-                                if (!player.isFlying())
-                                    continue back;
-                            chance = chanceMap.get(chanceGroup);
-                            break back;
-                        default:
-                            translatedGroup = CorePlusAPI.getLang().transByEntity(ConfigHandler.getPluginName(), null,
-                                    chanceGroup, entity, "entity", false);
-                            if (CorePlusAPI.getCondition().checkCondition(translatedGroup)) {
-                                chance = chanceMap.get(chanceGroup);
-                                break back;
-                            }
-                    }
-                }
-            }
-            // Checking "Chance".
-            if (!CorePlusAPI.getUtils().isRandChance(chance)) {
-                CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
-                        "Spawn", groupName, "Chance", "cancel", entityType,
-                        new Throwable().getStackTrace()[0]);
-                return true;
-            }
-            // Checking Limit.
-            if (ConfigHandler.getConfigPath().isEnLimit()) {
-                if (!EntityUtils.checkLimit(loc, entityMap.getLimitGroup())) {
+            if (spawn) {
+                // Checking "Max-Distance".
+                List<Player> nearbyPlayers = CorePlusAPI.getUtils().getNearbyPlayersXZY(loc, entityMap.getMaxDistance());
+                if (nearbyPlayers.isEmpty()) {
                     CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
-                            "Spawn", groupName, "Limit", "cancel", entityType,
+                            "Spawn", groupName, "Max-Distance", "cancel", entityType,
                             new Throwable().getStackTrace()[0]);
                     return true;
                 }
+                // Checking "Permission".
+                if (!CorePlusAPI.getPlayer().havePermPlayer(nearbyPlayers, entityMap.getPermission())) {
+                    CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                            "Spawn", groupName, "Permission", "cancel", entityType,
+                            new Throwable().getStackTrace()[0]);
+                    return true;
+                }
+                // Setting "Chance".
+                double chance = 1;
+                Map<String, Double> chanceMap = entityMap.getChanceMap();
+                if (chanceMap != null) {
+                    String translatedGroup;
+                    back:
+                    for (String chanceGroup : chanceMap.keySet()) {
+                        switch (chanceGroup) {
+                            case "Default":
+                                chance = chanceMap.get(chanceGroup);
+                                break back;
+                            case "AFK":
+                                for (Player player : nearbyPlayers)
+                                    if (!CorePlusAPI.getPlayer().isAFK(player))
+                                        continue back;
+                                chance = chanceMap.get(chanceGroup);
+                                break back;
+                            case "Gliding":
+                                for (Player player : nearbyPlayers)
+                                    if (!player.isGliding())
+                                        continue back;
+                                chance = chanceMap.get(chanceGroup);
+                                break back;
+                            case "Flying":
+                                for (Player player : nearbyPlayers)
+                                    if (!player.isFlying())
+                                        continue back;
+                                chance = chanceMap.get(chanceGroup);
+                                break back;
+                            default:
+                                translatedGroup = CorePlusAPI.getLang().transByEntity(ConfigHandler.getPluginName(), null,
+                                        chanceGroup, entity, "entity", false);
+                                if (CorePlusAPI.getCondition().checkCondition(translatedGroup)) {
+                                    chance = chanceMap.get(chanceGroup);
+                                    break back;
+                                }
+                        }
+                    }
+                }
+                // Checking "Chance".
+                if (!CorePlusAPI.getUtils().isRandChance(chance)) {
+                    CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                            "Spawn", groupName, "Chance", "cancel", entityType,
+                            new Throwable().getStackTrace()[0]);
+                    return true;
+                }
+                // Checking Limit.
+                if (ConfigHandler.getConfigPath().isEnLimit()) {
+                    if (!EntityUtils.checkLimit(loc, entityMap.getLimitGroup())) {
+                        CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                                "Spawn", groupName, "Limit", "cancel", entityType,
+                                new Throwable().getStackTrace()[0]);
+                        return true;
+                    }
+                }
+                // Executing Commands.
+                List<String> commandList = entityMap.getCommands();
+                if (commandList != null && !commandList.isEmpty()) {
+                    commandList = CorePlusAPI.getLang().transByEntity(
+                            ConfigHandler.getPluginName(), null, commandList, entity, "entity", true);
+                    String[] langHolder = CorePlusAPI.getLang().newString();
+                    langHolder[8] = entityType; // %entity%
+                    langHolder[19] = CorePlusAPI.getLang().getPlayersString(nearbyPlayers); // %targets%
+                    CorePlusAPI.getCommand().executeCmdList(ConfigHandler.getPrefix(), commandList, true, langHolder);
+                }
             }
-            // Executing Commands.
-            List<String> commandList = entityMap.getCommands();
-            if (commandList != null && !commandList.isEmpty()) {
-                commandList = CorePlusAPI.getLang().transByEntity(
-                        ConfigHandler.getPluginName(), null, commandList, entity, "entity", true);
-                String[] langHolder = CorePlusAPI.getLang().newString();
-                langHolder[8] = entityType; // %entity%
-                langHolder[19] = CorePlusAPI.getLang().getPlayersString(nearbyPlayers); // %targets%
-                CorePlusAPI.getCommand().executeCmdList(ConfigHandler.getPrefix(), commandList, true, langHolder);
-            }
-            // Add a tag for this creature.
-            EntityUtils.putLivingEntityMap(entity.getUniqueId(), groupName);
+            // Adding this creature to cache.
+            putLivingEntityMap(entity.getUniqueId(), groupName);
             CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
-                    "Spawn", groupName, "Final", "return", entityType,
+                    "Spawn", groupName, "Load", "return", entityType,
                     new Throwable().getStackTrace()[0]);
             return false;
         }
@@ -203,23 +217,29 @@ public class EntityUtils {
     }
 
     public static boolean isIgnore(Entity entity) {
-        if (isLifetimeOver(entity, ConfigHandler.getConfigPath().getEnPurgeIgnoreLiveTime()))
+        if (isLifetimeUnder(entity, ConfigHandler.getConfigPath().getEnPurgeIgnoreLiveTime())) {
             return true;
-        if (isBaby(entity))
+        }
+        if (isBaby(entity)) {
             return true;
-        if (isSaddleOn(entity))
+        }
+        if (isSaddleOn(entity)) {
             return true;
-        if (isPickup(entity))
+        }
+        if (isNotPickup(entity)) {
             return true;
-        if (isTamed(entity))
+        }
+        if (isTamed(entity)) {
             return true;
-        if (isTamed(entity))
+        }
+        if (isTamed(entity)) {
             return true;
+        }
         return false;
     }
 
-    public static boolean isLifetimeOver(Entity entity, int tick) {
-        return entity.getTicksLived() >= tick;
+    public static boolean isLifetimeUnder(Entity entity, int tick) {
+        return entity.getTicksLived() < tick;
     }
 
     public static boolean isNamed(Entity entity) {
@@ -240,16 +260,16 @@ public class EntityUtils {
 
     public static boolean isBaby(Entity entity) {
         if (entity instanceof Ageable)
-            return ((Ageable) entity).isAdult();
+            return !((Ageable) entity).isAdult();
         return false;
     }
 
-    public static boolean isPickup(Entity entity) {
+    public static boolean isNotPickup(Entity entity) {
         LivingEntity livingEntity = (LivingEntity) entity;
         if (livingEntity.getEquipment() != null)
-            return livingEntity.getEquipment().getHelmetDropChance() != 1 && livingEntity.getEquipment().getChestplateDropChance() != 1 &&
+            return !(livingEntity.getEquipment().getHelmetDropChance() != 1 && livingEntity.getEquipment().getChestplateDropChance() != 1 &&
                     livingEntity.getEquipment().getLeggingsDropChance() != 1 && livingEntity.getEquipment().getBootsDropChance() != 1 &&
-                    livingEntity.getEquipment().getItemInMainHandDropChance() != 1 && livingEntity.getEquipment().getItemInOffHandDropChance() != 1;
+                    livingEntity.getEquipment().getItemInMainHandDropChance() != 1 && livingEntity.getEquipment().getItemInOffHandDropChance() != 1);
         return false;
     }
 }

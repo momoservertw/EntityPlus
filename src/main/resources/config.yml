@@ -29,19 +29,21 @@ Entities:
     Settings:
       # Custom Residence flag "entitypurgebypass" to bypass the features.
       Residence-Flag: false
-      Message:
-        Enable: true
-        Broadcast: false
-        Console: true
+      # The speed of checking chunks per second.
+      Speed: 500
     Check:
-      Player-Teleport: false
+      Chunk-Load: false
       Schedule:
-        Enable: true
-        Interval: 180
+        Enable: false
+        Interval: 1200
         # Only purges when player is AFK. Need: CMI
         AFK: false
+        Message:
+          Enable: true
+          Broadcast: false
+          Console: true
     Death:
-      Drop: false
+      Prevent: false
       Particle:
         Enable: true
         Type: SPELL_MOB
@@ -76,8 +78,8 @@ Entities:
         Exp: 1.5
         Items: 1.5
         Money: 1.5
-        Conditions: []
-        Commands: []
+        Conditions: [ ]
+        Commands: [ ]
       lucky2:
         Enable: true
         Priority: 2
@@ -103,8 +105,8 @@ Entities:
         Ignore:
           Player-Nearby-Range: 10
           Sunburn: true
-        Conditions: []
-        Commands: []
+        Conditions: [ ]
+        Commands: [ ]
       Fast-Kill:
         Enable: true
         Reasons:
@@ -144,7 +146,7 @@ Spawner:
       Enable: true
       Location:
         - world
-      Blocks: []
+      Blocks: [ ]
       Allow-Types:
         - ZOMBIE
         - SKELETON
@@ -190,9 +192,14 @@ Message:
     reload: "/ep reload &8- &7Reloads config file."
     version: "/ep version &8- &7Checks the plugin version and updates."
     purgeSchedule: "/ep purge schedule <on/off> &8- &7Changes the purging schedule status."
-    purgeCheck: "/ep purge check &8- &7Purge creatures that exceed the limit."
-  purgeSucced: "%prefix% &eRemoved a total of: &7%amount% &e(%value%&e)"
-  purgeListed: "%prefix% &eListed a total of: &7%amount% &e(%value%&e)"
+    purgeKillAll: "/ep purge killall &8- &7Purge all creatures that exceed the limit."
+    purgeCheckAll: "/ep purge checkall &8- &7List creatures that exceed the limit."
+    purgeKillChunk: "/ep purge killchunk &8- &7Kill the chunk creatures that exceed the limit."
+    purgeCheckChunk: "/ep purge checkchunk &8- &7List the chunk creatures that exceed the limit."
+  purgeStart: "%prefix% &6Start checking chunks..."
+  purgeEnd: "%prefix% &6Purge process has ended."
+  purgeKillSucceed: "%prefix% &eRemoved a total of: &7%amount% &e(%value%&e)"
+  purgeCheckSucceed: "%prefix% &eListed a total of: &7%amount% &e(%value%&e)"
   purgeOn: "%prefix% &aEnabled the purging process."
   purgeOff: "%prefix% &cDisabled the purging process."
   purgeAlreadyOn: "%prefix% &fThe purge process has already enabled."

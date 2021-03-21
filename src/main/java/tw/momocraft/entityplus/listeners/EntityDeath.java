@@ -1,7 +1,6 @@
 package tw.momocraft.entityplus.listeners;
 
 import io.lumine.xikage.mythicmobs.MythicMobs;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -138,5 +137,13 @@ public class EntityDeath implements Listener {
                         player, commandList, true);
             }
         }
+    }
+
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onEntityDeathRemoveTag(EntityDeathEvent e) {
+        if (CorePlusAPI.getDepend().isPaper())
+            return;
+        EntityUtils.removeLivingEntityMap(e.getEntity().getUniqueId());
     }
 }

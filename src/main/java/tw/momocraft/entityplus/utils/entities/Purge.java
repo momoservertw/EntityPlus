@@ -6,6 +6,7 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import tw.momocraft.coreplus.api.CorePlusAPI;
 import tw.momocraft.entityplus.EntityPlus;
@@ -20,48 +21,77 @@ public class Purge {
 
     private static boolean starting;
 
+    public static void setStarting(boolean enable) {
+        starting = enable;
+    }
+
+    public static boolean isStarting() {
+        return starting;
+    }
+
     public static void toggleSchedule(CommandSender sender, boolean toggle) {
         if (toggle) {
             if (starting) {
                 // Already on
-                CorePlusAPI.getLang().sendConsoleMsg(ConfigHandler.getPluginPrefix(),
+                CorePlusAPI.getLang().sendConsoleMsg(ConfigHandler.getPrefix(),
                         ConfigHandler.getConfigPath().getMsgPurgeAlreadyOn());
             } else {
                 // Turns on
-                CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPluginName(), ConfigHandler.getPluginPrefix(),
+                CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPluginName(), ConfigHandler.getPrefix(),
                         ConfigHandler.getConfigPath().getMsgPurgeOn(), sender);
-                startSchedule(sender);
+                startSchedule();
             }
         } else {
             if (!starting) {
                 // Already off
-                CorePlusAPI.getLang().sendConsoleMsg(ConfigHandler.getPluginPrefix(),
+                CorePlusAPI.getLang().sendConsoleMsg(ConfigHandler.getPrefix(),
                         ConfigHandler.getConfigPath().getMsgPurgeAlreadyOff());
             } else {
                 // Turns off
                 starting = false;
-                CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPluginName(), ConfigHandler.getPluginPrefix(),
+                CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPluginName(), ConfigHandler.getPrefix(),
                         ConfigHandler.getConfigPath().getMsgPurgeOff(), sender);
             }
         }
     }
 
-    private static void startSchedule(CommandSender sender) {
-        starting = true;
+    public static void startSchedule() {
+        // Sending schedule start message.
+        CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
+                ConfigHandler.getConfigPath().getMsgPurgeStart(), Bukkit.getConsoleSender());
 
+        starting = true;
         new BukkitRunnable() {
             @Override
             public void run() {
                 if (!starting) {
                     cancel();
+                    sendTotalMsg(null, true);
                 }
-                startCheck(sender, true);
+                checkAll(null, true);
+                // Resetting the entityMap to prevent memory overflow.
+                if (EntityUtils.getLivingEntityMap().size() > 100000)
+                    EntityUtils.resetLivingEntityMap();
             }
         }.runTaskTimer(EntityPlus.getInstance(), 0, ConfigHandler.getConfigPath().getEnPurgeCheckScheduleInterval());
     }
 
-    public static void startCheck(CommandSender sender, boolean purge) {
+    public static void checkChunk(CommandSender sender, boolean purge, Chunk chunk) {
+        if (chunk != null) {
+            purgeMap = new HashMap<>();
+            CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
+                    ConfigHandler.getConfigPath().getMsgPurgeStart(), sender);
+            checkChunk(chunk, purge);
+        }
+        sendTotalMsg(sender, purge);
+    }
+
+    public static void checkAll(CommandSender sender, boolean purge) {
         purgeMap = new HashMap<>();
+        // Sending chunks amount message.
+        CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
+                ConfigHandler.getConfigPath().getMsgPurgeStart(), sender);
+        // Getting all loaded chunks.
         List<Chunk> chunkList = new ArrayList<>();
         for (World world : Bukkit.getWorlds()) {
             try {
@@ -69,45 +99,91 @@ public class Purge {
             } catch (Exception ignored) {
             }
         }
+        // Sending total chunks message.
         int chunkSize = chunkList.size();
+        String[] langHolder = CorePlusAPI.getLang().newString();
+        langHolder[4] = CorePlusAPI.getLang().getMsgTrans("chunks"); // %value%
+        langHolder[6] = String.valueOf(chunkSize); // %amount%
+        CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
+                "Message.foundAmount", sender, langHolder);
+        final int speed = ConfigHandler.getConfigPath().getEnPurgeSpeed();
+        final int totalTimes = chunkSize / speed;
         new BukkitRunnable() {
-            int i = 0;
+            int times = 0;
+            int process = 0;
 
             @Override
             public void run() {
-                i++;
-                if (i > chunkSize) {
-                    int amount = 0;
-                    StringBuilder list = new StringBuilder();
-                    for (Map.Entry<String, AtomicInteger> group : purgeMap.entrySet()) {
-                        amount += group.getValue().get();
-                        list.append(group.getKey()).append(": ").append(group.getValue().get()).append(", ");
-                    }
-                    if (list.toString().equals(""))
-                        list = new StringBuilder(CorePlusAPI.getLang().getMsgTrans("empty"));
-                    else
-                        list = new StringBuilder(list.substring(0, list.length() - 2));
-                    String[] langHolder = CorePlusAPI.getLang().newString();
-                    langHolder[4] = list.toString(); // %value%
-                    langHolder[6] = String.valueOf(amount); // %amount%
-                    if (sender != null) {
-                        CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPluginName(), ConfigHandler.getPluginPrefix(),
-                                ConfigHandler.getConfigPath().getMsgPurgeSucceed(), sender, langHolder);
-                    } else {
-                        if (ConfigHandler.getConfigPath().isEnPurgeMsg()) {
-                            if (ConfigHandler.getConfigPath().isEnPurgeMsgBroadcast())
-                                CorePlusAPI.getLang().sendBroadcastMsg(ConfigHandler.getPluginPrefix(),
-                                        ConfigHandler.getConfigPath().getMsgPurgeSucceed(), langHolder);
-                            if (ConfigHandler.getConfigPath().isEnPurgeMsgConsole())
-                                CorePlusAPI.getLang().sendConsoleMsg(ConfigHandler.getPluginPrefix(),
-                                        ConfigHandler.getConfigPath().getMsgPurgeSucceed(), langHolder);
-                        }
-                    }
+                times++;
+                if (times > totalTimes) {
+                    sendTotalMsg(sender, purge);
                     cancel();
+                    return;
                 }
-                checkChunk(chunkList.get(i), purge);
+                for (int count = 1; count <= speed; count++) {
+                    checkChunk(chunkList.get(count + process), purge);
+                }
+                process += speed;
             }
-        }.runTaskTimer(EntityPlus.getInstance(), 10, 1);
+        }.runTaskTimer(EntityPlus.getInstance(), 5, 20);
+    }
+
+    private static void sendTotalMsg(CommandSender sender, boolean purge) {
+        int amount = 0;
+        String[] langHolder = CorePlusAPI.getLang().newString();
+        if (purgeMap.isEmpty()) {
+            langHolder[4] = CorePlusAPI.getLang().getMsgTrans("noTargets"); // %value%
+        } else {
+            StringBuilder list = new StringBuilder();
+            for (Map.Entry<String, AtomicInteger> group : purgeMap.entrySet()) {
+                amount += group.getValue().get();
+                list.append(group.getKey()).append(": ").append(group.getValue().get()).append(", ");
+            }
+            list = new StringBuilder(list.substring(0, list.length() - 2));
+            langHolder[4] = list.toString(); // %value%
+        }
+        langHolder[6] = String.valueOf(amount); // %amount%
+        // Total.
+        if (purge) {
+            if (ConfigHandler.getConfigPath().isEnPurgeMsg()) {
+                if (ConfigHandler.getConfigPath().isEnPurgeMsgBroadcast())
+                    CorePlusAPI.getLang().sendBroadcastMsg(ConfigHandler.getPluginPrefix(),
+                            ConfigHandler.getConfigPath().getMsgPurgeKillSucceed(), langHolder);
+                if (ConfigHandler.getConfigPath().isEnPurgeMsgConsole())
+                    CorePlusAPI.getLang().sendConsoleMsg(ConfigHandler.getPluginPrefix(),
+                            ConfigHandler.getConfigPath().getMsgPurgeKillSucceed(), langHolder);
+            } else {
+                if (sender instanceof ConfigHandler) {
+                    CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPluginName(), ConfigHandler.getPrefix(),
+                            ConfigHandler.getConfigPath().getMsgPurgeKillSucceed(), sender, langHolder);
+                }
+            }
+            if (sender instanceof Player) {
+                CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPluginName(), ConfigHandler.getPrefix(),
+                        ConfigHandler.getConfigPath().getMsgPurgeKillSucceed(), sender, langHolder);
+            }
+        } else {
+            if (ConfigHandler.getConfigPath().isEnPurgeMsg()) {
+                if (ConfigHandler.getConfigPath().isEnPurgeMsgBroadcast())
+                    CorePlusAPI.getLang().sendBroadcastMsg(ConfigHandler.getPluginPrefix(),
+                            ConfigHandler.getConfigPath().getMsgPurgeKillSucceed(), langHolder);
+                if (ConfigHandler.getConfigPath().isEnPurgeMsgConsole())
+                    CorePlusAPI.getLang().sendConsoleMsg(ConfigHandler.getPluginPrefix(),
+                            ConfigHandler.getConfigPath().getMsgPurgeKillSucceed(), langHolder);
+            } else {
+                if (sender instanceof ConfigHandler) {
+                    CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPluginName(), ConfigHandler.getPrefix(),
+                            ConfigHandler.getConfigPath().getMsgPurgeKillSucceed(), sender, langHolder);
+                }
+            }
+            if (sender instanceof Player) {
+                CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPluginName(), ConfigHandler.getPrefix(),
+                        ConfigHandler.getConfigPath().getMsgPurgeCheckSucceed(), sender, langHolder);
+            }
+        }
+        // End.
+        CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
+                ConfigHandler.getConfigPath().getMsgPurgeEnd(), sender);
     }
 
     private static void checkChunk(Chunk chunk, boolean purge) {
@@ -118,6 +194,7 @@ public class Purge {
         AtomicInteger count;
         Iterator<Entity> iterator = Arrays.stream(entities).iterator();
         Entity entity;
+        EntityMap entityMap;
         while (iterator.hasNext()) {
             entity = iterator.next();
             groupName = EntityUtils.getEntityType(entity.getUniqueId());
@@ -126,8 +203,8 @@ public class Purge {
             // Bypass the ignore entities.
             if (EntityUtils.isIgnore(entity))
                 continue;
-            // Add one number to the group.
-            EntityMap entityMap = ConfigHandler.getConfigPath().getEntitiesProp().get(groupName).get(groupName);
+            // Getting the group amount.
+            entityMap = ConfigHandler.getConfigPath().getEntitiesTypeProp().get(groupName);
             try {
                 purgeGroup = entityMap.getPurgeGroup();
                 if (purgeGroup == null)
@@ -136,35 +213,34 @@ public class Purge {
             } catch (Exception ex) {
                 continue;
             }
+            // Increasing the group amount.
             if (count == null) {
                 map.put(purgeGroup, new AtomicInteger(1));
                 continue;
-            }
-            if (count.get() <= entityMap.getPurge()) {
+            } else if (count.get() < entityMap.getPurge()) {
                 count.incrementAndGet();
                 continue;
             }
-            // Remove the entity.
+            // Purging the entity.
             if (purge) {
-                iterator.remove();
-                if (ConfigHandler.getConfigPath().isEnPurgeDeathDrop()) {
+                if (ConfigHandler.getConfigPath().isEnPurgeDeathPreventDrop()) {
                     entity.remove();
                 } else {
-                    if (entity instanceof Damageable)
+                    if (entity instanceof Damageable) {
                         ((Damageable) entity).setHealth(0);
-                    else
+                    } else {
                         entity.remove();
-                    if (ConfigHandler.getConfigPath().isEnPurgeDeathParticle())
-                        CorePlusAPI.getEffect().spawnParticle(ConfigHandler.getPluginName(),
-                                entity.getLocation(), ConfigHandler.getConfigPath().getEnPurgeDeathParticleType());
+                    }
                 }
+                if (ConfigHandler.getConfigPath().isEnPurgeDeathParticle())
+                    CorePlusAPI.getEffect().spawnParticle(ConfigHandler.getPluginName(),
+                            entity.getLocation(), ConfigHandler.getConfigPath().getEnPurgeDeathParticleType());
             }
-            // Adding to purge map.
-            count = purgeMap.get(groupName);
-            if (count == null) {
+            // Adding to checking list.
+            try {
+                purgeMap.get(groupName).incrementAndGet();
+            } catch (Exception ex) {
                 purgeMap.put(groupName, new AtomicInteger(1));
-            } else if (count.get() <= entityMap.getPurge()) {
-                count.incrementAndGet();
             }
         }
     }

@@ -17,7 +17,7 @@ public class CreatureSpawn implements Listener {
         // To skip MythicMobs and checking them in MythicMobs Listener.
         if (e.getSpawnReason().name().equals("CUSTOM") && CorePlusAPI.getDepend().MythicMobsEnabled())
             return;
-        if (EntityUtils.checkEntityReturnCanceled(e.getEntity()))
+        if (EntityUtils.checkEntityReturnCanceled(e.getEntity(), true))
             e.setCancelled(true);
     }
 }
