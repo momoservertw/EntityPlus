@@ -56,19 +56,19 @@ public class Purge {
     }
 
     public static void startSchedule() {
-        // Sending schedule start message.
         CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
                 ConfigHandler.getConfigPath().getMsgPurgeStart(), Bukkit.getConsoleSender());
-
         starting = true;
         new BukkitRunnable() {
             @Override
             public void run() {
                 if (!starting) {
                     cancel();
-                    sendTotalMsg(null, true);
+                    CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
+                            ConfigHandler.getConfigPath().getMsgPurgeEnd(), Bukkit.getConsoleSender());
+                    return;
                 }
-                checkAll(null, true);
+                checkAll(true, true);
                 // Resetting the entityMap to prevent memory overflow.
                 if (EntityUtils.getLivingEntityMap().size() > 100000)
                     EntityUtils.resetLivingEntityMap();
@@ -77,20 +77,22 @@ public class Purge {
     }
 
     public static void checkChunk(CommandSender sender, boolean purge, Chunk chunk) {
-        if (chunk != null) {
-            purgeMap = new HashMap<>();
-            CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
-                    ConfigHandler.getConfigPath().getMsgPurgeStart(), sender);
-            checkChunk(chunk, purge);
-        }
-        sendTotalMsg(sender, purge);
-    }
-
-    public static void checkAll(CommandSender sender, boolean purge) {
-        purgeMap = new HashMap<>();
-        // Sending chunks amount message.
         CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
                 ConfigHandler.getConfigPath().getMsgPurgeStart(), sender);
+        if (chunk != null) {
+            purgeMap = new HashMap<>();
+            checkChunk(chunk, purge);
+            sendTotalMsg(sender, purge);
+        }
+        CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
+                ConfigHandler.getConfigPath().getMsgPurgeEnd(), sender);
+    }
+
+    public static void checkAll(boolean purge, boolean schedule) {
+        if (!schedule)
+            CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
+                    ConfigHandler.getConfigPath().getMsgPurgeStart(), Bukkit.getConsoleSender());
+        purgeMap = new HashMap<>();
         // Getting all loaded chunks.
         List<Chunk> chunkList = new ArrayList<>();
         for (World world : Bukkit.getWorlds()) {
@@ -101,11 +103,6 @@ public class Purge {
         }
         // Sending total chunks message.
         int chunkSize = chunkList.size();
-        String[] langHolder = CorePlusAPI.getLang().newString();
-        langHolder[4] = CorePlusAPI.getLang().getMsgTrans("chunks"); // %value%
-        langHolder[6] = String.valueOf(chunkSize); // %amount%
-        CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
-                "Message.foundAmount", sender, langHolder);
         final int speed = ConfigHandler.getConfigPath().getEnPurgeSpeed();
         final int totalTimes = chunkSize / speed;
         new BukkitRunnable() {
@@ -116,8 +113,11 @@ public class Purge {
             public void run() {
                 times++;
                 if (times > totalTimes) {
-                    sendTotalMsg(sender, purge);
                     cancel();
+                    sendTotalMsg(null, true);
+                    if (!schedule)
+                        CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
+                                ConfigHandler.getConfigPath().getMsgPurgeEnd(), Bukkit.getConsoleSender());
                     return;
                 }
                 for (int count = 1; count <= speed; count++) {
@@ -181,9 +181,6 @@ public class Purge {
                         ConfigHandler.getConfigPath().getMsgPurgeCheckSucceed(), sender, langHolder);
             }
         }
-        // End.
-        CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
-                ConfigHandler.getConfigPath().getMsgPurgeEnd(), sender);
     }
 
     private static void checkChunk(Chunk chunk, boolean purge) {

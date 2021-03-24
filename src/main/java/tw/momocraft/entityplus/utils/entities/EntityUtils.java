@@ -1,9 +1,11 @@
 package tw.momocraft.entityplus.utils.entities;
 
+import javafx.util.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import tw.momocraft.coreplus.api.CorePlusAPI;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
@@ -60,7 +62,7 @@ public class EntityUtils {
                 continue;
             }
             // Checking "Conditions".
-            if (!CorePlusAPI.getCondition().checkCondition(entityMap.getConditions())) {
+            if (!CorePlusAPI.getCondition().checkCondition(ConfigHandler.getPluginName(), entityMap.getConditions())) {
                 CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
                         "Spawn", groupName, "Conditions", "continue", entityType,
                         new Throwable().getStackTrace()[0]);
@@ -122,7 +124,7 @@ public class EntityUtils {
                             default:
                                 translatedGroup = CorePlusAPI.getLang().transByEntity(ConfigHandler.getPluginName(), null,
                                         chanceGroup, entity, "entity", false);
-                                if (CorePlusAPI.getCondition().checkCondition(translatedGroup)) {
+                                if (CorePlusAPI.getCondition().checkCondition(ConfigHandler.getPluginName(), translatedGroup)) {
                                     chance = chanceMap.get(chanceGroup);
                                     break back;
                                 }
@@ -146,20 +148,12 @@ public class EntityUtils {
                     }
                 }
                 // Executing Commands.
-                List<String> commandList = entityMap.getCommands();
-                if (commandList != null && !commandList.isEmpty()) {
-                    commandList = CorePlusAPI.getLang().transByEntity(
-                            ConfigHandler.getPluginName(), null, commandList, entity, "entity", true);
-                    String[] langHolder = CorePlusAPI.getLang().newString();
-                    langHolder[8] = entityType; // %entity%
-                    langHolder[19] = CorePlusAPI.getLang().getPlayersString(nearbyPlayers); // %targets%
-                    CorePlusAPI.getCommand().executeCmdList(ConfigHandler.getPrefix(), commandList, true, langHolder);
-                }
+                EntityUtils.sendCmdList(ConfigHandler.getPluginName(), null, entity, null, entityMap.getCommands());
             }
             // Adding this creature to cache.
             putLivingEntityMap(entity.getUniqueId(), groupName);
             CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
-                    "Spawn", groupName, "Load", "return", entityType,
+                    "Spawn", groupName, "Loaded", "return", entityType,
                     new Throwable().getStackTrace()[0]);
             return false;
         }

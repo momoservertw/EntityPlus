@@ -29,26 +29,24 @@ Entities:
     Settings:
       # Custom Residence flag "entitypurgebypass" to bypass the features.
       Residence-Flag: false
-      # The speed of checking chunks per second.
-      Speed: 500
     Check:
       Chunk-Load: false
       Schedule:
         Enable: false
         Interval: 1200
-        # Only purges when player is AFK. Need: CMI
-        AFK: false
+        # The speed of checking chunks per second.
+        Speed: 500
         Message:
           Enable: true
           Broadcast: false
           Console: true
     Death:
-      Prevent: false
+      Prevent-Drop: true
       Particle:
         Enable: true
         Type: SPELL_MOB
     Ignore:
-      Live-Time-Under: 30
+      Live-Time-Under: 600
       Named: true
       Named-MythicMobs: false
       Tamed: true
@@ -78,8 +76,8 @@ Entities:
         Exp: 1.5
         Items: 1.5
         Money: 1.5
-        Conditions: [ ]
         Commands: [ ]
+        Conditions: [ ]
       lucky2:
         Enable: true
         Priority: 2

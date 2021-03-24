@@ -5,11 +5,12 @@ public class UtilsHandler {
     private static DependHandler dependence;
     private static ScheduleHandler schedule;
 
-    public static void setUpFirst() {
-        dependence = new DependHandler();
+    public static void setUpFirst(boolean reload) {
+        if (!reload)
+            dependence = new DependHandler();
     }
 
-    public static void setUpLast() {
+    public static void setUpLast(boolean reload) {
         schedule = new ScheduleHandler();
     }
 

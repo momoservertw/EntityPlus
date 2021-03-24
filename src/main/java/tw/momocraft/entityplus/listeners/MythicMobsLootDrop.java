@@ -31,8 +31,8 @@ public class MythicMobsLootDrop implements Listener {
         } catch (Exception ex) {
             return;
         }
-        String entityType = e.getMobType().getInternalName();
         // To get drop properties.
+        String entityType = e.getMobType().getInternalName();
         List<String> dropList = ConfigHandler.getConfigPath().getEntitiesProp().get(entityType).get(entityGroup).getDropList();
         if (dropList == null || dropList.isEmpty())
             return;
@@ -56,7 +56,7 @@ public class MythicMobsLootDrop implements Listener {
                 if (dropMap == null)
                     continue;
                 // Checking the "Conditions".
-                if (!CorePlusAPI.getCondition().checkCondition(dropMap.getConditions())) {
+                if (!CorePlusAPI.getCondition().checkCondition(ConfigHandler.getPluginName(), dropMap.getConditions())) {
                     CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
                             "Damage", entityType, "Condition", "continue", group,
                             new Throwable().getStackTrace()[0]);
@@ -135,16 +135,10 @@ public class MythicMobsLootDrop implements Listener {
         }
         // Executing commands.
         if (ConfigHandler.getConfigPath().isEnDropCommand()) {
-            if (!commandList.isEmpty()) {
-                commandList = CorePlusAPI.getLang().transByEntity(
-                        ConfigHandler.getPluginName(), CorePlusAPI.getPlayer().getPlayerLocal(player),
-                        commandList, e.getEntity(), "entity", true);
-                commandList = CorePlusAPI.getLang().transByPlayer(
-                        ConfigHandler.getPluginName(), CorePlusAPI.getPlayer().getPlayerLocal(player),
-                        commandList, player, "player");
-                CorePlusAPI.getCommand().executeCmdList(ConfigHandler.getPrefix(),
-                        player, commandList, true);
-            }
+            EntityUtils.sendCmdList(ConfigHandler.getPluginName(), player, e.getEntity(), dropList);
         }
+        CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                "Drop", entityType, "Final", "return", entityGroup,
+                new Throwable().getStackTrace()[0]);
     }
 }

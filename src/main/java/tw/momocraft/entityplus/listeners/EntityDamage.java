@@ -1,9 +1,6 @@
 package tw.momocraft.entityplus.listeners;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -11,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffectType;
 import tw.momocraft.coreplus.api.CorePlusAPI;
@@ -24,194 +22,156 @@ import java.util.Map;
 public class EntityDamage implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onEntityDamage(EntityDamageEvent e) {
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
         if (!ConfigHandler.getConfigPath().isEnDamage())
             return;
-        // Checking if the entity has property.
+        String reason = e.getCause().name();
+
+        // Properties.
         Entity entity = e.getEntity();
         String entityGroup = EntityUtils.getEntityType(entity.getUniqueId());
         if (entityGroup == null)
             return;
-        if (entity instanceof Player)
-            return;
-        String entityType = entity.getType().name();
-        String reason = e.getCause().name();
-        // To get damage properties.
-        List<String> damageList = ConfigHandler.getConfigPath().getEntitiesProp().get(entityType).get(entityGroup).getDamageList();
+        List<String> damageList = ConfigHandler.getConfigPath().getEntitiesTypeProp().get(entityGroup).getDamageList();
         if (damageList == null || damageList.isEmpty())
             return;
-        // Checking the bypass "Residence-Flag".
+        String entityType = entity.getType().name();
+        // Residence Flag
         Location loc = entity.getLocation();
         if (!CorePlusAPI.getCondition().checkFlag(loc,
                 "damagebypass", false, ConfigHandler.getConfigPath().isEnDamageResFlag())) {
             CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
-                    "Damage", entityType, "!Residence-Flag", "return",
+                    "Damage", entityType, "Residence-Flag", "bypass",
                     new Throwable().getStackTrace()[0]);
             return;
         }
-        Block block = loc.getBlock();
+        // Setup "trigger" and "player".
+        Entity trigger = e.getDamager();
+        Player player = null;
+        if (trigger instanceof Player)
+            player = (Player) trigger;
+        String local = CorePlusAPI.getPlayer().getPlayerLocal(player);
+        // Checking every groups of this entity.
         DamageMap damageMap;
         Map<String, DamageMap> damageProp = ConfigHandler.getConfigPath().getEnDamageProp();
         List<String> conditionList;
-        // Checking every groups of this entity.
         back:
         for (String group : damageList) {
             damageMap = damageProp.get(group);
-            // Checking the "reasons".
+            // Reasons
             if (!CorePlusAPI.getUtils().containIgnoreValue(reason, damageMap.getReasons(), damageMap.getIgnoreReasons())) {
                 CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
                         "Damage", entityType, "Reason", "continue", group,
                         new Throwable().getStackTrace()[0]);
                 continue;
             }
-            // Checking the "Conditions".
-            conditionList = CorePlusAPI.getLang().transByEntity(ConfigHandler.getPluginName(), null,
+            // Conditions
+            conditionList = CorePlusAPI.getLang().transByEntity(ConfigHandler.getPluginName(), local,
                     damageMap.getConditions(), entity, "entity", false);
-            if (!CorePlusAPI.getCondition().checkCondition(conditionList)) {
+            conditionList = CorePlusAPI.getLang().transByEntity(ConfigHandler.getPluginName(), local,
+                    conditionList, trigger, "trigger", false);
+            conditionList = CorePlusAPI.getLang().transByEntity(ConfigHandler.getPluginName(), local,
+                    conditionList, player, "player", false);
+            if (!CorePlusAPI.getCondition().checkCondition(ConfigHandler.getPluginName(), conditionList)) {
                 CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
-                        "Damage", entityType, "Condition", "continue", group,
+                        "Damage", entityType, "Conditions", "continue", group,
                         new Throwable().getStackTrace()[0]);
                 continue;
             }
-            // Checking the nearby players.
-            int playerNear = damageMap.getPlayerNear();
-            if (playerNear > 0) {
-                List<Entity> nearbyEntities = entity.getNearbyEntities(playerNear, playerNear, playerNear);
-                for (Entity nearEntity : nearbyEntities) {
-                    if (nearEntity instanceof Player) {
-                        CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
-                                "Damage", entityType, "PlayerNear", "return", group,
-                                new Throwable().getStackTrace()[0]);
-                        continue back;
-                    }
-                }
+            // Nearby Players.
+            if (hasPlayerNearby(damageMap.getPlayerNear(), entity)) {
+                CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                        "Damage", entityType, "PlayerNear", "continue", group,
+                        new Throwable().getStackTrace()[0]);
+                continue;
             }
-            // Checking the damage.
+            // Damage.
             double damage = e.getDamage();
-            String compareDamage = damageMap.getDamage();
-            if (compareDamage != null) {
-                String[] values = compareDamage.split("\\s+");
-                int length = values.length;
-                try {
-                    if (length == 2) {
-                        // Damage: ">= 5"
-                        if (!CorePlusAPI.getUtils().getCompare(values[0], damage, Integer.parseInt(values[1]))) {
-                            CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
-                                    "Damage", entityType, "Damage", "return", group,
-                                    new Throwable().getStackTrace()[0]);
-                            continue;
-                        }
-                    } else if (length == 3) {
-                        // Damage: "1 ~ 3"
-                        if (!CorePlusAPI.getUtils().getRange(damage, Integer.parseInt(values[0]), Integer.parseInt(values[1]), true)) {
-                            CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
-                                    "Damage", entityType, "Damage", "return", group,
-                                    new Throwable().getStackTrace()[0]);
-                            continue;
-                        }
-                    }
-                } catch (Exception ex) {
-                    CorePlusAPI.getLang().sendConsoleMsg(ConfigHandler.getPluginPrefix(),
-                            "&cThere is an error occurred. Please check the \"Damage\" format.");
-                    CorePlusAPI.getLang().sendConsoleMsg(ConfigHandler.getPluginPrefix(),
-                            "&cDamage - " + group + ", Damage: " + compareDamage);
+            if (damageMap.getDamage() != null) {
+                if (!compareDamage(damage, damageMap.getDamage())) {
+                    CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                            "Damage", entityType, "Damage", "return", group,
+                            new Throwable().getStackTrace()[0]);
+                    continue;
                 }
             }
+            // Action.
             Damageable damageEn = (Damageable) entity;
             LivingEntity livingEn = (LivingEntity) entity;
-            // Executing action.
-            switch (damageMap.getAction().toLowerCase()) {
+            switch (damageMap.getAction()) {
                 case "skip-duration":
                     double effectTick;
-                    double effectDamage;
-                    if (damageMap.getReasons().contains("FIRE_TICK") && reason.equals("FIRE_TICK")) {
-                        effectTick = livingEn.getFireTicks();
-                        if (effectTick > 0) {
-                            if (entityType.equals("ZOMBIE") || entityType.equals("ZOMBIE_VILLAGER") || entityType.equals("DROWNED") ||
-                                    entityType.equals("SKELETON") || entityType.equals("STRAY")) {
-                                if (damageMap.isSunburn()) {
-                                    // Checking if there any blocks on the top of the creature.
-                                    if (block.getRelative(BlockFace.UP).getType() != Material.AIR) {
+                    switch (reason) {
+                        case "FIRE_TICK":
+                            if (!damageMap.getReasons().contains("FIRE_TICK"))
+                                continue back;
+                            effectTick = livingEn.getFireTicks();
+                            if (effectTick == 0)
+                                continue back;
+                            if (damageMap.isSunburn()) {
+                                if (entityType.equals("ZOMBIE") || entityType.equals("ZOMBIE_VILLAGER") || entityType.equals("DROWNED") ||
+                                        entityType.equals("SKELETON") || entityType.equals("STRAY")) {
+                                    // Sunburn outside.
+                                    if (CorePlusAPI.getCondition().isInOutside(loc)) {
                                         CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
-                                                "Damage", entityType, "Skip-Duration: Sunburn-Top", "return", group,
+                                                "Damage", entityType, "Skip-Duration: Sunburn-Outside", "continue", group,
                                                 new Throwable().getStackTrace()[0]);
                                         continue back;
                                     }
-                                    double time = loc.getWorld().getTime();
-                                    // Checking if the time.
-                                    if (time >= 12300 && time <= 23850) {
+                                    // Sunburn time.
+                                    if (CorePlusAPI.getCondition().isDay(loc.getWorld().getTime())) {
                                         CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
-                                                "Damage", entityType, "Skip-Duration: Sunburn-Time", "return", group,
+                                                "Damage", entityType, "Skip-Duration: Sunburn-Time", "continue", group,
                                                 new Throwable().getStackTrace()[0]);
                                         continue back;
                                     }
                                 }
                             }
-                            effectDamage = effectTick / 20;
-                            effectDamage *= damage;
-                            damage += effectDamage;
-                            damageEn.setHealth(Math.max(0, damageEn.getHealth() - damage));
-                            livingEn.setFireTicks(0);
+                            damageEn.setHealth(Math.max(0, damageEn.getHealth() - getTickDamage(damage, effectTick)));
+                            EntityUtils.sendCmdList(ConfigHandler.getPluginName(), player, entity, trigger, damageList);
                             CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
                                     "Damage", entityType, "Skip-Duration: fire", "return", group,
                                     new Throwable().getStackTrace()[0]);
                             if (damageEn.getHealth() == 0)
                                 return;
-                        }
-                        continue back;
-                    } else if (damageMap.getReasons().contains("WITHER") && reason.equals("WITHER")) {
-                        try {
+                        case "WITHER":
+                            if (!damageMap.getReasons().contains("WITHER"))
+                                continue back;
+                            if (livingEn.getPotionEffect(PotionEffectType.WITHER) == null)
+                                continue back;
                             effectTick = livingEn.getPotionEffect(PotionEffectType.WITHER).getDuration();
-                            if (effectTick > 0) {
-                                effectDamage = effectTick / 20;
-                                effectDamage *= damage;
-                                damage += effectDamage;
-                                damageEn.setHealth(Math.max(0, damageEn.getHealth() - damage));
-                                livingEn.removePotionEffect(PotionEffectType.WITHER);
-                                CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
-                                        "Damage", entityType, "Skip-Duration: wither", "return", group,
-                                        new Throwable().getStackTrace()[0]);
-                                if (damageEn.getHealth() == 0)
-                                    return;
-                            }
-                        } catch (Exception ignored) {
-                        }
-                        continue back;
-                    } else if (damageMap.getReasons().contains("POISON") && reason.equals("POISON")) {
-                        try {
+                            if (effectTick == 0)
+                                continue back;
+                            damageEn.setHealth(Math.max(0, damageEn.getHealth() - getTickDamage(damage, effectTick)));
+                            livingEn.removePotionEffect(PotionEffectType.WITHER);
+                            EntityUtils.sendCmdList(ConfigHandler.getPluginName(), player, entity, trigger, damageList);
+                            CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                                    "Damage", entityType, "Skip-Duration: wither", "return", group,
+                                    new Throwable().getStackTrace()[0]);
+                            if (damageEn.getHealth() == 0)
+                                return;
+                        case "POISON":
+                            if (!damageMap.getReasons().contains("POISON"))
+                                continue back;
+                            if (livingEn.getPotionEffect(PotionEffectType.POISON) == null)
+                                continue back;
                             effectTick = livingEn.getPotionEffect(PotionEffectType.POISON).getDuration();
-                            if (effectTick > 0) {
-                                effectDamage = effectTick / 20;
-                                effectDamage *= damage;
-                                damage += effectDamage;
-                                damageEn.setHealth(Math.max(0, damageEn.getHealth() - damage));
-                                livingEn.removePotionEffect(PotionEffectType.POISON);
-                                CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
-                                        "Damage", entityType, "Skip-Duration: poison", "return", group,
-                                        new Throwable().getStackTrace()[0]);
-                                if (damageEn.getHealth() == 0)
-                                    return;
-                            }
-                        } catch (Exception ignored) {
-                        }
-                        continue back;
+                            if (effectTick == 0)
+                                continue back;
+                            damageEn.setHealth(Math.max(0, damageEn.getHealth() - getTickDamage(damage, effectTick)));
+                            livingEn.removePotionEffect(PotionEffectType.POISON);
+                            EntityUtils.sendCmdList(ConfigHandler.getPluginName(), player, entity, trigger, damageList);
+                            CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                                    "Damage", entityType, "Skip-Duration: poison", "return", group,
+                                    new Throwable().getStackTrace()[0]);
+                            if (damageEn.getHealth() == 0)
+                                return;
                     }
-                    return;
-                case "kill":
-                    damageEn.setHealth(0);
-                    CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
-                            "Damage", entityType, "Kill", "return", group,
-                            new Throwable().getStackTrace()[0]);
-                    return;
-                case "remove":
-                    entity.remove();
-                    CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
-                            "Damage", entityType, "Remove", "return", group,
-                            new Throwable().getStackTrace()[0]);
-                    return;
+                    continue back;
                 case "damage":
-                    damage = Integer.parseInt(damageMap.getActionValue());
+                    damage = damageMap.getActionValue();
                     e.setDamage(damage);
+                    EntityUtils.sendCmdList(ConfigHandler.getPluginName(), player, entity, trigger, damageList);
                     CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
                             "Damage", entityType, "Damage", "return", group,
                             new Throwable().getStackTrace()[0]);
@@ -219,8 +179,9 @@ public class EntityDamage implements Listener {
                         return;
                     continue back;
                 case "damage-rate":
-                    damage *= Integer.parseInt(damageMap.getActionValue());
+                    damage *= damageMap.getActionValue();
                     e.setDamage(damage);
+                    EntityUtils.sendCmdList(ConfigHandler.getPluginName(), player, entity, trigger, damageList);
                     CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
                             "Damage", entityType, "Damage-rate", "return", group,
                             new Throwable().getStackTrace()[0]);
@@ -228,14 +189,254 @@ public class EntityDamage implements Listener {
                         return;
                     continue back;
                 case "health":
-                    damageEn.setHealth(Double.parseDouble(damageMap.getActionValue()));
+                    damageEn.setHealth(damageMap.getActionValue());
+                    e.setDamage(0);
+                    EntityUtils.sendCmdList(ConfigHandler.getPluginName(), player, entity, trigger, damageList);
                     CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
                             "Damage", entityType, "Health", "return", group,
                             new Throwable().getStackTrace()[0]);
                     if (damageEn.getHealth() == 0)
                         return;
+                    continue back;
+                case "kill":
+                    damageEn.setHealth(0);
+                    EntityUtils.sendCmdList(ConfigHandler.getPluginName(), player, entity, trigger, damageList);
+                    CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                            "Damage", entityType, "Kill", "return", group,
+                            new Throwable().getStackTrace()[0]);
+                    return;
+                case "remove":
+                    entity.remove();
+                    EntityUtils.sendCmdList(ConfigHandler.getPluginName(), player, entity, trigger, damageList);
+                    CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                            "Damage", entityType, "Remove", "return", group,
+                            new Throwable().getStackTrace()[0]);
+                    return;
+                case "cancel":
+                    e.setCancelled(true);
+                    EntityUtils.sendCmdList(ConfigHandler.getPluginName(), player, entity, trigger, damageList);
+                    CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                            "Damage", entityType, "Cancel", "return", group,
+                            new Throwable().getStackTrace()[0]);
+                    return;
             }
         }
     }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onEntityDamage(EntityDamageEvent e) {
+        if (!ConfigHandler.getConfigPath().isEnDamage())
+            return;
+        // ENTITY_ATTACK
+        String reason = e.getCause().name();
+        if (reason.equals("ENTITY_ATTACK"))
+            return;
+        // Properties.
+        Entity entity = e.getEntity();
+        String entityGroup = EntityUtils.getEntityType(entity.getUniqueId());
+        if (entityGroup == null)
+            return;
+        List<String> damageList = ConfigHandler.getConfigPath().getEntitiesTypeProp().get(entityGroup).getDamageList();
+        if (damageList == null || damageList.isEmpty())
+            return;
+        String entityType = entity.getType().name();
+        // Residence-Flag
+        Location loc = entity.getLocation();
+        if (!CorePlusAPI.getCondition().checkFlag(loc,
+                "damagebypass", false, ConfigHandler.getConfigPath().isEnDamageResFlag())) {
+            CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                    "Damage", entityType, "Residence-Flag", "bypass",
+                    new Throwable().getStackTrace()[0]);
+            return;
+        }
+        DamageMap damageMap;
+        Map<String, DamageMap> damageProp = ConfigHandler.getConfigPath().getEnDamageProp();
+        List<String> conditionList;
+        back:
+        for (String group : damageList) {
+            damageMap = damageProp.get(group);
+            // Reason
+            if (!CorePlusAPI.getUtils().containIgnoreValue(reason, damageMap.getReasons(), damageMap.getIgnoreReasons())) {
+                CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                        "Damage", entityType, "Reason", "continue", group,
+                        new Throwable().getStackTrace()[0]);
+                continue;
+            }
+            // Conditions
+            conditionList = CorePlusAPI.getLang().transByEntity(ConfigHandler.getPluginName(), null,
+                    damageMap.getConditions(), entity, "entity", false);
+            if (!CorePlusAPI.getCondition().checkCondition(ConfigHandler.getPluginName(), conditionList)) {
+                CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                        "Damage", entityType, "Conditions", "continue", group,
+                        new Throwable().getStackTrace()[0]);
+                continue;
+            }
+            // Nearby Players
+            if (hasPlayerNearby(damageMap.getPlayerNear(), entity)) {
+                CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                        "Damage", entityType, "PlayerNear", "continue", group,
+                        new Throwable().getStackTrace()[0]);
+                continue;
+            }
+            // Damage
+            double damage = e.getDamage();
+            if (damageMap.getDamage() != null) {
+                if (!compareDamage(damage, damageMap.getDamage())) {
+                    CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                            "Damage", entityType, "Damage", "return", group,
+                            new Throwable().getStackTrace()[0]);
+                    continue;
+                }
+            }
+            // Action
+            Damageable damageEn = (Damageable) entity;
+            LivingEntity livingEn = (LivingEntity) entity;
+            switch (damageMap.getAction()) {
+                case "skip-duration":
+                    double effectTick;
+                    switch (reason) {
+                        case "FIRE_TICK":
+                            if (!damageMap.getReasons().contains("FIRE_TICK"))
+                                continue back;
+                            effectTick = livingEn.getFireTicks();
+                            if (effectTick == 0)
+                                continue back;
+                            if (damageMap.isSunburn()) {
+                                if (entityType.equals("ZOMBIE") || entityType.equals("ZOMBIE_VILLAGER") || entityType.equals("DROWNED") ||
+                                        entityType.equals("SKELETON") || entityType.equals("STRAY")) {
+                                    // Sunburn outside.
+                                    if (CorePlusAPI.getCondition().isInOutside(loc)) {
+                                        CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                                                "Damage", entityType, "Skip-Duration: Sunburn-Outside", "continue", group,
+                                                new Throwable().getStackTrace()[0]);
+                                        continue back;
+                                    }
+                                    // Sunburn time.
+                                    if (CorePlusAPI.getCondition().isDay(loc.getWorld().getTime())) {
+                                        CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                                                "Damage", entityType, "Skip-Duration: Sunburn-Time", "continue", group,
+                                                new Throwable().getStackTrace()[0]);
+                                        continue back;
+                                    }
+                                }
+                            }
+                            damageEn.setHealth(Math.max(0, damageEn.getHealth() - getTickDamage(damage, effectTick)));
+                            EntityUtils.sendCmdList(ConfigHandler.getPluginName(), null, entity, null, damageList);
+                            CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                                    "Damage", entityType, "Skip-Duration: fire", "return", group,
+                                    new Throwable().getStackTrace()[0]);
+                            if (damageEn.getHealth() == 0)
+                                return;
+                        case "WITHER":
+                            if (!damageMap.getReasons().contains("WITHER"))
+                                continue back;
+                            if (livingEn.getPotionEffect(PotionEffectType.WITHER) == null)
+                                continue back;
+                            effectTick = livingEn.getPotionEffect(PotionEffectType.WITHER).getDuration();
+                            if (effectTick == 0)
+                                continue back;
+                            damageEn.setHealth(Math.max(0, damageEn.getHealth() - getTickDamage(damage, effectTick)));
+                            livingEn.removePotionEffect(PotionEffectType.WITHER);
+                            EntityUtils.sendCmdList(ConfigHandler.getPluginName(), null, entity, null, damageList);
+                            CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                                    "Damage", entityType, "Skip-Duration: wither", "return", group,
+                                    new Throwable().getStackTrace()[0]);
+                            if (damageEn.getHealth() == 0)
+                                return;
+                        case "POISON":
+                            if (!damageMap.getReasons().contains("POISON"))
+                                continue back;
+                            if (livingEn.getPotionEffect(PotionEffectType.POISON) == null)
+                                continue back;
+                            effectTick = livingEn.getPotionEffect(PotionEffectType.POISON).getDuration();
+                            if (effectTick == 0)
+                                continue back;
+                            damageEn.setHealth(Math.max(0, damageEn.getHealth() - getTickDamage(damage, effectTick)));
+                            livingEn.removePotionEffect(PotionEffectType.POISON);
+                            EntityUtils.sendCmdList(ConfigHandler.getPluginName(), null, entity, null, damageList);
+                            CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                                    "Damage", entityType, "Skip-Duration: poison", "return", group,
+                                    new Throwable().getStackTrace()[0]);
+                            if (damageEn.getHealth() == 0)
+                                return;
+                    }
+                    continue back;
+                case "damage":
+                    damage = damageMap.getActionValue();
+                    e.setDamage(damage);
+                    EntityUtils.sendCmdList(ConfigHandler.getPluginName(), null, entity, null, damageList);
+                    CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                            "Damage", entityType, "Damage", "return", group,
+                            new Throwable().getStackTrace()[0]);
+                    if (damageEn.getHealth() <= damage)
+                        return;
+                    continue back;
+                case "damage-rate":
+                    damage *= damageMap.getActionValue();
+                    e.setDamage(damage);
+                    EntityUtils.sendCmdList(ConfigHandler.getPluginName(), null, entity, null, damageList);
+                    CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                            "Damage", entityType, "Damage-rate", "return", group,
+                            new Throwable().getStackTrace()[0]);
+                    if (damageEn.getHealth() <= damage)
+                        return;
+                    continue back;
+                case "health":
+                    damageEn.setHealth(damageMap.getActionValue());
+                    e.setDamage(0);
+                    EntityUtils.sendCmdList(ConfigHandler.getPluginName(), null, entity, null, damageList);
+                    CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                            "Damage", entityType, "Health", "return", group,
+                            new Throwable().getStackTrace()[0]);
+                    if (damageEn.getHealth() == 0)
+                        return;
+                    continue back;
+                case "kill":
+                    damageEn.setHealth(0);
+                    EntityUtils.sendCmdList(ConfigHandler.getPluginName(), null, entity, null, damageList);
+                    CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                            "Damage", entityType, "Kill", "return", group,
+                            new Throwable().getStackTrace()[0]);
+                    return;
+                case "remove":
+                    entity.remove();
+                    EntityUtils.sendCmdList(ConfigHandler.getPluginName(), null, entity, null, damageList);
+                    CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                            "Damage", entityType, "Remove", "return", group,
+                            new Throwable().getStackTrace()[0]);
+                    return;
+                case "cancel":
+                    e.setCancelled(true);
+                    EntityUtils.sendCmdList(ConfigHandler.getPluginName(), null, entity, null, damageList);
+                    CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                            "Damage", entityType, "Cancel", "return", group,
+                            new Throwable().getStackTrace()[0]);
+                    return;
+            }
+        }
+    }
+
+    private boolean hasPlayerNearby(int range, Entity entity) {
+        if (range > 0) {
+            List<Entity> nearbyEntities = entity.getNearbyEntities(range, range, range);
+            for (Entity nearEntity : nearbyEntities) {
+                if (nearEntity instanceof Player)
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean compareDamage(double damage, String value) {
+        if (value != null)
+            return CorePlusAPI.getUtils().checkValues(ConfigHandler.getPluginName(), String.valueOf(damage), value);
+        return true;
+    }
+
+    private double getTickDamage(double damage, double tick) {
+        damage *= (tick / 20) + 1;
+        return damage;
+    }
+
 }
 

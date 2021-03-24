@@ -7,13 +7,14 @@ public class DamageMap {
     private List<String> reasons;
     private List<String> ignoreReasons;
     private List<String> conditions;
+    private List<String> commands;
 
     // Damage
     private String damage;
 
     // Action
     private String action;
-    private String actionValue;
+    private double actionValue;
 
     // Ignore
     private int playerNear;
@@ -51,6 +52,14 @@ public class DamageMap {
         this.conditions = conditions;
     }
 
+    public List<String> getCommands() {
+        return commands;
+    }
+
+    public void setCommands(List<String> commands) {
+        this.commands = commands;
+    }
+
     public String getDamage() {
         return damage;
     }
@@ -67,11 +76,11 @@ public class DamageMap {
         this.action = action;
     }
 
-    public String getActionValue() {
+    public double getActionValue() {
         return actionValue;
     }
 
-    public void setActionValue(String actionValue) {
+    public void setActionValue(double actionValue) {
         this.actionValue = actionValue;
     }
 

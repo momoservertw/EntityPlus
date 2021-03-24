@@ -19,6 +19,7 @@ public class DependHandler {
         EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new CreatureSpawn(), EntityPlus.getInstance());
         EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new SpawnerSpawn(), EntityPlus.getInstance());
         EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new EntityDeath(), EntityPlus.getInstance());
+        EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new EntityDamage(), EntityPlus.getInstance());
         EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new ChunkLoad(), EntityPlus.getInstance());
 
         if (CorePlusAPI.getDepend().isPaper()) {

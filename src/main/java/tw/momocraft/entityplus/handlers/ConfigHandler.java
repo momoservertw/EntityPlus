@@ -20,9 +20,9 @@ public class ConfigHandler {
     public static void generateData(boolean reload) {
         genConfigFile("config.yml");
         genConfigFile("entities.yml");
-        UtilsHandler.setUpFirst();
+        UtilsHandler.setUpFirst(reload);
         setConfigPath(new ConfigPath());
-        UtilsHandler.setUpLast();
+        UtilsHandler.setUpLast(reload);
         if (!reload) {
             CorePlusAPI.getUpdate().check(getPluginName(), getPluginPrefix(), Bukkit.getConsoleSender(),
                     EntityPlus.getInstance().getDescription().getName(),

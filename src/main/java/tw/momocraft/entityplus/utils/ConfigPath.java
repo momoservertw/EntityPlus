@@ -275,7 +275,6 @@ public class ConfigPath {
                     entityMap.setLimitMap(null);
                 } else {
                     String[] amountSplit = limit.split(", ");
-                    System.out.println(Arrays.toString(amountSplit));
                     if (amountSplit.length == 3) {
                         try {
                             AmountMap amountMap = new AmountMap();
@@ -316,16 +315,13 @@ public class ConfigPath {
             }
         }
         //// Drop ////
-        valueStringList = CorePlusAPI.getConfig().getTypeList(ConfigHandler.getPrefix(),
-                ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Drop"), "Entities");
-        if (valueStringList != null)
+        valueStringList = ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Drop");
+        if (!valueStringList.isEmpty())
             entityMap.setDropList(valueStringList);
         //// Damage ////
-        valueStringList = CorePlusAPI.getConfig().getTypeList(ConfigHandler.getPrefix(),
-                ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Damage"), "Entities");
-        if (valueStringList != null)
+        valueStringList = ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Damage");
+        if (!valueStringList.isEmpty())
             entityMap.setDamageList(valueStringList);
-
         return entityMap;
     }
 
@@ -341,11 +337,11 @@ public class ConfigPath {
         if (!enPurge)
             return;
         enPurgeResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Settings.Residence-Flag");
-        enPurgeSpeed = ConfigHandler.getConfig("config.yml").getInt("Entities.Purge.Settings.Speed");
         enPurgeCheckChunkLoad = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Check.Chunk-Load");
         enPurgeCheckSchedule = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Check.Schedule.Enable");
-        enPurgeCheckScheduleInterval = ConfigHandler.getConfig("config.yml").getInt("Entities.Purge.Check.Schedule.Interval");
-        enPurgeCheckAFK = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Check.AFK");
+        enPurgeCheckScheduleInterval = ConfigHandler.getConfig("config.yml").getInt("Entities.Purge.Check.Schedule.Interval", 60);
+        enPurgeSpeed = ConfigHandler.getConfig("config.yml").getInt("Entities.Purge.Check.Schedule.Speed", 500);
+        //enPurgeCheckAFK = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Check.AFK");
         enPurgeMsg = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Settings.Schedule.Message.Enable");
         enPurgeMsgBroadcast = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Settings.Schedule.Message.Broadcast");
         enPurgeMsgConsole = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Settings.Schedule.Message.Console");
@@ -369,18 +365,18 @@ public class ConfigPath {
         enDrop = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Enable");
         if (!enDrop)
             return;
-        enDropExp = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Features.Options.Exp");
-        enDropMoney = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Features.Options.Money");
-        enDropItem = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Features.Options.Items");
-        enDropCommand = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Features.Options.Commands");
-        enDropResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Features.Bypass.Residence-Flag");
+        enDropExp = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Options.Exp");
+        enDropMoney = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Options.Money");
+        enDropItem = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Options.Items");
+        enDropCommand = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Options.Commands");
+        enDropResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Bypass.Residence-Flag");
         enDropMultiPerm = ConfigHandler.getConfig("config.yml").getString("Entities.Drop.Settings.Multiple-Groups");
         ConfigurationSection groupsConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Entities.Drop.Groups");
         if (groupsConfig == null)
             return;
         DropMap dropMap;
         for (String group : groupsConfig.getKeys(false)) {
-            if (!ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop." + group + ".Enable", true))
+            if (!ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Groups." + group + ".Enable", true))
                 continue;
             dropMap = new DropMap();
             dropMap.setPriority(ConfigHandler.getConfig("config.yml").getLong("Entities.Drop.Groups." + group + ".Priority"));
@@ -389,6 +385,42 @@ public class ConfigPath {
             dropMap.setMoney(ConfigHandler.getConfig("config.yml").getDouble("Entities.Drop.Groups." + group + ".MythicMobs.Money"));
             dropMap.setCommands(ConfigHandler.getConfig("config.yml").getStringList("Entities.Drop.Groups." + group + ".Commands"));
             enDropProp.put(group, dropMap);
+        }
+    }
+
+    //  ============================================== //
+    //         Damage Setter                           //
+    //  ============================================== //
+    private void setDamage() {
+        enDamage = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Damage.Enable");
+        if (!enDamage)
+            return;
+        enDamageResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Damage.Settings.Bypass.Residence-Flag");
+        ConfigurationSection groupsConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Entities.Damage.Groups");
+        if (groupsConfig == null)
+            return;
+        DamageMap damageMap;
+        ConfigurationSection actionConfig;
+        String actionKey;
+        for (String group : groupsConfig.getKeys(false)) {
+            if (!(ConfigHandler.getConfig("config.yml").getBoolean("Entities.Damage.Groups." + group + ".Enable")))
+                return;
+            damageMap = new DamageMap();
+            damageMap.setPriority(ConfigHandler.getConfig("config.yml").getLong("Entities.Damage.Groups." + group + ".Priority"));
+            damageMap.setReasons(ConfigHandler.getConfig("config.yml").getStringList("Entities.Damage.Groups." + group + ".Reasons"));
+            damageMap.setIgnoreReasons(ConfigHandler.getConfig("config.yml").getStringList("Entities.Damage.Groups." + group + ".Ignore-Reasons"));
+            damageMap.setDamage(ConfigHandler.getConfig("config.yml").getString("Entities.Damage.Groups." + group + ".Damage"));
+            damageMap.setConditions(ConfigHandler.getConfig("config.yml").getStringList("Entities.Damage.Groups." + group + ".Conditions"));
+            damageMap.setCommands(ConfigHandler.getConfig("config.yml").getStringList("Entities.Damage.Groups." + group + ".Commands"));
+            actionConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Entities.Damage.Groups." + group + ".Action");
+            if (actionConfig != null) {
+                actionKey = actionConfig.getKeys(false).iterator().next();
+                damageMap.setAction(actionKey.toLowerCase(Locale.ROOT));
+                damageMap.setActionValue(ConfigHandler.getConfig("config.yml").getDouble("Entities.Damage.Groups." + group + ".Action." + actionKey));
+            }
+            damageMap.setPlayerNear(ConfigHandler.getConfig("config.yml").getInt("Entities.Damage.Groups." + group + ".Ignore.Player-Nearby-Range"));
+            damageMap.setSunburn(ConfigHandler.getConfig("config.yml").getBoolean("Entities.Damage.Groups." + group + ".Ignore.Sunburn"));
+            enDamageProp.put(group, damageMap);
         }
     }
 
@@ -466,40 +498,6 @@ public class ConfigPath {
                 newMap.put(group, spawnerProp.get(worldName).get(group));
             }
             spawnerProp.replace(worldName, newMap);
-        }
-    }
-
-    //  ============================================== //
-    //         Damage Setter                           //
-    //  ============================================== //
-    private void setDamage() {
-        enDamage = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Damage.Enable");
-        if (!enDamage)
-            return;
-        enDamageResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Damage.Settings.Features.Bypass.Residence-Flag");
-        ConfigurationSection groupsConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Entities.Damage.Groups");
-        if (groupsConfig == null)
-            return;
-        DamageMap damageMap;
-        ConfigurationSection actionConfig;
-        String actionKey;
-        for (String group : groupsConfig.getKeys(false)) {
-            if (!(ConfigHandler.getConfig("config.yml").getBoolean("Entities.Damage.Groups." + group + ".Enable")))
-                return;
-            damageMap = new DamageMap();
-            damageMap.setPriority(ConfigHandler.getConfig("config.yml").getLong("Entities.Damage.Groups." + group + ".Priority"));
-            damageMap.setReasons(ConfigHandler.getConfig("config.yml").getStringList("Entities.Damage.Groups." + group + ".Reasons"));
-            damageMap.setIgnoreReasons(ConfigHandler.getConfig("config.yml").getStringList("Entities.Damage.Groups." + group + ".Ignore-Reasons"));
-            damageMap.setDamage(ConfigHandler.getConfig("config.yml").getString("Entities.Damage.Groups." + group + ".Damage"));
-            actionConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Entities.Damage.Groups." + group + ".Action");
-            if (actionConfig != null) {
-                actionKey = actionConfig.getKeys(false).iterator().next();
-                damageMap.setAction(actionKey);
-                damageMap.setActionValue(ConfigHandler.getConfig("config.yml").getString("Entities.Damage.Groups." + group + ".Action." + actionKey));
-            }
-            damageMap.setPlayerNear(ConfigHandler.getConfig("config.yml").getInt("Entities.Damage.Groups." + group + ".Ignore.Player-Nearby-Range"));
-            damageMap.setSunburn(ConfigHandler.getConfig("config.yml").getBoolean("Entities.Damage.Groups." + group + ".Ignore.Sunburn"));
-            enDamageProp.put(group, damageMap);
         }
     }
 

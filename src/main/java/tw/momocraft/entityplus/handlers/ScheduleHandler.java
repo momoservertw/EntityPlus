@@ -20,7 +20,7 @@ public class ScheduleHandler {
                     public void run() {
                         Purge.startSchedule();
                     }
-                }.runTaskLater(CorePlus.getInstance(), 400);
+                }.runTaskLater(CorePlus.getInstance(), 200);
             } else {
                 if (Purge.isStarting())
                     Purge.setStarting(false);

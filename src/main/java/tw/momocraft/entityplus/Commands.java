@@ -99,10 +99,10 @@ public class Commands implements CommandExecutor {
                     } else if (length == 2) {
                         switch (args[1]) {
                             case "killall":
-                                Purge.checkAll(sender, true);
+                                Purge.checkAll(true, false);
                                 return true;
                             case "checkall":
-                                Purge.checkAll(sender, false);
+                                Purge.checkAll(false, false);
                                 return true;
                             case "killchunk":
                                 Player player = CorePlusAPI.getPlayer().getPlayer(sender);
