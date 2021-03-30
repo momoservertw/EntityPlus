@@ -1,13 +1,12 @@
 package tw.momocraft.entityplus.utils.entities;
 
-import javafx.util.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import tw.momocraft.coreplus.api.CorePlusAPI;
+import tw.momocraft.coreplus.handlers.UtilsHandler;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 
 import java.util.*;
@@ -15,7 +14,6 @@ import java.util.*;
 public class EntityUtils {
 
     public static Map<UUID, String> livingEntityMap = new HashMap<>();
-
 
     public static Map<UUID, String> getLivingEntityMap() {
         return livingEntityMap;
@@ -39,7 +37,7 @@ public class EntityUtils {
         String entityType = entity.getType().name();
         // Loading MythicMob.
         if (CorePlusAPI.getDepend().MythicMobsEnabled()) {
-            String mmType = CorePlusAPI.getEntity().getMythicMobName(entity);
+            String mmType = CorePlusAPI.getEnt().getMythicMobName(entity);
             if (mmType != null)
                 entityType = mmType;
         }
@@ -56,22 +54,22 @@ public class EntityUtils {
             entityMap = entityProp.get(groupName);
             // Checking "Reasons".
             if (!CorePlusAPI.getUtils().containIgnoreValue(reason, entityMap.getReasons(), entityMap.getIgnoreReasons())) {
-                CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
-                        "Spawn", groupName, "Reason", "continue", entityType,
+                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                        "Spawn", groupName, "Reason", "none", entityType,
                         new Throwable().getStackTrace()[0]);
                 continue;
             }
             // Checking "Conditions".
-            if (!CorePlusAPI.getCondition().checkCondition(ConfigHandler.getPluginName(), entityMap.getConditions())) {
-                CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
-                        "Spawn", groupName, "Conditions", "continue", entityType,
+            if (!CorePlusAPI.getCond().checkCondition(ConfigHandler.getPluginName(), entityMap.getConditions())) {
+                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                        "Spawn", groupName, "Conditions", "none", entityType,
                         new Throwable().getStackTrace()[0]);
                 continue;
             }
             // Checking "Residence-Flag".
-            if (!CorePlusAPI.getCondition().checkFlag(loc, "spawnbypass", true, checkResFlag)) {
-                CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
-                        "Spawn", groupName, "Residence-Flag", "continue", entityType,
+            if (!CorePlusAPI.getCond().checkFlag(loc, "spawnbypass", true, checkResFlag)) {
+                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                        "Spawn", groupName, "Residence-Flag", "none", entityType,
                         new Throwable().getStackTrace()[0]);
                 continue;
             }
@@ -80,14 +78,14 @@ public class EntityUtils {
                 // Checking "Max-Distance".
                 List<Player> nearbyPlayers = CorePlusAPI.getUtils().getNearbyPlayersXZY(loc, entityMap.getMaxDistance());
                 if (nearbyPlayers.isEmpty()) {
-                    CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                    CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
                             "Spawn", groupName, "Max-Distance", "cancel", entityType,
                             new Throwable().getStackTrace()[0]);
                     return true;
                 }
                 // Checking "Permission".
                 if (!CorePlusAPI.getPlayer().havePermPlayer(nearbyPlayers, entityMap.getPermission())) {
-                    CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                    CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
                             "Spawn", groupName, "Permission", "cancel", entityType,
                             new Throwable().getStackTrace()[0]);
                     return true;
@@ -98,34 +96,33 @@ public class EntityUtils {
                 if (chanceMap != null) {
                     String translatedGroup;
                     back:
-                    for (String chanceGroup : chanceMap.keySet()) {
-                        switch (chanceGroup) {
+                    for (String chanceValue : chanceMap.keySet()) {
+                        switch (chanceValue) {
                             case "Default":
-                                chance = chanceMap.get(chanceGroup);
+                                chance = chanceMap.get(chanceValue);
                                 break back;
                             case "AFK":
                                 for (Player player : nearbyPlayers)
                                     if (!CorePlusAPI.getPlayer().isAFK(player))
                                         continue back;
-                                chance = chanceMap.get(chanceGroup);
+                                chance = chanceMap.get(chanceValue);
                                 break back;
                             case "Gliding":
                                 for (Player player : nearbyPlayers)
                                     if (!player.isGliding())
                                         continue back;
-                                chance = chanceMap.get(chanceGroup);
+                                chance = chanceMap.get(chanceValue);
                                 break back;
                             case "Flying":
                                 for (Player player : nearbyPlayers)
                                     if (!player.isFlying())
                                         continue back;
-                                chance = chanceMap.get(chanceGroup);
+                                chance = chanceMap.get(chanceValue);
                                 break back;
                             default:
-                                translatedGroup = CorePlusAPI.getLang().transByEntity(ConfigHandler.getPluginName(), null,
-                                        chanceGroup, entity, "entity", false);
-                                if (CorePlusAPI.getCondition().checkCondition(ConfigHandler.getPluginName(), translatedGroup)) {
-                                    chance = chanceMap.get(chanceGroup);
+                                translatedGroup = UtilsHandler.getMsg().transHolder(null, entity, chanceValue);
+                                if (CorePlusAPI.getCond().checkCondition(ConfigHandler.getPluginName(), translatedGroup)) {
+                                    chance = chanceMap.get(chanceValue);
                                     break back;
                                 }
                         }
@@ -133,7 +130,7 @@ public class EntityUtils {
                 }
                 // Checking "Chance".
                 if (!CorePlusAPI.getUtils().isRandChance(chance)) {
-                    CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                    CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
                             "Spawn", groupName, "Chance", "cancel", entityType,
                             new Throwable().getStackTrace()[0]);
                     return true;
@@ -141,19 +138,17 @@ public class EntityUtils {
                 // Checking Limit.
                 if (ConfigHandler.getConfigPath().isEnLimit()) {
                     if (!EntityUtils.checkLimit(loc, entityMap.getLimitGroup())) {
-                        CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                        CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
                                 "Spawn", groupName, "Limit", "cancel", entityType,
                                 new Throwable().getStackTrace()[0]);
                         return true;
                     }
                 }
                 // Executing Commands.
-                EntityUtils.sendCmdList(ConfigHandler.getPluginName(), null, entity, null, entityMap.getCommands());
+                CorePlusAPI.getCmd().sendCmd(ConfigHandler.getPluginName(), null, entity, entityMap.getCommands());
             }
-            // Adding this creature to cache.
-            putLivingEntityMap(entity.getUniqueId(), groupName);
-            CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
-                    "Spawn", groupName, "Loaded", "return", entityType,
+            CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                    "Spawn", groupName, "Loaded", "succeed", entityType,
                     new Throwable().getStackTrace()[0]);
             return false;
         }
@@ -211,24 +206,18 @@ public class EntityUtils {
     }
 
     public static boolean isIgnore(Entity entity) {
-        if (isLifetimeUnder(entity, ConfigHandler.getConfigPath().getEnPurgeIgnoreLiveTime())) {
+        if (isLifetimeUnder(entity, ConfigHandler.getConfigPath().getEnPurgeIgnoreLiveTime()))
             return true;
-        }
-        if (isBaby(entity)) {
+        if (isBaby(entity))
             return true;
-        }
-        if (isSaddleOn(entity)) {
+        if (isSaddleOn(entity))
             return true;
-        }
-        if (isNotPickup(entity)) {
+        if (isNotPickup(entity))
             return true;
-        }
-        if (isTamed(entity)) {
+        if (isNamed(entity))
             return true;
-        }
-        if (isTamed(entity)) {
+        if (isTamed(entity))
             return true;
-        }
         return false;
     }
 

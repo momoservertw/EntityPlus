@@ -15,13 +15,13 @@ import tw.momocraft.entityplus.utils.entities.EntityUtils;
 
 import java.util.*;
 
-public class EntityDeath implements Listener {
+public class Drop implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onEntityDeath(EntityDeathEvent e) {
+    public void onEntityDeathEvent(EntityDeathEvent e) {
         if (!ConfigHandler.getConfigPath().isEnDrop())
             return;
-        // Checking if the entity has property.
+        // Checking property.
         LivingEntity entity = e.getEntity();
         String entityGroup = EntityUtils.getEntityType(entity.getUniqueId());
         if (entityGroup == null)
@@ -29,8 +29,8 @@ public class EntityDeath implements Listener {
         Player player = e.getEntity().getKiller();
         if (player == null)
             return;
-        UUID entityUUID = entity.getUniqueId();
         // To stop checking the MythicMobs.
+        UUID entityUUID = entity.getUniqueId();
         if (CorePlusAPI.getDepend().MythicMobsEnabled())
             if (MythicMobs.inst().getAPIHelper().isMythicMob(entityUUID))
                 return;
@@ -40,28 +40,30 @@ public class EntityDeath implements Listener {
         if (dropList == null || dropList.isEmpty())
             return;
         // Checking the bypass "Residence-Flag".
-        if (!CorePlusAPI.getCondition().checkFlag(e.getEntity().getLocation(),
+        if (!CorePlusAPI.getCond().checkFlag(e.getEntity().getLocation(),
                 "dropbypass", false, ConfigHandler.getConfigPath().isEnDropResFlag())) {
-            CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
-                    "Drop", entityType, "!Residence-Flag", "return",
+            CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                    "Drop", entityType, "Residence-Flag", "bypass",
                     new Throwable().getStackTrace()[0]);
             return;
         }
-        // Checking player reward permissions.
+        // Checking rewards.
         DropMap dropMap;
         List<DropMap> dropMapList = new ArrayList<>();
         List<String> commandList = new ArrayList<>();
+        List<String> conditionList = new ArrayList<>();
         Map<String, DropMap> dropProp = ConfigHandler.getConfigPath().getEnDropProp();
-        for (String group : dropList) {
+        for (String groupName : dropList) {
             if (CorePlusAPI.getPlayer().hasPerm(player, "entityplus.drop.*")
-                    || CorePlusAPI.getPlayer().hasPerm(player, "entityplus.drop." + group)) {
-                dropMap = dropProp.get(group);
+                    || CorePlusAPI.getPlayer().hasPerm(player, "entityplus.drop." + groupName)) {
+                dropMap = dropProp.get(groupName);
                 if (dropMap == null)
                     continue;
                 // Checking the "Conditions".
-                if (!CorePlusAPI.getCondition().checkCondition(ConfigHandler.getPluginName(), dropMap.getConditions())) {
-                    CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
-                            "Damage", entityType, "Condition", "continue", group,
+                conditionList = CorePlusAPI.getMsg().transHolder(null, entity, conditionList);
+                if (!CorePlusAPI.getCond().checkCondition(ConfigHandler.getPluginName(), conditionList)) {
+                    CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                            "Damage", entityType, "Condition", "none", groupName,
                             new Throwable().getStackTrace()[0]);
                     continue;
                 }
@@ -70,8 +72,8 @@ public class EntityDeath implements Listener {
             }
         }
         if (dropMapList.isEmpty()) {
-            CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
-                    "Drop", entityType, "Permission", "return",
+            CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                    "Drop", entityType, "Permission", "none",
                     new Throwable().getStackTrace()[0]);
             return;
         }
@@ -79,7 +81,7 @@ public class EntityDeath implements Listener {
         double totalItem = 1;
         double exp;
         double item;
-        // Checking the bonus mode.
+        // Checking bonus mode.
         String combinedMethod = ConfigHandler.getConfigPath().getEnDropMultiPerm();
         if (combinedMethod.equals("plus") || combinedMethod.equals("multiply")) {
             for (DropMap drop : dropMapList) {
@@ -98,20 +100,20 @@ public class EntityDeath implements Listener {
                 }
             }
         } else {
-            // Choosing the first drop (The highest priority).
+            // Choosing the highest priority.
             dropMap = dropMapList.get(0);
             exp = dropMap.getExp();
             item = dropMap.getItems();
             totalExp *= exp;
             totalItem *= item;
         }
-        // Setting the higher exp.
+        // Setting Exp.
         if (ConfigHandler.getConfigPath().isEnDropExp()) {
             int dropExp = e.getDroppedExp();
             dropExp *= totalExp;
             e.setDroppedExp(dropExp);
         }
-        // Giving more items.
+        // Giving Items.
         if (ConfigHandler.getConfigPath().isEnDropItem()) {
             List<ItemStack> dropItem = e.getDrops();
             double dropDecimal;
@@ -125,19 +127,10 @@ public class EntityDeath implements Listener {
             }
         }
         // Executing commands.
-        if (ConfigHandler.getConfigPath().isEnDropCommand()) {
-            EntityUtils.sendCmdList(ConfigHandler.getPluginName(), player, e.getEntity(), dropList);
-        }
-        CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
-                "Drop", entityType, "Final", "return", entityGroup,
+        if (ConfigHandler.getConfigPath().isEnDropCommand())
+            CorePlusAPI.getCmd().sendCmd(ConfigHandler.getPluginName(), player, e.getEntity(), player, commandList);
+        CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                "Drop", entityType, "Final", "succeed", entityGroup,
                 new Throwable().getStackTrace()[0]);
-    }
-
-
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onEntityDeathRemoveTag(EntityDeathEvent e) {
-        if (CorePlusAPI.getDepend().isPaper())
-            return;
-        EntityUtils.removeLivingEntityMap(e.getEntity().getUniqueId());
     }
 }

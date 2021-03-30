@@ -143,8 +143,8 @@ Spawner:
     Normal:
       Enable: true
       Location:
-        - world
-      Blocks: [ ]
+        - NormalWorlds
+      Conditions: []
       Allow-Types:
         - ZOMBIE
         - SKELETON
@@ -159,28 +159,31 @@ Spawner:
       Commands:
         - "log-custom: SpawnerChanged, %entity_display_name% spawner - %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%, nearby players: %nearbyplayers%"
         - "print: &c%entity_display_name% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%, nearby players: %nearbyplayers%"
-        - "targets-message: &c%entity_display_name% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%."
+      Target-Commands:
+        - "message: &c%entity_display_name% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%."
     Nether:
       Enable: true
       Location:
-        - world_nether
+        - NetherWorlds
       Allow-Types:
         - BLAZE
       Change-Types:
         - BLAZE
       Commands:
-        - "log-custom: SpawnerChanged, %spawner% spawner - %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%, nearby players: %nearbyplayers%"
+        - "log-group: SpawnerChanged, %spawner% spawner - %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%, nearby players: %nearbyplayers%"
         - "print: &c%spawner% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%, nearby players: %nearbyplayers%"
-        - "targets-message: &c%spawner% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%."
+      Target-Commands:
+        - "message: &c%entity_display_name% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%."
     Remove:
       Enable: true
       Remove: true
       Location:
-        - world_the_end
+        - EndWorlds
       Commands:
         - "log-custom: SpawnerChanged, %spawner% spawner - %world%(%loc_x%, %loc_y%, %loc_z%) has been removed, nearby players: %nearbyplayers%"
         - "print: &c%spawner% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been removed, nearby players: %nearbyplayers%"
-        - "targets-message: &c%spawner% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been removed."
+      Target-Commands:
+        - "message: &c%entity_display_name% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been removed."
 
 Message:
   prefix: '&7[&dEntityPlus&7]&r '

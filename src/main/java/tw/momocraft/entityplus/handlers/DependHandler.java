@@ -16,25 +16,25 @@ public class DependHandler {
         EntityPlus.getInstance().getCommand("entityplus").setExecutor(new Commands());
         EntityPlus.getInstance().getCommand("entityplus").setTabCompleter(new TabComplete());
 
-        EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new CreatureSpawn(), EntityPlus.getInstance());
-        EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new SpawnerSpawn(), EntityPlus.getInstance());
-        EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new EntityDeath(), EntityPlus.getInstance());
-        EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new EntityDamage(), EntityPlus.getInstance());
-        EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new ChunkLoad(), EntityPlus.getInstance());
+        EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new EntityData(), EntityPlus.getInstance());
+        EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new Spawn(), EntityPlus.getInstance());
+        EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new Drop(), EntityPlus.getInstance());
+        EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new Damage(), EntityPlus.getInstance());
+        EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new Spawner(), EntityPlus.getInstance());
 
         if (CorePlusAPI.getDepend().isPaper()) {
-            EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new EntityRemoveFromWorld(), EntityPlus.getInstance());
+            EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new EntityDataPaper(), EntityPlus.getInstance());
         }
 
         if (CorePlusAPI.getDepend().MythicMobsEnabled()) {
-            EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new MythicMobsSpawn(), EntityPlus.getInstance());
-            EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new MythicMobsLootDrop(), EntityPlus.getInstance());
+            EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new SpawnMythicMobs(), EntityPlus.getInstance());
+            EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new DropMythicMobs(), EntityPlus.getInstance());
         }
         if (CorePlusAPI.getDepend().ResidenceEnabled()) {
-            CorePlusAPI.getCondition().registerFlag("spawnbypass");
-            CorePlusAPI.getCondition().registerFlag("spawnerbypass");
-            CorePlusAPI.getCondition().registerFlag("dropbypass");
-            CorePlusAPI.getCondition().registerFlag("damagebypass");
+            CorePlusAPI.getCond().registerFlag("spawnbypass");
+            CorePlusAPI.getCond().registerFlag("dropbypass");
+            CorePlusAPI.getCond().registerFlag("damagebypass");
+            CorePlusAPI.getCond().registerFlag("spawnerbypass");
         }
     }
 }

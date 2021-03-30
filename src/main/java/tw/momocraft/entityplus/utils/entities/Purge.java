@@ -16,7 +16,6 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Purge {
-    // Get center location: new Location(chunk.getWorld(), chunk.getX() << 4, 64, chunk.getZ() << 4).add(7, 0, 7);
     private static Map<String, AtomicInteger> purgeMap;
 
     private static boolean starting;
@@ -33,30 +32,30 @@ public class Purge {
         if (toggle) {
             if (starting) {
                 // Already on
-                CorePlusAPI.getLang().sendConsoleMsg(ConfigHandler.getPrefix(),
+                CorePlusAPI.getMsg().sendConsoleMsg(ConfigHandler.getPrefix(),
                         ConfigHandler.getConfigPath().getMsgPurgeAlreadyOn());
             } else {
                 // Turns on
-                CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPluginName(), ConfigHandler.getPrefix(),
+                CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPluginName(), ConfigHandler.getPrefix(),
                         ConfigHandler.getConfigPath().getMsgPurgeOn(), sender);
                 startSchedule();
             }
         } else {
             if (!starting) {
                 // Already off
-                CorePlusAPI.getLang().sendConsoleMsg(ConfigHandler.getPrefix(),
+                CorePlusAPI.getMsg().sendConsoleMsg(ConfigHandler.getPrefix(),
                         ConfigHandler.getConfigPath().getMsgPurgeAlreadyOff());
             } else {
                 // Turns off
                 starting = false;
-                CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPluginName(), ConfigHandler.getPrefix(),
+                CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPluginName(), ConfigHandler.getPrefix(),
                         ConfigHandler.getConfigPath().getMsgPurgeOff(), sender);
             }
         }
     }
 
     public static void startSchedule() {
-        CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
+        CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
                 ConfigHandler.getConfigPath().getMsgPurgeStart(), Bukkit.getConsoleSender());
         starting = true;
         new BukkitRunnable() {
@@ -64,7 +63,7 @@ public class Purge {
             public void run() {
                 if (!starting) {
                     cancel();
-                    CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
+                    CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
                             ConfigHandler.getConfigPath().getMsgPurgeEnd(), Bukkit.getConsoleSender());
                     return;
                 }
@@ -77,20 +76,20 @@ public class Purge {
     }
 
     public static void checkChunk(CommandSender sender, boolean purge, Chunk chunk) {
-        CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
+        CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
                 ConfigHandler.getConfigPath().getMsgPurgeStart(), sender);
         if (chunk != null) {
             purgeMap = new HashMap<>();
             checkChunk(chunk, purge);
             sendTotalMsg(sender, purge);
         }
-        CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
+        CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
                 ConfigHandler.getConfigPath().getMsgPurgeEnd(), sender);
     }
 
     public static void checkAll(boolean purge, boolean schedule) {
         if (!schedule)
-            CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
+            CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
                     ConfigHandler.getConfigPath().getMsgPurgeStart(), Bukkit.getConsoleSender());
         purgeMap = new HashMap<>();
         // Getting all loaded chunks.
@@ -116,7 +115,7 @@ public class Purge {
                     cancel();
                     sendTotalMsg(null, true);
                     if (!schedule)
-                        CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
+                        CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
                                 ConfigHandler.getConfigPath().getMsgPurgeEnd(), Bukkit.getConsoleSender());
                     return;
                 }
@@ -130,9 +129,9 @@ public class Purge {
 
     private static void sendTotalMsg(CommandSender sender, boolean purge) {
         int amount = 0;
-        String[] langHolder = CorePlusAPI.getLang().newString();
+        String[] langHolder = CorePlusAPI.getMsg().newString();
         if (purgeMap.isEmpty()) {
-            langHolder[4] = CorePlusAPI.getLang().getMsgTrans("noTargets"); // %value%
+            langHolder[4] = CorePlusAPI.getMsg().getMsgTrans("noTargets"); // %value%
         } else {
             StringBuilder list = new StringBuilder();
             for (Map.Entry<String, AtomicInteger> group : purgeMap.entrySet()) {
@@ -147,37 +146,37 @@ public class Purge {
         if (purge) {
             if (ConfigHandler.getConfigPath().isEnPurgeMsg()) {
                 if (ConfigHandler.getConfigPath().isEnPurgeMsgBroadcast())
-                    CorePlusAPI.getLang().sendBroadcastMsg(ConfigHandler.getPluginPrefix(),
+                    CorePlusAPI.getMsg().sendBroadcastMsg(ConfigHandler.getPluginPrefix(),
                             ConfigHandler.getConfigPath().getMsgPurgeKillSucceed(), langHolder);
                 if (ConfigHandler.getConfigPath().isEnPurgeMsgConsole())
-                    CorePlusAPI.getLang().sendConsoleMsg(ConfigHandler.getPluginPrefix(),
+                    CorePlusAPI.getMsg().sendConsoleMsg(ConfigHandler.getPluginPrefix(),
                             ConfigHandler.getConfigPath().getMsgPurgeKillSucceed(), langHolder);
             } else {
                 if (sender instanceof ConfigHandler) {
-                    CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPluginName(), ConfigHandler.getPrefix(),
+                    CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPluginName(), ConfigHandler.getPrefix(),
                             ConfigHandler.getConfigPath().getMsgPurgeKillSucceed(), sender, langHolder);
                 }
             }
             if (sender instanceof Player) {
-                CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPluginName(), ConfigHandler.getPrefix(),
+                CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPluginName(), ConfigHandler.getPrefix(),
                         ConfigHandler.getConfigPath().getMsgPurgeKillSucceed(), sender, langHolder);
             }
         } else {
             if (ConfigHandler.getConfigPath().isEnPurgeMsg()) {
                 if (ConfigHandler.getConfigPath().isEnPurgeMsgBroadcast())
-                    CorePlusAPI.getLang().sendBroadcastMsg(ConfigHandler.getPluginPrefix(),
+                    CorePlusAPI.getMsg().sendBroadcastMsg(ConfigHandler.getPluginPrefix(),
                             ConfigHandler.getConfigPath().getMsgPurgeKillSucceed(), langHolder);
                 if (ConfigHandler.getConfigPath().isEnPurgeMsgConsole())
-                    CorePlusAPI.getLang().sendConsoleMsg(ConfigHandler.getPluginPrefix(),
+                    CorePlusAPI.getMsg().sendConsoleMsg(ConfigHandler.getPluginPrefix(),
                             ConfigHandler.getConfigPath().getMsgPurgeKillSucceed(), langHolder);
             } else {
                 if (sender instanceof ConfigHandler) {
-                    CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPluginName(), ConfigHandler.getPrefix(),
+                    CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPluginName(), ConfigHandler.getPrefix(),
                             ConfigHandler.getConfigPath().getMsgPurgeKillSucceed(), sender, langHolder);
                 }
             }
             if (sender instanceof Player) {
-                CorePlusAPI.getLang().sendLangMsg(ConfigHandler.getPluginName(), ConfigHandler.getPrefix(),
+                CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPluginName(), ConfigHandler.getPrefix(),
                         ConfigHandler.getConfigPath().getMsgPurgeCheckSucceed(), sender, langHolder);
             }
         }

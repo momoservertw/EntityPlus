@@ -13,13 +13,13 @@ import tw.momocraft.entityplus.utils.entities.EntityUtils;
 
 import java.util.*;
 
-public class MythicMobsLootDrop implements Listener {
+public class DropMythicMobs implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onMythicMobLootDrop(MythicMobLootDropEvent e) {
+    public void onMythicMobLootDropEvent(MythicMobLootDropEvent e) {
         if (!ConfigHandler.getConfigPath().isEnDrop())
             return;
-        // Checking if the entity has property.
+        // Checking property.
         String entityGroup = EntityUtils.getEntityType(e.getEntity().getUniqueId());
         if (entityGroup == null)
             return;
@@ -37,14 +37,14 @@ public class MythicMobsLootDrop implements Listener {
         if (dropList == null || dropList.isEmpty())
             return;
         // Checking the bypass "Residence-Flag".
-        if (!CorePlusAPI.getCondition().checkFlag(e.getEntity().getLocation(), "dropbypass", false,
+        if (!CorePlusAPI.getCond().checkFlag(e.getEntity().getLocation(), "dropbypass", false,
                 ConfigHandler.getConfigPath().isEnDropResFlag())) {
-            CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+            CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
                     "Drop", entityType, "Residence-Flag", "return",
                     new Throwable().getStackTrace()[0]);
             return;
         }
-        // Checking player reward permissions.
+        // Checking rewards.
         DropMap dropMap;
         List<DropMap> dropMapList = new ArrayList<>();
         List<String> commandList = new ArrayList<>();
@@ -55,9 +55,9 @@ public class MythicMobsLootDrop implements Listener {
                 dropMap = dropProp.get(group);
                 if (dropMap == null)
                     continue;
-                // Checking the "Conditions".
-                if (!CorePlusAPI.getCondition().checkCondition(ConfigHandler.getPluginName(), dropMap.getConditions())) {
-                    CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                // Checking "Conditions".
+                if (!CorePlusAPI.getCond().checkCondition(ConfigHandler.getPluginName(), dropMap.getConditions())) {
+                    CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
                             "Damage", entityType, "Condition", "continue", group,
                             new Throwable().getStackTrace()[0]);
                     continue;
@@ -67,7 +67,7 @@ public class MythicMobsLootDrop implements Listener {
             }
         }
         if (dropMapList.isEmpty()) {
-            CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+            CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
                     "Drop", entityType, "Permission", "return",
                     new Throwable().getStackTrace()[0]);
             return;
@@ -78,7 +78,7 @@ public class MythicMobsLootDrop implements Listener {
         double exp;
         double item;
         double money;
-        // Checking the bonus mode.
+        // Checking bonus mode.
         String combinedMethod = ConfigHandler.getConfigPath().getEnDropMultiPerm();
         if (combinedMethod.equals("plus") || combinedMethod.equals("multiply")) {
             for (DropMap drop : dropMapList) {
@@ -101,7 +101,7 @@ public class MythicMobsLootDrop implements Listener {
                 }
             }
         } else {
-            // Choosing the first drop (The highest priority).
+            // Choosing the highest priority.
             dropMap = dropMapList.get(0);
             exp = dropMap.getExp();
             item = dropMap.getItems();
@@ -110,17 +110,17 @@ public class MythicMobsLootDrop implements Listener {
             totalItem *= item;
             totalMoney *= money;
         }
-        // Setting the higher exp.
+        // Exp.
         if (ConfigHandler.getConfigPath().isEnDropExp()) {
             totalExp *= e.getExp();
             e.setExp((int) totalExp);
         }
-        // Setting the higher money.
+        // Money.
         if (ConfigHandler.getConfigPath().isEnDropMoney()) {
             totalMoney *= e.getMoney();
             e.setMoney((int) totalMoney);
         }
-        // Giving more items.
+        // Items.
         if (ConfigHandler.getConfigPath().isEnDropItem()) {
             Collection<Drop> dropItem = e.getPhysicalDrops();
             double dropDecimal;
@@ -134,10 +134,9 @@ public class MythicMobsLootDrop implements Listener {
             }
         }
         // Executing commands.
-        if (ConfigHandler.getConfigPath().isEnDropCommand()) {
-            EntityUtils.sendCmdList(ConfigHandler.getPluginName(), player, e.getEntity(), dropList);
-        }
-        CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+        if (ConfigHandler.getConfigPath().isEnDropCommand())
+            CorePlusAPI.getCmd().sendCmd(ConfigHandler.getPluginName(), player, e.getEntity(), player, commandList);
+        CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
                 "Drop", entityType, "Final", "return", entityGroup,
                 new Throwable().getStackTrace()[0]);
     }

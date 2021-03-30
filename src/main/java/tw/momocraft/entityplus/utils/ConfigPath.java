@@ -3,7 +3,7 @@ package tw.momocraft.entityplus.utils;
 import org.bukkit.configuration.ConfigurationSection;
 import tw.momocraft.coreplus.api.CorePlusAPI;
 import tw.momocraft.coreplus.handlers.UtilsHandler;
-import tw.momocraft.coreplus.utils.conditions.LocationMap;
+import tw.momocraft.coreplus.utils.condition.LocationMap;
 import tw.momocraft.entityplus.EntityPlus;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.utils.entities.*;
@@ -106,14 +106,14 @@ public class ConfigPath {
     private void sendSetupMsg() {
         List<String> list = new ArrayList<>(EntityPlus.getInstance().getDescription().getDepend());
         list.addAll(EntityPlus.getInstance().getDescription().getSoftDepend());
-        CorePlusAPI.getLang().sendHookMsg(ConfigHandler.getPluginPrefix(), "plugins", list);
+        CorePlusAPI.getMsg().sendHookMsg(ConfigHandler.getPluginPrefix(), "plugins", list);
 
         String string =
                 "spawnbypass" + " "
                         + "spawnerbypass" + " "
                         + "dropbypass" + " "
                         + "damagebypass";
-        CorePlusAPI.getLang().sendHookMsg(ConfigHandler.getPluginPrefix(), "Residence flags", Arrays.asList(string.split("\\s*")));
+        CorePlusAPI.getMsg().sendHookMsg(ConfigHandler.getPluginPrefix(), "Residence flags", Arrays.asList(string.split("\\s*")));
     }
 
     //  ============================================== //
@@ -189,7 +189,7 @@ public class ConfigPath {
                 sortMap.put(group, entitiesProp.get(entityType).get(group).getPriority());
             sortMap = CorePlusAPI.getUtils().sortByValue(sortMap);
             for (String group : sortMap.keySet()) {
-                CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
                         "Spawn", "setup", group, "continue", entityType,
                         new Throwable().getStackTrace()[0]);
                 newEnMap.put(group, entitiesProp.get(entityType).get(group));
@@ -284,11 +284,11 @@ public class ConfigPath {
                             entityMap.setLimitMap(amountMap);
                             entityMap.setLimitGroup(group);
                         } catch (Exception ex) {
-                            UtilsHandler.getLang().sendErrorMsg(ConfigHandler.getPluginName(),
+                            UtilsHandler.getMsg().sendErrorMsg(ConfigHandler.getPluginName(),
                                     "Not correct format of entity Limit: \"" + limit + "\"");
-                            UtilsHandler.getLang().sendErrorMsg(ConfigHandler.getPluginName(),
+                            UtilsHandler.getMsg().sendErrorMsg(ConfigHandler.getPluginName(),
                                     "More information: https://github.com/momoservertw/EntityPlus/wiki/Entities#Limit");
-                            UtilsHandler.getLang().sendDebugTrace(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(), ex);
+                            UtilsHandler.getMsg().sendDebugTrace(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(), ex);
                         }
                     }
                 }
@@ -305,11 +305,11 @@ public class ConfigPath {
                     try {
                         entityMap.setPurge(Integer.parseInt(purge));
                     } catch (Exception ex) {
-                        UtilsHandler.getLang().sendErrorMsg(ConfigHandler.getPluginName(),
+                        UtilsHandler.getMsg().sendErrorMsg(ConfigHandler.getPluginName(),
                                 "Not correct format of entity Purge: \"" + purge + "\"");
-                        UtilsHandler.getLang().sendErrorMsg(ConfigHandler.getPluginName(),
+                        UtilsHandler.getMsg().sendErrorMsg(ConfigHandler.getPluginName(),
                                 "More information: https://github.com/momoservertw/EntityPlus/wiki/Entities#Purge");
-                        UtilsHandler.getLang().sendDebugTrace(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(), ex);
+                        UtilsHandler.getMsg().sendDebugTrace(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(), ex);
                     }
                 }
             }
@@ -438,7 +438,7 @@ public class ConfigPath {
             return;
         SpawnerMap spawnerMap;
         ConfigurationSection spawnerListConfig;
-        Map<String, Long> changeMap;
+        Map<String, Double> changeMap;
         List<String> changeList;
         for (String group : spawnerConfig.getKeys(false)) {
             if (!(ConfigHandler.getConfig("config.yml").getBoolean("Spawner.Groups." + group + ".Enable", true)))
@@ -448,21 +448,22 @@ public class ConfigPath {
             spawnerMap.setPriority(ConfigHandler.getConfig("config.yml").getLong("Spawner.Groups." + group + ".Priority"));
             spawnerMap.setRemove(ConfigHandler.getConfig("config.yml").getBoolean("Spawner.Groups." + group + ".Remove"));
             spawnerMap.setCommands(ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Commands"));
-            spawnerMap.setBlocksList(ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Blocks"));
+            spawnerMap.setTargetsCommands(ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Targets-Commands"));
+            spawnerMap.setConditions(ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Conditions"));
             spawnerMap.setLocList(ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Location"));
             spawnerMap.setAllowList(ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Allow-Types"));
             spawnerListConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawner.Groups." + group + ".Change-Types");
             if (spawnerListConfig != null) {
                 for (String changeType : spawnerListConfig.getKeys(false))
-                    changeMap.put(changeType, ConfigHandler.getConfig("config.yml").getLong("Spawner.Groups." + group + ".Change-Types." + changeType));
+                    changeMap.put(changeType, ConfigHandler.getConfig("config.yml").getDouble("Spawner.Groups." + group + ".Change-Types." + changeType));
             } else {
                 changeList = ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Change-Types");
                 if (changeList.isEmpty() && !spawnerMap.isRemove()) {
-                    CorePlusAPI.getLang().sendConsoleMsg(ConfigHandler.getPluginPrefix(), "&cThere is an error occurred. The spawner change type of \"" + group + "\" is empty.");
+                    CorePlusAPI.getMsg().sendConsoleMsg(ConfigHandler.getPluginPrefix(), "&cThe spawner change type of \"" + group + "\" is empty.");
                     continue;
                 }
                 for (String changeType : changeList)
-                    changeMap.put(changeType, 1L);
+                    changeMap.put(changeType, 1.0);
             }
             spawnerMap.setChangeMap(changeMap);
             // Add properties to all Worlds.
@@ -493,7 +494,7 @@ public class ConfigPath {
                 sortMap.put(group, spawnerProp.get(worldName).get(group).getPriority());
             sortMap = CorePlusAPI.getUtils().sortByValue(sortMap);
             for (String group : sortMap.keySet()) {
-                CorePlusAPI.getLang().sendFeatureMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(), "Spawner", worldName, "setup", "continue", group,
+                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(), "Spawner", worldName, "setup", "continue", group,
                         new Throwable().getStackTrace()[0]);
                 newMap.put(group, spawnerProp.get(worldName).get(group));
             }

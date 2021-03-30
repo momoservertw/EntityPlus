@@ -7,16 +7,13 @@ import org.bukkit.event.Listener;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.utils.entities.EntityUtils;
 
-import java.util.UUID;
-
-public class EntityRemoveFromWorld implements Listener {
+public class EntityDataPaper implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onEntityRemoveFromWorld(EntityRemoveFromWorldEvent e) {
+    public void onEntityRemoveFromWorldEvent(EntityRemoveFromWorldEvent e) {
         if (!ConfigHandler.getConfigPath().isEntities())
             return;
-        // Removing tag to all entity in this chunk.
-        UUID uuid = e.getEntity().getUniqueId();
-        EntityUtils.removeLivingEntityMap(uuid);
+        EntityUtils.removeLivingEntityMap(e.getEntity().getUniqueId());
     }
+
 }
