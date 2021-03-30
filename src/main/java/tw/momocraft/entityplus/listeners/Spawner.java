@@ -2,7 +2,9 @@ package tw.momocraft.entityplus.listeners;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,6 +12,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.SpawnerSpawnEvent;
 import tw.momocraft.coreplus.api.CorePlusAPI;
+import tw.momocraft.coreplus.utils.message.TranslateMap;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.utils.entities.SpawnerMap;
 
@@ -17,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class SpawnerSpawn implements Listener {
+public class Spawner implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onSpawnerSpawn(SpawnerSpawnEvent e) {
@@ -28,46 +31,42 @@ public class SpawnerSpawn implements Listener {
         try {
             entityType = spawner.getSpawnedType().name();
         } catch (Exception ex) {
-            CorePlusAPI.getLang().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+            CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
                     "Spawner", "Unknown type", "Location", "return",
                     new Throwable().getStackTrace()[0]);
             return;
         }
         // Already changed.
-        if (spawner.getBlock().getType() != Material.SPAWNER || !entityType.equals(e.getEntity().getType().name()))
+        Entity entity = e.getEntity();
+        Block block = e.getSpawner().getBlock();
+        if (block.getType() != Material.SPAWNER || !entityType.equals(entity.getType().name()))
             return;
-        Location loc = e.getLocation();
+        Location loc = block.getLocation();
         String worldName = loc.getWorld().getName();
         // Checking the enable worlds.
         Map<String, SpawnerMap> spawnerProp = ConfigHandler.getConfigPath().getSpawnerProp().get(worldName);
         if (spawnerProp == null)
             return;
-        boolean resFlag = ConfigHandler.getConfigPath().isSpawnerResFlag();
+        boolean checkResFlag = ConfigHandler.getConfigPath().isSpawnerResFlag();
         SpawnerMap spawnerMap;
+        List<String> conditionList = new ArrayList<>();
         for (String groupName : spawnerProp.keySet()) {
             spawnerMap = spawnerProp.get(groupName);
             // Checking the allow entities.
-            if (spawnerMap.getAllowList().contains(entityType)) {
+            if (spawnerMap.getAllowList().contains(entityType))
                 continue;
-            }
-            // Checking the spawn "location".
-            if (!CorePlusAPI.getCond().checkLocation(ConfigHandler.getPluginName(), loc, spawnerMap.getLocList(), true)) {
-                CorePlusAPI.getLang().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
-                        "Spawner", entityType, "Location", "continue", groupName,
+            // Checking the "Conditions".
+            conditionList = CorePlusAPI.getMsg().transHolder(null, entity, block, conditionList);
+            if (!CorePlusAPI.getCond().checkCondition(ConfigHandler.getPluginName(), conditionList)) {
+                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                        "Damage", groupName, "Condition", "none", entityType,
                         new Throwable().getStackTrace()[0]);
                 continue;
             }
-            // Checking the "blocks" nearby the spawn location.
-            if (!CorePlusAPI.getCond().checkBlocks(loc, spawnerMap.getBlocksList(), true)) {
-                CorePlusAPI.getLang().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
-                        "Spawner", entityType, "Blocks", "continue", groupName,
-                        new Throwable().getStackTrace()[0]);
-                continue;
-            }
-            // Checking the spawn "Residence-Flag".
-            if (!CorePlusAPI.getCond().checkFlag(loc, "spawnerbypass", false, resFlag)) {
-                CorePlusAPI.getLang().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
-                        "Spawner", entityType, "Residence-Flag", "continue", groupName,
+            // Checking the bypass "Residence-Flag".
+            if (!CorePlusAPI.getCond().checkFlag(loc, "spawnerbypass", false, checkResFlag)) {
+                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                        "Spawner", groupName, "Residence-Flag", "bypass", entityType,
                         new Throwable().getStackTrace()[0]);
                 continue;
             }
@@ -76,32 +75,30 @@ public class SpawnerSpawn implements Listener {
                 e.setCancelled(true);
                 spawner.getBlock().setType(Material.AIR);
 
-                String[] langHolder = CorePlusAPI.getLang().newString();
-                langHolder[8] = entityType; // %entity%
-                langHolder[25] = entityType; // %new_entity%
+                TranslateMap translateMap = CorePlusAPI.getMsg().getTranslateMap(null, entity, "entity");
+                CorePlusAPI.getMsg().getTranslateMap(translateMap, block, "block");
+
+                String[] langHolder = CorePlusAPI.getMsg().newString();
+                langHolder[8] = entityType; // %spawner%
+                langHolder[25] = entityType; // %new_spawner%
+                CorePlusAPI.getCmd().sendCmd(ConfigHandler.getPrefix(),
+                        null, translateMap, spawnerMap.getCommands(), true, langHolder);
                 int nearbyPlayerRange = ConfigHandler.getConfigPath().getSpawnerNearbyPlayerRange();
                 if (nearbyPlayerRange != 0) {
                     List<Player> nearbyPlayers = CorePlusAPI.getUtils().getNearbyPlayersXZY(loc, nearbyPlayerRange);
-                    langHolder[19] = CorePlusAPI.getLang().getPlayersString(nearbyPlayers); // %targets%
-                    CorePlusAPI.getCmd().executeCmd(
-                            ConfigHandler.getPrefix(), nearbyPlayers, translate(loc, spawnerMap.getCommands(), nearbyPlayers), true, langHolder);
-                } else {
-                    CorePlusAPI.getCmd().executeCmd(
-                            ConfigHandler.getPrefix(), spawnerMap.getCommands(), true, langHolder);
+                    langHolder[19] = CorePlusAPI.getMsg().getPlayersString(nearbyPlayers); // %targets%
+                    CorePlusAPI.getCmd().sendCmd(ConfigHandler.getPrefix(),
+                            null, translateMap, spawnerMap.getTargetsCommands(), true, langHolder);
                 }
-                CorePlusAPI.getLang().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
-                        "Spawner", entityType, "Remove", "remove",
+                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                        "Spawner", groupName, "Remove", "remove", entityType,
                         new Throwable().getStackTrace()[0]);
                 return;
             }
             // Changing the type of spawner.
-            Map<String, Long> changeMap = spawnerMap.getChangeMap();
-            if (changeMap == null) {
-                CorePlusAPI.getLang().sendErrorMsg(ConfigHandler.getPluginName(), "The \"Change-Types\" is empty.");
-                return;
-            }
-            long totalChance = 0;
-            long chance;
+            Map<String, Double> changeMap = spawnerMap.getChangeMap();
+            double totalChance = 0;
+            double chance;
             for (String changeType : changeMap.keySet()) {
                 chance = changeMap.get(changeType);
                 totalChance += chance;
@@ -117,24 +114,23 @@ public class SpawnerSpawn implements Listener {
                 spawner.update();
                 e.setCancelled(true);
 
-                String[] langHolder = CorePlusAPI.getLang().newString();
-                langHolder[8] = entityType; // %entity%
-                langHolder[25] = changeType; // %new_entity%
+                TranslateMap translateMap = CorePlusAPI.getMsg().getTranslateMap(null, entity, "entity");
+                CorePlusAPI.getMsg().getTranslateMap(translateMap, block, "block");
+
+                String[] langHolder = CorePlusAPI.getMsg().newString();
+                langHolder[8] = entityType; // %spawner%
+                langHolder[25] = entityType; // %new_spawner%
+                CorePlusAPI.getCmd().sendCmd(ConfigHandler.getPrefix(),
+                        null, translateMap, spawnerMap.getCommands(), true, langHolder);
                 int nearbyPlayerRange = ConfigHandler.getConfigPath().getSpawnerNearbyPlayerRange();
                 if (nearbyPlayerRange != 0) {
                     List<Player> nearbyPlayers = CorePlusAPI.getUtils().getNearbyPlayersXZY(loc, nearbyPlayerRange);
-                    langHolder[19] = CorePlusAPI.getLang().getPlayersString(nearbyPlayers); // %targets%
-                    // Executing commands for every target.
-                    CorePlusAPI.getCmd().executeCmd(
-                            ConfigHandler.getPrefix(),
-                            nearbyPlayers, translate(loc, spawnerMap.getCommands(), nearbyPlayers), true, langHolder);
-                } else {
-                    // Executing commands.
-                    CorePlusAPI.getCmd().executeCmd(
-                            ConfigHandler.getPrefix(), spawnerMap.getCommands(), true, langHolder);
+                    langHolder[19] = CorePlusAPI.getMsg().getPlayersString(nearbyPlayers); // %targets%
+                    CorePlusAPI.getCmd().sendCmd(ConfigHandler.getPrefix(),
+                            null, translateMap, spawnerMap.getTargetsCommands(), true, langHolder);
                 }
-                CorePlusAPI.getLang().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
-                        "Spawner", entityType, changeType, "change",
+                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                        "Spawner", groupName, changeType, "change", entityType,
                         new Throwable().getStackTrace()[0]);
                 return;
             }
@@ -151,9 +147,9 @@ public class SpawnerSpawn implements Listener {
                     .replace("%loc_z%", String.valueOf(loc.getBlockZ()))
             ;
             if (targets == null || targets.isEmpty())
-                s = s.replace("%targets%", CorePlusAPI.getLang().getMsgTrans("noTargets"));
+                s = s.replace("%targets%", CorePlusAPI.getMsg().getMsgTrans("noTargets"));
             else
-                s = s.replace("%targets%", CorePlusAPI.getLang().getPlayersString(targets));
+                s = s.replace("%targets%", CorePlusAPI.getMsg().getPlayersString(targets));
             commands.add(s);
         }
         return commands;
