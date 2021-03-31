@@ -54,21 +54,21 @@ public class EntityUtils {
             entityMap = entityProp.get(groupName);
             // Checking "Reasons".
             if (!CorePlusAPI.getUtils().containIgnoreValue(reason, entityMap.getReasons(), entityMap.getIgnoreReasons())) {
-                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
                         "Spawn", groupName, "Reason", "none", entityType,
                         new Throwable().getStackTrace()[0]);
                 continue;
             }
             // Checking "Conditions".
-            if (!CorePlusAPI.getCond().checkCondition(ConfigHandler.getPluginName(), entityMap.getConditions())) {
-                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+            if (!CorePlusAPI.getCond().checkCondition(ConfigHandler.getPlugin(), entityMap.getConditions())) {
+                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
                         "Spawn", groupName, "Conditions", "none", entityType,
                         new Throwable().getStackTrace()[0]);
                 continue;
             }
             // Checking "Residence-Flag".
             if (!CorePlusAPI.getCond().checkFlag(loc, "spawnbypass", true, checkResFlag)) {
-                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
                         "Spawn", groupName, "Residence-Flag", "none", entityType,
                         new Throwable().getStackTrace()[0]);
                 continue;
@@ -78,14 +78,14 @@ public class EntityUtils {
                 // Checking "Max-Distance".
                 List<Player> nearbyPlayers = CorePlusAPI.getUtils().getNearbyPlayersXZY(loc, entityMap.getMaxDistance());
                 if (nearbyPlayers.isEmpty()) {
-                    CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                    CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
                             "Spawn", groupName, "Max-Distance", "cancel", entityType,
                             new Throwable().getStackTrace()[0]);
                     return true;
                 }
                 // Checking "Permission".
                 if (!CorePlusAPI.getPlayer().havePermPlayer(nearbyPlayers, entityMap.getPermission())) {
-                    CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                    CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
                             "Spawn", groupName, "Permission", "cancel", entityType,
                             new Throwable().getStackTrace()[0]);
                     return true;
@@ -121,7 +121,7 @@ public class EntityUtils {
                                 break back;
                             default:
                                 translatedGroup = UtilsHandler.getMsg().transHolder(null, entity, chanceValue);
-                                if (CorePlusAPI.getCond().checkCondition(ConfigHandler.getPluginName(), translatedGroup)) {
+                                if (CorePlusAPI.getCond().checkCondition(ConfigHandler.getPlugin(), translatedGroup)) {
                                     chance = chanceMap.get(chanceValue);
                                     break back;
                                 }
@@ -130,7 +130,7 @@ public class EntityUtils {
                 }
                 // Checking "Chance".
                 if (!CorePlusAPI.getUtils().isRandChance(chance)) {
-                    CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                    CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
                             "Spawn", groupName, "Chance", "cancel", entityType,
                             new Throwable().getStackTrace()[0]);
                     return true;
@@ -138,16 +138,16 @@ public class EntityUtils {
                 // Checking Limit.
                 if (ConfigHandler.getConfigPath().isEnLimit()) {
                     if (!EntityUtils.checkLimit(loc, entityMap.getLimitGroup())) {
-                        CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                        CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
                                 "Spawn", groupName, "Limit", "cancel", entityType,
                                 new Throwable().getStackTrace()[0]);
                         return true;
                     }
                 }
                 // Executing Commands.
-                CorePlusAPI.getCmd().sendCmd(ConfigHandler.getPluginName(), null, entity, entityMap.getCommands());
+                CorePlusAPI.getCmd().sendCmd(ConfigHandler.getPlugin(), null, entity, entityMap.getCommands());
             }
-            CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+            CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
                     "Spawn", groupName, "Loaded", "succeed", entityType,
                     new Throwable().getStackTrace()[0]);
             return false;

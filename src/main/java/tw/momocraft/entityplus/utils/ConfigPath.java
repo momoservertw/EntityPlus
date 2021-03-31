@@ -189,7 +189,7 @@ public class ConfigPath {
                 sortMap.put(group, entitiesProp.get(entityType).get(group).getPriority());
             sortMap = CorePlusAPI.getUtils().sortByValue(sortMap);
             for (String group : sortMap.keySet()) {
-                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
                         "Spawn", "setup", group, "continue", entityType,
                         new Throwable().getStackTrace()[0]);
                 newEnMap.put(group, entitiesProp.get(entityType).get(group));
@@ -284,11 +284,11 @@ public class ConfigPath {
                             entityMap.setLimitMap(amountMap);
                             entityMap.setLimitGroup(group);
                         } catch (Exception ex) {
-                            UtilsHandler.getMsg().sendErrorMsg(ConfigHandler.getPluginName(),
+                            UtilsHandler.getMsg().sendErrorMsg(ConfigHandler.getPlugin(),
                                     "Not correct format of entity Limit: \"" + limit + "\"");
-                            UtilsHandler.getMsg().sendErrorMsg(ConfigHandler.getPluginName(),
+                            UtilsHandler.getMsg().sendErrorMsg(ConfigHandler.getPlugin(),
                                     "More information: https://github.com/momoservertw/EntityPlus/wiki/Entities#Limit");
-                            UtilsHandler.getMsg().sendDebugTrace(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(), ex);
+                            UtilsHandler.getMsg().sendDebugTrace(ConfigHandler.isDebug(), ConfigHandler.getPlugin(), ex);
                         }
                     }
                 }
@@ -305,11 +305,11 @@ public class ConfigPath {
                     try {
                         entityMap.setPurge(Integer.parseInt(purge));
                     } catch (Exception ex) {
-                        UtilsHandler.getMsg().sendErrorMsg(ConfigHandler.getPluginName(),
+                        UtilsHandler.getMsg().sendErrorMsg(ConfigHandler.getPlugin(),
                                 "Not correct format of entity Purge: \"" + purge + "\"");
-                        UtilsHandler.getMsg().sendErrorMsg(ConfigHandler.getPluginName(),
+                        UtilsHandler.getMsg().sendErrorMsg(ConfigHandler.getPlugin(),
                                 "More information: https://github.com/momoservertw/EntityPlus/wiki/Entities#Purge");
-                        UtilsHandler.getMsg().sendDebugTrace(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(), ex);
+                        UtilsHandler.getMsg().sendDebugTrace(ConfigHandler.isDebug(), ConfigHandler.getPlugin(), ex);
                     }
                 }
             }
@@ -494,7 +494,7 @@ public class ConfigPath {
                 sortMap.put(group, spawnerProp.get(worldName).get(group).getPriority());
             sortMap = CorePlusAPI.getUtils().sortByValue(sortMap);
             for (String group : sortMap.keySet()) {
-                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(), "Spawner", worldName, "setup", "continue", group,
+                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(), "Spawner", worldName, "setup", "continue", group,
                         new Throwable().getStackTrace()[0]);
                 newMap.put(group, spawnerProp.get(worldName).get(group));
             }

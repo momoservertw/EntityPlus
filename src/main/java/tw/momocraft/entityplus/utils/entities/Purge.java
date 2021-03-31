@@ -36,7 +36,7 @@ public class Purge {
                         ConfigHandler.getConfigPath().getMsgPurgeAlreadyOn());
             } else {
                 // Turns on
-                CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPluginName(), ConfigHandler.getPrefix(),
+                CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPlugin(), ConfigHandler.getPrefix(),
                         ConfigHandler.getConfigPath().getMsgPurgeOn(), sender);
                 startSchedule();
             }
@@ -48,7 +48,7 @@ public class Purge {
             } else {
                 // Turns off
                 starting = false;
-                CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPluginName(), ConfigHandler.getPrefix(),
+                CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPlugin(), ConfigHandler.getPrefix(),
                         ConfigHandler.getConfigPath().getMsgPurgeOff(), sender);
             }
         }
@@ -153,12 +153,12 @@ public class Purge {
                             ConfigHandler.getConfigPath().getMsgPurgeKillSucceed(), langHolder);
             } else {
                 if (sender instanceof ConfigHandler) {
-                    CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPluginName(), ConfigHandler.getPrefix(),
+                    CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPlugin(), ConfigHandler.getPrefix(),
                             ConfigHandler.getConfigPath().getMsgPurgeKillSucceed(), sender, langHolder);
                 }
             }
             if (sender instanceof Player) {
-                CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPluginName(), ConfigHandler.getPrefix(),
+                CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPlugin(), ConfigHandler.getPrefix(),
                         ConfigHandler.getConfigPath().getMsgPurgeKillSucceed(), sender, langHolder);
             }
         } else {
@@ -171,12 +171,12 @@ public class Purge {
                             ConfigHandler.getConfigPath().getMsgPurgeKillSucceed(), langHolder);
             } else {
                 if (sender instanceof ConfigHandler) {
-                    CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPluginName(), ConfigHandler.getPrefix(),
+                    CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPlugin(), ConfigHandler.getPrefix(),
                             ConfigHandler.getConfigPath().getMsgPurgeKillSucceed(), sender, langHolder);
                 }
             }
             if (sender instanceof Player) {
-                CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPluginName(), ConfigHandler.getPrefix(),
+                CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPlugin(), ConfigHandler.getPrefix(),
                         ConfigHandler.getConfigPath().getMsgPurgeCheckSucceed(), sender, langHolder);
             }
         }
@@ -229,7 +229,7 @@ public class Purge {
                     }
                 }
                 if (ConfigHandler.getConfigPath().isEnPurgeDeathParticle())
-                    CorePlusAPI.getEffect().spawnParticle(ConfigHandler.getPluginName(),
+                    CorePlusAPI.getEffect().spawnParticle(ConfigHandler.getPlugin(),
                             entity.getLocation(), ConfigHandler.getConfigPath().getEnPurgeDeathParticleType());
             }
             // Adding to checking list.

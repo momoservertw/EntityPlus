@@ -75,7 +75,7 @@ public class Commands implements CommandExecutor {
                     CorePlusAPI.getMsg().sendMsg(ConfigHandler.getPrefix(), sender,
                             "&f " + EntityPlus.getInstance().getDescription().getName()
                                     + " &ev" + EntityPlus.getInstance().getDescription().getVersion() + "  &8by Momocraft");
-                    CorePlusAPI.getUpdate().check(ConfigHandler.getPluginName(), ConfigHandler.getPrefix(), sender,
+                    CorePlusAPI.getUpdate().check(ConfigHandler.getPlugin(), ConfigHandler.getPrefix(), sender,
                             EntityPlus.getInstance().getName(), EntityPlus.getInstance().getDescription().getVersion(), true);
                 } else {
                     CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
@@ -107,7 +107,7 @@ public class Commands implements CommandExecutor {
                             case "killchunk":
                                 Player player = CorePlusAPI.getPlayer().getPlayer(sender);
                                 if (player == null) {
-                                    CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPluginName(), ConfigHandler.getPrefix(),
+                                    CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPlugin(), ConfigHandler.getPrefix(),
                                             "onlyPlayer", sender);
                                     return true;
                                 }
@@ -116,7 +116,7 @@ public class Commands implements CommandExecutor {
                             case "checkchunk":
                                 player = CorePlusAPI.getPlayer().getPlayer(sender);
                                 if (player == null) {
-                                    CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPluginName(), ConfigHandler.getPrefix(),
+                                    CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPlugin(), ConfigHandler.getPrefix(),
                                             "onlyPlayer", sender);
                                     return true;
                                 }

@@ -31,7 +31,7 @@ public class Spawner implements Listener {
         try {
             entityType = spawner.getSpawnedType().name();
         } catch (Exception ex) {
-            CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+            CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
                     "Spawner", "Unknown type", "Location", "return",
                     new Throwable().getStackTrace()[0]);
             return;
@@ -57,15 +57,15 @@ public class Spawner implements Listener {
                 continue;
             // Checking the "Conditions".
             conditionList = CorePlusAPI.getMsg().transHolder(null, entity, block, conditionList);
-            if (!CorePlusAPI.getCond().checkCondition(ConfigHandler.getPluginName(), conditionList)) {
-                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+            if (!CorePlusAPI.getCond().checkCondition(ConfigHandler.getPlugin(), conditionList)) {
+                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
                         "Damage", groupName, "Condition", "none", entityType,
                         new Throwable().getStackTrace()[0]);
                 continue;
             }
             // Checking the bypass "Residence-Flag".
             if (!CorePlusAPI.getCond().checkFlag(loc, "spawnerbypass", false, checkResFlag)) {
-                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
                         "Spawner", groupName, "Residence-Flag", "bypass", entityType,
                         new Throwable().getStackTrace()[0]);
                 continue;
@@ -90,7 +90,7 @@ public class Spawner implements Listener {
                     CorePlusAPI.getCmd().sendCmd(ConfigHandler.getPrefix(),
                             null, translateMap, spawnerMap.getTargetsCommands(), true, langHolder);
                 }
-                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
                         "Spawner", groupName, "Remove", "remove", entityType,
                         new Throwable().getStackTrace()[0]);
                 return;
@@ -129,7 +129,7 @@ public class Spawner implements Listener {
                     CorePlusAPI.getCmd().sendCmd(ConfigHandler.getPrefix(),
                             null, translateMap, spawnerMap.getTargetsCommands(), true, langHolder);
                 }
-                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebugging(), ConfigHandler.getPluginName(),
+                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
                         "Spawner", groupName, changeType, "change", entityType,
                         new Throwable().getStackTrace()[0]);
                 return;
