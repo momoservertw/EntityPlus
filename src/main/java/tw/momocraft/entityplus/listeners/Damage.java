@@ -65,7 +65,7 @@ public class Damage implements Listener {
                 continue;
             }
             // Conditions
-            valueList = CorePlusAPI.getMsg().transHolder(player, entity, damageMap.getConditions());
+            valueList = CorePlusAPI.getMsg().transHolder(player, entity, trigger, damageMap.getConditions());
             if (!CorePlusAPI.getCond().checkCondition(ConfigHandler.getPlugin(), valueList)) {
                 CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
                         "Damage", entityType, "Conditions", "continue", group,

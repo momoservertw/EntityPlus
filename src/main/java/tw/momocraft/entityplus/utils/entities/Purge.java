@@ -36,7 +36,7 @@ public class Purge {
                         ConfigHandler.getConfigPath().getMsgPurgeAlreadyOn());
             } else {
                 // Turns on
-                CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPlugin(), ConfigHandler.getPrefix(),
+                CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
                         ConfigHandler.getConfigPath().getMsgPurgeOn(), sender);
                 startSchedule();
             }
@@ -48,14 +48,14 @@ public class Purge {
             } else {
                 // Turns off
                 starting = false;
-                CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPlugin(), ConfigHandler.getPrefix(),
+                CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
                         ConfigHandler.getConfigPath().getMsgPurgeOff(), sender);
             }
         }
     }
 
     public static void startSchedule() {
-        CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
+        CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
                 ConfigHandler.getConfigPath().getMsgPurgeStart(), Bukkit.getConsoleSender());
         starting = true;
         new BukkitRunnable() {
@@ -63,7 +63,7 @@ public class Purge {
             public void run() {
                 if (!starting) {
                     cancel();
-                    CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
+                    CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
                             ConfigHandler.getConfigPath().getMsgPurgeEnd(), Bukkit.getConsoleSender());
                     return;
                 }
@@ -76,20 +76,20 @@ public class Purge {
     }
 
     public static void checkChunk(CommandSender sender, boolean purge, Chunk chunk) {
-        CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
+        CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
                 ConfigHandler.getConfigPath().getMsgPurgeStart(), sender);
         if (chunk != null) {
             purgeMap = new HashMap<>();
             checkChunk(chunk, purge);
             sendTotalMsg(sender, purge);
         }
-        CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
+        CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
                 ConfigHandler.getConfigPath().getMsgPurgeEnd(), sender);
     }
 
     public static void checkAll(boolean purge, boolean schedule) {
         if (!schedule)
-            CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
+            CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
                     ConfigHandler.getConfigPath().getMsgPurgeStart(), Bukkit.getConsoleSender());
         purgeMap = new HashMap<>();
         // Getting all loaded chunks.
@@ -115,7 +115,7 @@ public class Purge {
                     cancel();
                     sendTotalMsg(null, true);
                     if (!schedule)
-                        CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(), ConfigHandler.getPrefix(),
+                        CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
                                 ConfigHandler.getConfigPath().getMsgPurgeEnd(), Bukkit.getConsoleSender());
                     return;
                 }
@@ -153,12 +153,12 @@ public class Purge {
                             ConfigHandler.getConfigPath().getMsgPurgeKillSucceed(), langHolder);
             } else {
                 if (sender instanceof ConfigHandler) {
-                    CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPlugin(), ConfigHandler.getPrefix(),
+                    CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
                             ConfigHandler.getConfigPath().getMsgPurgeKillSucceed(), sender, langHolder);
                 }
             }
             if (sender instanceof Player) {
-                CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPlugin(), ConfigHandler.getPrefix(),
+                CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
                         ConfigHandler.getConfigPath().getMsgPurgeKillSucceed(), sender, langHolder);
             }
         } else {
@@ -171,12 +171,12 @@ public class Purge {
                             ConfigHandler.getConfigPath().getMsgPurgeKillSucceed(), langHolder);
             } else {
                 if (sender instanceof ConfigHandler) {
-                    CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPlugin(), ConfigHandler.getPrefix(),
+                    CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
                             ConfigHandler.getConfigPath().getMsgPurgeKillSucceed(), sender, langHolder);
                 }
             }
             if (sender instanceof Player) {
-                CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPlugin(), ConfigHandler.getPrefix(),
+                CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
                         ConfigHandler.getConfigPath().getMsgPurgeCheckSucceed(), sender, langHolder);
             }
         }
