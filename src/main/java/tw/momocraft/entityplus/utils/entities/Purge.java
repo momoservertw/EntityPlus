@@ -16,6 +16,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Purge {
+
     private static Map<String, AtomicInteger> purgeMap;
 
     private static boolean starting;
@@ -37,7 +38,7 @@ public class Purge {
             } else {
                 // Turns on
                 CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                        ConfigHandler.getConfigPath().getMsgPurgeOn(), sender);
+                        ConfigHandler.getConfigPath().getMsgPurgeToggleOn(), sender);
                 startSchedule();
             }
         } else {
@@ -49,7 +50,7 @@ public class Purge {
                 // Turns off
                 starting = false;
                 CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                        ConfigHandler.getConfigPath().getMsgPurgeOff(), sender);
+                        ConfigHandler.getConfigPath().getMsgPurgeToggleOff(), sender);
             }
         }
     }
@@ -147,37 +148,37 @@ public class Purge {
             if (ConfigHandler.getConfigPath().isEnPurgeMsg()) {
                 if (ConfigHandler.getConfigPath().isEnPurgeMsgBroadcast())
                     CorePlusAPI.getMsg().sendBroadcastMsg(ConfigHandler.getPluginPrefix(),
-                            ConfigHandler.getConfigPath().getMsgPurgeKillSucceed(), langHolder);
+                            ConfigHandler.getConfigPath().getMsgPurgeSucceed(), langHolder);
                 if (ConfigHandler.getConfigPath().isEnPurgeMsgConsole())
                     CorePlusAPI.getMsg().sendConsoleMsg(ConfigHandler.getPluginPrefix(),
-                            ConfigHandler.getConfigPath().getMsgPurgeKillSucceed(), langHolder);
+                            ConfigHandler.getConfigPath().getMsgPurgeSucceed(), langHolder);
             } else {
                 if (sender instanceof ConfigHandler) {
                     CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                            ConfigHandler.getConfigPath().getMsgPurgeKillSucceed(), sender, langHolder);
+                            ConfigHandler.getConfigPath().getMsgPurgeSucceed(), sender, langHolder);
                 }
             }
             if (sender instanceof Player) {
                 CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                        ConfigHandler.getConfigPath().getMsgPurgeKillSucceed(), sender, langHolder);
+                        ConfigHandler.getConfigPath().getMsgPurgeSucceed(), sender, langHolder);
             }
         } else {
             if (ConfigHandler.getConfigPath().isEnPurgeMsg()) {
                 if (ConfigHandler.getConfigPath().isEnPurgeMsgBroadcast())
                     CorePlusAPI.getMsg().sendBroadcastMsg(ConfigHandler.getPluginPrefix(),
-                            ConfigHandler.getConfigPath().getMsgPurgeKillSucceed(), langHolder);
+                            ConfigHandler.getConfigPath().getMsgPurgeSucceed(), langHolder);
                 if (ConfigHandler.getConfigPath().isEnPurgeMsgConsole())
                     CorePlusAPI.getMsg().sendConsoleMsg(ConfigHandler.getPluginPrefix(),
-                            ConfigHandler.getConfigPath().getMsgPurgeKillSucceed(), langHolder);
+                            ConfigHandler.getConfigPath().getMsgPurgeSucceed(), langHolder);
             } else {
                 if (sender instanceof ConfigHandler) {
                     CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                            ConfigHandler.getConfigPath().getMsgPurgeKillSucceed(), sender, langHolder);
+                            ConfigHandler.getConfigPath().getMsgPurgeSucceed(), sender, langHolder);
                 }
             }
             if (sender instanceof Player) {
                 CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                        ConfigHandler.getConfigPath().getMsgPurgeCheckSucceed(), sender, langHolder);
+                        ConfigHandler.getConfigPath().getMsgPurgeListed(), sender, langHolder);
             }
         }
     }

@@ -30,10 +30,10 @@ public class ConfigPath {
 
     private String msgPurgeStart;
     private String msgPurgeEnd;
-    private String msgPurgeKillSucceed;
-    private String msgPurgeCheckSucceed;
-    private String msgPurgeOn;
-    private String msgPurgeOff;
+    private String msgPurgeSucceed;
+    private String msgPurgeListed;
+    private String msgPurgeToggleOn;
+    private String msgPurgeToggleOff;
     private String msgPurgeAlreadyOn;
     private String msgPurgeAlreadyOff;
 
@@ -130,14 +130,14 @@ public class ConfigPath {
         msgCmdPurgeKillChunk = ConfigHandler.getConfig("config.yml").getString("Message.Commands.purgeKillChunk");
         msgCmdPurgeCheckChunk = ConfigHandler.getConfig("config.yml").getString("Message.Commands.purgeCheckChunk");
 
-        msgPurgeStart = ConfigHandler.getConfig("config.yml").getString("Message.purgeStart");
-        msgPurgeEnd = ConfigHandler.getConfig("config.yml").getString("Message.purgeEnd");
-        msgPurgeKillSucceed = ConfigHandler.getConfig("config.yml").getString("Message.purgeKillSucceed");
-        msgPurgeCheckSucceed = ConfigHandler.getConfig("config.yml").getString("Message.purgeCheckSucceed");
-        msgPurgeOn = ConfigHandler.getConfig("config.yml").getString("Message.purgeOn");
-        msgPurgeOff = ConfigHandler.getConfig("config.yml").getString("Message.purgeOff");
-        msgPurgeAlreadyOn = ConfigHandler.getConfig("config.yml").getString("Message.purgeAlreadyOn");
-        msgPurgeAlreadyOff = ConfigHandler.getConfig("config.yml").getString("Message.purgeAlreadyOff");
+        msgPurgeStart = ConfigHandler.getConfig("config.yml").getString("Message.Purge.start");
+        msgPurgeEnd = ConfigHandler.getConfig("config.yml").getString("Message.Purge.end");
+        msgPurgeSucceed = ConfigHandler.getConfig("config.yml").getString("Message.Purge.succeed");
+        msgPurgeListed = ConfigHandler.getConfig("config.yml").getString("Message.Purge.listed");
+        msgPurgeToggleOn = ConfigHandler.getConfig("config.yml").getString("Message.Purge.toggleOn");
+        msgPurgeToggleOff = ConfigHandler.getConfig("config.yml").getString("Message.Purge.toggleOff");
+        msgPurgeAlreadyOn = ConfigHandler.getConfig("config.yml").getString("Message.Purge.alreadyOn");
+        msgPurgeAlreadyOff = ConfigHandler.getConfig("config.yml").getString("Message.Purge.alreadyOff");
     }
 
     //  ============================================== //
@@ -549,20 +549,20 @@ public class ConfigPath {
         return msgPurgeEnd;
     }
 
-    public String getMsgPurgeKillSucceed() {
-        return msgPurgeKillSucceed;
+    public String getMsgPurgeSucceed() {
+        return msgPurgeSucceed;
     }
 
-    public String getMsgPurgeCheckSucceed() {
-        return msgPurgeCheckSucceed;
+    public String getMsgPurgeListed() {
+        return msgPurgeListed;
     }
 
-    public String getMsgPurgeOn() {
-        return msgPurgeOn;
+    public String getMsgPurgeToggleOn() {
+        return msgPurgeToggleOn;
     }
 
-    public String getMsgPurgeOff() {
-        return msgPurgeOff;
+    public String getMsgPurgeToggleOff() {
+        return msgPurgeToggleOff;
     }
 
     public String getMsgPurgeAlreadyOn() {
