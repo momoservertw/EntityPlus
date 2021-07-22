@@ -183,7 +183,7 @@ public class Purge {
         }
     }
 
-    private static void checkChunk(Chunk chunk, boolean purge) {
+    public static void checkChunk(Chunk chunk, boolean purge) {
         Entity[] entities = chunk.getEntities();
         Map<String, AtomicInteger> map = new HashMap<>();
         String groupName;
@@ -194,7 +194,7 @@ public class Purge {
         EntityMap entityMap;
         while (iterator.hasNext()) {
             entity = iterator.next();
-            groupName = EntityUtils.getEntityType(entity.getUniqueId());
+            groupName = EntityUtils.getEntityGroup(entity.getUniqueId());
             if (groupName == null)
                 continue;
             // Bypass the ignore entities.

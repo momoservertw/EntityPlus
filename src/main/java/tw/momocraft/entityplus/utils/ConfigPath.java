@@ -237,6 +237,7 @@ public class ConfigPath {
             entityMap.setMaxDistance(valueInt * valueInt);
         // Chance
         valueString = ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Spawn.Chance");
+        System.out.println(valueString);
         if (valueString != null) {
             Map<String, Double> chanceMap = new LinkedHashMap<>();
             try {

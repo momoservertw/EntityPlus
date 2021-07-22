@@ -144,7 +144,7 @@ Spawner:
       Enable: true
       Location:
         - NormalWorlds
-      Conditions: []
+      Conditions: [ ]
       Allow-Types:
         - ZOMBIE
         - SKELETON
@@ -197,11 +197,12 @@ Message:
     purgeCheckAll: "/ep purge checkall &8- &7List creatures that exceed the limit."
     purgeKillChunk: "/ep purge killchunk &8- &7Kill the chunk creatures that exceed the limit."
     purgeCheckChunk: "/ep purge checkchunk &8- &7List the chunk creatures that exceed the limit."
-  purgeStart: "%prefix% &6Start checking chunks..."
-  purgeEnd: "%prefix% &6Purge process has ended."
-  purgeKillSucceed: "%prefix% &eRemoved a total of: &7%amount% &e(%value%&e)"
-  purgeCheckSucceed: "%prefix% &eListed a total of: &7%amount% &e(%value%&e)"
-  purgeOn: "%prefix% &aEnabled the purging process."
-  purgeOff: "%prefix% &cDisabled the purging process."
-  purgeAlreadyOn: "%prefix% &fThe purge process has already enabled."
-  purgeAlreadyOff: "%prefix% &fThe purge process has already disabled."
+  Purge:
+    start: "%prefix% &6Start checking chunks..."
+    end: "%prefix% &6Purge process has ended."
+    succed: "%prefix% &eRemoved a total of: &7%amount% &e(%value%&e)"
+    list: "%prefix% &eListed a total of: &7%amount% &e(%value%&e)"
+    toggleOn: "%prefix% &aEnabled the purge process."
+    toggleOff: "%prefix% &cDisabled the purge process."
+    alreadyOn: "%prefix% &fThe purge process has already enabled."
+    alreadyOff: "%prefix% &fThe purge process has already disabled."

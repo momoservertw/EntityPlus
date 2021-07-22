@@ -20,7 +20,7 @@ public class DropMythicMobs implements Listener {
         if (!ConfigHandler.getConfigPath().isEnDrop())
             return;
         // Checking property.
-        String entityGroup = EntityUtils.getEntityType(e.getEntity().getUniqueId());
+        String entityGroup = EntityUtils.getEntityGroup(e.getEntity().getUniqueId());
         if (entityGroup == null)
             return;
         Player player;

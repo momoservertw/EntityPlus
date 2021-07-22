@@ -29,7 +29,7 @@ public class Damage implements Listener {
 
         // Properties.
         Entity entity = e.getEntity();
-        String entityGroup = EntityUtils.getEntityType(entity.getUniqueId());
+        String entityGroup = EntityUtils.getEntityGroup(entity.getUniqueId());
         if (entityGroup == null)
             return;
         List<String> damageList = ConfigHandler.getConfigPath().getEntitiesTypeProp().get(entityGroup).getDamageList();
@@ -227,7 +227,7 @@ public class Damage implements Listener {
             return;
         // Properties.
         Entity entity = e.getEntity();
-        String entityGroup = EntityUtils.getEntityType(entity.getUniqueId());
+        String entityGroup = EntityUtils.getEntityGroup(entity.getUniqueId());
         if (entityGroup == null)
             return;
         List<String> damageList = ConfigHandler.getConfigPath().getEntitiesTypeProp().get(entityGroup).getDamageList();

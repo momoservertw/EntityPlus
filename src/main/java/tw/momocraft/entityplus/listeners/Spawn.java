@@ -15,9 +15,10 @@ public class Spawn implements Listener {
         if (!ConfigHandler.getConfigPath().isEntities())
             return;
         // Checking in MythicSpawnEvent
-        if (e.getSpawnReason().name().equals("CUSTOM") && CorePlusAPI.getDepend().MythicMobsEnabled())
+        if (e.getSpawnReason().name().equals("CUSTOM") &&
+                CorePlusAPI.getDepend().MythicMobsEnabled())
             return;
-        if (EntityUtils.checkEntityReturnCanceled(e.getEntity(), true))
+        if (EntityUtils.setEntityGroup(e.getEntity(), true))
             e.setCancelled(true);
     }
 }

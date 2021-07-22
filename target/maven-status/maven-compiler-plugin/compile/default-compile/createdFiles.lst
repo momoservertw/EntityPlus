@@ -11,6 +11,7 @@ tw\momocraft\entityplus\handlers\ScheduleHandler$1.class
 tw\momocraft\entityplus\listeners\SpawnMythicMobs.class
 tw\momocraft\entityplus\listeners\DropMythicMobs.class
 tw\momocraft\entityplus\listeners\Spawn.class
+tw\momocraft\entityplus\listeners\EntityData$1.class
 tw\momocraft\entityplus\utils\entities\Purge$2.class
 tw\momocraft\entityplus\listeners\Spawner.class
 tw\momocraft\entityplus\utils\entities\DropMap.class

@@ -1,6 +1,7 @@
 package tw.momocraft.entityplus.listeners;
 
 import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -11,9 +12,9 @@ public class EntityDataPaper implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityRemoveFromWorldEvent(EntityRemoveFromWorldEvent e) {
+        System.out.println("EntityDeathEvent");
         if (!ConfigHandler.getConfigPath().isEntities())
             return;
         EntityUtils.removeLivingEntityMap(e.getEntity().getUniqueId());
     }
-
 }

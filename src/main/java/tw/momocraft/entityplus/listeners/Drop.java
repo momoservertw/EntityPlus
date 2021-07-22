@@ -23,7 +23,7 @@ public class Drop implements Listener {
             return;
         // Checking property.
         LivingEntity entity = e.getEntity();
-        String entityGroup = EntityUtils.getEntityType(entity.getUniqueId());
+        String entityGroup = EntityUtils.getEntityGroup(entity.getUniqueId());
         if (entityGroup == null)
             return;
         Player player = e.getEntity().getKiller();

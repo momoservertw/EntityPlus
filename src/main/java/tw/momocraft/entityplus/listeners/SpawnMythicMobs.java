@@ -13,7 +13,7 @@ public class SpawnMythicMobs implements Listener {
     public void onMythicMobsSpawn(MythicMobSpawnEvent e) {
         if (!ConfigHandler.getConfigPath().isEntities())
             return;
-        if (EntityUtils.checkEntityReturnCanceled(e.getEntity(), true))
+        if (EntityUtils.setEntityGroup(e.getEntity(), true))
             e.setCancelled();
     }
 }
