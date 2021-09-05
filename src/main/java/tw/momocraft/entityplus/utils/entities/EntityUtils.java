@@ -22,11 +22,11 @@ public class EntityUtils {
         return livingEntityMap.get(uuid);
     }
 
-    public static void removeLivingEntityMap(UUID uuid) {
+    public static void removeEntityGroup(UUID uuid) {
         livingEntityMap.remove(uuid);
     }
 
-    public static void putLivingEntityMap(UUID uuid, String type) {
+    public static void putEntityGroup(UUID uuid, String type) {
         livingEntityMap.put(uuid, type);
     }
 
@@ -35,12 +35,17 @@ public class EntityUtils {
         for (World world : Bukkit.getWorlds())
             for (Chunk chunk : world.getLoadedChunks())
                 for (Entity entity : chunk.getEntities())
-                    EntityUtils.setEntityGroup(entity, false);
+                    EntityUtils.putEntityGroup(entity.getUniqueId(),
+                            EntityUtils.getEntityGroup(entity));
     }
 
-    public static boolean setEntityGroup(Entity entity, boolean spawnning) {
+    public static String getEntityGroup(Entity entity) {
+        // Check existed
+        String entityGroup = livingEntityMap.get(entity.getUniqueId());
+        if (entityGroup != null)
+            return entityGroup;
         String entityType = entity.getType().name();
-        // Checking MythicMob internal name.
+        // Get MythicMob internal name.
         if (CorePlusAPI.getDepend().MythicMobsEnabled()) {
             String mmType = CorePlusAPI.getEnt().getMythicMobName(entity);
             if (mmType != null)
@@ -48,83 +53,38 @@ public class EntityUtils {
         }
         Map<String, EntityMap> entityProp = ConfigHandler.getConfigPath().getEntitiesProp().get(entityType);
         if (entityProp != null) {
-            Location loc = entity.getLocation();
-            boolean checkResFlag = ConfigHandler.getConfigPath().isEnSpawnResFlag();
             String reason = entity.getEntitySpawnReason().name();
             EntityMap entityMap;
-            // Checking every groups of the entity type.
+            // Checking every groups of this entity type.
             for (String groupName : entityProp.keySet()) {
                 entityMap = entityProp.get(groupName);
-                // Checking "Reasons".
-                if (!CorePlusAPI.getUtils().containIgnoreValue(reason, entityMap.getReasons(), entityMap.getIgnoreReasons())) {
-                    CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
-                            "Spawn", groupName, "reason", "none", entityType,
-                            new Throwable().getStackTrace()[0]);
+                // Check "Reasons"
+                if (!CorePlusAPI.getUtils().containIgnoreValue(reason, entityMap.getReasons(), entityMap.getIgnoreReasons()))
                     continue;
-                }
-                // Checking "Conditions".
+                // Check "Conditions"
                 if (!CorePlusAPI.getCond().checkCondition(ConfigHandler.getPlugin(),
-                        CorePlusAPI.getMsg().transHolder(null, entity, entityMap.getConditions()))) {
-                    CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
-                            "Spawn", groupName, "conditions", "none", entityType,
-                            new Throwable().getStackTrace()[0]);
+                        CorePlusAPI.getMsg().transHolder(null, entity, entityMap.getConditions())))
                     continue;
-                }
-                // Checking "Residence-Flag".
-                if (!CorePlusAPI.getCond().checkFlag(loc, "spawnbypass", true, checkResFlag)) {
-                    CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
-                            "Spawn", groupName, "residence-flag", "none", entityType,
-                            new Throwable().getStackTrace()[0]);
-                    continue;
-                }
-                if (spawnning) {
-                    boolean kill = executeGroupAction(entity, groupName);
-                    if (kill)
-                        return true;
-                }
-                // Adding the group name for this entity.
-                EntityUtils.putLivingEntityMap(entity.getUniqueId(), groupName);
-                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
-                        "Spawn", groupName, "loaded", "none",
-                        new Throwable().getStackTrace()[0]);
-                return false;
+                return groupName;
             }
         }
-        // Adding the group name for this entity.
-        EntityUtils.putLivingEntityMap(entity.getUniqueId(), entityType);
-        CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
-                "Spawn", entityType, "loaded", "none",
-                new Throwable().getStackTrace()[0]);
-        return false;
+        return entityType;
     }
 
-    public static boolean executeGroupAction(Entity entity, String groupName) {
-        String entityType = entity.getType().name();
-        EntityMap entityMap;
-        try {
-            entityMap = ConfigHandler.getConfigPath().getEntitiesProp().get(entityType).get(groupName);
-            if (entityMap == null)
-                return false;
-        } catch (Exception ex) {
-            return false;
-        }
-        // Checking "Max-Distance".
+    public static String getSpawnAction(Entity entity, EntityMap entityMap) {
         Location loc = entity.getLocation();
+        // Check "Residence-Flag"
+        if (!CorePlusAPI.getCond().checkFlag(loc, "spawnbypass", true,
+                ConfigHandler.getConfigPath().isEnSpawnResFlag()))
+            return "none";
+        // Check "Max-Distance".
         List<Player> nearbyPlayers = CorePlusAPI.getUtils().getNearbyPlayersXZY(loc, entityMap.getMaxDistance());
-        if (nearbyPlayers.isEmpty()) {
-            CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
-                    "Spawn", groupName, "max-distance", "cancel", entityType,
-                    new Throwable().getStackTrace()[0]);
-            return true;
-        }
-        // Checking "Permission".
-        if (!CorePlusAPI.getPlayer().havePermPlayer(nearbyPlayers, entityMap.getPermission())) {
-            CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
-                    "Spawn", groupName, "permission", "cancel", entityType,
-                    new Throwable().getStackTrace()[0]);
-            return true;
-        }
-        // Setting "Chance".
+        if (nearbyPlayers.isEmpty())
+            return "noPlayer";
+        // Check "Permission".
+        if (!CorePlusAPI.getPlayer().havePermPlayer(nearbyPlayers, entityMap.getPermission()))
+            return "noPermission";
+        // Set "Chance".
         double chance = 1;
         Map<String, Double> chanceMap = entityMap.getChanceMap();
         if (chanceMap != null) {
@@ -162,25 +122,14 @@ public class EntityUtils {
                 }
             }
         }
-        // Checking "Chance".
-        if (!CorePlusAPI.getUtils().isRandChance(chance)) {
-            CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
-                    "Spawn", groupName, "chance", "cancel", entityType,
-                    new Throwable().getStackTrace()[0]);
-            return true;
-        }
-        // Checking Limit.
-        if (ConfigHandler.getConfigPath().isEnLimit()) {
-            if (!EntityUtils.checkLimit(loc, entityMap.getLimitGroup())) {
-                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
-                        "Spawn", groupName, "limit", "cancel", entityType,
-                        new Throwable().getStackTrace()[0]);
-                return true;
-            }
-        }
-        // Executing Commands.
-        CorePlusAPI.getCmd().sendCmd(ConfigHandler.getPlugin(), null, entity, entityMap.getCommands());
-        return false;
+        // Check "Chance".
+        if (!CorePlusAPI.getUtils().isRandChance(chance))
+            return "chanceFail";
+        // Check Limit.
+        if (ConfigHandler.getConfigPath().isEnLimit())
+            if (!EntityUtils.checkLimit(loc, entityMap.getLimitGroup()))
+                return "limit";
+        return "none";
     }
 
     public static boolean checkLimit(Location loc, String entityGroup) {
@@ -202,10 +151,9 @@ public class EntityUtils {
                 World world = loc.getWorld();
                 int chunkX = loc.getChunk().getX();
                 int chunkZ = loc.getChunk().getZ();
-                for (int x = -radius; x <= radius; x++) {
+                for (int x = -radius; x <= radius; x++)
                     for (int z = -radius; z <= radius; z++)
                         chunks.add(world.getChunkAt(chunkX + x, chunkZ + z));
-                }
                 nearbyEntities = new ArrayList<>();
                 for (Chunk chunk : chunks)
                     nearbyEntities.addAll(Arrays.asList(chunk.getEntities()));
@@ -213,30 +161,33 @@ public class EntityUtils {
                 nearbyEntities = Arrays.asList(loc.getChunk().getEntities());
             }
         } else if (amountMap.getUnit().equals("block")) {
-            nearbyEntities = new ArrayList<>(loc.getNearbyEntities(amountMap.getRadius(), amountMap.getRadius(), amountMap.getRadius()));
+            nearbyEntities = new ArrayList<>(loc.getNearbyEntities(amountMap.getRadius(),
+                    amountMap.getRadius(), amountMap.getRadius()));
         } else {
             return null;
         }
         List<Entity> newNearbyEntities = new ArrayList<>();
-        for (Entity en : nearbyEntities) {
+        for (Entity en : nearbyEntities)
             if (entityGroup.equals(EntityUtils.getLivingEntityMap().get(en.getUniqueId())))
                 newNearbyEntities.add(en);
-        }
         return newNearbyEntities;
     }
 
-    public static boolean isIgnore(Entity entity) {
+    public static boolean isPurgeIgnore(Entity entity) {
         if (isLifetimeUnder(entity, ConfigHandler.getConfigPath().getEnPurgeIgnoreLiveTime()))
             return true;
-        if (isBaby(entity))
+        if (!(entity instanceof LivingEntity))
+            return false;
+        if (isBaby(entity, ConfigHandler.getConfigPath().isEnPurgeIgnoreBaby()))
             return true;
-        if (isSaddleOn(entity))
+        if (isSaddleOn(entity, ConfigHandler.getConfigPath().isEnPurgeIgnoreBaby()))
             return true;
-        if (isNotPickup(entity))
+        if (isNotPickup(entity, ConfigHandler.getConfigPath().isEnPurgeIgnorePickup()))
             return true;
-        if (isNamed(entity))
+        if (isNamed(entity, ConfigHandler.getConfigPath().isEnPurgeIgnoreNamed(),
+                ConfigHandler.getConfigPath().isEnPurgeIgnoreNamedMM()))
             return true;
-        if (isTamed(entity))
+        if (isTamed(entity, ConfigHandler.getConfigPath().isEnPurgeIgnoreTamed()))
             return true;
         return false;
     }
@@ -245,29 +196,46 @@ public class EntityUtils {
         return entity.getTicksLived() < tick;
     }
 
-    public static boolean isNamed(Entity entity) {
+    public static boolean isNamed(Entity entity, boolean bypass, boolean bypassMM) {
+        if (CorePlusAPI.getDepend().MythicMobsEnabled()) {
+            if (CorePlusAPI.getEnt().isMythicMob(entity)) {
+                if (!bypassMM)
+                    return false;
+            }
+        } else {
+            if (!bypass)
+                return false;
+        }
         return entity.getCustomName() != null;
     }
 
-    public static boolean isTamed(Entity entity) {
+    public static boolean isTamed(Entity entity, boolean bypass) {
+        if (!bypass)
+            return false;
         if (entity instanceof Tameable)
             return ((Tameable) entity).isTamed();
         return false;
     }
 
-    public static boolean isSaddleOn(Entity entity) {
+    public static boolean isSaddleOn(Entity entity, boolean bypass) {
+        if (!bypass)
+            return false;
         if (entity instanceof AbstractHorse)
             return ((AbstractHorse) entity).getInventory().getSaddle() != null;
         return false;
     }
 
-    public static boolean isBaby(Entity entity) {
-        if (entity instanceof Ageable)
+    public static boolean isBaby(Entity entity, boolean bypass) {
+        if (!bypass)
+            return false;
+        if (entity instanceof Animals)
             return !((Ageable) entity).isAdult();
         return false;
     }
 
-    public static boolean isNotPickup(Entity entity) {
+    public static boolean isNotPickup(Entity entity, boolean bypass) {
+        if (!bypass)
+            return false;
         LivingEntity livingEntity = (LivingEntity) entity;
         if (livingEntity.getEquipment() != null)
             return !(livingEntity.getEquipment().getHelmetDropChance() != 1 && livingEntity.getEquipment().getChestplateDropChance() != 1 &&

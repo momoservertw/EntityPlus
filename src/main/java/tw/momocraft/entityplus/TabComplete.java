@@ -36,9 +36,7 @@ public class TabComplete implements TabCompleter {
                         if (length == 2) {
                             commands.add("schedule");
                             commands.add("killall");
-                            commands.add("checkall");
                             commands.add("killchunk");
-                            commands.add("checkchunk");
                             // etp purge schedule <on/off>
                         } else if (args[1].equals("schedule") && length == 3) {
                             commands.add("on");

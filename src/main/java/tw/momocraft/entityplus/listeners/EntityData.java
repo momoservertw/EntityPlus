@@ -14,37 +14,38 @@ import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.utils.entities.EntityUtils;
 import tw.momocraft.entityplus.utils.entities.Purge;
 
+import java.util.HashMap;
+
 public class EntityData implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onChunkLoadEvent(ChunkLoadEvent e) {
         if (!ConfigHandler.getConfigPath().isEntities())
             return;
-        // Adding tag to all entity in this chunk.
         Chunk chunk = e.getChunk();
         new BukkitRunnable() {
             @Override
             public void run() {
-                System.out.println("ChunkLoadEvent: " + chunk.getX() + ", " + chunk.getZ() + ", amount: " + chunk.getEntities().length);
+                // Put entity group
+                String entityGroup;
                 for (Entity entity : chunk.getEntities()) {
-                    EntityUtils.setEntityGroup(entity, false);
-                    System.out.println(entity.getName());
+                    entityGroup = EntityUtils.getEntityGroup(entity);
+                    EntityUtils.putEntityGroup(entity.getUniqueId(), entityGroup);
                 }
                 // Purge
                 if (ConfigHandler.getConfigPath().isEnPurge())
                     if (ConfigHandler.getConfigPath().isEnPurgeCheckChunkLoad())
-                        Purge.checkChunk(chunk, true);
+                        Purge.purgeChunk(chunk, new HashMap<>());
             }
-        }.runTaskLater(CorePlus.getInstance(), 20);
+        }.runTaskLater(CorePlus.getInstance(), 1);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityDeathEvent(EntityDeathEvent e) {
-        System.out.println("EntityDeathEvent");
         if (!ConfigHandler.getConfigPath().isEntities())
             return;
         if (CorePlusAPI.getDepend().isPaper())
             return;
-        EntityUtils.removeLivingEntityMap(e.getEntity().getUniqueId());
+        EntityUtils.removeEntityGroup(e.getEntity().getUniqueId());
     }
 }

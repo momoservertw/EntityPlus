@@ -3,6 +3,7 @@ package tw.momocraft.entityplus;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import tw.momocraft.coreplus.api.CorePlusAPI;
 import tw.momocraft.coreplus.handlers.UtilsHandler;
@@ -77,52 +78,28 @@ public class Commands implements CommandExecutor {
                     // etp purge schedule <on/off>
                     if (length == 3) {
                         if (args[1].equals("schedule")) {
-                            if (args[2].equals("on"))
-                                Purge.toggleSchedule(sender, true);
-                            else if (args[2].equals("off"))
-                                Purge.toggleSchedule(sender, false);
+                            Purge.toggleSchedule(sender, args[2]);
                             return true;
                         }
-                        CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                                ConfigHandler.getConfigPath().getMsgCmdPurgeSchedule(), sender);
-                        return true;
                     } else if (length == 2) {
                         switch (args[1]) {
                             case "killall":
-                                Purge.checkAll(true, false);
-                                return true;
-                            case "checkall":
-                                Purge.checkAll(false, false);
+                                Purge.checkAllChunks(sender);
                                 return true;
                             case "killchunk":
-                                Player player = CorePlusAPI.getPlayer().getPlayer(sender);
-                                if (player == null) {
+                                if (sender instanceof ConsoleCommandSender) {
                                     CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
                                             "onlyPlayer", sender);
                                     return true;
                                 }
-                                Purge.checkChunk(player, true, player.getChunk());
-                                return true;
-                            case "checkchunk":
-                                player = CorePlusAPI.getPlayer().getPlayer(sender);
-                                if (player == null) {
-                                    CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                                            "onlyPlayer", sender);
-                                    return true;
-                                }
-                                Purge.checkChunk(player, false, player.getChunk());
+                                Purge.checkChunk(sender, ((Player) sender).getChunk());
                                 return true;
                         }
-                        CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                                ConfigHandler.getConfigPath().getMsgCmdPurgeKillAll(), sender);
-                        CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                                ConfigHandler.getConfigPath().getMsgCmdPurgeCheckAll(), sender);
-                        CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                                ConfigHandler.getConfigPath().getMsgCmdPurgeKillChunk(), sender);
-                        CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                                ConfigHandler.getConfigPath().getMsgCmdPurgeCheckChunk(), sender);
-                        return true;
                     }
+                    CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
+                            ConfigHandler.getConfigPath().getMsgCmdPurgeKillAll(), sender);
+                    CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
+                            ConfigHandler.getConfigPath().getMsgCmdPurgeKillChunk(), sender);
                     CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
                             ConfigHandler.getConfigPath().getMsgCmdPurgeSchedule(), sender);
                 } else {

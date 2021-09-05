@@ -24,14 +24,11 @@ public class ConfigPath {
     private String msgCmdVersion;
     private String msgCmdPurgeSchedule;
     private String msgCmdPurgeKillAll;
-    private String msgCmdPurgeCheckAll;
     private String msgCmdPurgeKillChunk;
-    private String msgCmdPurgeCheckChunk;
 
     private String msgPurgeStart;
     private String msgPurgeEnd;
     private String msgPurgeSucceed;
-    private String msgPurgeListed;
     private String msgPurgeToggleOn;
     private String msgPurgeToggleOff;
     private String msgPurgeAlreadyOn;
@@ -52,7 +49,6 @@ public class ConfigPath {
     private boolean enPurge;
     private boolean enPurgeResFlag;
     private int enPurgeSpeed;
-    private boolean enPurgeMsg;
     private boolean enPurgeMsgBroadcast;
     private boolean enPurgeMsgConsole;
     private boolean enPurgeCheckChunkLoad;
@@ -126,14 +122,11 @@ public class ConfigPath {
         msgCmdVersion = ConfigHandler.getConfig("config.yml").getString("Message.Commands.version");
         msgCmdPurgeSchedule = ConfigHandler.getConfig("config.yml").getString("Message.Commands.purgeSchedule");
         msgCmdPurgeKillAll = ConfigHandler.getConfig("config.yml").getString("Message.Commands.purgeKillAll");
-        msgCmdPurgeCheckAll = ConfigHandler.getConfig("config.yml").getString("Message.Commands.purgeCheckAll");
         msgCmdPurgeKillChunk = ConfigHandler.getConfig("config.yml").getString("Message.Commands.purgeKillChunk");
-        msgCmdPurgeCheckChunk = ConfigHandler.getConfig("config.yml").getString("Message.Commands.purgeCheckChunk");
 
         msgPurgeStart = ConfigHandler.getConfig("config.yml").getString("Message.Purge.start");
         msgPurgeEnd = ConfigHandler.getConfig("config.yml").getString("Message.Purge.end");
         msgPurgeSucceed = ConfigHandler.getConfig("config.yml").getString("Message.Purge.succeed");
-        msgPurgeListed = ConfigHandler.getConfig("config.yml").getString("Message.Purge.listed");
         msgPurgeToggleOn = ConfigHandler.getConfig("config.yml").getString("Message.Purge.toggleOn");
         msgPurgeToggleOff = ConfigHandler.getConfig("config.yml").getString("Message.Purge.toggleOff");
         msgPurgeAlreadyOn = ConfigHandler.getConfig("config.yml").getString("Message.Purge.alreadyOn");
@@ -145,8 +138,6 @@ public class ConfigPath {
     //  ============================================== //
     private void setEntities() {
         entities = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Enable");
-        if (!entities)
-            return;
         setLimit();
         setPurge();
         setDrop();
@@ -237,7 +228,6 @@ public class ConfigPath {
             entityMap.setMaxDistance(valueInt * valueInt);
         // Chance
         valueString = ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Spawn.Chance");
-        System.out.println(valueString);
         if (valueString != null) {
             Map<String, Double> chanceMap = new LinkedHashMap<>();
             try {
@@ -335,15 +325,12 @@ public class ConfigPath {
 
     private void setPurge() {
         enPurge = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Enable");
-        if (!enPurge)
-            return;
         enPurgeResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Settings.Residence-Flag");
         enPurgeCheckChunkLoad = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Check.Chunk-Load");
         enPurgeCheckSchedule = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Check.Schedule.Enable");
         enPurgeCheckScheduleInterval = ConfigHandler.getConfig("config.yml").getInt("Entities.Purge.Check.Schedule.Interval", 60);
         enPurgeSpeed = ConfigHandler.getConfig("config.yml").getInt("Entities.Purge.Check.Schedule.Speed", 500);
         //enPurgeCheckAFK = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Check.AFK");
-        enPurgeMsg = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Settings.Schedule.Message.Enable");
         enPurgeMsgBroadcast = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Settings.Schedule.Message.Broadcast");
         enPurgeMsgConsole = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Settings.Schedule.Message.Console");
         enPurgeDeathPreventDrop = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Death.Prevent-Drop");
@@ -355,7 +342,7 @@ public class ConfigPath {
         enPurgeIgnoreTamed = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Ignore.Tamed");
         enPurgeIgnoreSaddle = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Ignore.With-Saddle");
         enPurgeIgnorePickup = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Ignore.Pickup");
-        enPurgeIgnoreBaby = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Ignore.Baby");
+        enPurgeIgnoreBaby = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Ignore.Animal-Baby");
     }
 
     //  ============================================== //
@@ -530,14 +517,6 @@ public class ConfigPath {
         return msgCmdPurgeKillAll;
     }
 
-    public String getMsgCmdPurgeCheckAll() {
-        return msgCmdPurgeCheckAll;
-    }
-
-    public String getMsgCmdPurgeCheckChunk() {
-        return msgCmdPurgeCheckChunk;
-    }
-
     public String getMsgCmdPurgeKillChunk() {
         return msgCmdPurgeKillChunk;
     }
@@ -552,10 +531,6 @@ public class ConfigPath {
 
     public String getMsgPurgeSucceed() {
         return msgPurgeSucceed;
-    }
-
-    public String getMsgPurgeListed() {
-        return msgPurgeListed;
     }
 
     public String getMsgPurgeToggleOn() {
@@ -627,10 +602,6 @@ public class ConfigPath {
 
     public int getEnPurgeSpeed() {
         return enPurgeSpeed;
-    }
-
-    public boolean isEnPurgeMsg() {
-        return enPurgeMsg;
     }
 
     public boolean isEnPurgeMsgBroadcast() {

@@ -29,17 +29,6 @@ Entities:
     Settings:
       # Custom Residence flag "entitypurgebypass" to bypass the features.
       Residence-Flag: false
-    Check:
-      Chunk-Load: false
-      Schedule:
-        Enable: false
-        Interval: 1200
-        # The speed of checking chunks per second.
-        Speed: 500
-        Message:
-          Enable: true
-          Broadcast: false
-          Console: true
     Death:
       Prevent-Drop: true
       Particle:
@@ -49,10 +38,20 @@ Entities:
       Live-Time-Under: 600
       Named: true
       Named-MythicMobs: false
+      Pickup: true
       Tamed: true
       With-Saddle: true
-      Pickup: true
-      Baby: true
+      Animal-Baby: true
+    Check:
+      Chunk-Load: false
+      Schedule:
+        Enable: false
+        Interval: 1200
+        # The speed of checking chunks per second.
+        Speed: 50
+        Message:
+          Broadcast: false
+          Console: true
   # Changing the rewards for killing creatures.
   Drop:
     Enable: false
@@ -194,14 +193,11 @@ Message:
     version: "/ep version &8- &7Checks the plugin version and updates."
     purgeSchedule: "/ep purge schedule <on/off> &8- &7Changes the purging schedule status."
     purgeKillAll: "/ep purge killall &8- &7Purge all creatures that exceed the limit."
-    purgeCheckAll: "/ep purge checkall &8- &7List creatures that exceed the limit."
     purgeKillChunk: "/ep purge killchunk &8- &7Kill the chunk creatures that exceed the limit."
-    purgeCheckChunk: "/ep purge checkchunk &8- &7List the chunk creatures that exceed the limit."
   Purge:
     start: "%prefix% &6Start checking chunks..."
     end: "%prefix% &6Purge process has ended."
-    succed: "%prefix% &eRemoved a total of: &7%amount% &e(%value%&e)"
-    list: "%prefix% &eListed a total of: &7%amount% &e(%value%&e)"
+    succeed: "%prefix% &eRemoved a total of: &7%amount% &e(%value%&e)"
     toggleOn: "%prefix% &aEnabled the purge process."
     toggleOff: "%prefix% &cDisabled the purge process."
     alreadyOn: "%prefix% &fThe purge process has already enabled."
