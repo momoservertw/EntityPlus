@@ -22,12 +22,21 @@ public class EntityUtils {
         return livingEntityMap.get(uuid);
     }
 
-    public static void removeEntityGroup(UUID uuid) {
-        livingEntityMap.remove(uuid);
-    }
-
     public static void putEntityGroup(UUID uuid, String type) {
         livingEntityMap.put(uuid, type);
+        CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
+                "Entity", type, "load", null, uuid.toString(),
+                new Throwable().getStackTrace()[0]);
+        // Reset the living entity map to prevent memory overflow.
+        if (livingEntityMap.size() > 999999)
+            resetLivingEntityMap();
+    }
+
+    public static void removeEntityGroup(UUID uuid) {
+        CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
+                "Entity", livingEntityMap.get(uuid), "remove", null, uuid.toString(),
+                new Throwable().getStackTrace()[0]);
+        livingEntityMap.remove(uuid);
     }
 
     public static void resetLivingEntityMap() {
@@ -133,43 +142,18 @@ public class EntityUtils {
     }
 
     public static boolean checkLimit(Location loc, String entityGroup) {
-        AmountMap amountMap = ConfigHandler.getConfigPath().getEntitiesTypeProp().get(entityGroup).getLimitMap();
-        List<Entity> nearbyEntities = getNearbyEntities(loc, entityGroup, amountMap);
-        if (nearbyEntities == null)
+        List<Entity> nearbyEntities = getNearbyGroupEntities(loc, entityGroup);
+        if (nearbyEntities.isEmpty())
             return true;
-        return nearbyEntities.size() < amountMap.getAmount();
+        int limitAmount = ConfigHandler.getConfigPath().getEntitiesTypeProp().get(entityGroup).getLimitAmount();
+        return nearbyEntities.size() < limitAmount;
     }
 
-    public static List<Entity> getNearbyEntities(Location loc, String entityGroup, AmountMap amountMap) {
-        if (amountMap == null)
-            return null;
-        int radius = amountMap.getRadius();
-        List<Entity> nearbyEntities;
-        if (amountMap.getUnit().equals("chunk")) {
-            if (radius > 0) {
-                List<Chunk> chunks = new ArrayList<>();
-                World world = loc.getWorld();
-                int chunkX = loc.getChunk().getX();
-                int chunkZ = loc.getChunk().getZ();
-                for (int x = -radius; x <= radius; x++)
-                    for (int z = -radius; z <= radius; z++)
-                        chunks.add(world.getChunkAt(chunkX + x, chunkZ + z));
-                nearbyEntities = new ArrayList<>();
-                for (Chunk chunk : chunks)
-                    nearbyEntities.addAll(Arrays.asList(chunk.getEntities()));
-            } else {
-                nearbyEntities = Arrays.asList(loc.getChunk().getEntities());
-            }
-        } else if (amountMap.getUnit().equals("block")) {
-            nearbyEntities = new ArrayList<>(loc.getNearbyEntities(amountMap.getRadius(),
-                    amountMap.getRadius(), amountMap.getRadius()));
-        } else {
-            return null;
-        }
+    public static List<Entity> getNearbyGroupEntities(Location loc, String entityGroup) {
         List<Entity> newNearbyEntities = new ArrayList<>();
-        for (Entity en : nearbyEntities)
-            if (entityGroup.equals(EntityUtils.getLivingEntityMap().get(en.getUniqueId())))
-                newNearbyEntities.add(en);
+        for (Entity entity : loc.getChunk().getEntities())
+            if (entityGroup.equals(livingEntityMap.get(entity.getUniqueId())))
+                newNearbyEntities.add(entity);
         return newNearbyEntities;
     }
 

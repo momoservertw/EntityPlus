@@ -19,38 +19,17 @@ public class Purge {
 
     private static boolean starting;
 
-    public static void toggleSchedule(CommandSender sender, String toggle) {
-        switch (CorePlusAPI.getUtils().getToggleStatus(toggle, starting, true)) {
-            case "alreadyOn":
-                CorePlusAPI.getMsg().sendConsoleMsg(ConfigHandler.getPrefix(),
-                        ConfigHandler.getConfigPath().getMsgPurgeAlreadyOn());
-                break;
-            case "alreadyOff":
-                CorePlusAPI.getMsg().sendConsoleMsg(ConfigHandler.getPrefix(),
-                        ConfigHandler.getConfigPath().getMsgPurgeAlreadyOff());
-                break;
-            case "true":
-                CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                        ConfigHandler.getConfigPath().getMsgPurgeToggleOn(), sender);
-                startSchedule();
-                if (!(sender instanceof ConsoleCommandSender))
-                    CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                            ConfigHandler.getConfigPath().getMsgPurgeStart(), sender);
-                CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                        ConfigHandler.getConfigPath().getMsgPurgeStart(), Bukkit.getConsoleSender());
-                break;
-            case "false":
-                starting = false;
-                CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                        ConfigHandler.getConfigPath().getMsgPurgeToggleOff(), sender);
-                break;
-            default:
-                CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                        ConfigHandler.getConfigPath().getMsgCmdPurgeSchedule(), sender);
-        }
+    public static boolean isStarting() {
+        return starting;
+    }
+
+    public static void setStarting(boolean value) {
+        starting = value;
     }
 
     public static void startSchedule() {
+        CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
+                ConfigHandler.getConfigPath().getMsgPurgeStart(), Bukkit.getConsoleSender());
         starting = true;
         new BukkitRunnable() {
             @Override
@@ -61,10 +40,7 @@ public class Purge {
                             ConfigHandler.getConfigPath().getMsgPurgeEnd(), Bukkit.getConsoleSender());
                     return;
                 }
-                checkAllChunks(null);
-                // Resetting the entityMap to prevent memory overflow.
-                if (EntityUtils.getLivingEntityMap().size() > 100000)
-                    EntityUtils.resetLivingEntityMap();
+                checkAll(null, true);
             }
         }.runTaskTimer(EntityPlus.getInstance(), 0, ConfigHandler.getConfigPath().getEnPurgeCheckScheduleInterval());
     }
@@ -72,7 +48,6 @@ public class Purge {
     public static void checkChunk(CommandSender sender, Chunk chunk) {
         CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
                 ConfigHandler.getConfigPath().getMsgPurgeStart(), sender);
-
         Map<String, AtomicInteger> purgeMap = purgeChunk(chunk, new HashMap<>());
 
         sendTotalMsg(sender, purgeMap);
@@ -80,9 +55,10 @@ public class Purge {
                 ConfigHandler.getConfigPath().getMsgPurgeEnd(), sender);
     }
 
-    public static void checkAllChunks(CommandSender sender) {
-        CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                ConfigHandler.getConfigPath().getMsgPurgeStart(), sender);
+    public static void checkAll(CommandSender sender, boolean isSchedule) {
+        if (!isSchedule)
+            CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
+                    ConfigHandler.getConfigPath().getMsgPurgeStart(), sender);
         Map<String, AtomicInteger> purgeMap = new HashMap<>();
         // Getting all loaded chunks.
         List<Chunk> chunkList = new ArrayList<>();
@@ -104,15 +80,17 @@ public class Purge {
             public void run() {
                 times++;
                 if (times > totalTimes) {
-                    cancel();
                     // Send total purged message.
                     sendTotalMsg(sender, purgeMap);
                     // Send end message.
-                    CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                            ConfigHandler.getConfigPath().getMsgPurgeEnd(), sender);
-                    if (!(sender instanceof ConsoleCommandSender))
+                    if (!isSchedule) {
                         CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                                ConfigHandler.getConfigPath().getMsgPurgeEnd(), Bukkit.getConsoleSender());
+                                ConfigHandler.getConfigPath().getMsgPurgeEnd(), sender);
+                        if (!(sender instanceof ConsoleCommandSender))
+                            CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
+                                    ConfigHandler.getConfigPath().getMsgPurgeEnd(), Bukkit.getConsoleSender());
+                    }
+                    cancel();
                     return;
                 }
                 for (int count = 1; count <= speed; count++)
@@ -153,7 +131,7 @@ public class Purge {
             if (count == null) {
                 map.put(purgeGroup, new AtomicInteger(1));
                 continue;
-            } else if (count.get() < entityMap.getPurge()) {
+            } else if (count.get() < entityMap.getLimitAmount()) {
                 count.incrementAndGet();
                 continue;
             }
@@ -161,10 +139,11 @@ public class Purge {
             if (ConfigHandler.getConfigPath().isEnPurgeDeathPreventDrop()) {
                 entity.remove();
             } else {
-                if (entity instanceof Damageable)
+                if (entity instanceof Damageable) {
                     ((Damageable) entity).setHealth(0);
-                else
+                } else {
                     entity.remove();
+                }
             }
             if (ConfigHandler.getConfigPath().isEnPurgeDeathParticle())
                 CorePlusAPI.getEffect().spawnParticle(ConfigHandler.getPlugin(),

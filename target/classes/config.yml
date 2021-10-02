@@ -50,8 +50,8 @@ Entities:
         # The speed of checking chunks per second.
         Speed: 50
         Message:
+          Console: false
           Broadcast: false
-          Console: true
   # Changing the rewards for killing creatures.
   Drop:
     Enable: false
@@ -191,14 +191,9 @@ Message:
     help: "/ep help &8- &7This help menu."
     reload: "/ep reload &8- &7Reloads config file."
     version: "/ep version &8- &7Checks the plugin version and updates."
-    purgeSchedule: "/ep purge schedule <on/off> &8- &7Changes the purging schedule status."
-    purgeKillAll: "/ep purge killall &8- &7Purge all creatures that exceed the limit."
-    purgeKillChunk: "/ep purge killchunk &8- &7Kill the chunk creatures that exceed the limit."
+    purgeAll: "/ep purge killall &8- &7Purge all creatures that exceed the limit."
+    purgeChunk: "/ep purge killchunk &8- &7Kill the chunk creatures that exceed the limit."
   Purge:
     start: "%prefix% &6Start checking chunks..."
     end: "%prefix% &6Purge process has ended."
-    succeed: "%prefix% &eRemoved a total of: &7%amount% &e(%value%&e)"
-    toggleOn: "%prefix% &aEnabled the purge process."
-    toggleOff: "%prefix% &cDisabled the purge process."
-    alreadyOn: "%prefix% &fThe purge process has already enabled."
-    alreadyOff: "%prefix% &fThe purge process has already disabled."
+    succeed: "%prefix% &Removed entities: &7%amount% (%value%)"

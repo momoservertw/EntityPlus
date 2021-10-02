@@ -15,6 +15,7 @@ import tw.momocraft.entityplus.utils.entities.EntityUtils;
 import tw.momocraft.entityplus.utils.entities.Purge;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 public class EntityData implements Listener {
 
@@ -22,11 +23,11 @@ public class EntityData implements Listener {
     public void onChunkLoadEvent(ChunkLoadEvent e) {
         if (!ConfigHandler.getConfigPath().isEntities())
             return;
-        Chunk chunk = e.getChunk();
         new BukkitRunnable() {
             @Override
             public void run() {
                 // Put entity group
+                Chunk chunk = e.getChunk();
                 String entityGroup;
                 for (Entity entity : chunk.getEntities()) {
                     entityGroup = EntityUtils.getEntityGroup(entity);
@@ -37,7 +38,7 @@ public class EntityData implements Listener {
                     if (ConfigHandler.getConfigPath().isEnPurgeCheckChunkLoad())
                         Purge.purgeChunk(chunk, new HashMap<>());
             }
-        }.runTaskLater(CorePlus.getInstance(), 1);
+        }.runTaskLater(CorePlus.getInstance(), 10);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -46,6 +47,7 @@ public class EntityData implements Listener {
             return;
         if (CorePlusAPI.getDepend().isPaper())
             return;
-        EntityUtils.removeEntityGroup(e.getEntity().getUniqueId());
+        UUID uuid = e.getEntity().getUniqueId();
+        EntityUtils.removeEntityGroup(uuid);
     }
 }

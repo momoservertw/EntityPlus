@@ -2,11 +2,13 @@ package tw.momocraft.entityplus.utils;
 
 import org.bukkit.configuration.ConfigurationSection;
 import tw.momocraft.coreplus.api.CorePlusAPI;
-import tw.momocraft.coreplus.handlers.UtilsHandler;
 import tw.momocraft.coreplus.utils.condition.LocationMap;
 import tw.momocraft.entityplus.EntityPlus;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
-import tw.momocraft.entityplus.utils.entities.*;
+import tw.momocraft.entityplus.utils.entities.DamageMap;
+import tw.momocraft.entityplus.utils.entities.DropMap;
+import tw.momocraft.entityplus.utils.entities.EntityMap;
+import tw.momocraft.entityplus.utils.entities.SpawnerMap;
 
 import java.util.*;
 
@@ -22,17 +24,12 @@ public class ConfigPath {
     private String msgCmdHelp;
     private String msgCmdReload;
     private String msgCmdVersion;
-    private String msgCmdPurgeSchedule;
-    private String msgCmdPurgeKillAll;
-    private String msgCmdPurgeKillChunk;
+    private String msgCmdPurgeAll;
+    private String msgCmdPurgeChunk;
 
     private String msgPurgeStart;
     private String msgPurgeEnd;
     private String msgPurgeSucceed;
-    private String msgPurgeToggleOn;
-    private String msgPurgeToggleOff;
-    private String msgPurgeAlreadyOn;
-    private String msgPurgeAlreadyOff;
 
     //  ============================================== //
     //         Entities Variables                      //
@@ -120,17 +117,12 @@ public class ConfigPath {
         msgCmdHelp = ConfigHandler.getConfig("config.yml").getString("Message.Commands.help");
         msgCmdReload = ConfigHandler.getConfig("config.yml").getString("Message.Commands.reload");
         msgCmdVersion = ConfigHandler.getConfig("config.yml").getString("Message.Commands.version");
-        msgCmdPurgeSchedule = ConfigHandler.getConfig("config.yml").getString("Message.Commands.purgeSchedule");
-        msgCmdPurgeKillAll = ConfigHandler.getConfig("config.yml").getString("Message.Commands.purgeKillAll");
-        msgCmdPurgeKillChunk = ConfigHandler.getConfig("config.yml").getString("Message.Commands.purgeKillChunk");
+        msgCmdPurgeAll = ConfigHandler.getConfig("config.yml").getString("Message.Commands.purgeAll");
+        msgCmdPurgeChunk = ConfigHandler.getConfig("config.yml").getString("Message.Commands.purgeChunk");
 
         msgPurgeStart = ConfigHandler.getConfig("config.yml").getString("Message.Purge.start");
         msgPurgeEnd = ConfigHandler.getConfig("config.yml").getString("Message.Purge.end");
         msgPurgeSucceed = ConfigHandler.getConfig("config.yml").getString("Message.Purge.succeed");
-        msgPurgeToggleOn = ConfigHandler.getConfig("config.yml").getString("Message.Purge.toggleOn");
-        msgPurgeToggleOff = ConfigHandler.getConfig("config.yml").getString("Message.Purge.toggleOff");
-        msgPurgeAlreadyOn = ConfigHandler.getConfig("config.yml").getString("Message.Purge.alreadyOn");
-        msgPurgeAlreadyOff = ConfigHandler.getConfig("config.yml").getString("Message.Purge.alreadyOff");
     }
 
     //  ============================================== //
@@ -221,6 +213,7 @@ public class ConfigPath {
         valueStringList = ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Spawn.Ignore-Reasons");
         if (!valueStringList.isEmpty())
             entityMap.setIgnoreReasons(valueStringList);
+
         //// Spawn ////
         // Max-Distance
         valueInt = ConfigHandler.getConfig("entities.yml").getInt("Entities." + group + ".Spawn.Max-Distance", -1);
@@ -258,53 +251,22 @@ public class ConfigPath {
         valueStringList = ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Spawn.Commands");
         if (!valueStringList.isEmpty())
             entityMap.setCommands(valueStringList);
+
         //// Limit ////
         if (enLimit) {
-            String limit = ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Limit");
-            if (limit != null) {
-                if (limit.equals("none")) {
-                    entityMap.setLimitMap(null);
-                } else {
-                    String[] amountSplit = limit.split(", ");
-                    if (amountSplit.length == 3) {
-                        try {
-                            AmountMap amountMap = new AmountMap();
-                            amountMap.setUnit(amountSplit[0]);
-                            amountMap.setRadius(Integer.parseInt(amountSplit[1]));
-                            amountMap.setAmount(Integer.parseInt(amountSplit[2]));
-                            entityMap.setLimitMap(amountMap);
-                            entityMap.setLimitGroup(group);
-                        } catch (Exception ex) {
-                            UtilsHandler.getMsg().sendErrorMsg(ConfigHandler.getPlugin(),
-                                    "Not correct format of entity Limit: \"" + limit + "\"");
-                            UtilsHandler.getMsg().sendErrorMsg(ConfigHandler.getPlugin(),
-                                    "More information: https://github.com/momoservertw/EntityPlus/wiki/Entities#Limit");
-                            UtilsHandler.getMsg().sendDebugTrace(ConfigHandler.isDebug(), ConfigHandler.getPlugin(), ex);
-                        }
-                    }
-                }
+            int limit = ConfigHandler.getConfig("entities.yml").getInt("Entities." + group + ".Limit", -1);
+            if (limit != -1) {
+                entityMap.setLimitAmount(limit);
+                entityMap.setLimitGroup(group);
             }
         }
+
         //// Purge ////
         if (enPurge) {
-            String purge = ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Purge");
-            if (purge != null) {
-                if (purge.equals("none")) {
-                    entityMap.setPurgeGroup(null);
-                } else {
-                    entityMap.setPurgeGroup(group);
-                    try {
-                        entityMap.setPurge(Integer.parseInt(purge));
-                    } catch (Exception ex) {
-                        UtilsHandler.getMsg().sendErrorMsg(ConfigHandler.getPlugin(),
-                                "Not correct format of entity Purge: \"" + purge + "\"");
-                        UtilsHandler.getMsg().sendErrorMsg(ConfigHandler.getPlugin(),
-                                "More information: https://github.com/momoservertw/EntityPlus/wiki/Entities#Purge");
-                        UtilsHandler.getMsg().sendDebugTrace(ConfigHandler.isDebug(), ConfigHandler.getPlugin(), ex);
-                    }
-                }
-            }
+            if (ConfigHandler.getConfig("entities.yml").getBoolean("Entities." + group + ".Purge"))
+                entityMap.setPurgeGroup(group);
         }
+
         //// Drop ////
         valueStringList = ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Drop");
         if (!valueStringList.isEmpty())
@@ -509,16 +471,12 @@ public class ConfigPath {
         return msgCmdVersion;
     }
 
-    public String getMsgCmdPurgeSchedule() {
-        return msgCmdPurgeSchedule;
+    public String getMsgCmdPurgeAll() {
+        return msgCmdPurgeAll;
     }
 
-    public String getMsgCmdPurgeKillAll() {
-        return msgCmdPurgeKillAll;
-    }
-
-    public String getMsgCmdPurgeKillChunk() {
-        return msgCmdPurgeKillChunk;
+    public String getMsgCmdPurgeChunk() {
+        return msgCmdPurgeChunk;
     }
 
     public String getMsgPurgeStart() {
@@ -531,22 +489,6 @@ public class ConfigPath {
 
     public String getMsgPurgeSucceed() {
         return msgPurgeSucceed;
-    }
-
-    public String getMsgPurgeToggleOn() {
-        return msgPurgeToggleOn;
-    }
-
-    public String getMsgPurgeToggleOff() {
-        return msgPurgeToggleOff;
-    }
-
-    public String getMsgPurgeAlreadyOn() {
-        return msgPurgeAlreadyOn;
-    }
-
-    public String getMsgPurgeAlreadyOff() {
-        return msgPurgeAlreadyOff;
     }
 
     //  ============================================== //

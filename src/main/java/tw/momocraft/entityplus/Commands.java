@@ -75,18 +75,12 @@ public class Commands implements CommandExecutor {
                 return true;
             case "purge":
                 if (CorePlusAPI.getPlayer().hasPerm(sender, "entityplus.command.purge")) {
-                    // etp purge schedule <on/off>
-                    if (length == 3) {
-                        if (args[1].equals("schedule")) {
-                            Purge.toggleSchedule(sender, args[2]);
-                            return true;
-                        }
-                    } else if (length == 2) {
+                    if (length == 2) {
                         switch (args[1]) {
-                            case "killall":
-                                Purge.checkAllChunks(sender);
+                            case "all":
+                                Purge.checkAll(sender, false);
                                 return true;
-                            case "killchunk":
+                            case "chunk":
                                 if (sender instanceof ConsoleCommandSender) {
                                     CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
                                             "onlyPlayer", sender);
@@ -97,11 +91,9 @@ public class Commands implements CommandExecutor {
                         }
                     }
                     CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                            ConfigHandler.getConfigPath().getMsgCmdPurgeKillAll(), sender);
+                            ConfigHandler.getConfigPath().getMsgCmdPurgeAll(), sender);
                     CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                            ConfigHandler.getConfigPath().getMsgCmdPurgeKillChunk(), sender);
-                    CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                            ConfigHandler.getConfigPath().getMsgCmdPurgeSchedule(), sender);
+                            ConfigHandler.getConfigPath().getMsgCmdPurgeChunk(), sender);
                 } else {
                     CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
                             "Message.noPermission", sender);

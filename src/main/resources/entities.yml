@@ -8,8 +8,7 @@ Entities:
   # ░░░░░░░░░░░░░░░░░░
   # ░░  Inherit     ░░
   # ░░░░░░░░░░░░░░░░░░
-  # This group is used to inherit to other groups.
-  Global:
+  default:
     Enable: false
     Drop:
       - lucky1
@@ -25,7 +24,7 @@ Entities:
     Enable: false
     # Inherit all settings from group "Global", options can be overrode or disabled by setting "none".
     # The limit amount also h
-    Inherit: Global
+    Inherit: default
     Priority: 2
     Types:
       - NormalMobs
@@ -40,8 +39,8 @@ Entities:
         Default: 1
       Reasons:
         - NATURAL
-    Limit: "chunk, 0, 5"
-    Purge: 10
+    Limit: 5
+    Purge: true
   Phantom:
     Enable: false
     Inherit: NormalMobs
@@ -56,10 +55,7 @@ Entities:
     Priority: 3
     Types:
       - GUARDIAN
-    Spawn:
-      Conditions:
-        - "%entity_location_IgnoreNearbyMonument%=true"
-    Limit: "chunk, 0, 3"
+    Limit: 1
   Zombified_Piglin:
     Enable: false
     Inherit: NormalMobs
@@ -75,7 +71,7 @@ Entities:
   # ░░░░░░░░░░░░░░░░░░
   BreedableMobs:
     Enable: false
-    Inherit: Global
+    Inherit: default
     Priority: 2
     Types:
       - BreedableMobs
@@ -84,21 +80,20 @@ Entities:
         - SPAWNER_EGG
         - NATURAL
         - BEEHIVE
-    Limit: "chunk, 0, 16"
-    Purge: 16
+    Limit: 16
+    Purge: true
   Pets:
     Enable: false
     Inherit: BreedableMobs
     Types:
       - Pets
     Limit: 16
-    Purge: 16
   # ░░░░░░░░░░░░░░░░░░
   # ░░  Useless     ░░
   # ░░░░░░░░░░░░░░░░░░
   Useless_natural:
     Enable: false
-    Inherit: Global
+    Inherit: default
     Priority: 2
     Types:
       - Useless
@@ -106,8 +101,8 @@ Entities:
       Chance: 0.2
       Reasons:
         - NATURAL
-    Limit: "chunk, 0, 16"
-    Purge: 16
+    Limit: 16
+    Purge: true
   Useless_other:
     Enable: false
     Inherit: Useless_natural
@@ -135,23 +130,18 @@ Entities:
   # ░░░░░░░░░░░░░░░░░░
   Boss:
     Enable: false
-    Inherit: Global
+    Inherit: default
     Priority: 3
     Types:
       - WITHER
-    Spawn:
-      Chance: 0.3
-      Reasons:
-        - NETHER_PORTAL
-    Limit: "chunk, 0, 20"
-    Purge: 20
+    Limit: 20
+    Purge: true
   MythicMobs_Example:
     Enable: false
     Priority: 3
     Types:
       - SkeletonKing
     Spawn:
-      Chance: 0.1
       Permission: "entityplus.spawn.MythicMobs_Example"
-    Limit: "chunk, 0, 10"
-    Purge: 10
+    Limit: 100
+    Purge: true

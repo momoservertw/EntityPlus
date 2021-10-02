@@ -27,23 +27,14 @@ public class TabComplete implements TabCompleter {
             if (CorePlusAPI.getPlayer().hasPerm(sender, "entityplus.command.purge"))
                 commands.add("purge");
         } else {
-            switch (args[0]) {
-                // etp purge schedule <on/off>
-                case "purge":
-                    if (CorePlusAPI.getPlayer().hasPerm(sender, "entityplus.command.purge")) {
-                        // etp purge schedule <on/off>
-                        // etp purge check
-                        if (length == 2) {
-                            commands.add("schedule");
-                            commands.add("killall");
-                            commands.add("killchunk");
-                            // etp purge schedule <on/off>
-                        } else if (args[1].equals("schedule") && length == 3) {
-                            commands.add("on");
-                            commands.add("off");
-                        }
+            if ("purge".equals(args[0])) {
+                if (CorePlusAPI.getPlayer().hasPerm(sender, "entityplus.command.purge")) {
+                    // etp purge check
+                    if (length == 2) {
+                        commands.add("all");
+                        commands.add("chunk");
                     }
-                    break;
+                }
             }
         }
         StringUtil.copyPartialMatches(args[(args.length - 1)], commands, completions);

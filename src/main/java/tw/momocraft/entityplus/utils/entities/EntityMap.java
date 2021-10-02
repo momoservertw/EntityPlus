@@ -24,14 +24,12 @@ public class EntityMap {
     private Map<String, Double> chanceMap;
 
     private String limitGroup;
-    private AmountMap limitMap;
+    private int limitAmount;
     private String purgeGroup;
-    private int purge;
     private List<String> commands;
 
     private List<String> dropList;
     private List<String> damageList;
-
 
     public String getGroupName() {
         return groupName;
@@ -121,12 +119,12 @@ public class EntityMap {
         this.limitGroup = limitGroup;
     }
 
-    public AmountMap getLimitMap() {
-        return limitMap;
+    public int getLimitAmount() {
+        return limitAmount;
     }
 
-    public void setLimitMap(AmountMap limitMap) {
-        this.limitMap = limitMap;
+    public void setLimitAmount(int limitAmount) {
+        this.limitAmount = limitAmount;
     }
 
     public String getPurgeGroup() {
@@ -135,14 +133,6 @@ public class EntityMap {
 
     public void setPurgeGroup(String purgeGroup) {
         this.purgeGroup = purgeGroup;
-    }
-
-    public int getPurge() {
-        return purge;
-    }
-
-    public void setPurge(int purge) {
-        this.purge = purge;
     }
 
     public List<String> getCommands() {

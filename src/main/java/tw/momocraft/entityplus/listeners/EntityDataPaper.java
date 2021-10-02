@@ -7,12 +7,15 @@ import org.bukkit.event.Listener;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.utils.entities.EntityUtils;
 
+import java.util.UUID;
+
 public class EntityDataPaper implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityRemoveFromWorldEvent(EntityRemoveFromWorldEvent e) {
         if (!ConfigHandler.getConfigPath().isEntities())
             return;
-        EntityUtils.removeEntityGroup(e.getEntity().getUniqueId());
+        UUID uuid = e.getEntity().getUniqueId();
+        EntityUtils.removeEntityGroup(uuid);
     }
 }
