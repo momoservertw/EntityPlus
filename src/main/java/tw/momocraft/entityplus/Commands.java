@@ -75,6 +75,11 @@ public class Commands implements CommandExecutor {
                 return true;
             case "purge":
                 if (CorePlusAPI.getPlayer().hasPerm(sender, "entityplus.command.purge")) {
+                    if (!ConfigHandler.getConfigPath().isEnPurge()) {
+                        CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
+                                "featureDisabled", sender);
+                        return true;
+                    }
                     if (length == 2) {
                         switch (args[1]) {
                             case "all":

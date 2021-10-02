@@ -31,6 +31,8 @@ public class EntityData implements Listener {
                 String entityGroup;
                 for (Entity entity : chunk.getEntities()) {
                     entityGroup = EntityUtils.getEntityGroup(entity);
+                    if (entityGroup == null)
+                        entityGroup = entity.getType().name();
                     EntityUtils.putEntityGroup(entity.getUniqueId(), entityGroup);
                 }
                 // Purge
@@ -48,6 +50,6 @@ public class EntityData implements Listener {
         if (CorePlusAPI.getDepend().isPaper())
             return;
         UUID uuid = e.getEntity().getUniqueId();
-        EntityUtils.removeEntityGroup(uuid);
+        EntityUtils.removeEntityGroup(uuid, e.getEntity());
     }
 }

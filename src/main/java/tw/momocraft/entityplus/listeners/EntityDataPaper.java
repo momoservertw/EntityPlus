@@ -16,6 +16,6 @@ public class EntityDataPaper implements Listener {
         if (!ConfigHandler.getConfigPath().isEntities())
             return;
         UUID uuid = e.getEntity().getUniqueId();
-        EntityUtils.removeEntityGroup(uuid);
+        EntityUtils.removeEntityGroup(uuid, e.getEntity());
     }
 }

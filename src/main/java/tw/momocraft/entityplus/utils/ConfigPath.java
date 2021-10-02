@@ -144,7 +144,6 @@ public class ConfigPath {
             return;
         EntityMap entityMap;
         for (String group : groupsConfig.getKeys(false)) {
-            // Getting all entity settings.
             entityMap = getEntityMap(new EntityMap(), group);
             entitiesTypeProp.put(group, entityMap);
             // Adding properties to all entity types.
@@ -194,8 +193,7 @@ public class ConfigPath {
             entityMap.setInherit(valueString);
         }
         // GroupName
-        if (group != null)
-            entityMap.setGroupName(group);
+        entityMap.setGroupName(group);
         // Types
         valueStringList = CorePlusAPI.getConfig().getTypeList(ConfigHandler.getPrefix(),
                 ConfigHandler.getConfig("entities.yml").getStringList("Entities." + group + ".Types"), "Entities");
@@ -290,7 +288,7 @@ public class ConfigPath {
         enPurgeResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Settings.Residence-Flag");
         enPurgeCheckChunkLoad = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Check.Chunk-Load");
         enPurgeCheckSchedule = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Check.Schedule.Enable");
-        enPurgeCheckScheduleInterval = ConfigHandler.getConfig("config.yml").getInt("Entities.Purge.Check.Schedule.Interval", 60);
+        enPurgeCheckScheduleInterval = ConfigHandler.getConfig("config.yml").getInt("Entities.Purge.Check.Schedule.Interval", 60) * 20;
         enPurgeSpeed = ConfigHandler.getConfig("config.yml").getInt("Entities.Purge.Check.Schedule.Speed", 500);
         //enPurgeCheckAFK = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Check.AFK");
         enPurgeMsgBroadcast = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Settings.Schedule.Message.Broadcast");

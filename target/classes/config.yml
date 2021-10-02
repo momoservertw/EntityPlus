@@ -194,6 +194,6 @@ Message:
     purgeAll: "/ep purge killall &8- &7Purge all creatures that exceed the limit."
     purgeChunk: "/ep purge killchunk &8- &7Kill the chunk creatures that exceed the limit."
   Purge:
-    start: "%prefix% &6Start checking chunks..."
-    end: "%prefix% &6Purge process has ended."
-    succeed: "%prefix% &Removed entities: &7%amount% (%value%)"
+    start: "%prefix%&6Purge process has started."
+    end: "%prefix%&6Purge process has ended."
+    succeed: "%prefix%&fRemoved entities: &7%amount% (%value%)"

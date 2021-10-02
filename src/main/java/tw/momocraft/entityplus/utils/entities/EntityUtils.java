@@ -32,10 +32,11 @@ public class EntityUtils {
             resetLivingEntityMap();
     }
 
-    public static void removeEntityGroup(UUID uuid) {
+    public static void removeEntityGroup(UUID uuid, Entity entity) {
         CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
                 "Entity", livingEntityMap.get(uuid), "remove", null, uuid.toString(),
                 new Throwable().getStackTrace()[0]);
+        System.out.println(entity.getName() + " " + entity.getEntitySpawnReason());
         livingEntityMap.remove(uuid);
     }
 
@@ -102,31 +103,31 @@ public class EntityUtils {
             for (String chanceValue : chanceMap.keySet()) {
                 switch (chanceValue) {
                     case "Default":
-                        chance = chanceMap.get(chanceValue);
-                        break back;
+                        chance *= chanceMap.get(chanceValue);
+                        break;
                     case "AFK":
                         for (Player player : nearbyPlayers)
                             if (!CorePlusAPI.getPlayer().isAFK(player))
                                 continue back;
-                        chance = chanceMap.get(chanceValue);
-                        break back;
+                        chance *= chanceMap.get(chanceValue);
+                        break;
                     case "Gliding":
                         for (Player player : nearbyPlayers)
                             if (!player.isGliding())
                                 continue back;
-                        chance = chanceMap.get(chanceValue);
-                        break back;
+                        chance *= chanceMap.get(chanceValue);
+                        break;
                     case "Flying":
                         for (Player player : nearbyPlayers)
                             if (!player.isFlying())
                                 continue back;
-                        chance = chanceMap.get(chanceValue);
-                        break back;
+                        chance *= chanceMap.get(chanceValue);
+                        break;
                     default:
                         translatedGroup = CorePlusAPI.getMsg().transHolder(null, entity, chanceValue);
                         if (CorePlusAPI.getCond().checkCondition(ConfigHandler.getPlugin(), translatedGroup)) {
-                            chance = chanceMap.get(chanceValue);
-                            break back;
+                            chance *= chanceMap.get(chanceValue);
+                            break;
                         }
                 }
             }

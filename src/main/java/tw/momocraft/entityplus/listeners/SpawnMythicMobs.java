@@ -22,15 +22,15 @@ public class SpawnMythicMobs implements Listener {
         UUID uuid = entity.getUniqueId();
         String entityType = entity.getType().name();
         String entityGroup = EntityUtils.getEntityGroup(entity);
+        if (entityGroup == null) {
+            EntityUtils.putEntityGroup(uuid, entityType);
+            return;
+        }
         EntityMap entityMap;
         try {
             entityMap = ConfigHandler.getConfigPath().getEntitiesProp().get(entityType).get(entityGroup);
-            if (entityMap == null) {
-                EntityUtils.putEntityGroup(uuid, EntityUtils.getEntityGroup(entity));
-                return;
-            }
         } catch (Exception ex) {
-            EntityUtils.putEntityGroup(uuid, EntityUtils.getEntityGroup(entity));
+            EntityUtils.putEntityGroup(uuid, entityType);
             return;
         }
         String action = EntityUtils.getSpawnAction(entity, entityMap);
