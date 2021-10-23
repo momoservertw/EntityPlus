@@ -24,7 +24,7 @@ public class EntityUtils {
 
     public static void putEntityGroup(UUID uuid, String type) {
         livingEntityMap.put(uuid, type);
-        CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
+        CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPluginName(),
                 "Entity", type, "load", null, uuid.toString(),
                 new Throwable().getStackTrace()[0]);
         // Reset the living entity map to prevent memory overflow.
@@ -33,10 +33,9 @@ public class EntityUtils {
     }
 
     public static void removeEntityGroup(UUID uuid, Entity entity) {
-        CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
+        CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPluginName(),
                 "Entity", livingEntityMap.get(uuid), "remove", null, uuid.toString(),
                 new Throwable().getStackTrace()[0]);
-        System.out.println(entity.getName() + " " + entity.getEntitySpawnReason());
         livingEntityMap.remove(uuid);
     }
 
@@ -72,7 +71,7 @@ public class EntityUtils {
                 if (!CorePlusAPI.getUtils().containIgnoreValue(reason, entityMap.getReasons(), entityMap.getIgnoreReasons()))
                     continue;
                 // Check "Conditions"
-                if (!CorePlusAPI.getCond().checkCondition(ConfigHandler.getPlugin(),
+                if (!CorePlusAPI.getCond().checkCondition(ConfigHandler.getPluginName(),
                         CorePlusAPI.getMsg().transHolder(null, entity, entityMap.getConditions())))
                     continue;
                 return groupName;
@@ -125,7 +124,7 @@ public class EntityUtils {
                         break;
                     default:
                         translatedGroup = CorePlusAPI.getMsg().transHolder(null, entity, chanceValue);
-                        if (CorePlusAPI.getCond().checkCondition(ConfigHandler.getPlugin(), translatedGroup)) {
+                        if (CorePlusAPI.getCond().checkCondition(ConfigHandler.getPluginName(), translatedGroup)) {
                             chance *= chanceMap.get(chanceValue);
                             break;
                         }

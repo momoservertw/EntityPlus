@@ -28,19 +28,15 @@ public class Purge {
     }
 
     public static void startSchedule() {
-        CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                ConfigHandler.getConfigPath().getMsgPurgeStart(), Bukkit.getConsoleSender());
         starting = true;
         new BukkitRunnable() {
             @Override
             public void run() {
                 if (!starting) {
                     cancel();
-                    CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                            ConfigHandler.getConfigPath().getMsgPurgeEnd(), Bukkit.getConsoleSender());
                     return;
                 }
-                checkAll(null, true);
+                checkAll(null);
             }
         }.runTaskTimer(EntityPlus.getInstance(), 0, ConfigHandler.getConfigPath().getEnPurgeCheckScheduleInterval());
     }
@@ -51,14 +47,11 @@ public class Purge {
         Map<String, AtomicInteger> purgeMap = purgeChunk(chunk, new HashMap<>());
 
         sendTotalMsg(sender, purgeMap);
-        CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                ConfigHandler.getConfigPath().getMsgPurgeEnd(), sender);
     }
 
-    public static void checkAll(CommandSender sender, boolean isSchedule) {
-        if (!isSchedule)
-            CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                    ConfigHandler.getConfigPath().getMsgPurgeStart(), sender);
+    public static void checkAll(CommandSender sender) {
+        CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
+                ConfigHandler.getConfigPath().getMsgPurgeStart(), sender);
         Map<String, AtomicInteger> purgeMap = new HashMap<>();
         // Getting all loaded chunks.
         List<Chunk> chunkList = new ArrayList<>();
@@ -82,14 +75,6 @@ public class Purge {
                 if (times > totalTimes) {
                     // Send total purged message.
                     sendTotalMsg(sender, purgeMap);
-                    // Send end message.
-                    if (!isSchedule) {
-                        CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                                ConfigHandler.getConfigPath().getMsgPurgeEnd(), sender);
-                        if (!(sender instanceof ConsoleCommandSender))
-                            CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                                    ConfigHandler.getConfigPath().getMsgPurgeEnd(), Bukkit.getConsoleSender());
-                    }
                     cancel();
                     return;
                 }
@@ -146,7 +131,7 @@ public class Purge {
                 }
             }
             if (ConfigHandler.getConfigPath().isEnPurgeDeathParticle())
-                CorePlusAPI.getEffect().spawnParticle(ConfigHandler.getPlugin(),
+                CorePlusAPI.getEffect().spawnParticle(ConfigHandler.getPluginName(),
                         entity.getLocation(), ConfigHandler.getConfigPath().getEnPurgeDeathParticleType());
             // Adding to checking list.
             try {
@@ -174,14 +159,14 @@ public class Purge {
         langHolder[6] = String.valueOf(amount); // %amount%
         // Total.
         CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                ConfigHandler.getConfigPath().getMsgPurgeSucceed(), sender, langHolder);
+                ConfigHandler.getConfigPath().getMsgPurgeTotal(), sender, langHolder);
         if (ConfigHandler.getConfigPath().isEnPurgeMsgBroadcast())
             CorePlusAPI.getMsg().sendBroadcastMsg(ConfigHandler.getPluginPrefix(),
-                    ConfigHandler.getConfigPath().getMsgPurgeSucceed(), langHolder);
+                    ConfigHandler.getConfigPath().getMsgPurgeTotal(), langHolder);
         if (ConfigHandler.getConfigPath().isEnPurgeMsgConsole()) {
             if (!(sender instanceof ConsoleCommandSender))
                 CorePlusAPI.getMsg().sendConsoleMsg(ConfigHandler.getPluginPrefix(),
-                        ConfigHandler.getConfigPath().getMsgPurgeSucceed(), langHolder);
+                        ConfigHandler.getConfigPath().getMsgPurgeTotal(), langHolder);
         }
     }
 }

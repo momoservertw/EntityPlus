@@ -39,7 +39,7 @@ public class DropMythicMobs implements Listener {
         // Checking the bypass "Residence-Flag".
         if (!CorePlusAPI.getCond().checkFlag(e.getEntity().getLocation(), "dropbypass", false,
                 ConfigHandler.getConfigPath().isEnDropResFlag())) {
-            CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
+            CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPluginName(),
                     "Drop", entityType, "Residence-Flag", "return",
                     new Throwable().getStackTrace()[0]);
             return;
@@ -56,8 +56,8 @@ public class DropMythicMobs implements Listener {
                 if (dropMap == null)
                     continue;
                 // Checking "Conditions".
-                if (!CorePlusAPI.getCond().checkCondition(ConfigHandler.getPlugin(), dropMap.getConditions())) {
-                    CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
+                if (!CorePlusAPI.getCond().checkCondition(ConfigHandler.getPluginName(), dropMap.getConditions())) {
+                    CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPluginName(),
                             "Damage", entityType, "Condition", "continue", group,
                             new Throwable().getStackTrace()[0]);
                     continue;
@@ -67,7 +67,7 @@ public class DropMythicMobs implements Listener {
             }
         }
         if (dropMapList.isEmpty()) {
-            CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
+            CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPluginName(),
                     "Drop", entityType, "Permission", "return",
                     new Throwable().getStackTrace()[0]);
             return;
@@ -135,8 +135,8 @@ public class DropMythicMobs implements Listener {
         }
         // Executing commands.
         if (ConfigHandler.getConfigPath().isEnDropCommand())
-            CorePlusAPI.getCmd().sendCmd(ConfigHandler.getPlugin(), player, e.getEntity(), player, commandList);
-        CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
+            CorePlusAPI.getCmd().sendCmd(ConfigHandler.getPluginName(), player, e.getEntity(), player, commandList);
+        CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPluginName(),
                 "Drop", entityType, "Final", "return", entityGroup,
                 new Throwable().getStackTrace()[0]);
     }

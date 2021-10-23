@@ -28,8 +28,7 @@ public class ConfigPath {
     private String msgCmdPurgeChunk;
 
     private String msgPurgeStart;
-    private String msgPurgeEnd;
-    private String msgPurgeSucceed;
+    private String msgPurgeTotal;
 
     //  ============================================== //
     //         Entities Variables                      //
@@ -121,8 +120,7 @@ public class ConfigPath {
         msgCmdPurgeChunk = ConfigHandler.getConfig("config.yml").getString("Message.Commands.purgeChunk");
 
         msgPurgeStart = ConfigHandler.getConfig("config.yml").getString("Message.Purge.start");
-        msgPurgeEnd = ConfigHandler.getConfig("config.yml").getString("Message.Purge.end");
-        msgPurgeSucceed = ConfigHandler.getConfig("config.yml").getString("Message.Purge.succeed");
+        msgPurgeTotal = ConfigHandler.getConfig("config.yml").getString("Message.Purge.total");
     }
 
     //  ============================================== //
@@ -171,7 +169,7 @@ public class ConfigPath {
                 sortMap.put(group, entitiesProp.get(entityType).get(group).getPriority());
             sortMap = CorePlusAPI.getUtils().sortByValue(sortMap);
             for (String group : sortMap.keySet()) {
-                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
+                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPluginName(),
                         "Spawn", "setup", group, "continue", entityType,
                         new Throwable().getStackTrace()[0]);
                 newEnMap.put(group, entitiesProp.get(entityType).get(group));
@@ -442,7 +440,7 @@ public class ConfigPath {
                 sortMap.put(group, spawnerProp.get(worldName).get(group).getPriority());
             sortMap = CorePlusAPI.getUtils().sortByValue(sortMap);
             for (String group : sortMap.keySet()) {
-                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(), "Spawner", worldName, "setup", "continue", group,
+                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPluginName(), "Spawner", worldName, "setup", "continue", group,
                         new Throwable().getStackTrace()[0]);
                 newMap.put(group, spawnerProp.get(worldName).get(group));
             }
@@ -481,12 +479,8 @@ public class ConfigPath {
         return msgPurgeStart;
     }
 
-    public String getMsgPurgeEnd() {
-        return msgPurgeEnd;
-    }
-
-    public String getMsgPurgeSucceed() {
-        return msgPurgeSucceed;
+    public String getMsgPurgeTotal() {
+        return msgPurgeTotal;
     }
 
     //  ============================================== //

@@ -42,11 +42,11 @@ public class Spawn implements Listener {
         if (action.equals("none")) {
             EntityUtils.putEntityGroup(uuid, entityGroup);
             // Execute Commands
-            CorePlusAPI.getCmd().sendCmd(ConfigHandler.getPlugin(), null, entity, entityMap.getCommands());
+            CorePlusAPI.getCmd().sendCmd(ConfigHandler.getPluginName(), null, entity, entityMap.getCommands());
             return;
         }
         e.setCancelled(true);
-        CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
+        CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPluginName(),
                 "Spawn", entityGroup, action, "cancel", entity.getName(),
                 new Throwable().getStackTrace()[0]);
     }
@@ -78,11 +78,11 @@ public class Spawn implements Listener {
         if (action.equals("none")) {
             EntityUtils.putEntityGroup(uuid, EntityUtils.getEntityGroup(entity));
             // Execute Commands
-            CorePlusAPI.getCmd().sendCmd(ConfigHandler.getPlugin(), null, entity, entityMap.getCommands());
+            CorePlusAPI.getCmd().sendCmd(ConfigHandler.getPluginName(), null, entity, entityMap.getCommands());
             return;
         }
         e.setCancelled(true);
-        CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPlugin(),
+        CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPluginName(),
                 "Spawn", entityGroup, action, "cancel", entity.getName(),
                 new Throwable().getStackTrace()[0]);
     }

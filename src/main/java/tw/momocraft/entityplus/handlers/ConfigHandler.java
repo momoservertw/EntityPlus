@@ -24,7 +24,7 @@ public class ConfigHandler {
         setConfigPath(new ConfigPath());
         UtilsHandler.setUpLast(reload);
         if (!reload) {
-            CorePlusAPI.getUpdate().check(getPlugin(), getPluginPrefix(), Bukkit.getConsoleSender(),
+            CorePlusAPI.getUpdate().check(getPluginName(), getPrefix(), Bukkit.getConsoleSender(),
                     EntityPlus.getInstance().getDescription().getName(),
                     EntityPlus.getInstance().getDescription().getVersion(), true);
         }
@@ -51,7 +51,7 @@ public class ConfigHandler {
             try {
                 EntityPlus.getInstance().saveResource(fileName, false);
             } catch (Exception e) {
-                CorePlusAPI.getMsg().sendErrorMsg(getPlugin(), "Cannot save " + fileName + " to disk!");
+                CorePlusAPI.getMsg().sendErrorMsg(getPluginName(), "Cannot save " + fileName + " to disk!");
                 return;
             }
         }
@@ -115,7 +115,7 @@ public class ConfigHandler {
         return configPath;
     }
 
-    public static String getPlugin() {
+    public static String getPluginName() {
         return EntityPlus.getInstance().getDescription().getName();
     }
 
