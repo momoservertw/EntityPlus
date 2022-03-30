@@ -15,7 +15,6 @@ public class EntityDataPaper implements Listener {
     public void onEntityRemoveFromWorldEvent(EntityRemoveFromWorldEvent e) {
         if (!ConfigHandler.getConfigPath().isEntities())
             return;
-        UUID uuid = e.getEntity().getUniqueId();
-        EntityUtils.removeEntityGroup(uuid, e.getEntity());
+        EntityUtils.removeEntityGroup(e.getEntity());
     }
 }

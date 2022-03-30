@@ -22,19 +22,20 @@ public class EntityUtils {
         return livingEntityMap.get(uuid);
     }
 
-    public static void putEntityGroup(UUID uuid, String type) {
-        livingEntityMap.put(uuid, type);
+    public static void putEntityGroup(UUID uuid, String type, String group) {
+        livingEntityMap.put(uuid, group);
         CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPluginName(),
-                "Entity", type, "load", null, uuid.toString(),
+                "Entity", group, "load", null, uuid.toString() + ", " + type,
                 new Throwable().getStackTrace()[0]);
         // Reset the living entity map to prevent memory overflow.
         if (livingEntityMap.size() > 999999)
             resetLivingEntityMap();
     }
 
-    public static void removeEntityGroup(UUID uuid, Entity entity) {
+    public static void removeEntityGroup(Entity entity) {
+        UUID uuid = entity.getUniqueId();
         CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPluginName(),
-                "Entity", livingEntityMap.get(uuid), "remove", null, uuid.toString(),
+                "Entity", livingEntityMap.get(uuid), "remove", null, uuid + ", " + entity.getType().name(),
                 new Throwable().getStackTrace()[0]);
         livingEntityMap.remove(uuid);
     }
@@ -44,7 +45,7 @@ public class EntityUtils {
         for (World world : Bukkit.getWorlds())
             for (Chunk chunk : world.getLoadedChunks())
                 for (Entity entity : chunk.getEntities())
-                    EntityUtils.putEntityGroup(entity.getUniqueId(),
+                    EntityUtils.putEntityGroup(entity.getUniqueId(), entity.getType().name(),
                             EntityUtils.getEntityGroup(entity));
     }
 
@@ -67,6 +68,8 @@ public class EntityUtils {
             // Checking every groups of this entity type.
             for (String groupName : entityProp.keySet()) {
                 entityMap = entityProp.get(groupName);
+                if (entityMap == null)
+                    continue;
                 // Check "Reasons"
                 if (!CorePlusAPI.getUtils().containIgnoreValue(reason, entityMap.getReasons(), entityMap.getIgnoreReasons()))
                     continue;
@@ -81,6 +84,9 @@ public class EntityUtils {
     }
 
     public static String getSpawnAction(Entity entity, EntityMap entityMap) {
+        if (entity instanceof Wolf) {
+            System.out.println(entityMap.getLimitAmount());
+        }
         Location loc = entity.getLocation();
         // Check "Residence-Flag"
         if (!CorePlusAPI.getCond().checkFlag(loc, "spawnbypass", true,
@@ -213,7 +219,7 @@ public class EntityUtils {
         if (!bypass)
             return false;
         if (entity instanceof Animals)
-            return !((Ageable) entity).isAdult();
+            return !((Animals) entity).isAdult();
         return false;
     }
 

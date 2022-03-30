@@ -28,19 +28,23 @@ public class Spawn implements Listener {
         String entityType = entity.getType().name();
         String entityGroup = EntityUtils.getEntityGroup(entity);
         if (entityGroup == null) {
-            EntityUtils.putEntityGroup(uuid, entityType);
+            EntityUtils.putEntityGroup(uuid, entityType, entityType);
             return;
         }
         EntityMap entityMap;
         try {
             entityMap = ConfigHandler.getConfigPath().getEntitiesProp().get(entityType).get(entityGroup);
+            if (entityMap == null) {
+                EntityUtils.putEntityGroup(uuid, entityType, entityType);
+                return;
+            }
         } catch (Exception ex) {
-            EntityUtils.putEntityGroup(uuid, entityType);
+            EntityUtils.putEntityGroup(uuid, entityType, entityType);
             return;
         }
         String action = EntityUtils.getSpawnAction(entity, entityMap);
         if (action.equals("none")) {
-            EntityUtils.putEntityGroup(uuid, entityGroup);
+            EntityUtils.putEntityGroup(uuid, entityType, entityGroup);
             // Execute Commands
             CorePlusAPI.getCmd().sendCmd(ConfigHandler.getPluginName(), null, entity, entityMap.getCommands());
             return;
@@ -64,19 +68,23 @@ public class Spawn implements Listener {
         String entityType = entity.getType().name();
         String entityGroup = EntityUtils.getEntityGroup(entity);
         if (entityGroup == null) {
-            EntityUtils.putEntityGroup(uuid, entityType);
+            EntityUtils.putEntityGroup(uuid, entityType, entityType);
             return;
         }
         EntityMap entityMap;
         try {
             entityMap = ConfigHandler.getConfigPath().getEntitiesProp().get(entityType).get(entityGroup);
+            if (entityMap == null) {
+                EntityUtils.putEntityGroup(uuid, entityType, entityType);
+                return;
+            }
         } catch (Exception ex) {
-            EntityUtils.putEntityGroup(uuid, entityType);
+            EntityUtils.putEntityGroup(uuid, entityType, entityType);
             return;
         }
         String action = EntityUtils.getSpawnAction(entity, entityMap);
         if (action.equals("none")) {
-            EntityUtils.putEntityGroup(uuid, EntityUtils.getEntityGroup(entity));
+            EntityUtils.putEntityGroup(uuid, entityType, EntityUtils.getEntityGroup(entity));
             // Execute Commands
             CorePlusAPI.getCmd().sendCmd(ConfigHandler.getPluginName(), null, entity, entityMap.getCommands());
             return;

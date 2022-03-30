@@ -33,7 +33,7 @@ public class EntityData implements Listener {
                     entityGroup = EntityUtils.getEntityGroup(entity);
                     if (entityGroup == null)
                         entityGroup = entity.getType().name();
-                    EntityUtils.putEntityGroup(entity.getUniqueId(), entityGroup);
+                    EntityUtils.putEntityGroup(entity.getUniqueId(), entity.getType().name(), entityGroup);
                 }
                 // Purge
                 if (ConfigHandler.getConfigPath().isEnPurge())
@@ -49,7 +49,6 @@ public class EntityData implements Listener {
             return;
         if (CorePlusAPI.getDepend().isPaper())
             return;
-        UUID uuid = e.getEntity().getUniqueId();
-        EntityUtils.removeEntityGroup(uuid, e.getEntity());
+        EntityUtils.removeEntityGroup(e.getEntity());
     }
 }

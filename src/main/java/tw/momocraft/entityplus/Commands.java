@@ -24,7 +24,7 @@ public class Commands implements CommandExecutor {
                 CorePlusAPI.getMsg().sendLangMsg("", ConfigHandler.getConfigPath().getMsgCmdHelp(), sender);
                 CorePlusAPI.getMsg().sendMsg("", sender, "");
             } else {
-                CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(), "noPermission", sender);
+                CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(), "Message.noPermission", sender);
             }
             return true;
         }
@@ -44,7 +44,7 @@ public class Commands implements CommandExecutor {
                     CorePlusAPI.getMsg().sendMsg("", sender, "");
                 } else {
                     CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                            "noPermission", sender);
+                            "Message.noPermission", sender);
                 }
                 return true;
             case "reload":
@@ -52,12 +52,12 @@ public class Commands implements CommandExecutor {
                     ConfigHandler.generateData(true);
                     if (sender instanceof Player)
                         CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                                "configReload", sender);
+                                "Message.configReload", sender);
                     CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                            "configReload", null);
+                            "Message.configReload", null);
                 } else {
                     CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                            "noPermission", sender);
+                            "Message.noPermission", sender);
                 }
                 return true;
             case "version":
@@ -69,14 +69,14 @@ public class Commands implements CommandExecutor {
                             EntityPlus.getInstance().getName(), EntityPlus.getInstance().getDescription().getVersion(), true);
                 } else {
                     CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                            "noPermission", sender);
+                            "Message.noPermission", sender);
                 }
                 return true;
             case "purge":
                 if (CorePlusAPI.getPlayer().hasPerm(sender, "entityplus.command.purge")) {
                     if (!ConfigHandler.getConfigPath().isEnPurge()) {
                         CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                                "featureDisabled", sender);
+                                "Message.featureDisabled", sender);
                         return true;
                     }
                     if (length == 2) {
@@ -87,7 +87,7 @@ public class Commands implements CommandExecutor {
                             case "chunk":
                                 if (sender instanceof ConsoleCommandSender) {
                                     CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                                            "onlyPlayer", sender);
+                                            "Message.onlyPlayer", sender);
                                     return true;
                                 }
                                 Purge.checkChunk(sender, ((Player) sender).getChunk());
@@ -100,12 +100,12 @@ public class Commands implements CommandExecutor {
                             ConfigHandler.getConfigPath().getMsgCmdPurgeChunk(), sender);
                 } else {
                     CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                            "noPermission", sender);
+                            "Message.noPermission", sender);
                 }
                 return true;
         }
         CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                "unknownCommand", sender);
+                "Message.unknownCommand", sender);
         return true;
     }
 }

@@ -86,6 +86,8 @@ public class Purge {
     }
 
     public static Map<String, AtomicInteger> purgeChunk(Chunk chunk, Map<String, AtomicInteger> purgeMap) {
+        System.out.println(chunk.getWorld().getName() + ": " + chunk.getX() + ", " + chunk.getZ());
+
         Entity[] entities = chunk.getEntities();
         Map<String, AtomicInteger> map = new HashMap<>();
         String groupName;
@@ -97,6 +99,7 @@ public class Purge {
         while (iterator.hasNext()) {
             entity = iterator.next();
             groupName = EntityUtils.getEntityGroup(entity.getUniqueId());
+            System.out.println(entity.getName() + ": " + groupName);
             if (groupName == null)
                 continue;
             // Bypass the ignore entities.
@@ -115,9 +118,11 @@ public class Purge {
             count = map.get(purgeGroup);
             if (count == null) {
                 map.put(purgeGroup, new AtomicInteger(1));
+                System.out.println(entity.getName() + ": " + 1);
                 continue;
             } else if (count.get() < entityMap.getLimitAmount()) {
                 count.incrementAndGet();
+                System.out.println(entity.getName() + ": " + count);
                 continue;
             }
             // Purging the entity.
