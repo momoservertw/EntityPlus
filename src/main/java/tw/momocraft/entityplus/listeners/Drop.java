@@ -1,6 +1,6 @@
 package tw.momocraft.entityplus.listeners;
 
-import io.lumine.xikage.mythicmobs.MythicMobs;
+import io.lumine.mythic.bukkit.MythicBukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -30,9 +30,8 @@ public class Drop implements Listener {
         if (player == null)
             return;
         // To stop checking the MythicMobs.
-        UUID entityUUID = entity.getUniqueId();
         if (CorePlusAPI.getDepend().MythicMobsEnabled())
-            if (MythicMobs.inst().getAPIHelper().isMythicMob(entityUUID))
+            if (CorePlusAPI.getEnt().isMythicMob(entity))
                 return;
         // To get drop properties.
         String entityType = entity.getType().name();

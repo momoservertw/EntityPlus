@@ -1,6 +1,6 @@
 package tw.momocraft.entityplus.listeners;
 
-import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobSpawnEvent;
+import io.lumine.mythic.bukkit.events.MythicMobSpawnEvent;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -29,7 +29,7 @@ public class SpawnMythicMobs implements Listener {
         EntityMap entityMap;
         try {
             entityMap = ConfigHandler.getConfigPath().getEntitiesProp().get(entityType).get(entityGroup);
-            if (entityMap==null){
+            if (entityMap == null) {
                 EntityUtils.putEntityGroup(uuid, entityType, entityType);
                 return;
             }

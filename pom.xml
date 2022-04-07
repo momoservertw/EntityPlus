@@ -35,7 +35,7 @@
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.18.1-R0.1-SNAPSHOT</version>
+            <version>1.18.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!--CorePlus API-->
@@ -51,9 +51,8 @@
             <groupId>me.MythicMobs</groupId>
             <artifactId>MythicMobs</artifactId>
             <scope>system</scope>
-            <systemPath>${pom.basedir}/src/main/java/tw/momocraft/entityplus/extra/MythicMobs-5.0.0-SNAPSHOT.jar</systemPath>
+            <systemPath>${pom.basedir}/src/main/java/tw/momocraft/entityplus/extra/MythicMobs-5.0.3-SNAPSHOT.jar</systemPath>
             <version>LEGACY</version>
         </dependency>
     </dependencies>
-
 </project>

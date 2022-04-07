@@ -56,9 +56,8 @@ Entities:
   Drop:
     Enable: false
     Settings:
-      Bypass:
-        # Custom Residence flag "dropbypass" to bypass the features.
-        Residence-Flag: false
+      # Custom Residence flag "dropbypass" to bypass the features.
+      Residence-Flag: false
       # If players has multiple groups, they will get all extra rewards.
       # Mode: "none", "plus" or "multiply"
       Multiple-Groups: "none"
@@ -87,9 +86,8 @@ Entities:
   Damage:
     Enable: false
     Settings:
-      Bypass:
-        # Custom Residence flag "damagebypass" to bypass the features.
-        Residence-Flag: false
+      # Custom Residence flag "damagebypass" to bypass the features.
+      Residence-Flag: false
     Groups:
       Skip-Duration:
         Enable: true
@@ -135,9 +133,8 @@ Spawner:
       Nearby-Players: true
     # Sending commands nearby players. Set "0" to disable checking.
     Nearby-Players-Range: 32
-    Bypass:
-      # Custom Residence flag "spawnerbypass" to bypass the features.
-      Residence-Flag: false
+    # Custom Residence flag "spawnerbypass" to bypass the features.
+    Residence-Flag: false
   Groups:
     Normal:
       Enable: true

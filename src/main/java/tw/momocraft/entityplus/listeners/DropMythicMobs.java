@@ -1,7 +1,7 @@
 package tw.momocraft.entityplus.listeners;
 
-import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobLootDropEvent;
-import io.lumine.xikage.mythicmobs.drops.Drop;
+import io.lumine.mythic.bukkit.events.MythicMobLootDropEvent;
+import io.lumine.mythic.core.drops.Drop;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -122,7 +122,7 @@ public class DropMythicMobs implements Listener {
         }
         // Items.
         if (ConfigHandler.getConfigPath().isEnDropItem()) {
-            Collection<Drop> dropItem = e.getPhysicalDrops();
+            Collection<io.lumine.mythic.core.drops.Drop> dropItem = e.getPhysicalDrops();
             double dropDecimal;
             for (Drop itemStack : dropItem) {
                 totalItem *= itemStack.getAmount();

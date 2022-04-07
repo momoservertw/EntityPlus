@@ -136,7 +136,7 @@ public class ConfigPath {
     }
 
     private void setSpawn() {
-        enSpawnResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Settings.Bypass.Residence-Flag");
+        enSpawnResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Spawn.Settings.Residence-Flag");
         ConfigurationSection groupsConfig = ConfigHandler.getConfig("entities.yml").getConfigurationSection("Entities");
         if (groupsConfig == null)
             return;
@@ -315,7 +315,7 @@ public class ConfigPath {
         enDropMoney = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Options.Money");
         enDropItem = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Options.Items");
         enDropCommand = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Options.Commands");
-        enDropResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Bypass.Residence-Flag");
+        enDropResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Residence-Flag");
         enDropMultiPerm = ConfigHandler.getConfig("config.yml").getString("Entities.Drop.Settings.Multiple-Groups");
         ConfigurationSection groupsConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Entities.Drop.Groups");
         if (groupsConfig == null)
@@ -341,7 +341,7 @@ public class ConfigPath {
         enDamage = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Damage.Enable");
         if (!enDamage)
             return;
-        enDamageResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Damage.Settings.Bypass.Residence-Flag");
+        enDamageResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Damage.Settings.Residence-Flag");
         ConfigurationSection groupsConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Entities.Damage.Groups");
         if (groupsConfig == null)
             return;
@@ -377,7 +377,7 @@ public class ConfigPath {
         spawner = ConfigHandler.getConfig("config.yml").getBoolean("Spawner.Enable");
         if (!spawner)
             return;
-        spawnerResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Spawner.Settings.Bypass.Residence-Flag");
+        spawnerResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Spawner.Settings.Residence-Flag");
         spawnerNearbyPlayerRange = ConfigHandler.getConfig("config.yml").getInt("Spawner.Settings.Nearby-Players-Range");
         ConfigurationSection spawnerConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawner.Groups");
         if (spawnerConfig == null)

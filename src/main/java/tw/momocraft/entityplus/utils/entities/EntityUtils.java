@@ -89,7 +89,7 @@ public class EntityUtils {
         }
         Location loc = entity.getLocation();
         // Check "Residence-Flag"
-        if (!CorePlusAPI.getCond().checkFlag(loc, "spawnbypass", true,
+        if (!CorePlusAPI.getCond().checkFlag(loc, "spawnbypass", false,
                 ConfigHandler.getConfigPath().isEnSpawnResFlag()))
             return "none";
         // Check "Max-Distance".
