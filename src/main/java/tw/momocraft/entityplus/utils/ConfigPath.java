@@ -186,7 +186,7 @@ public class ConfigPath {
         int valueInt;
         // Inherit
         valueString = ConfigHandler.getConfig("entities.yml").getString("Entities." + group + ".Inherit");
-        if (valueString != null) {
+        if (valueString != null && !valueString.equals("none")) {
             entityMap = getEntityMap(entityMap, valueString);
             entityMap.setInherit(valueString);
         }

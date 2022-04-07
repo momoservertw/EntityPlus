@@ -84,12 +84,10 @@ public class EntityUtils {
     }
 
     public static String getSpawnAction(Entity entity, EntityMap entityMap) {
-        if (entity instanceof Wolf) {
-            System.out.println(entityMap.getLimitAmount());
-        }
         Location loc = entity.getLocation();
-        // Check "Residence-Flag"
-        if (!CorePlusAPI.getCond().checkFlag(loc, "spawnbypass", false,
+
+        // Check "Residence-Flag" - Bypass if residence has the flag.
+        if (CorePlusAPI.getCond().checkFlag(loc, "spawnbypass", false,
                 ConfigHandler.getConfigPath().isEnSpawnResFlag()))
             return "none";
         // Check "Max-Distance".
