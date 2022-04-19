@@ -86,20 +86,19 @@ public class Purge {
     }
 
     public static Map<String, AtomicInteger> purgeChunk(Chunk chunk, Map<String, AtomicInteger> purgeMap) {
-        System.out.println(chunk.getWorld().getName() + ": " + chunk.getX() + ", " + chunk.getZ());
-
         Entity[] entities = chunk.getEntities();
         Map<String, AtomicInteger> map = new HashMap<>();
         String groupName;
-        String purgeGroup;
         AtomicInteger count;
         Iterator<Entity> iterator = Arrays.stream(entities).iterator();
         Entity entity;
         EntityMap entityMap;
         while (iterator.hasNext()) {
             entity = iterator.next();
+            if (CorePlusAPI.getCond().checkFlag(entity.getLocation(), "purgebypass", false,
+                    ConfigHandler.getConfigPath().isEnPurge()))
+                continue;
             groupName = EntityUtils.getEntityGroup(entity.getUniqueId());
-            System.out.println(entity.getName() + ": " + groupName);
             if (groupName == null)
                 continue;
             // Bypass the ignore entities.
@@ -107,17 +106,10 @@ public class Purge {
                 continue;
             // Getting the group amount.
             entityMap = ConfigHandler.getConfigPath().getEntitiesTypeProp().get(groupName);
-            try {
-                purgeGroup = entityMap.getPurgeGroup();
-                if (purgeGroup == null)
-                    continue;
-            } catch (Exception ex) {
-                continue;
-            }
             // Increasing the group amount.
-            count = map.get(purgeGroup);
+            count = map.get(groupName);
             if (count == null) {
-                map.put(purgeGroup, new AtomicInteger(1));
+                map.put(groupName, new AtomicInteger(1));
                 System.out.println(entity.getName() + ": " + 1);
                 continue;
             } else if (count.get() < entityMap.getLimitAmount()) {

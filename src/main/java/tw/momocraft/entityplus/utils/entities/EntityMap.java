@@ -8,7 +8,7 @@ import java.util.Map;
 public class EntityMap {
 
     public EntityMap() {
-        maxDistance = ConfigHandler.getConfig("config.yml").getInt("Entities.Spawn.Settings.Max-Distance");
+        maxDistance = ConfigHandler.getConfig("config.yml").getInt("Entities.Spawn.Settings.Max-Distance", 128);;
         maxDistance *= maxDistance;
     }
 
@@ -16,16 +16,15 @@ public class EntityMap {
     private int maxDistance;
     private String inherit;
     private List<String> types;
-    private long priority;
+    private long priority = 0;
     private List<String> reasons;
     private List<String> ignoreReasons;
     private String permission;
     private List<String> conditions;
     private Map<String, Double> chanceMap;
 
-    private String limitGroup;
-    private int limitAmount;
-    private String purgeGroup;
+    private int limitAmount = -1;
+    private boolean purge;
     private List<String> commands;
 
     private List<String> dropList;
@@ -111,14 +110,6 @@ public class EntityMap {
         this.chanceMap = chanceMap;
     }
 
-    public String getLimitGroup() {
-        return limitGroup;
-    }
-
-    public void setLimitGroup(String limitGroup) {
-        this.limitGroup = limitGroup;
-    }
-
     public int getLimitAmount() {
         return limitAmount;
     }
@@ -127,12 +118,12 @@ public class EntityMap {
         this.limitAmount = limitAmount;
     }
 
-    public String getPurgeGroup() {
-        return purgeGroup;
+    public void setPurge(boolean purge) {
+        this.purge = purge;
     }
 
-    public void setPurgeGroup(String purgeGroup) {
-        this.purgeGroup = purgeGroup;
+    public boolean isPurge() {
+        return purge;
     }
 
     public List<String> getCommands() {

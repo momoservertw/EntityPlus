@@ -86,6 +86,8 @@ public class EntityUtils {
     public static String getSpawnAction(Entity entity, EntityMap entityMap) {
         Location loc = entity.getLocation();
 
+        Entity entity1;
+
         // Check "Residence-Flag" - Bypass if residence has the flag.
         if (CorePlusAPI.getCond().checkFlag(loc, "spawnbypass", false,
                 ConfigHandler.getConfigPath().isEnSpawnResFlag()))
@@ -110,7 +112,9 @@ public class EntityUtils {
                         break;
                     case "AFK":
                         for (Player player : nearbyPlayers)
-                            if (!CorePlusAPI.getPlayer().isAFK(player))
+                            if (!CorePlusAPI.getPlayer().isAFK(player) ||
+                                    CorePlusAPI.getPlayer().hasPerm(player, "entityplus.bypass.spawn.chance.afk")
+                            )
                                 continue back;
                         chance *= chanceMap.get(chanceValue);
                         break;
@@ -140,7 +144,7 @@ public class EntityUtils {
             return "chanceFail";
         // Check Limit.
         if (ConfigHandler.getConfigPath().isEnLimit())
-            if (!EntityUtils.checkLimit(loc, entityMap.getLimitGroup()))
+            if (!EntityUtils.checkLimit(loc, entityMap.getGroupName()))
                 return "limit";
         return "none";
     }
@@ -168,7 +172,7 @@ public class EntityUtils {
             return false;
         if (isBaby(entity, ConfigHandler.getConfigPath().isEnPurgeIgnoreBaby()))
             return true;
-        if (isSaddleOn(entity, ConfigHandler.getConfigPath().isEnPurgeIgnoreBaby()))
+        if (isSaddleOn(entity, ConfigHandler.getConfigPath().isEnPurgeIgnoreSaddle()))
             return true;
         if (isNotPickup(entity, ConfigHandler.getConfigPath().isEnPurgeIgnorePickup()))
             return true;

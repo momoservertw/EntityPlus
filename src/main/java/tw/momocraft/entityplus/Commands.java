@@ -29,7 +29,7 @@ public class Commands implements CommandExecutor {
             return true;
         }
         switch (args[0].toLowerCase()) {
-            case "help":
+            case "help" -> {
                 if (CorePlusAPI.getPlayer().hasPerm(sender, "entityplus.use")) {
                     CorePlusAPI.getMsg().sendMsg("", sender, "");
                     CorePlusAPI.getMsg().sendLangMsg("", ConfigHandler.getConfigPath().getMsgCmdTitle(), sender);
@@ -41,13 +41,18 @@ public class Commands implements CommandExecutor {
                         CorePlusAPI.getMsg().sendLangMsg("", ConfigHandler.getConfigPath().getMsgCmdReload(), sender);
                     if (CorePlusAPI.getPlayer().hasPerm(sender, "entityplus.command.version"))
                         CorePlusAPI.getMsg().sendLangMsg("", ConfigHandler.getConfigPath().getMsgCmdVersion(), sender);
+                    if (CorePlusAPI.getPlayer().hasPerm(sender, "entityplus.command.purge")) {
+                        CorePlusAPI.getMsg().sendLangMsg("", ConfigHandler.getConfigPath().getMsgCmdPurgeChunk(), sender);
+                        CorePlusAPI.getMsg().sendLangMsg("", ConfigHandler.getConfigPath().getMsgCmdPurgeAll(), sender);
+                    }
                     CorePlusAPI.getMsg().sendMsg("", sender, "");
                 } else {
                     CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
                             "Message.noPermission", sender);
                 }
                 return true;
-            case "reload":
+            }
+            case "reload" -> {
                 if (CorePlusAPI.getPlayer().hasPerm(sender, "entityplus.command.reload")) {
                     ConfigHandler.generateData(true);
                     if (sender instanceof Player)
@@ -60,7 +65,8 @@ public class Commands implements CommandExecutor {
                             "Message.noPermission", sender);
                 }
                 return true;
-            case "version":
+            }
+            case "version" -> {
                 if (CorePlusAPI.getPlayer().hasPerm(sender, "entityplus.command.version")) {
                     CorePlusAPI.getMsg().sendMsg(ConfigHandler.getPrefix(), sender,
                             "&f " + EntityPlus.getInstance().getDescription().getName()
@@ -72,7 +78,8 @@ public class Commands implements CommandExecutor {
                             "Message.noPermission", sender);
                 }
                 return true;
-            case "purge":
+            }
+            case "purge" -> {
                 if (CorePlusAPI.getPlayer().hasPerm(sender, "entityplus.command.purge")) {
                     if (!ConfigHandler.getConfigPath().isEnPurge()) {
                         CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
@@ -81,10 +88,11 @@ public class Commands implements CommandExecutor {
                     }
                     if (length == 2) {
                         switch (args[1]) {
-                            case "all":
+                            case "all" -> {
                                 Purge.checkAll(sender);
                                 return true;
-                            case "chunk":
+                            }
+                            case "chunk" -> {
                                 if (sender instanceof ConsoleCommandSender) {
                                     CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
                                             "Message.onlyPlayer", sender);
@@ -92,6 +100,7 @@ public class Commands implements CommandExecutor {
                                 }
                                 Purge.checkChunk(sender, ((Player) sender).getChunk());
                                 return true;
+                            }
                         }
                     }
                     CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
@@ -103,6 +112,7 @@ public class Commands implements CommandExecutor {
                             "Message.noPermission", sender);
                 }
                 return true;
+            }
         }
         CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
                 "Message.unknownCommand", sender);

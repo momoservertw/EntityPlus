@@ -6,22 +6,37 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import tw.momocraft.coreplus.api.CorePlusAPI;
 import tw.momocraft.entityplus.EntityPlus;
 import tw.momocraft.entityplus.utils.ConfigPath;
+import tw.momocraft.entityplus.utils.FileMap;
 
 import java.io.File;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ConfigHandler {
 
-    private static YamlConfiguration configYAML;
-    private static YamlConfiguration entitiesYAML;
+    private static final Map<String, YamlConfiguration> configMap = new HashMap<>();
+    private static final Map<String, FileMap> configInfoMap = new HashMap<>();
+
+    private static final Map<String, YamlConfiguration> mobsMap = new HashMap<>();
+    private static final Map<String, FileMap> mobsInfoMap = new HashMap<>();
     private static ConfigPath configPath;
 
     public static void generateData(boolean reload) {
-        genConfigFile("config.yml");
-        genConfigFile("entities.yml");
-        UtilsHandler.setUpFirst(reload);
+        // Setup
+        setConfigFile();
+        setMobsFile();
+        // Load
+        loadConfig("config.yml");
+        loadMobsConfig();
+
+        // Check version
+        checkConfigVer("config.yml");
+        logConfigMsg();
+
         setConfigPath(new ConfigPath());
+        UtilsHandler.setUpFirst(reload);
         UtilsHandler.setUpLast(reload);
         if (!reload) {
             CorePlusAPI.getUpdate().check(getPluginName(), getPrefix(), Bukkit.getConsoleSender(),
@@ -30,65 +45,60 @@ public class ConfigHandler {
         }
     }
 
-    public static FileConfiguration getConfig(String fileName) {
-        File filePath = EntityPlus.getInstance().getDataFolder();
-        File file;
-        switch (fileName) {
-            case "config.yml":
-                filePath = Bukkit.getWorldContainer();
-                if (configYAML == null) {
-                    getConfigData(filePath, fileName);
-                }
-                break;
-        }
-        file = new File(filePath, fileName);
-        return getPath(fileName, file, false);
+    private static void logConfigMsg() {
+        CorePlusAPI.getMsg().sendConsoleMsg(getPrefix(),
+                "Load config files: " + configMap.keySet());
+        CorePlusAPI.getMsg().sendConsoleMsg(getPrefix(),
+                "Load mobs files: " + mobsMap.keySet());
     }
 
-    private static void getConfigData(File filePath, String fileName) {
-        File file = new File(filePath, fileName);
+    private static void setConfigFile() {
+        FileMap fileMap;
+        String filePath;
+        String fileName;
+        // config.yml
+        fileMap = new FileMap();
+        filePath = EntityPlus.getInstance().getDataFolder().getPath();
+        fileName = "config.yml";
+        fileMap.setFile(new File(filePath, fileName));
+        fileMap.setFileName(fileName);
+        fileMap.setFileType("yaml");
+        fileMap.setVersion(12);
+        configInfoMap.put(fileName, fileMap);
+    }
+
+    private static void loadConfig(String fileName) {
+        File file = configInfoMap.get(fileName).getFile();
+        checkResource(file, fileName);
+        configMap.put(fileName, YamlConfiguration.loadConfiguration(file));
+    }
+
+    private static void checkResource(File file, String resource) {
         if (!(file).exists()) {
             try {
-                EntityPlus.getInstance().saveResource(fileName, false);
+                EntityPlus.getInstance().saveResource(resource, false);
             } catch (Exception e) {
-                CorePlusAPI.getMsg().sendErrorMsg(getPluginName(), "Cannot save " + fileName + " to disk!");
-                return;
+                CorePlusAPI.getMsg().sendErrorMsg(getPluginName(),
+                        "Cannot save " + resource + " to disk!");
             }
         }
-        getPath(fileName, file, true);
     }
 
-    private static YamlConfiguration getPath(String fileName, File file, boolean saveData) {
-        switch (fileName) {
-            case "config.yml":
-                if (saveData) {
-                    configYAML = YamlConfiguration.loadConfiguration(file);
-                }
-                return configYAML;
-            case "entities.yml":
-                if (saveData) {
-                    entitiesYAML = YamlConfiguration.loadConfiguration(file);
-                }
-                return entitiesYAML;
-        }
-        return null;
+    public static FileConfiguration getConfig(String fileName) {
+        if (configMap.get(fileName) == null)
+            loadConfig(fileName);
+        return configMap.get(fileName);
     }
 
-    private static void genConfigFile(String fileName) {
+    private static void checkConfigVer(String fileName) {
         String[] fileNameSlit = fileName.split("\\.(?=[^.]+$)");
-        int configVersion = 0;
-        File filePath = EntityPlus.getInstance().getDataFolder();
-        switch (fileName) {
-            case "config.yml":
-                configVersion = 12;
-                break;
-            case "entities.yml":
-                configVersion = 1;
-                break;
-        }
-        getConfigData(filePath, fileName);
+        FileMap fileMap = configInfoMap.get(fileName);
+        String filePath = fileMap.getFilePath();
+        int version = fileMap.getVersion();
+
+        loadConfig(fileName);
         File file = new File(filePath, fileName);
-        if (file.exists() && getConfig(fileName).getInt("Config-Version") != configVersion) {
+        if (file.exists() && getConfig(fileName).getInt("Config-Version") != version) {
             if (EntityPlus.getInstance().getResource(fileName) != null) {
                 LocalDateTime currentDate = LocalDateTime.now();
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm-ss");
@@ -99,12 +109,48 @@ public class ConfigHandler {
                     file.renameTo(newFile);
                     File configFile = new File(filePath, fileName);
                     configFile.delete();
-                    getConfigData(filePath, fileName);
-                    CorePlusAPI.getMsg().sendConsoleMsg(getPrefix(), "&4The file \"" + fileName + "\" is out of date, generating a new one!");
+                    loadConfig(fileName);
+                    CorePlusAPI.getMsg().sendConsoleMsg(getPrefix(),
+                            "&4The file \"" + fileName + "\" is out of date, generating a new one!");
                 }
             }
         }
         getConfig(fileName).options().copyDefaults(false);
+    }
+
+    private static void setMobsFile() {
+        FileMap fileMap;
+        String filePath = EntityPlus.getInstance().getDataFolder().getPath() + "/mobs";
+        checkResource(new File(filePath, "default.yml"), "mobs/default.yml");
+        checkResource(new File(filePath, "monsters.yml"), "mobs/monsters.yml");
+        checkResource(new File(filePath, "animals.yml"), "mobs/animals.yml");
+        checkResource(new File(filePath, "vanilla.yml"), "mobs/vanilla.yml");
+        // Load file in plugin/mobs folder.
+        String[] fileList = new File(filePath).list();
+        for (String fileName : fileList) {
+            if (fileName.endsWith(".yml")) {
+                fileMap = new FileMap();
+                fileMap.setFile(new File(filePath, fileName));
+                fileMap.setFileName(fileName);
+                fileMap.setVersion(1);
+                fileMap.setFileType("yaml");
+                mobsInfoMap.put(fileName, fileMap);
+            }
+        }
+    }
+
+    private static void loadMobsConfig() {
+        File file;
+        String fileName;
+        for (FileMap fileMap : mobsInfoMap.values()) {
+            file = fileMap.getFile();
+            fileName = fileMap.getFileName();
+            mobsMap.put(fileName, YamlConfiguration.loadConfiguration(file));
+        }
+    }
+
+    public static Map<String, YamlConfiguration> getMobsMap() {
+        return mobsMap;
     }
 
     private static void setConfigPath(ConfigPath configPaths) {

@@ -6,17 +6,16 @@ Config-Version: 12
 Debugging: false
 
 # Controlling entities spawn, rewards, and damage.
-# You need to setup the entities in entities.yml.
+# You need to setup the entities in "mobs" folder.
 # More information: https://github.com/momoservertw/EntityPlus/wiki/Entities
 Entities:
   Enable: false
-  # Controlling entities spawn conditions.
   Spawn:
     Settings:
       # Custom Residence flag "spawnbypass" to bypass the features.
       Residence-Flag: false
-      # Prevent entities from spawning outside the radius.
-      Max-Distance: 125
+      # Prevent entities from spawning too far from players.
+      Max-Distance: 128
   # Limits the creatures spawn amount.
   Limit:
     Enable: false
@@ -53,6 +52,7 @@ Entities:
           Console: false
           Broadcast: false
   # Changing the rewards for killing creatures.
+  # The features
   Drop:
     Enable: false
     Settings:
@@ -74,8 +74,6 @@ Entities:
         Exp: 1.5
         Items: 1.5
         Money: 1.5
-        Commands: [ ]
-        Conditions: [ ]
       lucky2:
         Enable: true
         Priority: 2
@@ -153,7 +151,7 @@ Spawner:
         SPIDER: 1
         CAVE_SPIDER: 1
       Commands:
-        - "log-custom: SpawnerChanged, %entity_display_name% spawner - %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%, nearby players: %nearbyplayers%"
+        - "log-group: EntityPlus-Spawner, %entity_display_name% spawner - %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%, nearby players: %nearbyplayers%"
         - "print: &c%entity_display_name% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%, nearby players: %nearbyplayers%"
       Target-Commands:
         - "message: &c%entity_display_name% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%."
@@ -166,7 +164,7 @@ Spawner:
       Change-Types:
         - BLAZE
       Commands:
-        - "log-group: SpawnerChanged, %spawner% spawner - %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%, nearby players: %nearbyplayers%"
+        - "log-group: EntityPlus-Spawner, %spawner% spawner - %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%, nearby players: %nearbyplayers%"
         - "print: &c%spawner% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%, nearby players: %nearbyplayers%"
       Target-Commands:
         - "message: &c%entity_display_name% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%."
@@ -176,7 +174,7 @@ Spawner:
       Location:
         - EndWorlds
       Commands:
-        - "log-custom: SpawnerChanged, %spawner% spawner - %world%(%loc_x%, %loc_y%, %loc_z%) has been removed, nearby players: %nearbyplayers%"
+        - "log-group: EntityPlus-Spawner, %spawner% spawner - %world%(%loc_x%, %loc_y%, %loc_z%) has been removed, nearby players: %nearbyplayers%"
         - "print: &c%spawner% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been removed, nearby players: %nearbyplayers%"
       Target-Commands:
         - "message: &c%entity_display_name% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been removed."
@@ -185,11 +183,11 @@ Message:
   prefix: '&7[&dEntityPlus&7]&r '
   Commands:
     title: "&8▩▩▩▩▩▩▩▩▩▩ &d&lEntityPlus &8▩▩▩▩▩▩▩▩▩▩"
-    help: "/ep help &8- &7This help menu."
-    reload: "/ep reload &8- &7Reloads config file."
-    version: "/ep version &8- &7Checks the plugin version and updates."
-    purgeAll: "/ep purge killall &8- &7Purge all creatures that exceed the limit."
-    purgeChunk: "/ep purge killchunk &8- &7Kill the chunk creatures that exceed the limit."
+    help: "/etp help &8- &7This help menu."
+    reload: "/etp reload &8- &7Reloads config file."
+    version: "/etp version &8- &7Checks the plugin version and updates."
+    purgeAll: "/etp purge killall &8- &7Purge all creatures that exceed the limit."
+    purgeChunk: "/etp purge killchunk &8- &7Kill the chunk creatures that exceed the limit."
   Purge:
-    start: "%prefix% &eStart checking chunks..."
+    start: "%prefix% &eStart checking entities..."
     total: "%prefix% &fRemoved entities: &7%amount% (%value%)"

@@ -32,6 +32,7 @@ public class DependHandler {
         }
         if (CorePlusAPI.getDepend().ResidenceEnabled()) {
             CorePlusAPI.getCond().registerFlag("spawnbypass");
+            CorePlusAPI.getCond().registerFlag("purgebypass");
             CorePlusAPI.getCond().registerFlag("dropbypass");
             CorePlusAPI.getCond().registerFlag("damagebypass");
             CorePlusAPI.getCond().registerFlag("spawnerbypass");

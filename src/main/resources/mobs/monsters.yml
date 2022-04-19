@@ -1,0 +1,37 @@
+# ░░░░░░░░░░░░░░░   EntityPlus, By Momocraft♥   ░░░░░░░░░░░░░░░
+#  Spigot: https://www.spigotmc.org/resources/entityplus.70592/
+#  Wiki: https://github.com/momoservertw/EntityPlus/wiki
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+Config-Version: 1
+
+Entities:
+  Monsters:
+    Enable: false
+    Inherit: Default
+    Priority: 1
+    Types:
+      - Monster
+      - Flying
+    Ignore-Types:
+      - Boss
+    Spawn:
+      Reasons:
+        - NATURAL
+      Chance:
+        Default: 1
+        AFK: 0.2
+        Gliding: 0
+        Flying: 0
+    Limit: 10
+    Purge: true
+  Boss:
+    Enable: false
+    Inherit: Default
+    Priority: 2
+    Types:
+      - Boss
+    Spawn:
+      Reasons:
+        - NATURAL
+    Limit: 10
+    Purge: true

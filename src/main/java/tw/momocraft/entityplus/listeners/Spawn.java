@@ -86,7 +86,8 @@ public class Spawn implements Listener {
         if (action.equals("none")) {
             EntityUtils.putEntityGroup(uuid, entityType, EntityUtils.getEntityGroup(entity));
             // Execute Commands
-            CorePlusAPI.getCmd().sendCmd(ConfigHandler.getPluginName(), null, entity, entityMap.getCommands());
+            CorePlusAPI.getCmd().sendCmd(ConfigHandler.getPluginName(),
+                    null, entity, entityMap.getCommands());
             return;
         }
         e.setCancelled(true);

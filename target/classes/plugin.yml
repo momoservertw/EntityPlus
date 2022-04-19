@@ -43,8 +43,12 @@ permissions:
     description: Bypass all limits.
     default: op
     children:
-      entityplus.bypass.spawnlimit.afk: true
-  entityplus.bypass.spawnlimit.afk:
+      entityplus.bypass.spawn.chance.afk: true
+      entityplus.bypass.spawn.limit.afk: true
+  entityplus.bypass.spawn.chance.ark:
+    description: Bypass the spawn chance limit when player is AFK.
+    default: op
+  entityplus.bypass.spawn.limit.afk:
     description: Bypass the spawn amount limit when player is AFK.
     default: op
   entityplus.drop.*:
