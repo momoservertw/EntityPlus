@@ -40,8 +40,8 @@ public class DamageMap {
         return ignoreReasons;
     }
 
-    public void setIgnoreReasons(List<String> ignoreReasons) {
-        this.ignoreReasons = ignoreReasons;
+    public void setIgnoreReasons(List<String> sons) {
+        this.ignoreReasons = sons;
     }
 
     public List<String> getConditions() {

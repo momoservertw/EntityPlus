@@ -14,7 +14,6 @@ public class EntityMap {
 
     private String groupName;
     private int maxDistance;
-    private String inherit;
     private List<String> types;
     private long priority = 0;
     private List<String> reasons;
@@ -46,14 +45,6 @@ public class EntityMap {
         this.maxDistance = maxDistance;
     }
 
-    public String getInherit() {
-        return inherit;
-    }
-
-    public void setInherit(String inherit) {
-        this.inherit = inherit;
-    }
-
     public List<String> getTypes() {
         return types;
     }
@@ -82,8 +73,8 @@ public class EntityMap {
         return ignoreReasons;
     }
 
-    public void setIgnoreReasons(List<String> ignoreReasons) {
-        this.ignoreReasons = ignoreReasons;
+    public void setIgnoreReasons(List<String> sons) {
+        this.ignoreReasons = sons;
     }
 
     public String getPermission() {

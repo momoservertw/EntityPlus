@@ -32,7 +32,7 @@ Entities:
       Prevent-Drop: true
       Particle:
         Enable: true
-        Type: SPELL_MOB
+        Type: FLAME
     Ignore:
       Live-Time-Under: 600
       Named: true
@@ -138,7 +138,7 @@ Spawner:
       Enable: true
       Location:
         - NormalWorlds
-      Conditions: [ ]
+      Conditions: []
       Allow-Types:
         - ZOMBIE
         - SKELETON
@@ -186,8 +186,8 @@ Message:
     help: "/etp help &8- &7This help menu."
     reload: "/etp reload &8- &7Reloads config file."
     version: "/etp version &8- &7Checks the plugin version and updates."
-    purgeAll: "/etp purge killall &8- &7Purge all creatures that exceed the limit."
-    purgeChunk: "/etp purge killchunk &8- &7Kill the chunk creatures that exceed the limit."
+    purgeAll: "/etp purge kill all &8- &7Purge all creatures that exceed the limit."
+    purgeChunk: "/etp purge kill chunk &8- &7Kill the chunk creatures that exceed the limit."
   Purge:
     start: "%prefix% &eStart checking entities..."
     total: "%prefix% &fRemoved entities: &7%amount% (%value%)"

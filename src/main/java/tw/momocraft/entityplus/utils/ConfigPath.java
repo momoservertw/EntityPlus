@@ -2,8 +2,6 @@ package tw.momocraft.entityplus.utils;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import tw.momocraft.coreplus.api.CorePlusAPI;
 import tw.momocraft.coreplus.utils.condition.LocationMap;
 import tw.momocraft.entityplus.EntityPlus;
@@ -61,7 +59,6 @@ public class ConfigPath {
     private String enPurgeDeathParticleType;
     private int enPurgeIgnoreLiveTime;
     private boolean enPurgeIgnoreNamed;
-    private boolean enPurgeIgnoreNamedMM;
     private boolean enPurgeIgnoreTamed;
     private boolean enPurgeIgnoreSaddle;
     private boolean enPurgeIgnorePickup;
@@ -105,14 +102,14 @@ public class ConfigPath {
     private void sendSetupMsg() {
         List<String> list = new ArrayList<>(EntityPlus.getInstance().getDescription().getDepend());
         list.addAll(EntityPlus.getInstance().getDescription().getSoftDepend());
-        CorePlusAPI.getMsg().sendHookMsg(ConfigHandler.getPrefix(), "plugins", list);
+        CorePlusAPI.getMsg().sendHookMsg(ConfigHandler.getPluginPrefix(), "plugins", list);
         String string =
                 "spawnbypass" + " "
                         + "dropbypass" + " "
                         + "purgebypass" + " "
                         + "damagebypass" + " "
                         + "spawnerbypass" + " ";
-        CorePlusAPI.getMsg().sendHookMsg(ConfigHandler.getPrefix(), "Residence flags", Arrays.asList(string.split("\\s*")));
+        CorePlusAPI.getMsg().sendHookMsg(ConfigHandler.getPluginPrefix(), "Residence flags", Arrays.asList(string.split("\\s*")));
     }
 
     //  ============================================== //
@@ -202,25 +199,18 @@ public class ConfigPath {
         int valueInt;
         // Inherit
         valueString = yaml.getString("Entities." + group + ".Inherit");
-        if (valueString != null) {
+        if (valueString != null)
             entityMap = getEntityMap(yaml, entityMap, valueString);
-            entityMap.setInherit(valueString);
-        }
         // GroupName
         entityMap.setGroupName(group);
         // Types
-        valueStringList = CorePlusAPI.getConfig().getTypeList(ConfigHandler.getPrefix(),
+        valueStringList = CorePlusAPI.getConfig().getTypeList(ConfigHandler.getPluginPrefix(),
                 yaml.getStringList("Entities." + group + ".Types"), "Entities");
         if (valueStringList != null) {
+            valueStringList = CorePlusAPI.getUtils().removeIgnoreList(valueStringList,
+                    CorePlusAPI.getConfig().getTypeList(ConfigHandler.getPluginPrefix(),
+                            yaml.getStringList("Entities." + group + ".Ignore-Types"), "Entities"));
             entityMap.setTypes(valueStringList);
-        } else {
-            try {
-                EntityType.valueOf(group);
-                valueStringList = new ArrayList<>();
-                valueStringList.add(group);
-                entityMap.setTypes(valueStringList);
-            } catch (Exception ignored) {
-            }
         }
         // Priority
         valueInt = yaml.getInt("Entities." + group + ".Priority", -1);
@@ -315,14 +305,13 @@ public class ConfigPath {
         enPurgeCheckScheduleInterval = ConfigHandler.getConfig("config.yml").getInt("Entities.Purge.Check.Schedule.Interval", 60) * 20;
         enPurgeSpeed = ConfigHandler.getConfig("config.yml").getInt("Entities.Purge.Check.Schedule.Speed", 500);
         //enPurgeCheckAFK = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Check.AFK");
-        enPurgeMsgBroadcast = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Settings.Schedule.Message.Broadcast");
-        enPurgeMsgConsole = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Settings.Schedule.Message.Console");
+        enPurgeMsgBroadcast = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Check.Schedule.Message.Broadcast");
+        enPurgeMsgConsole = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Check.Schedule.Message.Console");
         enPurgeDeathPreventDrop = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Death.Prevent-Drop");
         enPurgeDeathParticle = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Death.Particle.Enable");
         enPurgeDeathParticleType = ConfigHandler.getConfig("config.yml").getString("Entities.Purge.Death.Particle.Type");
-        enPurgeIgnoreLiveTime = ConfigHandler.getConfig("config.yml").getInt("Entities.Purge.Ignore.Live-Time-Under");
+        enPurgeIgnoreLiveTime = ConfigHandler.getConfig("config.yml").getInt("Entities.Purge.Ignore.Live-Time-Under") * 20;
         enPurgeIgnoreNamed = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Ignore.Named");
-        enPurgeIgnoreNamedMM = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Ignore.Named-MythicMobs");
         enPurgeIgnoreTamed = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Ignore.Tamed");
         enPurgeIgnoreSaddle = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Ignore.With-Saddle");
         enPurgeIgnorePickup = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Purge.Ignore.Pickup");
@@ -614,10 +603,6 @@ public class ConfigPath {
 
     public boolean isEnPurgeIgnoreNamed() {
         return enPurgeIgnoreNamed;
-    }
-
-    public boolean isEnPurgeIgnoreNamedMM() {
-        return enPurgeIgnoreNamedMM;
     }
 
     public boolean isEnPurgeIgnoreTamed() {

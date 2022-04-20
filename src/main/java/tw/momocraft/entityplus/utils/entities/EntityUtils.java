@@ -1,5 +1,7 @@
 package tw.momocraft.entityplus.utils.entities;
 
+import io.lumine.mythic.api.mobs.MythicMob;
+import io.lumine.mythic.bukkit.MythicBukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -71,7 +73,8 @@ public class EntityUtils {
                 if (entityMap == null)
                     continue;
                 // Check "Reasons"
-                if (!CorePlusAPI.getUtils().containIgnoreValue(reason, entityMap.getReasons(), entityMap.getIgnoreReasons()))
+                if (entityMap.getReasons() != null &&
+                        !CorePlusAPI.getUtils().containIgnoreValue(reason, entityMap.getReasons(), entityMap.getIgnoreReasons()))
                     continue;
                 // Check "Conditions"
                 if (!CorePlusAPI.getCond().checkCondition(ConfigHandler.getPluginName(),
@@ -85,8 +88,6 @@ public class EntityUtils {
 
     public static String getSpawnAction(Entity entity, EntityMap entityMap) {
         Location loc = entity.getLocation();
-
-        Entity entity1;
 
         // Check "Residence-Flag" - Bypass if residence has the flag.
         if (CorePlusAPI.getCond().checkFlag(loc, "spawnbypass", false,
@@ -176,8 +177,7 @@ public class EntityUtils {
             return true;
         if (isNotPickup(entity, ConfigHandler.getConfigPath().isEnPurgeIgnorePickup()))
             return true;
-        if (isNamed(entity, ConfigHandler.getConfigPath().isEnPurgeIgnoreNamed(),
-                ConfigHandler.getConfigPath().isEnPurgeIgnoreNamedMM()))
+        if (isNamed(entity, ConfigHandler.getConfigPath().isEnPurgeIgnoreNamed()))
             return true;
         if (isTamed(entity, ConfigHandler.getConfigPath().isEnPurgeIgnoreTamed()))
             return true;
@@ -188,11 +188,12 @@ public class EntityUtils {
         return entity.getTicksLived() < tick;
     }
 
-    public static boolean isNamed(Entity entity, boolean bypass, boolean bypassMM) {
+    public static boolean isNamed(Entity entity, boolean bypass) {
         if (CorePlusAPI.getDepend().MythicMobsEnabled()) {
-            if (CorePlusAPI.getEnt().isMythicMob(entity)) {
-                if (!bypassMM)
-                    return false;
+            String mmName = CorePlusAPI.getEnt().getMythicMobDisplayName(entity);
+            if (mmName != null) {
+                if (!mmName.equals(entity.getCustomName()))
+                    return true;
             }
         } else {
             if (!bypass)

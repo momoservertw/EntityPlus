@@ -39,16 +39,16 @@ public class ConfigHandler {
         UtilsHandler.setUpFirst(reload);
         UtilsHandler.setUpLast(reload);
         if (!reload) {
-            CorePlusAPI.getUpdate().check(getPluginName(), getPrefix(), Bukkit.getConsoleSender(),
+            CorePlusAPI.getUpdate().check(getPluginName(), getPluginPrefix(), Bukkit.getConsoleSender(),
                     EntityPlus.getInstance().getDescription().getName(),
                     EntityPlus.getInstance().getDescription().getVersion(), true);
         }
     }
 
     private static void logConfigMsg() {
-        CorePlusAPI.getMsg().sendConsoleMsg(getPrefix(),
+        CorePlusAPI.getMsg().sendConsoleMsg(getPluginPrefix(),
                 "Load config files: " + configMap.keySet());
-        CorePlusAPI.getMsg().sendConsoleMsg(getPrefix(),
+        CorePlusAPI.getMsg().sendConsoleMsg(getPluginPrefix(),
                 "Load mobs files: " + mobsMap.keySet());
     }
 

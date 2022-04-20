@@ -15,7 +15,6 @@ import tw.momocraft.entityplus.utils.entities.EntityUtils;
 import tw.momocraft.entityplus.utils.entities.Purge;
 
 import java.util.HashMap;
-import java.util.UUID;
 
 public class EntityData implements Listener {
 

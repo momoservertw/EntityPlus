@@ -1,8 +1,6 @@
 package tw.momocraft.entityplus.utils.entities;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Damageable;
@@ -101,20 +99,19 @@ public class Purge {
             groupName = EntityUtils.getEntityGroup(entity.getUniqueId());
             if (groupName == null)
                 continue;
+            entityMap = ConfigHandler.getConfigPath().getEntitiesTypeProp().get(groupName);
+            if (entityMap == null)
+                continue;
             // Bypass the ignore entities.
             if (EntityUtils.isPurgeIgnore(entity))
                 continue;
-            // Getting the group amount.
-            entityMap = ConfigHandler.getConfigPath().getEntitiesTypeProp().get(groupName);
             // Increasing the group amount.
             count = map.get(groupName);
             if (count == null) {
                 map.put(groupName, new AtomicInteger(1));
-                System.out.println(entity.getName() + ": " + 1);
                 continue;
             } else if (count.get() < entityMap.getLimitAmount()) {
                 count.incrementAndGet();
-                System.out.println(entity.getName() + ": " + count);
                 continue;
             }
             // Purging the entity.
@@ -127,9 +124,11 @@ public class Purge {
                     entity.remove();
                 }
             }
-            if (ConfigHandler.getConfigPath().isEnPurgeDeathParticle())
+            if (ConfigHandler.getConfigPath().isEnPurgeDeathParticle()) {
                 CorePlusAPI.getEffect().spawnParticle(ConfigHandler.getPluginName(),
                         entity.getLocation(), ConfigHandler.getConfigPath().getEnPurgeDeathParticleType());
+
+            }
             // Adding to checking list.
             try {
                 purgeMap.get(groupName).incrementAndGet();
@@ -157,10 +156,10 @@ public class Purge {
         // Total.
         CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
                 ConfigHandler.getConfigPath().getMsgPurgeTotal(), sender, langHolder);
-        if (ConfigHandler.getConfigPath().isEnPurgeMsgBroadcast())
+        if (ConfigHandler.getConfigPath().isEnPurgeMsgBroadcast()) {
             CorePlusAPI.getMsg().sendBroadcastMsg(ConfigHandler.getPluginPrefix(),
                     ConfigHandler.getConfigPath().getMsgPurgeTotal(), langHolder);
-        if (ConfigHandler.getConfigPath().isEnPurgeMsgConsole()) {
+        } else if (ConfigHandler.getConfigPath().isEnPurgeMsgConsole()) {
             if (!(sender instanceof ConsoleCommandSender))
                 CorePlusAPI.getMsg().sendConsoleMsg(ConfigHandler.getPluginPrefix(),
                         ConfigHandler.getConfigPath().getMsgPurgeTotal(), langHolder);
