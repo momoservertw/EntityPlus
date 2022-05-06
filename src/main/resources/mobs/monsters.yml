@@ -35,3 +35,21 @@ Entities:
         - NATURAL
     Limit: 10
     Purge: true
+  Zombified_piglin_world:
+    Enable: false
+    Types: ZOMBIFIED_PIGLIN
+    Inherit: Monsters
+    Spawn:
+      Reasons:
+        - NETHER_PORTAL
+      Chance:
+        Default: 0.3
+  Phantom_chance:
+    Enable: false
+    Inherit: Monsters
+    Spawn:
+      Chance:
+        Default: 0.3
+        AFK: 0.2
+        Gliding: 0
+        Flying: 0IRON_GOLEM

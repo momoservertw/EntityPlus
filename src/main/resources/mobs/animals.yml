@@ -74,3 +74,11 @@ Entities:
         Flying: 0
     Limit: 10
     Purge: true
+  Iron_golem_world:
+    Enable: false
+    Types: IRON_GOLEM
+    Spawn:
+      Chance: 0.3
+      Reasons:
+        - VILLAGE_DEFENSE
+    Limit: 16

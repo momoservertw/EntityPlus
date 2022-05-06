@@ -116,16 +116,16 @@ public class ConfigPath {
     //         Message Setter                          //
     //  ============================================== //
     private void setMsg() {
-        msgCmdTitle = ConfigHandler.getConfig("config.yml").getString("Message.Commands.title");
-        msgCmdHelp = ConfigHandler.getConfig("config.yml").getString("Message.Commands.help");
-        msgCmdReload = ConfigHandler.getConfig("config.yml").getString("Message.Commands.reload");
-        msgCmdVersion = ConfigHandler.getConfig("config.yml").getString("Message.Commands.version");
-        msgCmdPurgeAll = ConfigHandler.getConfig("config.yml").getString("Message.Commands.purgeAll");
-        msgCmdPurgeChunk = ConfigHandler.getConfig("config.yml").getString("Message.Commands.purgeChunk");
-        msgCmdPurgeChunk = ConfigHandler.getConfig("config.yml").getString("Message.Commands.configBuilder");
+        msgCmdTitle = ConfigHandler.getConfig("message.yml").getString("Message.Commands.title");
+        msgCmdHelp = ConfigHandler.getConfig("message.yml").getString("Message.Commands.help");
+        msgCmdReload = ConfigHandler.getConfig("message.yml").getString("Message.Commands.reload");
+        msgCmdVersion = ConfigHandler.getConfig("message.yml").getString("Message.Commands.version");
+        msgCmdPurgeAll = ConfigHandler.getConfig("message.yml").getString("Message.Commands.purgeAll");
+        msgCmdPurgeChunk = ConfigHandler.getConfig("message.yml").getString("Message.Commands.purgeChunk");
+        msgCmdPurgeChunk = ConfigHandler.getConfig("message.yml").getString("Message.Commands.configBuilder");
 
-        msgPurgeStart = ConfigHandler.getConfig("config.yml").getString("Message.Purge.start");
-        msgPurgeTotal = ConfigHandler.getConfig("config.yml").getString("Message.Purge.total");
+        msgPurgeStart = ConfigHandler.getConfig("message.yml").getString("Message.Purge.start");
+        msgPurgeTotal = ConfigHandler.getConfig("message.yml").getString("Message.Purge.total");
     }
 
     //  ============================================== //

@@ -1,6 +1,8 @@
 package tw.momocraft.entityplus.utils.entities;
 
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Damageable;
@@ -153,16 +155,13 @@ public class Purge {
             langHolder[4] = list.substring(0, list.length() - 2); // %value%
         }
         langHolder[6] = String.valueOf(amount); // %amount%
-        // Total.
-        CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                ConfigHandler.getConfigPath().getMsgPurgeTotal(), sender, langHolder);
+        String input = CorePlusAPI.getMsg().transLang(ConfigHandler.getConfigPath().getMsgPurgeTotal(), langHolder);
+        CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(), input, sender);
         if (ConfigHandler.getConfigPath().isEnPurgeMsgBroadcast()) {
-            CorePlusAPI.getMsg().sendBroadcastMsg(ConfigHandler.getPluginPrefix(),
-                    ConfigHandler.getConfigPath().getMsgPurgeTotal(), langHolder);
+            CorePlusAPI.getMsg().sendBroadcastMsg(ConfigHandler.getPluginPrefix(), input);
         } else if (ConfigHandler.getConfigPath().isEnPurgeMsgConsole()) {
             if (!(sender instanceof ConsoleCommandSender))
-                CorePlusAPI.getMsg().sendConsoleMsg(ConfigHandler.getPluginPrefix(),
-                        ConfigHandler.getConfigPath().getMsgPurgeTotal(), langHolder);
+                CorePlusAPI.getMsg().sendConsoleMsg(ConfigHandler.getPluginPrefix(), input);
         }
     }
 }

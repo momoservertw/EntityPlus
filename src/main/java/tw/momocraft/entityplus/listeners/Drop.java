@@ -1,6 +1,5 @@
 package tw.momocraft.entityplus.listeners;
 
-import io.lumine.mythic.bukkit.MythicBukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,39 +12,49 @@ import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.utils.entities.DropMap;
 import tw.momocraft.entityplus.utils.entities.EntityUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 public class Drop implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityDeathEvent(EntityDeathEvent e) {
+        System.out.println("24");
         if (!ConfigHandler.getConfigPath().isEnDrop())
             return;
+        System.out.println("27");
         // Checking property.
         LivingEntity entity = e.getEntity();
         String entityGroup = EntityUtils.getEntityGroup(entity.getUniqueId());
         if (entityGroup == null)
             return;
+        System.out.println("33");
         Player player = e.getEntity().getKiller();
         if (player == null)
             return;
+        System.out.println("37");
         // To stop checking the MythicMobs.
         if (CorePlusAPI.getDepend().MythicMobsEnabled())
             if (CorePlusAPI.getEnt().isMythicMob(entity))
                 return;
+        System.out.println("42");
         // To get drop properties.
         String entityType = entity.getType().name();
         List<String> dropList = ConfigHandler.getConfigPath().getEntitiesProp().get(entityType).get(entityGroup).getDropList();
-        if (dropList == null || dropList.isEmpty())
+        if (dropList == null)
             return;
+        System.out.println("47");
         // Checking the bypass "Residence-Flag".
-        if (!CorePlusAPI.getCond().checkFlag(e.getEntity().getLocation(),
+        if (CorePlusAPI.getCond().checkFlag(entity.getLocation(),
                 "dropbypass", false, ConfigHandler.getConfigPath().isEnDropResFlag())) {
             CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPluginName(),
                     "Drop", entityType, "Residence-Flag", "bypass",
                     new Throwable().getStackTrace()[0]);
             return;
         }
+        System.out.println("56");
         // Checking rewards.
         DropMap dropMap;
         List<DropMap> dropMapList = new ArrayList<>();
@@ -59,7 +68,7 @@ public class Drop implements Listener {
                 if (dropMap == null)
                     continue;
                 // Checking the "Conditions".
-                conditionList = CorePlusAPI.getMsg().transHolder(null, entity, conditionList);
+                conditionList = CorePlusAPI.getMsg().transHolder(player, entity, conditionList);
                 if (!CorePlusAPI.getCond().checkCondition(ConfigHandler.getPluginName(), conditionList)) {
                     CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPluginName(),
                             "Damage", entityType, "Condition", "none", groupName,
@@ -70,12 +79,14 @@ public class Drop implements Listener {
                 commandList.addAll(dropMap.getCommands());
             }
         }
+        System.out.println("82: " + dropList.toString());
         if (dropMapList.isEmpty()) {
             CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPluginName(),
                     "Drop", entityType, "Permission", "none",
                     new Throwable().getStackTrace()[0]);
             return;
         }
+        System.out.println("89");
         double totalExp = 1;
         double totalItem = 1;
         double exp;
@@ -125,6 +136,7 @@ public class Drop implements Listener {
                 itemStack.setAmount((int) (totalItem));
             }
         }
+        System.out.println("139: exp=" + totalExp);
         // Executing commands.
         if (ConfigHandler.getConfigPath().isEnDropCommand())
             CorePlusAPI.getCmd().sendCmd(ConfigHandler.getPluginName(), player, e.getEntity(), player, commandList);

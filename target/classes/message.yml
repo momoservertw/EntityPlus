@@ -1,0 +1,14 @@
+Config-Version: 1
+
+Message:
+  prefix: '&7[&dEntityPlus&7]&r '
+  Commands:
+    title: "&8▩▩▩▩▩▩▩▩▩▩ &d&lEntityPlus &8▩▩▩▩▩▩▩▩▩▩"
+    help: "/etp help &8- &7This help menu."
+    reload: "/etp reload &8- &7Reloads config file."
+    version: "/etp version &8- &7Checks the plugin version and updates."
+    purgeAll: "/etp purge kill all &8- &7Purge all creatures that exceed the limit."
+    purgeChunk: "/etp purge kill chunk &8- &7Kill the chunk creatures that exceed the limit."
+  Purge:
+    start: "%prefix% &eStart checking entities..."
+    total: "%prefix% &fRemoved entities: &7%amount% (%value%)"

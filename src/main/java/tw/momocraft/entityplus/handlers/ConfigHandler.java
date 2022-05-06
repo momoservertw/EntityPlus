@@ -29,10 +29,12 @@ public class ConfigHandler {
         setMobsFile();
         // Load
         loadConfig("config.yml");
+        loadConfig("message.yml");
         loadMobsConfig();
 
         // Check version
         checkConfigVer("config.yml");
+        checkConfigVer("message.yml");
         logConfigMsg();
 
         setConfigPath(new ConfigPath());
@@ -47,7 +49,7 @@ public class ConfigHandler {
 
     private static void logConfigMsg() {
         CorePlusAPI.getMsg().sendConsoleMsg(getPluginPrefix(),
-                "Load config files: " + configMap.keySet());
+                "Load configurations: " + configMap.keySet());
         CorePlusAPI.getMsg().sendConsoleMsg(getPluginPrefix(),
                 "Load mobs files: " + mobsMap.keySet());
     }
@@ -64,6 +66,15 @@ public class ConfigHandler {
         fileMap.setFileName(fileName);
         fileMap.setFileType("yaml");
         fileMap.setVersion(12);
+        configInfoMap.put(fileName, fileMap);
+        // message.yml
+        fileMap = new FileMap();
+        filePath = EntityPlus.getInstance().getDataFolder().getPath();
+        fileName = "message.yml";
+        fileMap.setFile(new File(filePath, fileName));
+        fileMap.setFileName(fileName);
+        fileMap.setFileType("yaml");
+        fileMap.setVersion(1);
         configInfoMap.put(fileName, fileMap);
     }
 
@@ -124,7 +135,6 @@ public class ConfigHandler {
         checkResource(new File(filePath, "default.yml"), "mobs/default.yml");
         checkResource(new File(filePath, "monsters.yml"), "mobs/monsters.yml");
         checkResource(new File(filePath, "animals.yml"), "mobs/animals.yml");
-        checkResource(new File(filePath, "vanilla.yml"), "mobs/vanilla.yml");
         // Load file in plugin/mobs folder.
         String[] fileList = new File(filePath).list();
         for (String fileName : fileList) {
@@ -170,7 +180,7 @@ public class ConfigHandler {
     }
 
     public static String getPrefix() {
-        return getConfig("config.yml").getString("Message.prefix");
+        return getConfig("message.yml").getString("Message.prefix");
     }
 
     public static boolean isDebug() {

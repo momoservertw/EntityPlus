@@ -7,13 +7,11 @@ Config-Version: 1
 Entities:
   GUARDIAN:
     Enable: false
-    Inherit: NormalMobs
-    Priority: 3
+    Inherit: Monsters
     Limit: 1
   ZOMBIFIED_PIGLIN:
     Enable: false
-    Inherit: NormalMobs
-    Priority: 3
+    Inherit: Monsters
     Spawn:
       Reasons:
         - NETHER_PORTAL
@@ -21,7 +19,6 @@ Entities:
         Default: 0.3
   IRON_GOLEM:
     Enable: false
-    Priority: 3
     Spawn:
       Chance: 0.3
       Reasons:
@@ -29,8 +26,7 @@ Entities:
     Limit: 16
   PHANTOM:
     Enable: false
-    Inherit: NormalMobs
-    Priority: 3
+    Inherit: Monsters
     Spawn:
       Chance:
         Default: 0.3

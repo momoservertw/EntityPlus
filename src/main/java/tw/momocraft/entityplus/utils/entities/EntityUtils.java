@@ -1,7 +1,6 @@
 package tw.momocraft.entityplus.utils.entities;
 
-import io.lumine.mythic.api.mobs.MythicMob;
-import io.lumine.mythic.bukkit.MythicBukkit;
+import io.lumine.mythic.core.drops.Drop;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -151,10 +150,12 @@ public class EntityUtils {
     }
 
     public static boolean checkLimit(Location loc, String entityGroup) {
+        int limitAmount = ConfigHandler.getConfigPath().getEntitiesTypeProp().get(entityGroup).getLimitAmount();
+        if (limitAmount == -1)
+            return true;
         List<Entity> nearbyEntities = getNearbyGroupEntities(loc, entityGroup);
         if (nearbyEntities.isEmpty())
             return true;
-        int limitAmount = ConfigHandler.getConfigPath().getEntitiesTypeProp().get(entityGroup).getLimitAmount();
         return nearbyEntities.size() < limitAmount;
     }
 
