@@ -8,7 +8,6 @@ tw\momocraft\entityplus\handlers\UtilsHandler.class
 tw\momocraft\entityplus\listeners\Damage.class
 tw\momocraft\entityplus\utils\entities\Purge$1.class
 tw\momocraft\entityplus\handlers\ScheduleHandler$1.class
-tw\momocraft\entityplus\utils\FileMap.class
 tw\momocraft\entityplus\listeners\SpawnMythicMobs.class
 tw\momocraft\entityplus\listeners\DropMythicMobs.class
 tw\momocraft\entityplus\listeners\Spawn.class

@@ -19,10 +19,6 @@ public class DropMythicMobs implements Listener {
     public void onMythicMobLootDropEvent(MythicMobLootDropEvent e) {
         if (!ConfigHandler.getConfigPath().isEnDrop())
             return;
-        // Checking property.
-        String entityGroup = EntityUtils.getEntityGroup(e.getEntity().getUniqueId());
-        if (entityGroup == null)
-            return;
         Player player;
         try {
             player = (Player) e.getKiller();
@@ -31,11 +27,20 @@ public class DropMythicMobs implements Listener {
         } catch (Exception ex) {
             return;
         }
+        // Checking property.
+        String entityGroup = EntityUtils.getEntityGroup(e.getEntity().getUniqueId());
+        if (entityGroup == null)
+            return;
         // To get drop properties.
         String entityType = e.getMobType().getInternalName();
-        List<String> dropList = ConfigHandler.getConfigPath().getEntitiesProp().get(entityType).get(entityGroup).getDropList();
-        if (dropList == null || dropList.isEmpty())
+        List<String> dropList;
+        try {
+            dropList = ConfigHandler.getConfigPath().getEntitiesProp().get(entityType).get(entityGroup).getDropList();
+            if (dropList == null)
+                return;
+        } catch (Exception ex) {
             return;
+        }
         // Checking the bypass "Residence-Flag".
         if (!CorePlusAPI.getCond().checkFlag(e.getEntity().getLocation(), "dropbypass", false,
                 ConfigHandler.getConfigPath().isEnDropResFlag())) {

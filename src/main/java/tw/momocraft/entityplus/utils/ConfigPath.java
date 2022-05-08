@@ -326,11 +326,11 @@ public class ConfigPath {
         enDrop = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Enable");
         if (!enDrop)
             return;
+        enDropResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Residence-Flag");
         enDropExp = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Options.Exp");
         enDropMoney = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Options.Money");
         enDropItem = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Options.Items");
         enDropCommand = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Options.Commands");
-        enDropResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Entities.Drop.Settings.Residence-Flag");
         enDropMultiPerm = ConfigHandler.getConfig("config.yml").getString("Entities.Drop.Settings.Multiple-Groups");
         ConfigurationSection groupsConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Entities.Drop.Groups");
         if (groupsConfig == null)

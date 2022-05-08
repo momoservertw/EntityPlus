@@ -6,8 +6,8 @@ public class UtilsHandler {
     private static ScheduleHandler schedule;
 
     public static void setUpFirst(boolean reload) {
-        if (!reload)
-            dependence = new DependHandler();
+        dependence = new DependHandler();
+        dependence.setup(reload);
     }
 
     public static void setUpLast(boolean reload) {

@@ -1,6 +1,5 @@
 package tw.momocraft.entityplus.utils.entities;
 
-import io.lumine.mythic.core.drops.Drop;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -29,7 +28,7 @@ public class EntityUtils {
                 "Entity", group, "load", null, uuid.toString() + ", " + type,
                 new Throwable().getStackTrace()[0]);
         // Reset the living entity map to prevent memory overflow.
-        if (livingEntityMap.size() > 999999)
+        if (livingEntityMap.size() > 9999999)
             resetLivingEntityMap();
     }
 

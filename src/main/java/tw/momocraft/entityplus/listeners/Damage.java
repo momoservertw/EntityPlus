@@ -14,7 +14,6 @@ import org.bukkit.potion.PotionEffectType;
 import tw.momocraft.coreplus.api.CorePlusAPI;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.utils.entities.DamageMap;
-import tw.momocraft.entityplus.utils.entities.EntityMap;
 import tw.momocraft.entityplus.utils.entities.EntityUtils;
 
 import java.util.List;
@@ -33,13 +32,18 @@ public class Damage implements Listener {
         String entityGroup = EntityUtils.getEntityGroup(entity.getUniqueId());
         if (entityGroup == null)
             return;
-        List<String> damageList = ConfigHandler.getConfigPath().getEntitiesTypeProp().get(entityGroup).getDamageList();
-        if (damageList == null || damageList.isEmpty())
+        List<String> damageList;
+        try {
+            damageList = ConfigHandler.getConfigPath().getEntitiesTypeProp().get(entityGroup).getDropList();
+            if (damageList == null)
+                return;
+        } catch (Exception ex) {
             return;
+        }
         String entityType = entity.getType().name();
         // Residence Flag
         Location loc = entity.getLocation();
-        if (!CorePlusAPI.getCond().checkFlag(loc,
+        if (CorePlusAPI.getCond().checkFlag(loc,
                 "damagebypass", false, ConfigHandler.getConfigPath().isEnDamageResFlag())) {
             CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPluginName(),
                     "Damage", entityType, "Residence-Flag", "bypass",
@@ -231,16 +235,18 @@ public class Damage implements Listener {
         String entityGroup = EntityUtils.getEntityGroup(entity.getUniqueId());
         if (entityGroup == null)
             return;
-        EntityMap entityMap = ConfigHandler.getConfigPath().getEntitiesTypeProp().get(entityGroup);
-        if (entityMap == null)
+        List<String> damageList;
+        try {
+            damageList = ConfigHandler.getConfigPath().getEntitiesTypeProp().get(entityGroup).getDropList();
+            if (damageList == null)
+                return;
+        } catch (Exception ex) {
             return;
-        List<String> damageList = entityMap.getDamageList();
-        if (damageList == null || damageList.isEmpty())
-            return;
+        }
         String entityType = entity.getType().name();
         // Residence-Flag
         Location loc = entity.getLocation();
-        if (!CorePlusAPI.getCond().checkFlag(loc,
+        if (CorePlusAPI.getCond().checkFlag(loc,
                 "damagebypass", false, ConfigHandler.getConfigPath().isEnDamageResFlag())) {
             CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPluginName(),
                     "Damage", entityType, "Residence-Flag", "bypass",

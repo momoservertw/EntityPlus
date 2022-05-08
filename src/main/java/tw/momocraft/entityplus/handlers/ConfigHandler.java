@@ -1,12 +1,11 @@
 package tw.momocraft.entityplus.handlers;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import tw.momocraft.coreplus.api.CorePlusAPI;
+import tw.momocraft.coreplus.utils.file.maps.FileMap;
 import tw.momocraft.entityplus.EntityPlus;
 import tw.momocraft.entityplus.utils.ConfigPath;
-import tw.momocraft.entityplus.utils.FileMap;
 
 import java.io.File;
 import java.time.LocalDateTime;
@@ -24,34 +23,28 @@ public class ConfigHandler {
     private static ConfigPath configPath;
 
     public static void generateData(boolean reload) {
-        // Setup
+        // Config
         setConfigFile();
         setMobsFile();
-        // Load
         loadConfig("config.yml");
         loadConfig("message.yml");
         loadMobsConfig();
-
-        // Check version
         checkConfigVer("config.yml");
         checkConfigVer("message.yml");
-        logConfigMsg();
 
+        // Others
         setConfigPath(new ConfigPath());
         UtilsHandler.setUpFirst(reload);
         UtilsHandler.setUpLast(reload);
-        if (!reload) {
-            CorePlusAPI.getUpdate().check(getPluginName(), getPluginPrefix(), Bukkit.getConsoleSender(),
-                    EntityPlus.getInstance().getDescription().getName(),
-                    EntityPlus.getInstance().getDescription().getVersion(), true);
-        }
+
+        logConfigMsg();
     }
 
     private static void logConfigMsg() {
-        CorePlusAPI.getMsg().sendConsoleMsg(getPluginPrefix(),
-                "Load configurations: " + configMap.keySet());
-        CorePlusAPI.getMsg().sendConsoleMsg(getPluginPrefix(),
-                "Load mobs files: " + mobsMap.keySet());
+        CorePlusAPI.getMsg().sendConsoleMsg(
+                getPluginPrefix() + "Load configurations: " + configMap.keySet());
+        CorePlusAPI.getMsg().sendConsoleMsg(
+                getPluginPrefix() + "Load mobs files: " + mobsMap.keySet());
     }
 
     private static void setConfigFile() {
@@ -185,5 +178,9 @@ public class ConfigHandler {
 
     public static boolean isDebug() {
         return ConfigHandler.getConfig("config.yml").getBoolean("Debugging");
+    }
+
+    public static boolean isCheckUpdates() {
+        return ConfigHandler.getConfig("config.yml").getBoolean("Check-Updates");
     }
 }

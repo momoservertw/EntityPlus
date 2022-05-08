@@ -1,5 +1,6 @@
 package tw.momocraft.entityplus.handlers;
 
+import org.bukkit.Bukkit;
 import tw.momocraft.coreplus.api.CorePlusAPI;
 import tw.momocraft.entityplus.Commands;
 import tw.momocraft.entityplus.EntityPlus;
@@ -8,8 +9,19 @@ import tw.momocraft.entityplus.listeners.*;
 
 public class DependHandler {
 
-    public DependHandler() {
+    public void setup(boolean reload) {
         registerEvents();
+        if (!reload)
+            checkUpdate();
+    }
+
+    public void checkUpdate() {
+        if (!ConfigHandler.isCheckUpdates())
+            return;
+        CorePlusAPI.getUpdate().check(ConfigHandler.getPluginName(),
+                ConfigHandler.getPluginPrefix(), Bukkit.getConsoleSender(),
+                EntityPlus.getInstance().getDescription().getName(),
+                EntityPlus.getInstance().getDescription().getVersion(), true);
     }
 
     private void registerEvents() {
