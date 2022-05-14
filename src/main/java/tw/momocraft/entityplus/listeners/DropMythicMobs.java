@@ -2,6 +2,7 @@ package tw.momocraft.entityplus.listeners;
 
 import io.lumine.mythic.bukkit.events.MythicMobLootDropEvent;
 import io.lumine.mythic.core.drops.Drop;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -28,7 +29,8 @@ public class DropMythicMobs implements Listener {
             return;
         }
         // Checking property.
-        String entityGroup = EntityUtils.getEntityGroup(e.getEntity().getUniqueId());
+        Entity entity = e.getEntity();
+        String entityGroup = EntityUtils.getEntityGroup(entity.getUniqueId());
         if (entityGroup == null)
             return;
         // To get drop properties.
@@ -139,8 +141,11 @@ public class DropMythicMobs implements Listener {
             }
         }
         // Executing commands.
-        if (ConfigHandler.getConfigPath().isEnDropCommand())
-            CorePlusAPI.getCmd().sendCmd(ConfigHandler.getPluginName(), player, e.getEntity(), player, commandList);
+        if (ConfigHandler.getConfigPath().isEnDropCommand()) {
+            commandList = CorePlusAPI.getMsg().transHolder(ConfigHandler.getPluginName(),
+                    player, entity, commandList);
+            CorePlusAPI.getCmd().sendCmd(ConfigHandler.getPluginName(), player, commandList);
+        }
         CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPluginName(),
                 "Drop", entityType, "Final", "return", entityGroup,
                 new Throwable().getStackTrace()[0]);

@@ -10,6 +10,8 @@ import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.utils.entities.EntityMap;
 import tw.momocraft.entityplus.utils.entities.EntityUtils;
 
+import java.util.List;
+
 public class SpawnMythicMobs implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -32,7 +34,10 @@ public class SpawnMythicMobs implements Listener {
         String action = EntityUtils.getSpawnAction(entity, entityMap);
         if (action.equals("none")) {
             // Execute Commands
-            CorePlusAPI.getCmd().sendCmd(ConfigHandler.getPluginName(), null, entity, entityMap.getCommands());
+            List<String> list = entityMap.getCommands();
+            list = CorePlusAPI.getMsg().transHolder(ConfigHandler.getPluginName(),
+                    entity, null, list);
+            CorePlusAPI.getCmd().sendCmd(ConfigHandler.getPluginName(), null, list);
             return;
         }
         e.setCancelled();

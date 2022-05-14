@@ -10,7 +10,6 @@ import org.bukkit.inventory.ItemStack;
 import tw.momocraft.coreplus.api.CorePlusAPI;
 import tw.momocraft.entityplus.handlers.ConfigHandler;
 import tw.momocraft.entityplus.utils.entities.DropMap;
-import tw.momocraft.entityplus.utils.entities.EntityMap;
 import tw.momocraft.entityplus.utils.entities.EntityUtils;
 
 import java.util.ArrayList;
@@ -67,7 +66,8 @@ public class Drop implements Listener {
                 if (dropMap == null)
                     continue;
                 // Checking the "Conditions".
-                conditionList = CorePlusAPI.getMsg().transHolder(player, entity, conditionList);
+                conditionList = CorePlusAPI.getMsg().transHolder(ConfigHandler.getPluginName(),
+                        player, entity, conditionList);
                 if (!CorePlusAPI.getCond().checkCondition(ConfigHandler.getPluginName(), conditionList)) {
                     CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPluginName(),
                             "Damage", entityType, "Condition", "none", groupName,
@@ -134,8 +134,11 @@ public class Drop implements Listener {
             }
         }
         // Executing commands.
-        if (ConfigHandler.getConfigPath().isEnDropCommand())
-            CorePlusAPI.getCmd().sendCmd(ConfigHandler.getPluginName(), player, e.getEntity(), player, commandList);
+        if (ConfigHandler.getConfigPath().isEnDropCommand()) {
+            commandList = CorePlusAPI.getMsg().transHolder(ConfigHandler.getPluginName(),
+                    player, entity, commandList);
+            CorePlusAPI.getCmd().sendCmd(ConfigHandler.getPluginName(), player, commandList);
+        }
         CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPluginName(),
                 "Drop", entityType, "Final", "succeed", entityGroup,
                 new Throwable().getStackTrace()[0]);

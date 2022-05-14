@@ -75,8 +75,10 @@ public class EntityUtils {
                         !CorePlusAPI.getUtils().containIgnoreValue(reason, entityMap.getReasons(), entityMap.getIgnoreReasons()))
                     continue;
                 // Check "Conditions"
-                if (!CorePlusAPI.getCond().checkCondition(ConfigHandler.getPluginName(),
-                        CorePlusAPI.getMsg().transHolder(null, entity, entityMap.getConditions())))
+                List<String> list = entityMap.getConditions();
+                list = CorePlusAPI.getMsg().transHolder(ConfigHandler.getPluginName(),
+                        entity, null, list);
+                if (!CorePlusAPI.getCond().checkCondition(ConfigHandler.getPluginName(), list))
                     continue;
                 return groupName;
             }
@@ -130,8 +132,9 @@ public class EntityUtils {
                         chance *= chanceMap.get(chanceValue);
                         break;
                     default:
-                        translatedGroup = CorePlusAPI.getMsg().transHolder(null, entity, chanceValue);
-                        if (CorePlusAPI.getCond().checkCondition(ConfigHandler.getPluginName(), translatedGroup)) {
+                        chanceValue = CorePlusAPI.getMsg().transHolder(ConfigHandler.getPluginName(),
+                                entity, null, chanceValue);
+                        if (CorePlusAPI.getCond().checkCondition(ConfigHandler.getPluginName(), chanceValue)) {
                             chance *= chanceMap.get(chanceValue);
                             break;
                         }

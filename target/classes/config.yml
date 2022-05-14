@@ -6,6 +6,8 @@ Config-Version: 12
 Debugging: false
 Check-Updates: true
 
+
+
 # Controlling entities spawn, rewards, and damage.
 # You need to setup the entities in "mobs" folder.
 # More information: https://github.com/momoservertw/EntityPlus/wiki/Entities
@@ -130,8 +132,6 @@ Spawner:
       Log: true
       Console: true
       Nearby-Players: true
-    # Sending commands nearby players. Set "0" to disable checking.
-    Nearby-Players-Range: 32
     # Custom Residence flag "spawnerbypass" to bypass the features.
     Residence-Flag: false
   Groups:

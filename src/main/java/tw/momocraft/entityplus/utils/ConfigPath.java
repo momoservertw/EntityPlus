@@ -84,7 +84,6 @@ public class ConfigPath {
     //  ============================================== //
     private boolean spawner;
     private boolean spawnerResFlag;
-    private int spawnerNearbyPlayerRange;
 
     private final Map<String, Map<String, SpawnerMap>> spawnerProp = new HashMap<>();
 
@@ -103,13 +102,14 @@ public class ConfigPath {
         List<String> list = new ArrayList<>(EntityPlus.getInstance().getDescription().getDepend());
         list.addAll(EntityPlus.getInstance().getDescription().getSoftDepend());
         CorePlusAPI.getMsg().sendHookMsg(ConfigHandler.getPluginPrefix(), "plugins", list);
-        String string =
-                "spawnbypass" + " "
-                        + "dropbypass" + " "
-                        + "purgebypass" + " "
-                        + "damagebypass" + " "
-                        + "spawnerbypass" + " ";
-        CorePlusAPI.getMsg().sendHookMsg(ConfigHandler.getPluginPrefix(), "Residence flags", Arrays.asList(string.split("\\s*")));
+
+        List<String> resList = new ArrayList<>();
+        resList.add("spawnbypass");
+        resList.add("dropbypass");
+        resList.add("purgebypass");
+        resList.add("damagebypass");
+        resList.add("spawnerbypass");
+        CorePlusAPI.getMsg().sendHookMsg(ConfigHandler.getPluginPrefix(), "residence_flags", resList);
     }
 
     //  ============================================== //
@@ -181,10 +181,10 @@ public class ConfigPath {
                     sortMap.put(group, entitiesProp.get(entityType).get(group).getPriority());
                 sortMap = CorePlusAPI.getUtils().sortByValue(sortMap);
                 for (String group : sortMap.keySet()) {
+                    newEnMap.put(group, entitiesProp.get(entityType).get(group));
                     CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPluginName(),
                             "Spawn", "setup", group, "continue", entityType,
                             new Throwable().getStackTrace()[0]);
-                    newEnMap.put(group, entitiesProp.get(entityType).get(group));
                 }
                 entitiesProp.replace(entityType, newEnMap);
             }
@@ -376,7 +376,7 @@ public class ConfigPath {
             actionConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Entities.Damage.Groups." + group + ".Action");
             if (actionConfig != null) {
                 actionKey = actionConfig.getKeys(false).iterator().next();
-                damageMap.setAction(actionKey.toLowerCase(Locale.ROOT));
+                damageMap.setAction(actionKey.toLowerCase());
                 damageMap.setActionValue(ConfigHandler.getConfig("config.yml").getDouble("Entities.Damage.Groups." + group + ".Action." + actionKey));
             }
             damageMap.setPlayerNear(ConfigHandler.getConfig("config.yml").getInt("Entities.Damage.Groups." + group + ".Ignore.Player-Nearby-Range"));
@@ -400,7 +400,6 @@ public class ConfigPath {
         if (!spawner)
             return;
         spawnerResFlag = ConfigHandler.getConfig("config.yml").getBoolean("Spawner.Settings.Residence-Flag");
-        spawnerNearbyPlayerRange = ConfigHandler.getConfig("config.yml").getInt("Spawner.Settings.Nearby-Players-Range");
         ConfigurationSection spawnerConfig = ConfigHandler.getConfig("config.yml").getConfigurationSection("Spawner.Groups");
         if (spawnerConfig == null)
             return;
@@ -427,7 +426,8 @@ public class ConfigPath {
             } else {
                 changeList = ConfigHandler.getConfig("config.yml").getStringList("Spawner.Groups." + group + ".Change-Types");
                 if (changeList.isEmpty() && !spawnerMap.isRemove()) {
-                    CorePlusAPI.getMsg().sendConsoleMsg(ConfigHandler.getPluginPrefix(), "&cThe spawner change type of \"" + group + "\" is empty.");
+                    CorePlusAPI.getMsg().sendErrorMsg(ConfigHandler.getPluginPrefix(),
+                            "&cThe spawner change type of \"" + group + "\" is empty.");
                     continue;
                 }
                 for (String changeType : changeList)
@@ -436,10 +436,15 @@ public class ConfigPath {
             spawnerMap.setChangeMap(changeMap);
             // Add properties to all Worlds.
             LocationMap locationMap;
+            List<String> worldList;
             for (String locName : spawnerMap.getLocList()) {
                 locationMap = CorePlusAPI.getConfig().getLocProp().get(locName);
-                if (locationMap == null)
-                    continue;
+                if (locationMap == null) {
+                    locationMap = new LocationMap();
+                    worldList = new ArrayList<>();
+                    worldList.add(locName);
+                    locationMap.setWorlds(worldList);
+                }
                 for (String worldName : locationMap.getWorlds()) {
                     try {
                         spawnerProp.get(worldName).put(group, spawnerMap);
@@ -462,7 +467,8 @@ public class ConfigPath {
                 sortMap.put(group, spawnerProp.get(worldName).get(group).getPriority());
             sortMap = CorePlusAPI.getUtils().sortByValue(sortMap);
             for (String group : sortMap.keySet()) {
-                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPluginName(), "Spawner", worldName, "setup", "continue", group,
+                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPluginName(),
+                        "Spawner", worldName, "setup", "continue", group,
                         new Throwable().getStackTrace()[0]);
                 newMap.put(group, spawnerProp.get(worldName).get(group));
             }
@@ -688,10 +694,6 @@ public class ConfigPath {
 
     public boolean isSpawnerResFlag() {
         return spawnerResFlag;
-    }
-
-    public int getSpawnerNearbyPlayerRange() {
-        return spawnerNearbyPlayerRange;
     }
 
     public Map<String, Map<String, SpawnerMap>> getSpawnerProp() {

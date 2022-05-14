@@ -34,8 +34,8 @@ public class ConfigHandler {
 
         // Others
         setConfigPath(new ConfigPath());
-        UtilsHandler.setUpFirst(reload);
-        UtilsHandler.setUpLast(reload);
+        UtilsHandler.setupFirst(reload);
+        UtilsHandler.setupLast(reload);
 
         logConfigMsg();
     }

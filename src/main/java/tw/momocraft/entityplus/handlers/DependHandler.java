@@ -10,9 +10,10 @@ import tw.momocraft.entityplus.listeners.*;
 public class DependHandler {
 
     public void setup(boolean reload) {
-        registerEvents();
-        if (!reload)
+        if (!reload) {
+            registerEvents();
             checkUpdate();
+        }
     }
 
     public void checkUpdate() {
