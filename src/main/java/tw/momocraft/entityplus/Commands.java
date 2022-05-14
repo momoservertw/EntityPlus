@@ -16,57 +16,52 @@ public class Commands implements CommandExecutor {
         int length = args.length;
         if (length == 0) {
             if (CorePlusAPI.getPlayer().hasPerm(sender, "entityplus.use")) {
-                CorePlusAPI.getMsg().sendMsg("", sender, "");
-                CorePlusAPI.getMsg().sendLangMsg("", ConfigHandler.getConfigPath().getMsgCmdTitle(), sender);
-                CorePlusAPI.getMsg().sendMsg("", sender,
+                CorePlusAPI.getMsg().sendMsg(sender, "");
+                CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getConfigPath().getMsgCmdTitle(), sender);
+                CorePlusAPI.getMsg().sendMsg(sender,
                         "&f " + EntityPlus.getInstance().getDescription().getName()
                                 + " &ev" + EntityPlus.getInstance().getDescription().getVersion() + "  &8by Momocraft");
-                CorePlusAPI.getMsg().sendLangMsg("", ConfigHandler.getConfigPath().getMsgCmdHelp(), sender);
-                CorePlusAPI.getMsg().sendMsg("", sender, "");
+                CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getConfigPath().getMsgCmdHelp(), sender);
+                CorePlusAPI.getMsg().sendMsg(sender, "");
             } else {
                 CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(), "Message.noPermission", sender);
             }
             return true;
         }
         switch (args[0].toLowerCase()) {
-            case "help" -> {
+            case "help":
                 if (CorePlusAPI.getPlayer().hasPerm(sender, "entityplus.use")) {
-                    CorePlusAPI.getMsg().sendMsg("", sender, "");
-                    CorePlusAPI.getMsg().sendLangMsg("", ConfigHandler.getConfigPath().getMsgCmdTitle(), sender);
-                    CorePlusAPI.getMsg().sendMsg("", sender,
+                    CorePlusAPI.getMsg().sendMsg(sender, "");
+                    CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getConfigPath().getMsgCmdTitle(), sender);
+                    CorePlusAPI.getMsg().sendMsg(sender,
                             "&f " + EntityPlus.getInstance().getDescription().getName()
                                     + " &ev" + EntityPlus.getInstance().getDescription().getVersion() + "  &8by Momocraft");
-                    CorePlusAPI.getMsg().sendLangMsg("", ConfigHandler.getConfigPath().getMsgCmdHelp(), sender);
+                    CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getConfigPath().getMsgCmdHelp(), sender);
                     if (CorePlusAPI.getPlayer().hasPerm(sender, "entityplus.command.reload"))
-                        CorePlusAPI.getMsg().sendLangMsg("", ConfigHandler.getConfigPath().getMsgCmdReload(), sender);
+                        CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getConfigPath().getMsgCmdReload(), sender);
                     if (CorePlusAPI.getPlayer().hasPerm(sender, "entityplus.command.version"))
-                        CorePlusAPI.getMsg().sendLangMsg("", ConfigHandler.getConfigPath().getMsgCmdVersion(), sender);
+                        CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getConfigPath().getMsgCmdVersion(), sender);
                     if (CorePlusAPI.getPlayer().hasPerm(sender, "entityplus.command.purge")) {
-                        CorePlusAPI.getMsg().sendLangMsg("", ConfigHandler.getConfigPath().getMsgCmdPurgeChunk(), sender);
-                        CorePlusAPI.getMsg().sendLangMsg("", ConfigHandler.getConfigPath().getMsgCmdPurgeAll(), sender);
+                        CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getConfigPath().getMsgCmdPurgeChunk(), sender);
+                        CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getConfigPath().getMsgCmdPurgeAll(), sender);
                     }
-                    CorePlusAPI.getMsg().sendMsg("", sender, "");
+                    CorePlusAPI.getMsg().sendMsg(sender, "");
                 } else {
                     CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
                             "Message.noPermission", sender);
                 }
                 return true;
-            }
-            case "reload" -> {
+            case "reload":
                 if (CorePlusAPI.getPlayer().hasPerm(sender, "entityplus.command.reload")) {
                     ConfigHandler.generateData(true);
-                    if (sender instanceof Player)
-                        CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                                "Message.configReload", sender);
                     CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
-                            "Message.configReload", null);
+                            "Message.configReload", sender);
                 } else {
                     CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
                             "Message.noPermission", sender);
                 }
                 return true;
-            }
-            case "version" -> {
+            case "version":
                 if (CorePlusAPI.getPlayer().hasPerm(sender, "entityplus.command.version")) {
                     CorePlusAPI.getMsg().sendMsg(ConfigHandler.getPrefix(), sender,
                             "&f " + EntityPlus.getInstance().getDescription().getName()
@@ -78,8 +73,7 @@ public class Commands implements CommandExecutor {
                             "Message.noPermission", sender);
                 }
                 return true;
-            }
-            case "purge" -> {
+            case "purge":
                 if (CorePlusAPI.getPlayer().hasPerm(sender, "entityplus.command.purge")) {
                     if (!ConfigHandler.getConfigPath().isEnPurge()) {
                         CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
@@ -112,7 +106,6 @@ public class Commands implements CommandExecutor {
                             "Message.noPermission", sender);
                 }
                 return true;
-            }
         }
         CorePlusAPI.getMsg().sendLangMsg(ConfigHandler.getPrefix(),
                 "Message.unknownCommand", sender);
