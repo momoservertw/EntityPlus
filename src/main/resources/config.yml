@@ -6,8 +6,6 @@ Config-Version: 12
 Debugging: false
 Check-Updates: true
 
-
-
 # Controlling entities spawn, rewards, and damage.
 # You need to setup the entities in "mobs" folder.
 # More information: https://github.com/momoservertw/EntityPlus/wiki/Entities
