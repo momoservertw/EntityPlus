@@ -152,8 +152,6 @@ Spawner:
       Commands:
         - "log-group: EntityPlus-Spawner, %entity_display_name% spawner - %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%, nearby players: %nearbyplayers%"
         - "print: &c%entity_display_name% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%, nearby players: %nearbyplayers%"
-      Target-Commands:
-        - "message: &c%entity_display_name% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%."
     Nether:
       Enable: true
       Location:
@@ -165,8 +163,6 @@ Spawner:
       Commands:
         - "log-group: EntityPlus-Spawner, %spawner% spawner - %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%, nearby players: %nearbyplayers%"
         - "print: &c%spawner% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%, nearby players: %nearbyplayers%"
-      Target-Commands:
-        - "message: &c%entity_display_name% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been changed to %new_spawner%."
     Remove:
       Enable: true
       Remove: true
@@ -175,5 +171,3 @@ Spawner:
       Commands:
         - "log-group: EntityPlus-Spawner, %spawner% spawner - %world%(%loc_x%, %loc_y%, %loc_z%) has been removed, nearby players: %nearbyplayers%"
         - "print: &c%spawner% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been removed, nearby players: %nearbyplayers%"
-      Target-Commands:
-        - "message: &c%entity_display_name% spawner at %world%(%loc_x%, %loc_y%, %loc_z%) has been removed."

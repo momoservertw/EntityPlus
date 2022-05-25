@@ -78,7 +78,7 @@ public class Purge {
                     cancel();
                     return;
                 }
-                for (int count = 1; count <= speed; count++)
+                for (int count = 0; count <= speed; count++)
                     purgeChunk(chunkList.get(count + process), purgeMap);
                 process += speed;
             }
