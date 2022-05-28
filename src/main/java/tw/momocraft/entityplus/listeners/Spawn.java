@@ -27,11 +27,11 @@ public class Spawn implements Listener {
         // Checking in MythicSpawnEvent
         if (entity.getEntitySpawnReason().name().equals("CUSTOM"))
             return;
-        String entityType = entity.getType().name();
         String entityGroup = EntityUtils.getEntityGroup(entity);
         if (entityGroup == null)
             return;
         EntityMap entityMap;
+        String entityType = entity.getType().name();
         try {
             entityMap = ConfigHandler.getConfigPath().getEntitiesProp().get(entityType).get(entityGroup);
             if (entityMap == null)
@@ -44,8 +44,8 @@ public class Spawn implements Listener {
             // Execute Commands
             List<String> list = entityMap.getCommands();
             list = CorePlusAPI.getMsg().transHolder(ConfigHandler.getPluginName(),
-                    entity, null, list);
-            CorePlusAPI.getCmd().sendCmd(ConfigHandler.getPluginName(), null, list);
+                    entity, list);
+            CorePlusAPI.getCmd().sendCmd(ConfigHandler.getPluginName(), list);
             return;
         }
         e.setCancelled(true);

@@ -38,7 +38,6 @@ public class DependHandler {
         if (CorePlusAPI.getDepend().isPaper()) {
             EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new EntityDataPaper(), EntityPlus.getInstance());
         }
-
         if (CorePlusAPI.getDepend().MythicMobsEnabled()) {
             EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new SpawnMythicMobs(), EntityPlus.getInstance());
             EntityPlus.getInstance().getServer().getPluginManager().registerEvents(new DropMythicMobs(), EntityPlus.getInstance());

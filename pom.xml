@@ -13,8 +13,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>15</source>
-                    <target>15</target>
+                    <source>17</source>
+                    <target>17</target>
                 </configuration>
             </plugin>
         </plugins>
@@ -37,12 +37,6 @@
         </repository>
     </repositories>
     <dependencies>
-        <!--Google API-->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>18.0</version>
-        </dependency>
         <!--Paper API-->
         <dependency>
             <groupId>io.papermc.paper</groupId>
@@ -63,7 +57,7 @@
             <groupId>me.MythicMobs</groupId>
             <artifactId>MythicMobs</artifactId>
             <scope>system</scope>
-            <systemPath>${pom.basedir}/src/main/java/tw/momocraft/entityplus/extra/MythicMobs-5.0.3-SNAPSHOT.jar</systemPath>
+            <systemPath>${pom.basedir}/src/main/java/tw/momocraft/entityplus/extra/MythicMobs-5.1.0-SNAPSHOT.jar</systemPath>
             <version>LEGACY</version>
         </dependency>
     </dependencies>

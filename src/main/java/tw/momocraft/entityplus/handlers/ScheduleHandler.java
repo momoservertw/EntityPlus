@@ -11,19 +11,16 @@ public class ScheduleHandler {
     }
 
     private void enableSchedule() {
-        if (ConfigHandler.getConfigPath().isEnPurge()) {
-            if (ConfigHandler.getConfigPath().isEnPurgeCheckSchedule()) {
-                if (!Purge.isStarting()) {
+        if (ConfigHandler.getConfigPath().isEnPurge())
+            if (ConfigHandler.getConfigPath().isEnPurgeCheckSchedule())
+                if (!Purge.isStarting())
                     new BukkitRunnable() {
                         @Override
                         public void run() {
                             Purge.startSchedule();
                         }
                     }.runTaskLater(CorePlus.getInstance(), 200);
-                }
-            } else {
-                Purge.setStarting(false);
-            }
-        }
+                else
+                    Purge.setStarting(false);
     }
 }

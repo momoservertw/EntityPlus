@@ -104,7 +104,6 @@ public class EntityUtils {
         double chance = 1;
         Map<String, Double> chanceMap = entityMap.getChanceMap();
         if (chanceMap != null) {
-            String translatedGroup;
             back:
             for (String chanceValue : chanceMap.keySet()) {
                 switch (chanceValue) {
@@ -194,10 +193,9 @@ public class EntityUtils {
     public static boolean isNamed(Entity entity, boolean bypass) {
         if (CorePlusAPI.getDepend().MythicMobsEnabled()) {
             String mmName = CorePlusAPI.getEnt().getMythicMobDisplayName(entity);
-            if (mmName != null) {
+            if (mmName != null)
                 if (!mmName.equals(entity.getCustomName()))
                     return true;
-            }
         } else {
             if (!bypass)
                 return false;
