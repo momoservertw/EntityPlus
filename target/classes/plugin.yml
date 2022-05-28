@@ -2,7 +2,7 @@ name: EntityPlus
 main: tw.momocraft.entityplus.EntityPlus
 author: Momocraft
 api-version: 1.13
-version: 1.3.0
+version: 1.3.1
 description: Control entities.
 depend: [CorePlus]
 softdepend: [MythicMobs]

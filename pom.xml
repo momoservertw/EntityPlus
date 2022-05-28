@@ -13,8 +13,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>15</source>
-                    <target>15</target>
+                    <source>17</source>
+                    <target>17</target>
                 </configuration>
             </plugin>
         </plugins>
@@ -63,8 +63,8 @@
             <groupId>me.MythicMobs</groupId>
             <artifactId>MythicMobs</artifactId>
             <scope>system</scope>
-            <systemPath>${pom.basedir}/src/main/java/tw/momocraft/entityplus/extra/MythicMobs-5.0.3-SNAPSHOT.jar</systemPath>
-            <version>LEGACY</version>
+            <systemPath>${pom.basedir}/src/main/java/tw/momocraft/entityplus/extra/MythicMobs-5.1.0-SNAPSHOT.jar</systemPath>
+            <version>DEV</version>
         </dependency>
     </dependencies>
 </project>
