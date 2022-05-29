@@ -47,6 +47,7 @@ public class Spawner implements Listener {
         if (spawnerProp == null)
             return;
         boolean checkResFlag = ConfigHandler.getConfigPath().isSpawnerResFlag();
+        boolean resEnabled = CorePlusAPI.getDepend().ResidenceEnabled();
         SpawnerMap spawnerMap;
         List<String> conditionList = new ArrayList<>();
         for (String groupName : spawnerProp.keySet()) {
@@ -72,12 +73,14 @@ public class Spawner implements Listener {
                 continue;
             }
             // Checking the bypass "Residence-Flag".
-            if (CorePlusAPI.getCond().checkFlag(loc, "spawnerbypass", false, checkResFlag)) {
-                CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPluginName(),
-                        "Spawner", groupName, "Residence-Flag", "bypass", spawnerType,
-                        new Throwable().getStackTrace()[0]);
-                continue;
-            }
+            if (checkResFlag)
+                if (resEnabled)
+                    if (CorePlusAPI.getCond().checkFlag(loc, "spawnerbypass", false)) {
+                        CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPluginName(),
+                                "Spawner", groupName, "Residence-Flag", "bypass", spawnerType,
+                                new Throwable().getStackTrace()[0]);
+                        continue;
+                    }
             // Removing the spawner.
             if (spawnerMap.isRemove()) {
                 e.setCancelled(true);

@@ -103,13 +103,15 @@ public class ConfigPath {
         list.addAll(EntityPlus.getInstance().getDescription().getSoftDepend());
         CorePlusAPI.getMsg().sendHookMsg(ConfigHandler.getPluginPrefix(), "plugins", list);
 
-        List<String> resList = new ArrayList<>();
-        resList.add("spawnbypass");
-        resList.add("dropbypass");
-        resList.add("purgebypass");
-        resList.add("damagebypass");
-        resList.add("spawnerbypass");
-        CorePlusAPI.getMsg().sendHookMsg(ConfigHandler.getPluginPrefix(), "residence_flags", resList);
+        if (CorePlusAPI.getDepend().ResidenceEnabled()) {
+            List<String> resList = new ArrayList<>();
+            resList.add("spawnbypass");
+            resList.add("dropbypass");
+            resList.add("purgebypass");
+            resList.add("damagebypass");
+            resList.add("spawnerbypass");
+            CorePlusAPI.getMsg().sendHookMsg(ConfigHandler.getPluginPrefix(), "residence_flags", resList);
+        }
     }
 
     //  ============================================== //

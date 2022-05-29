@@ -95,9 +95,11 @@ public class Purge {
         EntityMap entityMap;
         while (iterator.hasNext()) {
             entity = iterator.next();
-            if (CorePlusAPI.getCond().checkFlag(entity.getLocation(), "purgebypass", false,
-                    ConfigHandler.getConfigPath().isEnPurge()))
-                continue;
+            // Residence
+            if (ConfigHandler.getConfigPath().isEnPurgeResFlag())
+                if (CorePlusAPI.getDepend().ResidenceEnabled())
+                    if (CorePlusAPI.getCond().checkFlag(entity.getLocation(), "purgebypass", false))
+                        continue;
             groupName = EntityUtils.getEntityGroup(entity.getUniqueId());
             if (groupName == null)
                 continue;

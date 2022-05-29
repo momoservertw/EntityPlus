@@ -89,18 +89,19 @@ public class EntityUtils {
     public static String getSpawnAction(Entity entity, EntityMap entityMap) {
         Location loc = entity.getLocation();
 
-        // Check "Residence-Flag" - Bypass if residence has the flag.
-        if (CorePlusAPI.getCond().checkFlag(loc, "spawnbypass", false,
-                ConfigHandler.getConfigPath().isEnSpawnResFlag()))
-            return "none";
-        // Check "Max-Distance".
+        // Check "Residence flag"
+        if (ConfigHandler.getConfigPath().isEnSpawnResFlag())
+            if (CorePlusAPI.getDepend().ResidenceEnabled())
+                if (CorePlusAPI.getCond().checkFlag(loc, "spawnbypass", false))
+                    return "none";
+        // Check "Max-Distance"
         List<Player> nearbyPlayers = CorePlusAPI.getUtils().getNearbyPlayersXZY(loc, entityMap.getMaxDistance());
         if (nearbyPlayers.isEmpty())
             return "noPlayer";
-        // Check "Permission".
+        // Check "Permission"
         if (!CorePlusAPI.getPlayer().havePermPlayer(nearbyPlayers, entityMap.getPermission()))
             return "noPermission";
-        // Set "Chance".
+        // Set Chance
         double chance = 1;
         Map<String, Double> chanceMap = entityMap.getChanceMap();
         if (chanceMap != null) {

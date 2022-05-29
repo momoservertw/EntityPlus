@@ -45,13 +45,14 @@ public class Damage implements Listener {
         // Residence Flag
         String entityType = entity.getType().name();
         Location loc = entity.getLocation();
-        if (CorePlusAPI.getCond().checkFlag(loc,
-                "damagebypass", false, ConfigHandler.getConfigPath().isEnDamageResFlag())) {
-            CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPluginName(),
-                    "Damage", entityType, "Residence-Flag", "bypass",
-                    new Throwable().getStackTrace()[0]);
-            return;
-        }
+        if (ConfigHandler.getConfigPath().isEnDamageResFlag())
+            if (CorePlusAPI.getDepend().ResidenceEnabled())
+                if (CorePlusAPI.getCond().checkFlag(loc, "damagebypass", false)) {
+                    CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPluginName(),
+                            "Damage", entityType, "Residence-Flag", "bypass",
+                            new Throwable().getStackTrace()[0]);
+                    return;
+                }
         // Setup "trigger" and "player".
         Entity trigger = e.getDamager();
         Player player = null;
@@ -262,13 +263,14 @@ public class Damage implements Listener {
         String entityType = entity.getType().name();
         // Residence-Flag
         Location loc = entity.getLocation();
-        if (CorePlusAPI.getCond().checkFlag(loc,
-                "damagebypass", false, ConfigHandler.getConfigPath().isEnDamageResFlag())) {
-            CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPluginName(),
-                    "Damage", entityType, "Residence-Flag", "bypass",
-                    new Throwable().getStackTrace()[0]);
-            return;
-        }
+        if (ConfigHandler.getConfigPath().isEnDamageResFlag())
+            if (CorePlusAPI.getDepend().ResidenceEnabled())
+                if (CorePlusAPI.getCond().checkFlag(loc, "damagebypass", false)) {
+                    CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPluginName(),
+                            "Damage", entityType, "Residence-Flag", "bypass",
+                            new Throwable().getStackTrace()[0]);
+                    return;
+                }
         DamageMap damageMap;
         Map<String, DamageMap> damageProp = ConfigHandler.getConfigPath().getEnDamageProp();
         List<String> conditionList;

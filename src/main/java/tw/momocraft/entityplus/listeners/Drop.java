@@ -46,13 +46,14 @@ public class Drop implements Listener {
             return;
         }
         // Checking the bypass "Residence-Flag".
-        if (CorePlusAPI.getCond().checkFlag(entity.getLocation(),
-                "dropbypass", false, ConfigHandler.getConfigPath().isEnDropResFlag())) {
-            CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPluginName(),
-                    "Drop", entityType, "Residence-Flag", "bypass",
-                    new Throwable().getStackTrace()[0]);
-            return;
-        }
+        if (ConfigHandler.getConfigPath().isEnDropResFlag())
+            if (CorePlusAPI.getDepend().ResidenceEnabled())
+                if (CorePlusAPI.getCond().checkFlag(entity.getLocation(), "dropbypass", false)) {
+                    CorePlusAPI.getMsg().sendDetailMsg(ConfigHandler.isDebug(), ConfigHandler.getPluginName(),
+                            "Drop", entityType, "Residence-Flag", "bypass",
+                            new Throwable().getStackTrace()[0]);
+                    return;
+                }
         // Checking rewards.
         DropMap dropMap;
         List<DropMap> dropMapList = new ArrayList<>();
